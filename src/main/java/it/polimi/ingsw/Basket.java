@@ -17,6 +17,8 @@ public class Basket {
      * @param studentsNum: array of integers indicating the students numbers, divided by color.
      */
     public Basket(int[] studentsNum){
+        if (studentsNum==null)
+            throw new NullPointerException();
         this.studentsNum=studentsNum;
         size=0;
         for(int i = 0; i< this.studentsNum.length;i++){
@@ -24,7 +26,7 @@ public class Basket {
         }
     }
 
-    private int[] getStudentsNum() {
+    public int[] getStudentsNum() {
         return studentsNum;
     }
 
@@ -34,34 +36,50 @@ public class Basket {
 
     /**
      * This methods allows the extraction of a student tile from the basket.
-     * The color is randomly choosen.
+     * The color is randomly choosen according to the current weight of each color.
      * @return a new student instance.
      */
     public Student pickStudent() {
-        int colorIndex;
-        Random random = new Random();
 
-        //dovrò gestire una eccezione da qualche parte
-        //magari un try-catch NullPointerException dove faccio la chiamata
-        //metodo di scelta randomica del colore va sistemato
-        // in modo da pescare con più probabilità un colore se di quello ci sono più pedine (colori hanno pesi)
         if (size==0)
             return null;
-        do {
-            colorIndex = random.nextInt(Color.values().length);
-        } while (studentsNum[colorIndex] <= 0);
-        studentsNum[colorIndex]=studentsNum[colorIndex]-1;
+        //alternativamente potrei lanciare un'eccezione ad hoc, tipo EmptyBasketException
+        //in modo che il chiamante possa fare un try catch ed in caso di catch settare le condizioni di endGame
+        //in questo modo posso evitare di restituire null e differenziarlo da altri casi di errore
+
+
+        int colorIndex = weightedRandomIndex();
+        if (colorIndex==-1)
+            return null;
+        studentsNum[colorIndex]-= 1;
         size-= 1;
         return new Student(Color.values()[colorIndex]);
     }
 
     /**
-     * This methods manages the insertion of a new student
+     * This method manages the insertion of a new student
      * @param student: instance of the student that must be added to the basket
      */
     public void putStudent(Student student){
         int colorIndex = student.getColor().getIndex();
         studentsNum[colorIndex]=studentsNum[colorIndex]+1;
         size+= 1;
+    }
+
+    /**
+     * This private method generates in weighted-random way a color index from which it will be picked a new student
+     * @return the index of the student's color
+     */
+    private int weightedRandomIndex(){
+        int weights = size;
+        int currentWeight = 0;
+        Random random = new Random();
+        int randomWeight = random.nextInt(size);
+        for (int i = 0; i< studentsNum.length;i++){
+            currentWeight+=studentsNum[i];
+            if(currentWeight>randomWeight)
+                return i;
+        }
+        return -1;
     }
 }
