@@ -16,14 +16,15 @@ public class Assistant {
         this.wizard=wizard;
     }
 
+    public int getWizard() {
+        return wizard;
+    }
 
+    public int getNumMoves() {
+        return numMoves;
+    }
 
-
-
-
-
-
-
-
-
+    public int getPriority() {
+        return priority;
+    }
 }

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class Player {
     private int playerId;
-    private String nickname;
+    private final String nickname;
     private Board board;
     private ArrayList<Assistant> deck;
 
@@ -19,13 +19,34 @@ public class Player {
      * @param index: unique identification for the player.
      */
 
-    public Player(int index, String nickname) {
+    public Player(int index, String nickname, Tower team) {
         playerId = index;
         this.nickname=nickname;
         board = new Board();
         deck = new ArrayList<>();
 
     }
+
+    public void setDeck(ArrayList<Assistant> deck){
+        this.deck.addAll(deck);
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public ArrayList<Assistant> getDeck() {
+        return deck;
+    }
+
 }
 
 
