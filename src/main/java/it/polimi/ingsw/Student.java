@@ -2,7 +2,7 @@ package it.polimi.ingsw;
 
 /**
  * It represents the game's student pieces.
- * Each teacher is uniquely identified by its color.
+ * Each student is uniquely identified by its color.
  */
 public class Student {
     private final Color color;

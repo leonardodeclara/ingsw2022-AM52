@@ -16,7 +16,7 @@ public class Cloud {
      */
     public Cloud(int index){
         cloudIndex = index;
-        students = new ArrayList<Student>();
+        students = new ArrayList<>();
     }
 
     /**
