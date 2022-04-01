@@ -137,4 +137,7 @@ public class Board {
 
     }
 
+    public ArrayList<Student> getLobby() {
+        return lobby;
+    }
 }

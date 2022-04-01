@@ -18,7 +18,6 @@ public class Player {
      * Constructor creates a Player instance.
      * @param index: unique identification for the player.
      */
-
     public Player(int index, String nickname, Tower team) {
         playerId = index;
         this.nickname=nickname;
