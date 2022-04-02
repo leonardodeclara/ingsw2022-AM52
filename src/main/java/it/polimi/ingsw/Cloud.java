@@ -8,7 +8,7 @@ import java.util.ArrayList;
  */
 public class Cloud {
     private final int cloudIndex;
-    private ArrayList<Student> students;
+    private ArrayList<Color> students;
 
     /**
      * Costructor creates a new cloud istance.
@@ -31,7 +31,7 @@ public class Cloud {
      * This method refills the students' array on top of the cloud.
      * @param newStudents is taken as input and its content is copied into the attribute students.
      */
-    public void fillStudents(ArrayList<Student> newStudents){
+    public void fillStudents(ArrayList<Color> newStudents){
         students.addAll(newStudents);
     }
 
@@ -39,8 +39,8 @@ public class Cloud {
      * This method empties the students's array on top of the cloud.
      * @return the attribute students' content
      */
-    public ArrayList<Student> emptyStudents(){
-        ArrayList<Student> outStudents = new ArrayList<>(students);
+    public ArrayList<Color> emptyStudents(){
+        ArrayList<Color> outStudents = new ArrayList<>(students);
         students.clear();
         return outStudents;
     }
@@ -49,7 +49,7 @@ public class Cloud {
      * Method getStudents returns the cloud's students attribute current content
      * @return ArrayList<Students>: students attribute content
      */
-    public ArrayList<Student> getStudents() {
+    public ArrayList<Color> getStudents() {
         return students;
     }
 }

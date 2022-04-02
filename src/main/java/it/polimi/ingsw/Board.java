@@ -11,9 +11,9 @@ import java.util.HashMap;
 
 public class Board {
 
-    private HashMap<Color,ArrayList<Student>> studentsTable;
+    private HashMap<Color,Integer> studentsTable;
     private ArrayList<Teacher> teacherTable;
-    private ArrayList<Student> lobby;
+    private ArrayList<Color> lobby;
     private ArrayList<Tower> towerSlots;
 
     /**
@@ -22,7 +22,7 @@ public class Board {
      */
 
     public Board() {
-        studentsTable = new HashMap<Color, ArrayList<Student>>();
+        studentsTable = new HashMap<Color, Integer>();
         teacherTable=new ArrayList<>();
         lobby=new ArrayList<>();
         towerSlots=new ArrayList<>();
@@ -34,7 +34,7 @@ public class Board {
      * @param student
      */
 
-    public void addToLobby(Student student) {
+    public void addToLobby(Color student) {
         lobby.add(student);
     }
 
@@ -56,27 +56,21 @@ public class Board {
     //vedo il colore del nuovo studente e lo uso come chiave ricavando l'attuale table di quel colore
     //aggiungo a quella table il nuovo studente e aggiorno la voce corrispondente nella hashmap
     //controllo l'indice a cui è stato messo il nuovo studente e traggo le conclusioni del caso
-    public boolean addToTable(Student student) {
-        Color newStudentColor = student.getColor();
-        ArrayList<Student> students = studentsTable.get(newStudentColor);
-        students.add(student);
-        studentsTable.put(newStudentColor,students);
-        if (students.indexOf(student) == 3 || students.indexOf(student) == 6 || students.indexOf(student) == 9)
+    public boolean addToTable(Color student) {
+        Integer numOfStudents = studentsTable.get(student);
+        numOfStudents++;
+        studentsTable.put(student,numOfStudents);
+        if (numOfStudents == 3 || numOfStudents == 6 || numOfStudents == 9)
             return true;
 
         return false;
 
     }
 
-    /**
-     * Remove a student from the table corresponding to its color
-     * @param color: color of the student
-     */
-
-    public void removeFromTable(Color color){
-        ArrayList<Student> students = studentsTable.get(color);
-        students.remove(students.size() - 1);
-        studentsTable.put(color,students);
+    public void removeFromTable(Color student){
+        Integer numOfStudents = studentsTable.get(student);
+        numOfStudents--;
+        studentsTable.put(student,numOfStudents);
     }
 
     public void SwitchStudents() {
@@ -108,7 +102,14 @@ public class Board {
 
     }
 
-    public ArrayList<Student> getLobby() {
+    public ArrayList<Color> getLobby() {
         return lobby;
+    }
+    public Color getLobbyStudent(int lobbyIndex){
+        return lobby.get(lobbyIndex);
+    }
+
+    public boolean isTableFull(Color color){
+        return studentsTable.get(color) == 10 ? true : false;
     }
 }

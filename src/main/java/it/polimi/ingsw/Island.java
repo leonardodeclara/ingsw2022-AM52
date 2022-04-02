@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Island {
     private final int islandIndex;
     private ArrayList<Tower> towers;
-    private ArrayList<Student> students;
+    private ArrayList<Color> students;
     private boolean motherNature;
     private int numMergedIslands;
 
@@ -39,7 +39,7 @@ public class Island {
      * Method getTowers extracts the list of students placed on the island.
      * @return list containing the towers placed by players during the match.
      */
-    public ArrayList<Student> getStudents() {
+    public ArrayList<Color> getStudents() {
         return students;
     }
 
@@ -88,7 +88,7 @@ public class Island {
      * Add a tower object to the island's students list
      * @param student
      */
-    public void addStudent(Student student){
+    public void addStudent(Color student){
         students.add(student);
     }
 

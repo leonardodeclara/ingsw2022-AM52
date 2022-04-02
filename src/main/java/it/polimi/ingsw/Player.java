@@ -42,6 +42,7 @@ public class Player {
         return nickname;
     }
 
+
     public ArrayList<Assistant> getDeck() {
         return deck;
     }

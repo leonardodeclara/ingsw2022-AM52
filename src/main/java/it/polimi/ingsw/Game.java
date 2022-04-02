@@ -140,21 +140,7 @@ public class Game {
         return cardScore;
     }
 
-
-    //se passassimo la nuova board da sovrascrivere a quella attuale del giocatore,vorrebbe dire che il controller
-    //ha già eseguito parte del lavoro del model nel definire la nuova board a partire dai comandi ricevuti
-    //gli si passano quindi le coordinate di spostamento
-
-    //Controlli preliminari:
-    //move student x to table -> controlla se lobby(x) contiene qualcosa, controlla se la corrispettiva table ha spazio
-    //move student x to island y -> controlla se lobby(x) contiene qualcosa, controlla se l'isola y esiste
-
-    //Esecuzione:
-    //move student x to table -> lobby(x).remove() e
-    public boolean updateStudentsLocation(){
-        return false;
-    }
-
+    //chiamato nello step 1 della fase azione
     public boolean moveMotherNature(int playerId,int numSteps){
         if(!isMoveMNLegal(playerId,numSteps))
             return false;
@@ -164,6 +150,38 @@ public class Game {
 
         from.setMotherNature(false);
         dest.setMotherNature(true);
+        return true;
+    }
+
+
+    //chiamato dal Controller nello step 2 della fase Azione
+    public boolean moveStudentsFromLobby(int playerId,int studentIndex,int islandId){
+        Player player = players.get(playerId);
+        if(!isMoveStudentFromLobbyLegal(player,studentIndex,islandId))
+            return false;
+        if(islandId == -1){
+            player.getBoard().removeFromLobby(studentIndex);
+            Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
+            player.getBoard().addToTable(studentToMove);
+        }
+        else
+        {
+            player.getBoard().removeFromLobby(studentIndex);
+            Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
+            Island islandDest = islands.get(islandId);
+            islandDest.addStudent(studentToMove);
+        }
+        return true;
+    }
+    //chiamato dal Controller nello step 3 della fase Azione
+    public boolean moveStudentsToLobby(int playerId,int cloudId){
+        Player player = players.get(playerId);
+        if(!IsMoveStudentsToLobbyLegal(player,cloudId))
+            return false;
+        Cloud cloud = clouds.get(cloudId);
+        ArrayList<Color> studentsToMove = cloud.emptyStudents();
+        for(Color student : studentsToMove)
+            player.getBoard().addToLobby(student);
         return true;
     }
 
@@ -182,6 +200,25 @@ public class Game {
         return numSteps > playerMaxSteps ? false : true;
     }
 
+    public boolean isMoveStudentFromLobbyLegal(Player player,int studentIndex,int islandId){
+        Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
+        if(studentToMove != null){
+            if(islandId == -1){
+                if(player.getBoard().isTableFull(studentToMove))
+                    return true;
+            }
+            else
+            {
+                if(islandId >= 0 && islandId <= islands.size())
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean IsMoveStudentsToLobbyLegal(Player player,int cloudId){
+        return (cloudId >= 0 && cloudId <= clouds.size()) ? true : false;
+    }
 
     /**
      * Method lastRound sets the relative boolean flag to true or false, according to the game's state.
