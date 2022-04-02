@@ -129,7 +129,8 @@ public class Game {
         players.get(playerId).setDeck(assignedDeck);
     }
 
-    //rimuove dalle carte del giocatore quella che ha appena giocata e returna la priority (cardScore)
+    //rimuove dalle carte del giocatore quella che ha appena giocata, la aggiunge in quelle giocate nel turno corrente
+    //e returna la priority (cardScore)
     public int playAssistantCard(int playerId,int cardId){
         ArrayList<Assistant> newDeck = players.get(playerId).getDeck();
         Assistant playedCard = newDeck.get(cardId);
@@ -147,6 +148,8 @@ public class Game {
 
         Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
         Island dest = islands.get(from.getIslandIndex() + numSteps % islands.size());
+
+        //manca il ricalcolo dell'influenza
 
         from.setMotherNature(false);
         dest.setMotherNature(true);
@@ -216,7 +219,7 @@ public class Game {
     }
 
     public boolean IsMoveStudentsToLobbyLegal(Player player,int cloudId){
-        return (cloudId >= 0 && cloudId <= clouds.size()) ? true : false;
+        return (cloudId >= 0 && cloudId <= clouds.size() && !clouds.get(cloudId).getStudents().isEmpty()) ? true : false;
     }
 
     /**
@@ -266,3 +269,6 @@ public class Game {
         this.basket = basket;
     }
 }
+
+
+
