@@ -17,7 +17,7 @@ class BasketTest {
         Basket basket = new Basket(content);
         int total = 10;
         for (int i = 0; i< 10; i++){
-            Student picked = basket.pickStudent();
+            Color picked = basket.pickStudent();
             assertEquals(total-i-1, basket.getSize());
         }
         int[] finalContent = {0,0,0,0,0};
@@ -38,7 +38,7 @@ class BasketTest {
     }
 
     /**
-     * Method nullInputTest manages the creation of a new basket istance with null content
+     * Method nullInputTest manages the creation of a new basket instance with null content.
      */
     @Test
     void nullInputTest(){
@@ -53,7 +53,7 @@ class BasketTest {
     void putStudentTest() {
         int[] content = {2,2,2,2,2};
         Basket basket = new Basket(content);
-        basket.putStudent(new Student(Color.BLUE));
+        basket.putStudent(Color.BLUE);
         assertEquals(11, basket.getSize());
     }
 

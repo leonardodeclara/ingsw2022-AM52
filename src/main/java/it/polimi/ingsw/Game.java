@@ -40,11 +40,11 @@ public class Game {
      * @param player: instance of the player which has been admitted to the game.
      */
     //bisogna gestire il lancio di questa eccezione (creare una ad hoc)
-    public void addPlayer(Player player) throws Exception{
+    public void addPlayer(Player player){
         if (players.size()<3)
             players.add(player);
         else
-            throw new Exception("Superato limite di giocatori");
+            throw new RuntimeException("Superato limite di giocatori");
     }
 
     //si potrebbe inserire parte del suo funzionamento all'interno del costruttore in modo da alleggerirlo

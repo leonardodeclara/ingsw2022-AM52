@@ -16,7 +16,7 @@ public class Island {
     private int numMergedIslands;
 
     /**
-     * Constructor creates an island istance.
+     * Constructor creates an island instance.
      * @param index: unique identification for the island.
      */
     public Island(int index){
@@ -77,16 +77,16 @@ public class Island {
     }
 
     /**
-     * Add a tower object to the island's towers list
-     * @param tower
+     * Add a tower object to the island's towers list.
+     * @param tower: tower instance that needs to be added to the island's towers attribute.
      */
     public void addTower(Tower tower){
         towers.add(tower);
     }
 
     /**
-     * Add a tower object to the island's students list
-     * @param student
+     * Add a student tile to the island's students list.
+     * @param student: studente tile that needs to be added to the island's students attribute.
      */
     public void addStudent(Color student){
         students.add(student);

@@ -26,20 +26,12 @@ public class Basket {
         }
     }
 
-    public int[] getStudentsNum() {
-        return studentsNum;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
     /**
      * This methods allows the extraction of a student tile from the basket.
-     * The color is randomly choosen according to the current weight of each color.
+     * The color is randomly chosen according to the current weight of each color.
      * @return a new student instance.
      */
-    public Student pickStudent() {
+    public Color pickStudent() {
 
         if (size==0)
             return null;
@@ -47,21 +39,20 @@ public class Basket {
         //in modo che il chiamante possa fare un try catch ed in caso di catch settare le condizioni di endGame
         //in questo modo posso evitare di restituire null e differenziarlo da altri casi di errore
 
-
         int colorIndex = weightedRandomIndex();
         if (colorIndex==-1)
             return null;
         studentsNum[colorIndex]-= 1;
         size-= 1;
-        return new Student(Color.values()[colorIndex]);
+        return Color.values()[colorIndex];
     }
 
     /**
-     * This method manages the insertion of a new student
-     * @param student: instance of the student that must be added to the basket
+     * This method manages the insertion of a new student.
+     * @param color: instance of the color that must be added to the basket.
      */
-    public void putStudent(Student student){
-        int colorIndex = student.getColor().getIndex();
+    public void putStudent(Color color){
+        int colorIndex = color.getIndex();
         studentsNum[colorIndex]=studentsNum[colorIndex]+1;
         size+= 1;
     }
@@ -74,7 +65,7 @@ public class Basket {
         int weights = size;
         int currentWeight = 0;
         Random random = new Random();
-        int randomWeight = random.nextInt(size);
+        int randomWeight = random.nextInt(weights);
         for (int i = 0; i< studentsNum.length;i++){
             currentWeight+=studentsNum[i];
             if(currentWeight>randomWeight)
@@ -82,4 +73,13 @@ public class Basket {
         }
         return -1;
     }
+
+    public int[] getStudentsNum() {
+        return studentsNum;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
 }

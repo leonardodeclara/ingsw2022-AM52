@@ -44,15 +44,15 @@ class IslandTest {
     }
 
     /**
-     * Method studentTest checks that the inserition of students to the island's students attribute is accurate.
+     * Method studentTest checks the insertion of students to the island's students attribute's accuracy.
      */
     @Test
     void studentTest() {
         Island island = new Island(1);
-        ArrayList<Student> newStudents = new ArrayList<>();
-        Student tempStudent;
+        ArrayList<Color> newStudents = new ArrayList<>();
+        Color tempStudent;
         for (int i = 0; i< Color.values().length; i++){
-            tempStudent =new Student(Color.values()[i]);
+            tempStudent =Color.values()[i];
             newStudents.add(tempStudent);
             island.addStudent(tempStudent);
         }
@@ -69,9 +69,9 @@ class IslandTest {
     void mergingTest() {
         Island merger = new Island(7);
         Island merged = new Island( 10);
-        merger.addStudent(new Student(Color.PINK));
-        merger.addStudent(new Student(Color.RED));
-        merger.addStudent(new Student(Color.BLUE));
+        merger.addStudent(Color.PINK);
+        merger.addStudent(Color.RED);
+        merger.addStudent(Color.BLUE);
         merger.addTower(Tower.BLACK);
         merged.addTower(Tower.BLACK);
         merged.setMotherNature(true);
@@ -81,6 +81,6 @@ class IslandTest {
         assertEquals(2, merger.getTowers().size());
         assertEquals(2, merger.getNumMergedIslands());
         assertTrue(merger.isMotherNature());
-
     }
+
 }

@@ -8,10 +8,9 @@ class GameTest {
 
     /**
      * This method aims at verifying the correct insertion of players to the game.
-     * @throws Exception when trying to add to tha game more players than allowed.
      */
     @Test
-    void addPlayerTest() throws Exception{
+    void addPlayerTest(){
         Game game = new Game();
         game.addPlayer(new Player(0,"gigi",Tower.BLACK));
         game.addPlayer(new Player(1,"mario",Tower.WHITE));
@@ -100,7 +99,7 @@ class GameTest {
         assertEquals(1,countNoStudentIslands);
     }
     @Test
-    void cloudInstantiationTest() throws Exception{
+    void cloudInstantiationTest(){
         Game game = new Game();
         game.addPlayer(new Player(0,"gigi",Tower.BLACK));
         game.addPlayer(new Player(1,"mario",Tower.WHITE));
@@ -112,10 +111,9 @@ class GameTest {
 
     /**
      * This method aims at checking the correct insertion of students to a player's lobby.
-     * @throws Exception when trying to add to tha game more players than allowed.
      */
     @Test
-    void initiatePlayerLobby() throws Exception {
+    void initiatePlayerLobby(){
         Game game = new Game();
         game.addPlayer(new Player(0,"gigi",Tower.BLACK));
         game.addPlayer(new Player(1,"mario",Tower.WHITE));

@@ -15,24 +15,24 @@ class CloudTest {
     @Test
     void fillStudentsTest() {
         Cloud cloud = new Cloud(1);
-        ArrayList<Student> newStudents = new ArrayList<Student>();
-        newStudents.add(new Student(Color.PINK));
+        ArrayList<Color> newStudents = new ArrayList<>();
+        newStudents.add(Color.PINK);
+        newStudents.add(Color.PINK);
         cloud.fillStudents(newStudents);
         assertEquals(newStudents, cloud.getStudents());
         assertEquals(newStudents.size(), cloud.getStudents().size());
-
     }
 
     /**
-     * Method emptyStudentsTest verifies that fillStudents actually removes the content of
+     * Method emptyStudentsTest verifies that emptyStudents actually removes the content of
      * the cloud's students attribute.
      */
     @Test
     void emptyStudentsTest() {
         Cloud cloud = new Cloud(1);
-        ArrayList<Student> newStudents = new ArrayList<Student>();
+        ArrayList<Color> newStudents = new ArrayList<>();
         for (int i = 0; i< Color.values().length; i++)
-            newStudents.add(new Student(Color.values()[i]));
+            newStudents.add(Color.values()[i]);
         cloud.fillStudents(newStudents);
         assertEquals(newStudents, cloud.emptyStudents());
         assertEquals(0, cloud.getStudents().size());
