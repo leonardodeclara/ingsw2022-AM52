@@ -44,7 +44,6 @@ public class Cloud {
         students.clear();
         return outStudents;
     }
-
     /**
      * Method getStudents returns the cloud's students attribute current content
      * @return ArrayList<Students>: students attribute content
