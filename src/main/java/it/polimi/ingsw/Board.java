@@ -96,6 +96,7 @@ public class Board {
         towerSlots.add(tower);
     }
 
+
     public Tower removeTower(){
         Tower removed = towerSlots.remove(towerSlots.size()-1);
         return removed;
