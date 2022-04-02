@@ -123,9 +123,12 @@ public class Game {
     public void giveAssistantDeck(int playerId, int deckId){
         ArrayList<Assistant> assignedDeck = new ArrayList<>();
         for (Assistant assistant: assistantDecks){
-            if (assistant.getWizard()==deckId)
+            if (assistant.getWizard()==deckId){
                 assignedDeck.add(assistant);
+                //assistantDecks.remove(assistant);
+            }
         }
+        assistantDecks.removeAll(assignedDeck);
         players.get(playerId).setDeck(assignedDeck);
     }
 
@@ -187,8 +190,6 @@ public class Game {
         return true;
     }
 
-
-
     /**
      * Utility method used to check whether it's the game's last round or not.
      * @return true if the game will be over at the end of the current round, false if not.
@@ -220,6 +221,18 @@ public class Game {
 
     public boolean IsMoveStudentsToLobbyLegal(Player player,int cloudId){
         return (cloudId >= 0 && cloudId <= clouds.size() && !clouds.get(cloudId).getStudents().isEmpty()) ? true : false;
+    }
+
+    public void refillClouds(){
+        int numOfPicks = players.size()+1;
+        ArrayList<Color> picks = new ArrayList<>();
+        for (Cloud cloud: clouds){
+            for(int i= 0; i< numOfPicks;i++){
+                picks.add(basket.pickStudent());
+            }
+            cloud.fillStudents(picks);
+            picks.clear();
+        }
     }
 
     /**
@@ -267,6 +280,10 @@ public class Game {
 
     public void setBasket(Basket basket) {
         this.basket = basket;
+    }
+
+    public ArrayList<Assistant> getAssistantDecks() {
+        return assistantDecks;
     }
 }
 
