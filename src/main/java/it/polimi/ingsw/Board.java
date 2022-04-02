@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class Board {
 
     private HashMap<Color,Integer> studentsTable;
-    private ArrayList<Teacher> teacherTable;
+    private ArrayList<Color> teacherTable;
     private ArrayList<Color> lobby;
     private ArrayList<Tower> towerSlots;
 
@@ -78,18 +78,13 @@ public class Board {
 
     }
 
-    public void addTeacher(Teacher teacher){
+    public void addTeacher(Color teacher){
         teacherTable.add(teacher);
     }
 
-    public Teacher removeTeacher(Color color) {
-        Teacher removed=null;
-        for (Teacher teacher: teacherTable){
-            if(teacher.getColor()==color)
-                removed = teacher;
-                teacherTable.remove(teacher);
-        }
-        return removed;
+    public Color removeTeacher(Color teacher) {
+        teacherTable.remove(teacher);
+        return teacher;
     }
 
     public void addTower(Tower tower) {
