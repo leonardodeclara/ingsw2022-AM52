@@ -153,7 +153,6 @@ public class Game {
         return true;
     }
 
-
     //chiamato dal Controller nello step 2 della fase Azione
     public boolean moveStudentsFromLobby(int playerId,int studentIndex,int islandId){
         Player player = players.get(playerId);
