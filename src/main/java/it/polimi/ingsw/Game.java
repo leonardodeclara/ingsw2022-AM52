@@ -2,6 +2,7 @@ package it.polimi.ingsw;
 
 import java.sql.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -19,6 +20,7 @@ public class Game {
     private ArrayList<Cloud> clouds;
     private ArrayList<Teacher> teachers;
     private ArrayList<Assistant> assistantDecks;
+    private HashMap<Integer,Assistant> currentTurnAssistantCards;
     private Island currentMotherNatureIsland;
     //private boolean motherNature;
     private boolean lastRound;
@@ -29,6 +31,7 @@ public class Game {
         clouds = new ArrayList<>();
         teachers = new ArrayList<>();
         assistantDecks = new ArrayList<>();
+        currentTurnAssistantCards = new HashMap<Integer,Assistant>();
         this.lastRound = false;
     }
 
@@ -96,8 +99,8 @@ public class Game {
     //rivedere se cambiare o va bene così
     public void initiatePlayerLobby(int playerId){
         int studentLimit = players.size()==2? 7: 9;
-            for(int k = 0; k < studentLimit; k++)
-                players.get(playerId).getBoard().addToLobby(basket.pickStudent());
+        for(int k = 0; k < studentLimit; k++)
+            players.get(playerId).getBoard().addToLobby(basket.pickStudent());
     }
 
     /**
@@ -126,6 +129,46 @@ public class Game {
         players.get(playerId).setDeck(assignedDeck);
     }
 
+    //rimuove dalle carte del giocatore quella che ha appena giocata e returna la priority (cardScore)
+    public int playAssistantCard(int playerId,int cardId){
+        ArrayList<Assistant> newDeck = players.get(playerId).getDeck();
+        Assistant playedCard = newDeck.get(cardId);
+        int cardScore = playedCard.getPriority();
+        currentTurnAssistantCards.put(playerId,playedCard);
+        newDeck.remove(cardId);
+        players.get(playerId).setDeck(newDeck);
+        return cardScore;
+    }
+
+
+    //se passassimo la nuova board da sovrascrivere a quella attuale del giocatore,vorrebbe dire che il controller
+    //ha già eseguito parte del lavoro del model nel definire la nuova board a partire dai comandi ricevuti
+    //gli si passano quindi le coordinate di spostamento
+
+    //Controlli preliminari:
+    //move student x to table -> controlla se lobby(x) contiene qualcosa, controlla se la corrispettiva table ha spazio
+    //move student x to island y -> controlla se lobby(x) contiene qualcosa, controlla se l'isola y esiste
+
+    //Esecuzione:
+    //move student x to table -> lobby(x).remove() e
+    public boolean updateStudentsLocation(){
+        return false;
+    }
+
+    public boolean moveMotherNature(int playerId,int numSteps){
+        if(!isMoveMNLegal(playerId,numSteps))
+            return false;
+
+        Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
+        Island dest = islands.get(from.getIslandIndex() + numSteps % islands.size());
+
+        from.setMotherNature(false);
+        dest.setMotherNature(true);
+        return true;
+    }
+
+
+
     /**
      * Utility method used to check whether it's the game's last round or not.
      * @return true if the game will be over at the end of the current round, false if not.
@@ -133,6 +176,12 @@ public class Game {
     public boolean isLastRound() {
         return lastRound;
     }
+
+    public boolean isMoveMNLegal(int playerId,int numSteps){
+        int playerMaxSteps = currentTurnAssistantCards.get(playerId).getNumMoves();
+        return numSteps > playerMaxSteps ? false : true;
+    }
+
 
     /**
      * Method lastRound sets the relative boolean flag to true or false, according to the game's state.
@@ -161,6 +210,17 @@ public class Game {
     public ArrayList<Player> getPlayers() {
         return players;
     }
+
+    public ArrayList<Integer> GetEmptyCloudsID(){
+        ArrayList<Integer> emptyClouds = new ArrayList<>();
+        for(Cloud cloud : clouds){
+            if(cloud.getStudents().isEmpty())
+                emptyClouds.add(cloud.getCloudIndex());
+        }
+        return emptyClouds;
+    }
+
+    public ArrayList<Assistant> getPlayableAssistantCards(int playerId){return players.get(playerId).getDeck();}
 
     public void setCurrentMotherNatureIsland(Island currentMotherNatureIsland) {
         this.currentMotherNatureIsland = currentMotherNatureIsland;
