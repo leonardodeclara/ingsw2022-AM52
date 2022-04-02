@@ -1,6 +1,8 @@
 package it.polimi.ingsw;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This class contains the information and the actions that can be performed on a school's Board.
@@ -9,11 +11,7 @@ import java.util.ArrayList;
 
 public class Board {
 
-    private ArrayList<Student> greenTable;
-    private ArrayList<Student> redTable;
-    private ArrayList<Student> yellowTable;
-    private ArrayList<Student> pinkTable;
-    private ArrayList<Student> blueTable;
+    private HashMap<Color,ArrayList<Student>> studentsTable;
     private ArrayList<Teacher> teacherTable;
     private ArrayList<Student> lobby;
     private ArrayList<Tower> towerSlots;
@@ -24,11 +22,7 @@ public class Board {
      */
 
     public Board() {
-        greenTable=new ArrayList<>();
-        redTable=new ArrayList<>();
-        yellowTable=new ArrayList<>();
-        pinkTable=new ArrayList<>();
-        blueTable=new ArrayList<>();
+        studentsTable = new HashMap<Color, ArrayList<Student>>();
         teacherTable=new ArrayList<>();
         lobby=new ArrayList<>();
         towerSlots=new ArrayList<>();
@@ -59,29 +53,17 @@ public class Board {
      * @return
      */
 
+    //vedo il colore del nuovo studente e lo uso come chiave ricavando l'attuale table di quel colore
+    //aggiungo a quella table il nuovo studente e aggiorno la voce corrispondente nella hashmap
+    //controllo l'indice a cui è stato messo il nuovo studente e traggo le conclusioni del caso
     public boolean addToTable(Student student) {
-        switch(student.getColor()){
-            case PINK:
-                pinkTable.add(student);
-                if (pinkTable.indexOf(student) == 3 || pinkTable.indexOf(student) == 6 || pinkTable.indexOf(student) == 9)
-                    return true;
-            case GREEN:
-                greenTable.add(student);
-                if (greenTable.indexOf(student) == 3 || greenTable.indexOf(student) == 6 || greenTable.indexOf(student) == 9)
-                    return true;
-            case BLUE:
-                blueTable.add(student);
-                if (blueTable.indexOf(student) == 3 || blueTable.indexOf(student) == 6 || blueTable.indexOf(student) == 9)
-                    return true;
-            case YELLOW:
-                yellowTable.add(student);
-                if (yellowTable.indexOf(student) == 3 || yellowTable.indexOf(student) == 6 || yellowTable.indexOf(student) == 9)
-                    return true;
-            case RED:
-                redTable.add(student);
-                if (redTable.indexOf(student) == 3 || redTable.indexOf(student) == 6 || redTable.indexOf(student) == 9)
-                    return true;
-        }
+        Color newStudentColor = student.getColor();
+        ArrayList<Student> students = studentsTable.get(newStudentColor);
+        students.add(student);
+        studentsTable.put(newStudentColor,students);
+        if (students.indexOf(student) == 3 || students.indexOf(student) == 6 || students.indexOf(student) == 9)
+            return true;
+
         return false;
 
     }
@@ -92,20 +74,9 @@ public class Board {
      */
 
     public void removeFromTable(Color color){
-
-        switch(color){
-            case PINK:
-                pinkTable.remove(pinkTable.size()-1);
-            case GREEN:
-                greenTable.remove(greenTable.size()-1);
-            case BLUE:
-                blueTable.remove(blueTable.size()-1);
-            case YELLOW:
-                yellowTable.remove(yellowTable.size()-1);
-            case RED:
-                redTable.remove(redTable.size()-1);
-        }
-
+        ArrayList<Student> students = studentsTable.get(color);
+        students.remove(students.size() - 1);
+        studentsTable.put(color,students);
     }
 
     public void SwitchStudents() {
