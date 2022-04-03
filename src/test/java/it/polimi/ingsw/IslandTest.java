@@ -1,6 +1,7 @@
 package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
+import org.junit.platform.engine.support.descriptor.FileSystemSource;
 
 import java.util.ArrayList;
 
@@ -44,17 +45,15 @@ class IslandTest {
     }
 
     /**
-     * Method studentTest checks the insertion of students to the island's students attribute's accuracy.
+     * Method studentTest checks that the inserition of students to the island's students attribute is accurate.
      */
     @Test
     void studentTest() {
         Island island = new Island(1);
         ArrayList<Color> newStudents = new ArrayList<>();
-        Color tempStudent;
         for (int i = 0; i< Color.values().length; i++){
-            tempStudent =Color.values()[i];
-            newStudents.add(tempStudent);
-            island.addStudent(tempStudent);
+            newStudents.add(Color.values()[i]);
+            island.addStudent(Color.values()[i]);
         }
         assertEquals(newStudents, island.getStudents());
     }
@@ -81,6 +80,6 @@ class IslandTest {
         assertEquals(2, merger.getTowers().size());
         assertEquals(2, merger.getNumMergedIslands());
         assertTrue(merger.isMotherNature());
-    }
 
+    }
 }

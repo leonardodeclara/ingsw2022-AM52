@@ -1,6 +1,5 @@
 package it.polimi.ingsw;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -28,6 +27,8 @@ public class Board {
         towerSlots=new ArrayList<>();
 
     }
+
+
 
     /**
      * Add a student object to the board's lobby
