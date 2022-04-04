@@ -13,6 +13,7 @@ public class Player {
     private final String nickname;
     private Board board;
     private ArrayList<Assistant> deck;
+    private Tower team;
 
     /**
      * Constructor creates a Player instance.
@@ -23,7 +24,7 @@ public class Player {
         this.nickname=nickname;
         board = new Board();
         deck = new ArrayList<>();
-
+        this.team = team;
     }
 
     public void setDeck(ArrayList<Assistant> deck){
@@ -42,11 +43,17 @@ public class Player {
         return nickname;
     }
 
-
     public ArrayList<Assistant> getDeck() {
         return deck;
     }
 
+    public Tower getTeam() {
+        return team;
+    }
+
+    public void setTeam(Tower team) {
+        this.team = team;
+    }
 }
 
 

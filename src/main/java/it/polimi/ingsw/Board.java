@@ -13,7 +13,7 @@ public class Board {
     private HashMap<Color,Integer> studentsTable;
     private ArrayList<Color> teacherTable;
     private ArrayList<Color> lobby;
-    private ArrayList<Tower> towerSlots;
+    private int towers;
 
     /**
      * Constructor creates a Board istance.
@@ -29,7 +29,7 @@ public class Board {
         studentsTable.put(Color.BLUE,0);
         teacherTable=new ArrayList<>();
         lobby=new ArrayList<>();
-        towerSlots=new ArrayList<>();
+        towers = 0;
     }
 
     /**
@@ -89,12 +89,11 @@ public class Board {
     }
 
     public void addTower(Tower tower) {
-        towerSlots.add(tower);
+        towers++;
     }
 
-    public Tower removeTower(){
-        return towerSlots.remove(towerSlots.size()-1);
-
+    public void removeTower(){
+        towers--;
     }
 
     public ArrayList<Color> getLobby() {
@@ -115,5 +114,9 @@ public class Board {
 
     public boolean isTableFull(Color color){
         return studentsTable.get(color) == 10 ? true : false;
+    }
+
+    public int getTowers() {
+        return towers;
     }
 }

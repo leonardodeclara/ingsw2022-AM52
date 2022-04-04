@@ -16,6 +16,7 @@ public class Game {
     //private ArrayList<Player> activePlayers;
     //potrebbe servire per gestire la resilienza
     private Player currentPlayer;
+    private Player winner;
     private ArrayList<Island> islands;
     private ArrayList<Cloud> clouds;
     private ArrayList<Teacher> teachers;
@@ -33,6 +34,7 @@ public class Game {
         assistantDecks = new ArrayList<>();
         currentTurnAssistantCards = new HashMap<Integer,Assistant>();
         this.lastRound = false;
+        winner = null;
     }
 
     /**
@@ -91,6 +93,10 @@ public class Game {
 
         //per l'aggiunta delle torri bisogna conoscere il numero di giocatori e la scelta dei giocatori
         //vedere come fare
+        /*se facciamo con attributo Tower: team in player basta fare
+        for (Player player: players)
+            player.getBoard().setTowers(players.size()==2? 6:8)
+         */
 
 
     }
@@ -284,6 +290,53 @@ public class Game {
 
     public ArrayList<Assistant> getAssistantDecks() {
         return assistantDecks;
+    }
+
+
+    /*Da rivedere*/
+    /*potremmo aggiungere attributo winner a game*/
+    /*Vittoria: return true, winner = playerVincitore
+    * Partita continua: return false, winner = null
+    * Parità: return true, winner=null
+    * */
+    public boolean checkGameOver(){
+        for(Player player: players){
+            if(player.getBoard().getTowers()==0){
+                winner = player;
+                return true;
+            }
+        }
+        if (islands.size()<=3){
+            int minTowers = 10;
+            ArrayList<Player> potentialWinners = new ArrayList<>();
+            for (Player potentialWinner: players){
+                if (potentialWinner.getBoard().getTowers()<minTowers){
+                    potentialWinners.add(potentialWinner);
+                    minTowers=potentialWinner.getBoard().getTowers();
+                }
+                else if (potentialWinner.getBoard().getTowers()==minTowers)
+                    potentialWinners.add(potentialWinner);
+            }
+            if (potentialWinners.size() == 1){
+                winner = potentialWinners.get(0);
+                return true;
+
+            }
+            else {
+                int minTeachers = 5;
+                for (Player finalPlayer : potentialWinners) {
+                    if (finalPlayer.getBoard().getTeacherTable().size()<minTeachers){
+                        winner = finalPlayer;
+                        minTeachers= finalPlayer.getBoard().getTeacherTable().size();
+                    }
+                    else if (finalPlayer.getBoard().getTeacherTable().size()==minTeachers){
+                        winner = null;
+                    }
+                }
+            }
+        }
+        return false;
+
     }
 }
 
