@@ -106,6 +106,10 @@ public class Board {
         return lobby.get(lobbyIndex);
     }
 
+    public HashMap<Color, Integer> getStudentsTable() {
+        return studentsTable;
+    }
+
     public boolean isTableFull(Color color){
         return studentsTable.get(color) == 10 ? true : false;
     }
