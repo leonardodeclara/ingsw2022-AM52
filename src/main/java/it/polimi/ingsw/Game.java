@@ -13,19 +13,20 @@ import java.util.Random;
 public class Game {
     private static final int MAX_NUM_ISLANDS = 12;
     private Basket basket;
-    private ArrayList<Player> players;
+    protected ArrayList<Player> players;
     //private ArrayList<Player> activePlayers;
     //potrebbe servire per gestire la resilienza
-    private Player currentPlayer;
+    protected Player currentPlayer;
     private Player winner;
-    private ArrayList<Island> islands;
+    protected ArrayList<Island> islands;
     private ArrayList<Cloud> clouds;
     private ArrayList<Teacher> teachers;
     private ArrayList<Assistant> assistantDecks;
     private HashMap<Integer,Assistant> currentTurnAssistantCards;
-    private Island currentMotherNatureIsland;
+    protected Island currentMotherNatureIsland;
     //private boolean motherNature;
     private boolean lastRound;
+    protected HashMap<Color,Player> teachersOwners;
 
     public Game() {
         players = new ArrayList<>();
@@ -36,6 +37,7 @@ public class Game {
         currentTurnAssistantCards = new HashMap<Integer,Assistant>();
         this.lastRound = false;
         winner = null;
+        teachersOwners = new HashMap<>();
     }
 
     /**
@@ -183,8 +185,19 @@ public class Game {
             Island islandDest = islands.get(islandId);
             islandDest.addStudent(studentToMove);
         }
+        //aggiorna l'ownership dei teacher
+        for(Color c : Color.values()) {
+            Player owner = teachersOwners.get(c);
+            if (player.getBoard().getTableNumberOfStudents(c) > owner.getBoard().getTableNumberOfStudents(c)) {
+                owner.getBoard().removeTeacher(c);
+                player.getBoard().addTeacher(c);
+                teachersOwners.put(c, player);
+            }
+        }
         return true;
     }
+
+
     //chiamato dal Controller nello step 3 della fase Azione
     public boolean moveStudentsToLobby(int playerId,int cloudId){
         Player player = players.get(playerId);
@@ -196,7 +209,6 @@ public class Game {
             player.getBoard().addToLobby(student);
         return true;
     }
-
     /**
      * Utility method used to check whether it's the game's last round or not.
      * @return true if the game will be over at the end of the current round, false if not.
@@ -250,18 +262,18 @@ public class Game {
 
     //returniamo isDraw e id giocatore (sarebbe meglio String, ma a quel punto non ci sarebbe modo di comunicare
     //al controller che il giocatore returnato è sempre lo stesso e quindi che non deve far mettere torri a nessuno)
-    public HashMap<String,Number> calculateInfluence() {
+    public HashMap<String,Number> calculateInfluence(Island island) {
         int max_infl = 0, infl = 0;
         short isDraw = 0;
-        Player owner = currentMotherNatureIsland.getOwner();
+        Player owner = island.getOwner();
         HashMap<String, Number> returnMap = new HashMap<>();
 
         for (Player p : players) {
             for (Color t : p.getBoard().getTeacherTable()) {
-                infl += currentMotherNatureIsland.getStudentsOfColor(t).size();
-                if (currentMotherNatureIsland.getTowers().size() > 0)
-                    if (currentMotherNatureIsland.getOwnerTeam().equals(p.getTeam()))
-                        infl += currentMotherNatureIsland.getTowers().size();
+                infl += island.getStudentsOfColor(t).size();
+                if (island.getTowers().size() > 0)
+                    if (island.getOwnerTeam().equals(p.getTeam()))
+                        infl += island.getTowers().size();
             }
             if (infl > max_infl) {
                 max_infl = infl;
@@ -272,8 +284,8 @@ public class Game {
 
         }
 
-        if (!owner.equals(currentMotherNatureIsland.getOwner()))
-            currentMotherNatureIsland.setOwner(owner);
+        if (!owner.equals(island.getOwner()))
+            island.setOwner(owner);
 
             returnMap.put("ID Player", owner.getPlayerId());
             returnMap.put("Is Draw", isDraw);

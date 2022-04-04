@@ -120,5 +120,7 @@ public class Board {
         return towers;
     }
 
-
+    public int getTableNumberOfStudents(Color tableColor){
+        return studentsTable.get(tableColor);
+    }
 }
