@@ -1,6 +1,7 @@
 package it.polimi.ingsw;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class shapes the behaviour of the game's component represented by the island tile.
@@ -14,6 +15,7 @@ public class Island {
     private ArrayList<Color> students;
     private boolean motherNature;
     private int numMergedIslands;
+    private Player owner;
 
     /**
      * Constructor creates an island instance.
@@ -112,5 +114,25 @@ public class Island {
         towers.addAll(merged.getTowers());
         numMergedIslands+= 1;
         motherNature = motherNature || merged.isMotherNature();
+    }
+
+    public ArrayList<Color> getStudentsOfColor(Color c) {
+        ArrayList<Color> studentsOfColor = new ArrayList<>();
+        for(Color s : students)
+            if(s.equals(c))
+                studentsOfColor.add(s);
+        return studentsOfColor;
+    }
+
+    public Player getOwner(){
+        return owner;
+    }
+
+    public void setOwner(Player o){
+        this.owner = o;
+    }
+
+    public Tower getOwnerTeam(){
+        return towers.get(0);
     }
 }

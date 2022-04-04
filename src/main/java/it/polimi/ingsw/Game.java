@@ -3,6 +3,7 @@ package it.polimi.ingsw;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -31,7 +32,7 @@ public class Game {
         islands = new ArrayList<>();
         clouds = new ArrayList<>();
         teachers = new ArrayList<>();
-        assistantDecks = new ArrayList<>();
+        assistantDecks = new ArrayList<>(); //bisogna implementare effettivamente le 40 carte con relative statistiche
         currentTurnAssistantCards = new HashMap<Integer,Assistant>();
         this.lastRound = false;
         winner = null;
@@ -166,7 +167,7 @@ public class Game {
     }
 
     //chiamato dal Controller nello step 2 della fase Azione
-    public boolean moveStudentsFromLobby(int playerId,int studentIndex,int islandId){
+    public boolean moveStudentFromLobby(int playerId,int studentIndex,int islandId){
         Player player = players.get(playerId);
         if(!isMoveStudentFromLobbyLegal(player,studentIndex,islandId))
             return false;
@@ -187,7 +188,7 @@ public class Game {
     //chiamato dal Controller nello step 3 della fase Azione
     public boolean moveStudentsToLobby(int playerId,int cloudId){
         Player player = players.get(playerId);
-        if(!IsMoveStudentsToLobbyLegal(player,cloudId))
+        if(!isMoveStudentsToLobbyLegal(player,cloudId))
             return false;
         Cloud cloud = clouds.get(cloudId);
         ArrayList<Color> studentsToMove = cloud.emptyStudents();
@@ -225,7 +226,7 @@ public class Game {
         return false;
     }
 
-    public boolean IsMoveStudentsToLobbyLegal(Player player,int cloudId){
+    public boolean isMoveStudentsToLobbyLegal(Player player,int cloudId){
         return (cloudId >= 0 && cloudId <= clouds.size() && !clouds.get(cloudId).getStudents().isEmpty()) ? true : false;
     }
 
@@ -241,6 +242,44 @@ public class Game {
         }
     }
 
+
+
+    //se ci sono due valori uguali => non accade nulla
+    //calculateInfluence deve segnalare se c'è stata parità oppure no al Controller
+
+
+    //returniamo isDraw e id giocatore (sarebbe meglio String, ma a quel punto non ci sarebbe modo di comunicare
+    //al controller che il giocatore returnato è sempre lo stesso e quindi che non deve far mettere torri a nessuno)
+    public HashMap<String,Number> calculateInfluence() {
+        int max_infl = 0, infl = 0;
+        short isDraw = 0;
+        Player owner = currentMotherNatureIsland.getOwner();
+        HashMap<String, Number> returnMap = new HashMap<>();
+
+        for (Player p : players) {
+            for (Color t : p.getBoard().getTeacherTable()) {
+                infl += currentMotherNatureIsland.getStudentsOfColor(t).size();
+                if (currentMotherNatureIsland.getTowers().size() > 0)
+                    if (currentMotherNatureIsland.getOwnerTeam().equals(p.getTeam()))
+                        infl += currentMotherNatureIsland.getTowers().size();
+            }
+            if (infl > max_infl) {
+                max_infl = infl;
+                owner = p;
+                isDraw = 0;
+            } else if (infl == max_infl)
+                isDraw = 1;
+
+        }
+
+        if (!owner.equals(currentMotherNatureIsland.getOwner()))
+            currentMotherNatureIsland.setOwner(owner);
+
+            returnMap.put("ID Player", owner.getPlayerId());
+            returnMap.put("Is Draw", isDraw);
+            return returnMap;
+
+    }
     /**
      * Method lastRound sets the relative boolean flag to true or false, according to the game's state.
      * @param lastRound : flag representative of the satisfaction of two gameover's conditions.
@@ -267,6 +306,10 @@ public class Game {
 
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public HashMap<Integer,Assistant> getCurrentTurnAssistantCards(){
+        return currentTurnAssistantCards;
     }
 
     public ArrayList<Integer> GetEmptyCloudsID(){

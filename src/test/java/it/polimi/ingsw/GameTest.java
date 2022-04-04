@@ -2,6 +2,10 @@ package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
+import static it.polimi.ingsw.Color.BLUE;
+import static it.polimi.ingsw.Color.PINK;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameTest {
@@ -176,4 +180,173 @@ class GameTest {
             assertEquals(3,game.getClouds().get(i).getStudents().size());
         }
     }
+
+
+    /**
+     * playAssistantCard method is responsible for verifying that card are removed from player's deck and
+     * added to the game current turn deck
+     */
+
+    @Test
+    void playAssistantCard(){
+        Game game = new Game();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK));
+        game.addPlayer(new Player(1,"mari",Tower.WHITE));
+        game.instantiateGameElements();
+        Assistant a0 = new Assistant(3,4,1);
+        Assistant a1 = new Assistant(5,8,2);
+        Assistant a2 = new Assistant(7,15,1);
+        Assistant a3 = new Assistant(8,12,2);
+        ArrayList<Assistant> d1 = new ArrayList<>();
+        ArrayList<Assistant> d2 = new ArrayList<>();
+        d1.add(a0);
+        d1.add(a2);
+        d2.add(a1);
+        d2.add(a3);
+        game.getPlayers().get(0).setDeck(d1);
+        game.getPlayers().get(1).setDeck(d2);
+        game.playAssistantCard(0,1); //giochiamo a2
+        game.playAssistantCard(1,0); //giochiamo a1
+        //ci si assicura che a1,a2 siano stati rimossi dai rispettivi deck
+        assertEquals(false,game.getPlayers().get(0).getDeck().contains(a2));
+        assertEquals(false,game.getPlayers().get(1).getDeck().contains(a1));
+        //Ci si assicura che a1,a2 ora siano nelle celle dell'hashmap corrispondenti agli id dei giocatori che le hanno giocate
+        assertEquals(a1,game.getCurrentTurnAssistantCards().get(0));
+        assertEquals(a2,game.getCurrentTurnAssistantCards().get(1));
+    }
+
+
+
+    @Test
+    void isMoveMNLegal(){
+        Game game = new Game();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK));
+        game.addPlayer(new Player(1,"mari",Tower.WHITE));
+        game.instantiateGameElements();
+        Assistant a0 = new Assistant(3,4,1);
+        Assistant a1 = new Assistant(5,8,2);
+        Assistant a2 = new Assistant(7,15,1);
+        Assistant a3 = new Assistant(8,12,2);
+        ArrayList<Assistant> d1 = new ArrayList<>();
+        ArrayList<Assistant> d2 = new ArrayList<>();
+        d1.add(a0);
+        d1.add(a2);
+        d2.add(a1);
+        d2.add(a3);
+        game.getPlayers().get(0).setDeck(d1);
+        game.getPlayers().get(1).setDeck(d2);
+        game.playAssistantCard(0,0); //giochiamo a0
+        game.playAssistantCard(1,0); //giochaimo a1
+        assertEquals(false,game.isMoveMNLegal(0,25));
+        assertEquals(true,game.isMoveMNLegal(0,3));
+        assertEquals(false,game.isMoveMNLegal(1,6));
+        assertEquals(true,game.isMoveMNLegal(1,0));
+    }
+
+    @Test
+    void isMoveStudentFromLobbyLegal(){
+        Game game = new Game();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK));
+        game.addPlayer(new Player(1,"mari",Tower.WHITE));
+        game.instantiateGameElements();
+        game.initiatePlayerLobby(0);
+        game.initiatePlayerLobby(1);
+
+        for(int i = 0;i<10;i++) //riempie completamente la table rosa di "leo"
+            game.getPlayers().get(0).getBoard().addToTable(PINK);
+        for(int i = 0;i<10;i++) //riempie completamente la table blu di "mari"
+            game.getPlayers().get(1).getBoard().addToTable(BLUE);
+
+        assertEquals(true, game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0),0,3));
+        assertEquals(true, game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0),0,-1));
+        assertEquals(false, game.isMoveStudentFromLobbyLegal(game.getPlayers().get(1),0,23));
+    }
+
+
+    @Test
+    void isMoveStudentsToLobbyLegal(){
+        Game game = new Game();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK));
+        game.addPlayer(new Player(1,"mari",Tower.WHITE));
+        game.instantiateGameElements();
+        game.initiatePlayerLobby(0);
+        game.initiatePlayerLobby(1);
+        game.refillClouds();
+        assertEquals(false,game.isMoveStudentsToLobbyLegal(game.getPlayers().get(0),-25));
+        assertEquals(true,game.isMoveStudentsToLobbyLegal(game.getPlayers().get(0),1));
+        assertEquals(true,game.isMoveStudentsToLobbyLegal(game.getPlayers().get(1),2));
+        assertEquals(false,game.isMoveStudentsToLobbyLegal(game.getPlayers().get(0),1));
+    }
+
+    @Test
+    void moveStudentFromLobby(){
+        Game game = new Game();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK));
+        game.addPlayer(new Player(1,"mari",Tower.WHITE));
+        game.instantiateGameElements();
+        game.initiatePlayerLobby(0);
+        game.initiatePlayerLobby(1);
+
+        //subtest per le isole
+        Color s1 = game.getPlayers().get(0).getBoard().getLobbyStudent(0);
+        Color s2 = game.getPlayers().get(1).getBoard().getLobbyStudent(0);
+        game.moveStudentFromLobby(0,0,3);
+        game.moveStudentFromLobby(1,0,4);
+        assertEquals(true,game.getIslands().get(3).getStudents().contains(s1));
+        assertEquals(true, game.getIslands().get(4).getStudents().contains(s2));
+        assertEquals(false,game.getPlayers().get(0).getBoard().getLobby().contains(s1));
+        assertEquals(false, game.getPlayers().get(1).getBoard().getLobby().contains(s2));
+
+        //subtest per le table
+        Color s3 = game.getPlayers().get(0).getBoard().getLobbyStudent(1);
+        Color s4 = game.getPlayers().get(1).getBoard().getLobbyStudent(1);
+        Integer old1 = game.getPlayers().get(0).getBoard().getStudentsTable().get(s3);
+        Integer old2 = game.getPlayers().get(1).getBoard().getStudentsTable().get(s4);
+        game.moveStudentFromLobby(0,1,-1);
+        game.moveStudentFromLobby(1,1,-1);
+        assertEquals(old1 + 1,game.getPlayers().get(0).getBoard().getStudentsTable().get(s3));
+        assertEquals(old2 + 2, game.getPlayers().get(1).getBoard().getStudentsTable().get(s4));
+        assertEquals(false,game.getPlayers().get(0).getBoard().getLobby().contains(s1));
+        assertEquals(false, game.getPlayers().get(1).getBoard().getLobby().contains(s2));
+    }
+
+
+    @Test
+    void moveStudentsToLobby(){
+        Game game = new Game();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK));
+        game.addPlayer(new Player(1,"mari",Tower.WHITE));
+        game.instantiateGameElements();
+        game.initiatePlayerLobby(0);
+        game.initiatePlayerLobby(1);
+        int l1size = game.getPlayers().get(0).getBoard().getLobby().size();
+        int l2size = game.getPlayers().get(1).getBoard().getLobby().size();
+        game.refillClouds();
+        game.moveStudentsToLobby(0,0);
+        game.moveStudentsToLobby(1,1);
+        //test per vedere se le nuvole sono vuote
+        assertEquals(true,game.getClouds().get(0).getStudents().size() == 0);
+        assertEquals(true,game.getClouds().get(1).getStudents().size() == 0);
+        //test per vedere se sono stati aggiunti 3 studenti alla lobby
+        assertEquals(l1size+3,game.getPlayers().get(0).getBoard().getLobby().size());
+        assertEquals(l2size+3,game.getPlayers().get(1).getBoard().getLobby().size());
+
+    }
+
+    @Test
+    void getEmptyClouds(){
+        Game game = new Game();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK));
+        game.addPlayer(new Player(1,"mari",Tower.WHITE));
+        game.instantiateGameElements();
+        ArrayList<Integer> Id1 = new ArrayList<>();
+        Id1.add(0);
+        Id1.add(1);
+        assertEquals(Id1,game.GetEmptyCloudsID());
+        game.refillClouds();
+        ArrayList<Integer> Id2 = new ArrayList<>();
+        assertEquals(Id2,game.GetEmptyCloudsID());
+
+    }
+
 }

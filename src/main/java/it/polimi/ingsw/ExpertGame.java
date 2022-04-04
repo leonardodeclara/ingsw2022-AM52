@@ -16,5 +16,4 @@ public class ExpertGame extends Game {
     public void instantiateGameElements() {
         super.instantiateGameElements();
     }
-
 }
