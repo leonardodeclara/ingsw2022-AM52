@@ -1,79 +1,141 @@
 package it.polimi.ingsw;
 
 
+
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Array;
+
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class BoardTest {
-
-    /**
-     * Method LobbyTest verifies that students are correctly added and removed from the Lobby.
-     */
-
     @Test
-    void LobbyTest() {
+    void addToLobbyTest() {
         Board board = new Board();
-        ArrayList<Color> newStudents = new ArrayList<>();
-        for(int i=0; i<Color.values().length; i++){
-            newStudents.add(Color.values()[i]);
-            board.addToLobby(Color.values()[i]);
+        assertEquals(0, board.getLobby().size());
+        board.addToLobby(Color.RED);
+        assertEquals(1,board.getLobby().size());
+        board.addToLobby(Color.RED);
+        assertEquals(2,board.getLobby().size());
+        board.addToLobby(Color.PINK);
+        assertEquals(3,board.getLobby().size());
+    }
+
+    @Test
+    void removeFromLobbyTest() {
+        Board board = new Board();
+        board.addToLobby(Color.BLUE);
+        board.addToLobby(Color.BLUE);
+        board.removeFromLobby(1);
+        assertEquals(1, board.getLobby().size());
+    }
+
+    @Test
+    void addToTableTest() {
+        Board board = new Board();
+        for(Color color: Color.values()){
+            assertEquals(0, board.getStudentsTable().get(color));
         }
-        assertEquals(newStudents, board.getLobby());
+        board.addToTable(Color.PINK);
+        assertEquals(1,board.getStudentsTable().get(Color.PINK));
+        assertFalse(board.addToTable(Color.PINK));
+        assertTrue(board.addToTable(Color.PINK));
+    }
 
-        for(int i=Color.values().length-1; i>0; i--){
-            newStudents.remove(i);
-            board.removeFromLobby(i);
+    @Test
+    void removeFromTableTest() {
+        Board board = new Board();
+        board.addToTable(Color.BLUE);
+        board.addToTable(Color.BLUE);
+        board.removeFromTable(Color.BLUE);
+        assertEquals(1, board.getStudentsTable().get(Color.BLUE));
+    }
+
+    @Test
+    void switchStudentsTest() {
+    }
+
+    @Test
+    void addTeacherTest() {
+        Board board = new Board();
+        board.addTeacher(Color.GREEN);
+        assertEquals(1,board.getTeacherTable().size());
+        assertEquals(Color.GREEN, board.getTeacherTable().get(0));
+        board.addTeacher(Color.BLUE);
+        assertEquals(Color.BLUE, board.getTeacherTable().get(1));
+    }
+
+    @Test
+    void removeTeacherTest() {
+        Board board = new Board();
+        board.addTeacher(Color.GREEN);
+        board.addTeacher(Color.BLUE);
+        board.addTeacher(Color.PINK);
+        board.addTeacher(Color.RED);
+        assertEquals(Color.BLUE,board.removeTeacher(Color.BLUE));
+        for (Color teacher: board.getTeacherTable()){
+            assertNotEquals(Color.BLUE, teacher);
         }
-        assertEquals(newStudents, board.getLobby());
-
-
-    }
-
-
-    @Test
-    void TestTable() {
-
-    }
-
-
-    @Test
-    void switchStudents() {
     }
 
     @Test
-    void addTeacher() {
+    void addTowerTest() {
     }
 
     @Test
-    void removeTeacher() {
+    void removeTowerTest() {
     }
 
     @Test
-    void addTower() {
+    void getLobbyTest() {
+        Board board = new Board();
+        board.addToLobby(Color.PINK);
+        board.addToLobby(Color.RED);
+        ArrayList<Color> colors = new ArrayList<>();
+        colors.add(Color.PINK);
+        colors.add(Color.RED);
+        assertEquals(colors, board.getLobby());
     }
 
     @Test
-    void removeTower() {
+    void getLobbyStudentTest() {
+        Board board = new Board();
+        board.addToLobby(Color.YELLOW);
+        board.addToLobby(Color.YELLOW);
+        board.addToLobby(Color.YELLOW);
+        board.addToLobby(Color.BLUE);
+        assertEquals(Color.YELLOW, board.getLobbyStudent(0));
+        assertEquals(Color.BLUE, board.getLobbyStudent(3));
     }
 
     @Test
-    void getLobby() {
+    void getStudentsTableTest() {
+        Board board = new Board();
+        board.addToTable(Color.BLUE);
+        HashMap<Color, Integer> colors = new HashMap<>();
+        colors.put(Color.GREEN,0);
+        colors.put(Color.RED,0);
+        colors.put(Color.YELLOW,0);
+        colors.put(Color.PINK,0);
+        colors.put(Color.BLUE,1);
+        assertEquals(colors, board.getStudentsTable());
     }
 
     @Test
-    void getLobbyStudent() {
+    void isTableFullTest() {
+        Board board = new Board();
+        for (int i = 0; i<10; i++)
+            board.addToTable(Color.BLUE);
+        for (int i = 0; i<9; i++)
+            board.addToTable(Color.PINK);
+        assertTrue(board.isTableFull(Color.BLUE));
+        assertFalse(board.isTableFull(Color.PINK));
+        assertFalse(board.isTableFull(Color.RED));
     }
-
-    @Test
-    void isTableFull() {
-    }
-
-
-
 
 }

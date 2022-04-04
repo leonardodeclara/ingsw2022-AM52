@@ -36,7 +36,7 @@ public class Basket {
         if (size==0)
             return null;
         //alternativamente potrei lanciare un'eccezione ad hoc, tipo EmptyBasketException
-        //in modo che il chiamante possa fare un try catch ed in caso di catch settare le condizioni di endGame
+        //in modo che il chiamante possa fare un try catch ed in caso di catch fa game.setLastRound(true)
         //in questo modo posso evitare di restituire null e differenziarlo da altri casi di errore
 
         int colorIndex = weightedRandomIndex();
