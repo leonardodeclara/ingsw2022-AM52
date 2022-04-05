@@ -232,7 +232,7 @@ public class Game {
         Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
         if(studentToMove != null){
             if(islandId == -1){
-                if(player.getBoard().isTableFull(studentToMove))
+                if(!player.getBoard().isTableFull(studentToMove))
                     return true;
             }
             else

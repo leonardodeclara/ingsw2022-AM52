@@ -258,7 +258,7 @@ class GameTest {
             game.getPlayers().get(1).getBoard().addToTable(BLUE);
 
         assertEquals(true, game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0),0,3));
-        assertEquals(false, game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0),0,-1));
+        assertEquals(true, game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0),0,-1));
         assertEquals(false, game.isMoveStudentFromLobbyLegal(game.getPlayers().get(1),0,23));
     }
 
