@@ -27,6 +27,9 @@ public class Game {
     private boolean lastRound;
     protected HashMap<Color,Player> teachersOwners;
 
+    //AGGIUNGERE TRY CATCH PER refillClouds()che setta lastRound = true
+    //AGGIUNGERE TRY CATCH PER playAssistantCard() quando viene giocata l'ultima, che setta lastRound = true
+    //AGGIUNGERE TRY CATCH per refillClouds() per quando non ci sono abbastanza studenti per le nuvole => si salta la fase letPlayerPickStudent
     public Game() {
         players = new ArrayList<>();
         islands = new ArrayList<>();
@@ -95,7 +98,7 @@ public class Game {
 
 
         for (Player player: players)
-            player.getBoard().setTowers(players.size()==2? 6:8);
+            player.getBoard().setTowers(players.size()==2? 8:6);
 
 
     }
@@ -447,6 +450,9 @@ public class Game {
 
     }
 }
+
+
+
 
 
 
