@@ -64,7 +64,7 @@ class GameTest {
         game.instantiateGameElements();
         int countMotherNature=0;
         int indexMN=0;
-        for (int i = 0; i< game.getIslands().size()-1; i++ ){
+        for (int i = 0; i< 12; i++ ){
             if(game.getIslands().get(i).isMotherNature()){
                 countMotherNature+=1;
                 indexMN=i;
@@ -72,7 +72,7 @@ class GameTest {
         }
         assertEquals(1,countMotherNature);
         assertEquals(0,game.getIslands().get(indexMN).getStudents().size());
-
+        assertEquals(0,game.getIslands().get((indexMN+6)%12).getStudents().size());
     }
 
     @Test
@@ -84,6 +84,9 @@ class GameTest {
         game.instantiateGameElements();
         assertEquals(3, game.getClouds().size());
     }
+
+    @Test
+    void towerInstantiationTest(){}
 
     @Test
     void deckInstantiationTest() {
@@ -244,22 +247,30 @@ class GameTest {
     }
 
     @Test
-    void isMoveStudentFromLobbyLegal(){
+    void isMoveStudentFromLobbyLegalTest(){
         Game game = new Game();
         game.addPlayer(new Player(0,"leo",Tower.BLACK));
         game.addPlayer(new Player(1,"mari",Tower.WHITE));
         game.instantiateGameElements();
-        game.initiatePlayerLobby(0);
-        game.initiatePlayerLobby(1);
+        //game.initiatePlayerLobby(0);
+        //game.initiatePlayerLobby(1);
+        for(int i = 0;i<7;i++)
+            game.getPlayerByName("leo").getBoard().addToLobby(Color.RED);
+        for(int i = 0;i<7;i++)
+            game.getPlayerByName("mari").getBoard().addToLobby(Color.YELLOW);
 
         for(int i = 0;i<10;i++) //riempie completamente la table rosa di "leo"
-            game.getPlayers().get(0).getBoard().addToTable(PINK);
+            game.getPlayers().get(0).getBoard().addToTable(Color.RED);
         for(int i = 0;i<10;i++) //riempie completamente la table blu di "mari"
-            game.getPlayers().get(1).getBoard().addToTable(BLUE);
+            game.getPlayers().get(1).getBoard().addToTable(Color.BLUE);
 
-        assertEquals(true, game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0),0,3));
-        assertEquals(true, game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0),0,-1));
-        assertEquals(false, game.isMoveStudentFromLobbyLegal(game.getPlayers().get(1),0,23));
+        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0), 0, 3));
+        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0), 0, -1));
+        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0), 6, 1));
+        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayers().get(1), 7, 6));
+        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayers().get(1), 6, 6));
+        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayers().get(1), 0, 23));
+        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayers().get(1),-1,10));
     }
 
 
@@ -272,10 +283,10 @@ class GameTest {
         game.initiatePlayerLobby(0);
         game.initiatePlayerLobby(1);
         game.refillClouds();
-        assertEquals(false,game.isMoveStudentsToLobbyLegal(game.getPlayers().get(0),-25));
-        assertEquals(true,game.isMoveStudentsToLobbyLegal(game.getPlayers().get(0),1));
-        assertEquals(false,game.isMoveStudentsToLobbyLegal(game.getPlayers().get(1),2));
-        assertEquals(true,game.isMoveStudentsToLobbyLegal(game.getPlayers().get(0),1));
+        assertFalse(game.isMoveStudentsToLobbyLegal(game.getPlayers().get(0), -25));
+        assertTrue(game.isMoveStudentsToLobbyLegal(game.getPlayers().get(0), 1));
+        assertFalse(game.isMoveStudentsToLobbyLegal(game.getPlayers().get(1), 2));
+        assertTrue(game.isMoveStudentsToLobbyLegal(game.getPlayers().get(0), 1));
     }
 
     @Test
@@ -288,20 +299,20 @@ class GameTest {
         game.initiatePlayerLobby(1);
 
         //subtest per le isole
-        Color s1 = game.getPlayers().get(0).getBoard().getLobbyStudent(0);
-        Color s2 = game.getPlayers().get(1).getBoard().getLobbyStudent(0);
+        Color s1 = game.getPlayerByName("leo").getBoard().getLobbyStudent(0);
+        Color s2 = game.getPlayerByName("mari").getBoard().getLobbyStudent(0);
         int mnPosition = 0;
         for (Island island : game.getIslands()){
             if (island.isMotherNature())
                 mnPosition= island.getIslandIndex();
         }
 
-        game.moveStudentFromLobby(0, 0, mnPosition+1);
-        game.moveStudentFromLobby(1, 0, mnPosition+2);
-        assertEquals(2, game.getIslands().get(mnPosition+1).getStudents().size());
-        assertEquals(2, game.getIslands().get(mnPosition+2).getStudents().size());
-        assertEquals(s1, game.getIslands().get(mnPosition+1).getStudents().get(1));
-        assertEquals(s2, game.getIslands().get(mnPosition+2).getStudents().get(1));
+        game.moveStudentFromLobby(0, 0, (mnPosition+1)%12);
+        game.moveStudentFromLobby(1, 0, (mnPosition+2)%12);
+        assertEquals(2, game.getIslands().get((mnPosition+1)%12).getStudents().size());
+        assertEquals(2, game.getIslands().get((mnPosition+2)%12).getStudents().size());
+        assertEquals(s1, game.getIslands().get((mnPosition+1)%12).getStudents().get(1));
+        assertEquals(s2, game.getIslands().get((mnPosition+2)%12).getStudents().get(1));
     }
 
     @Test
