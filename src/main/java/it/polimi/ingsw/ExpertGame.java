@@ -22,19 +22,20 @@ public class ExpertGame extends Game {
         Player player = players.get(playerId);
         if(!isMoveStudentFromLobbyLegal(player,studentIndex,islandId))
             return false;
-        if(islandId == -1){
-            player.getBoard().removeFromLobby(studentIndex);
-            Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
+        Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
+        player.getBoard().removeFromLobby(studentIndex);
+        if(islandId == ISLAND_ID_NOT_RECEIVED)
             player.getBoard().addToTable(studentToMove);
-        }
-        else
-        {
-            player.getBoard().removeFromLobby(studentIndex);
-            Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
+        else {
             Island islandDest = islands.get(islandId);
             islandDest.addStudent(studentToMove);
         }
         //aggiorna l'ownership dei teacher
+        updateTeachersOwnershipForCard2(player);
+        return true;
+    }
+
+    public void updateTeachersOwnershipForCard2(Player player){
         for(Color c : Color.values()) {
             Player owner = teachersOwners.get(c);
             if (player.getBoard().getTableNumberOfStudents(c) >= owner.getBoard().getTableNumberOfStudents(c)) {
@@ -43,7 +44,6 @@ public class ExpertGame extends Game {
                 teachersOwners.put(c, player);
             }
         }
-        return true;
     }
 
 

@@ -9,7 +9,9 @@ import java.util.*;
 
 public class Game {
     private static final int MAX_NUM_ISLANDS = 12;
-    private static final int ISLAND_ID_NOT_RECEIVED = -1;
+    protected static final int ISLAND_ID_NOT_RECEIVED = -1;
+    private static final int ISLAND_THRESHOLD_FOR_GAME_OVER = 3;
+    private static final int MAX_TOWER_NUMBER = 10;
     private Basket basket;
     protected ArrayList<Player> players;
     //private ArrayList<Player> activePlayers;
@@ -279,7 +281,6 @@ public class Game {
                 isDraw = 0;
             } else if (infl == max_infl)
                 isDraw = 1;
-
         }
 
         if (!owner.equals(island.getOwner()))
@@ -288,7 +289,6 @@ public class Game {
             returnMap.put("ID Player", owner.getPlayerId());
             returnMap.put("Is Draw", isDraw);
             return returnMap;
-
     }
     /**
      * Method lastRound sets the relative boolean flag to true or false, according to the game's state.
@@ -359,8 +359,8 @@ public class Game {
                 return true;
             }
         }
-        if (islands.size()<=3){
-            int minTowers = 10;
+        if (islands.size()<=ISLAND_THRESHOLD_FOR_GAME_OVER){
+            int minTowers = MAX_TOWER_NUMBER;
             ArrayList<Player> potentialWinners = new ArrayList<>();
             for (Player potentialWinner: players){
                 if (potentialWinner.getBoard().getTowers()<minTowers){
