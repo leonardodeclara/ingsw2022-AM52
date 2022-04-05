@@ -171,8 +171,6 @@ public class Game {
         Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
         Island dest = islands.get(from.getIslandIndex() + numSteps % islands.size());
 
-        //manca il ricalcolo dell'influenza
-
         from.setMotherNature(false);
         dest.setMotherNature(true);
         return true;
@@ -340,7 +338,7 @@ public class Game {
                 isDraw = 1;
         }
 
-        if (!owner.equals(island.getOwner()))
+        if (!owner.equals(island.getOwner())&& isDraw==0)
             island.setOwner(owner);
 
             returnMap.put("ID Player", owner.getPlayerId());
