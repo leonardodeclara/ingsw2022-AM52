@@ -20,7 +20,7 @@ public class Game {
     private Player winner;
     protected ArrayList<Island> islands;
     private ArrayList<Cloud> clouds;
-    private ArrayList<Teacher> teachers;
+    private ArrayList<Color> teachers;
     private ArrayList<Assistant> assistantDecks;
     private HashMap<Integer,Assistant> currentTurnAssistantCards;
     protected Island currentMotherNatureIsland;
@@ -57,7 +57,7 @@ public class Game {
     public void instantiateGameElements(){
         //istanziati i professori al tavolo di gioco
         for (Color color: Color.values()){
-            teachers.add(new Teacher(color));
+            teachers.add(color);
         }
         //aggiunte tutte le carte di tutti i maghi
         for(int numWizard = 0; numWizard < 4; numWizard++){
@@ -300,7 +300,7 @@ public class Game {
         this.lastRound = lastRound;
     }
 
-    public ArrayList<Teacher> getTeachers() {
+    public ArrayList<Color> getTeachers() {
         return teachers;
     }
 

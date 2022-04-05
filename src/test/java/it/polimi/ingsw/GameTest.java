@@ -34,7 +34,7 @@ class GameTest {
         assertEquals(5, game.getTeachers().size());
         for(int i = 0; i< game.getTeachers().size()-1; i++){
                 for(int j=i+1;j<game.getTeachers().size();j++){
-                    assertTrue(game.getTeachers().get(i).getColor()!=game.getTeachers().get(j).getColor());
+                    assertTrue(game.getTeachers().get(i)!=game.getTeachers().get(j));
                 }
         }
     }
