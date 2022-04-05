@@ -263,7 +263,7 @@ public class Game {
     /**
      * Method isMoveStudentFromLobbyLegal checks  if the player with Player ID can move the student in his lobby to an island or
      *  the corresponding table.
-     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param player : id given to the player, used as the index for the players ArrayList
      * @param studentIndex : number of islands that the player identified with the playerId wants to move mother nature
      * @param islandId : the id of the destination island (or -1 if no island is specified)
      */
