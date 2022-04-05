@@ -12,6 +12,7 @@ import java.util.Random;
 
 public class Game {
     private static final int MAX_NUM_ISLANDS = 12;
+    private static final int ISLAND_ID_NOT_RECEIVED = -1;
     private Basket basket;
     protected ArrayList<Player> players;
     //private ArrayList<Player> activePlayers;
@@ -173,19 +174,21 @@ public class Game {
         Player player = players.get(playerId);
         if(!isMoveStudentFromLobbyLegal(player,studentIndex,islandId))
             return false;
-        if(islandId == -1){
-            player.getBoard().removeFromLobby(studentIndex);
-            Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
+        Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
+        player.getBoard().removeFromLobby(studentIndex);
+        if(islandId == ISLAND_ID_NOT_RECEIVED)
             player.getBoard().addToTable(studentToMove);
-        }
         else
         {
-            player.getBoard().removeFromLobby(studentIndex);
-            Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
             Island islandDest = islands.get(islandId);
             islandDest.addStudent(studentToMove);
         }
         //aggiorna l'ownership dei teacher
+        updateTeachersOwnership(player);
+        return true;
+    }
+
+    public void updateTeachersOwnership(Player player){
         for(Color c : Color.values()) {
             Player owner = teachersOwners.get(c);
             if(owner != null){
@@ -200,10 +203,7 @@ public class Game {
             }
 
         }
-        return true;
     }
-
-
     //chiamato dal Controller nello step 3 della fase Azione
     public boolean moveStudentsToLobby(int playerId,int cloudId){
         Player player = players.get(playerId);
@@ -232,7 +232,7 @@ public class Game {
         Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
         if(studentToMove != null){
             if(islandId == -1){
-                if(player.getBoard().isTableFull(studentToMove))
+                if(!player.getBoard().isTableFull(studentToMove))
                     return true;
             }
             else
