@@ -324,6 +324,7 @@ public class Game {
         HashMap<String, Number> returnMap = new HashMap<>();
 
         for (Player p : players) {
+            infl = 0;
             for (Color t : p.getBoard().getTeacherTable()) {
                 infl += island.getStudentsOfColor(t).size();
                 if (island.getTowers().size() > 0)
@@ -445,6 +446,14 @@ public class Game {
         }
         return false;
 
+    }
+
+    public Player getPlayerByName(String name){
+        for (Player player: players){
+            if(player.getNickname().equalsIgnoreCase(name))
+                return player;
+        }
+        return null;
     }
 }
 
