@@ -51,8 +51,10 @@ public class Game {
             throw new RuntimeException("Superato limite di giocatori");
     }
 
-    //si potrebbe inserire parte del suo funzionamento all'interno del costruttore in modo da alleggerirlo
-    //ad esempio: monete, divieti (solo nel costruttore di expert game),
+    /**
+     * This method instantiates all the game elements (clouds,teachers,basket,islands and boards).
+     *
+     */
     public void instantiateGameElements(){
         //istanziati i professori al tavolo di gioco
         teachers.addAll(Arrays.asList(Color.values()));
@@ -98,8 +100,11 @@ public class Game {
 
     }
 
-    //pescata in automatico di 7 pedine se 2 player, 9 pedine se 3, ma in teoria dovrebbe essere il giocatore a pescarne una alla volta
-    //rivedere se cambiare o va bene così
+    /**
+     * Method initiatePlayerLobby calculates the number of students to put in the players' lobby
+     * and does it
+     * @param:playerId : id given to the player, used as the index for the players arrayList
+     */
     public void initiatePlayerLobby(int playerId){
         int studentLimit = players.size()==2? 7: 9;
         for(int k = 0; k < studentLimit; k++)
@@ -120,8 +125,11 @@ public class Game {
         }
     }
 
-    //input: a player and its deck number
-    //gives him the relative cards
+    /**
+     * Method giveAssistantDeck assigns the deck of 10 assistant cards to the given player.
+     * @param playerId : id given to the player, used as the index for the players arrayList
+     * @param deckId : id given to the deck, the player uses it communicate which deck he wants
+     */
     public void giveAssistantDeck(int playerId, int deckId){
         ArrayList<Assistant> assignedDeck = new ArrayList<>();
         for (Assistant assistant: assistantDecks){
@@ -134,8 +142,12 @@ public class Game {
         players.get(playerId).setDeck(assignedDeck);
     }
 
-    //rimuove dalle carte del giocatore quella che ha appena giocata, la aggiunge in quelle giocate nel turno corrente
-    //e returna la priority (cardScore)
+    /**
+     * Method playAssistantCard removes the card to the player's deck and adds it to the current turn played assistant cards
+     * in order to calculate the playing order for the action phase
+     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param cardId : id given to the card, used as the index for the player's deck ArrayList
+     */
     public int playAssistantCard(int playerId,int cardId){
         ArrayList<Assistant> newDeck = players.get(playerId).getDeck();
         Assistant playedCard = newDeck.get(cardId);
@@ -146,7 +158,12 @@ public class Game {
         return cardScore;
     }
 
-    //chiamato nello step 1 della fase azione
+    /**
+     * Method moveMotherNature checks  if the player with Player ID can move Mother Nature of numSteps
+     *  and if it's doable, moves Mother Nature from the current island to the new one
+     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param numSteps : number of islands that the player identified with the playerId wants to move mother nature
+     */
     public boolean moveMotherNature(int playerId,int numSteps){
         if(!isMoveMNLegal(playerId,numSteps))
             return false;
@@ -161,7 +178,14 @@ public class Game {
         return true;
     }
 
-    //chiamato dal Controller nello step 2 della fase Azione
+    /**
+     * Method moveStudentFromLobby checks  if the player with Player ID can move the student in his lobby to an island or
+     *  the corresponding table. If it's doable the student is moved from the lobby to the table/island. If the island id is -1
+     *  (ISLAND_ID_NOT_RECEIVED) the student is moved to the table. Otherwise the student is moved to the island
+     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param studentIndex : number of islands that the player identified with the playerId wants to move mother nature
+     * @param islandId : the id of the destination island (or -1 if no island is specified)
+     */
     public boolean moveStudentFromLobby(int playerId,int studentIndex,int islandId){
         Player player = players.get(playerId);
         if(!isMoveStudentFromLobbyLegal(player,studentIndex,islandId))
@@ -179,7 +203,12 @@ public class Game {
         updateTeachersOwnership(player);
         return true;
     }
-
+    /**
+     * Method updateTeachersOwnership recalculates the given player's number of students and possibly assigns him 1+
+     *  teachers ownership
+     * @param player : reference of the player of whom we want to check teachers' ownership
+     *
+     */
     public void updateTeachersOwnership(Player player){
         for(Color c : Color.values()) {
             Player owner = teachersOwners.get(c);
@@ -196,7 +225,13 @@ public class Game {
 
         }
     }
-    //chiamato dal Controller nello step 3 della fase Azione
+
+    /**
+     * Method moveStudentsToLobby moves all the students on a given cloud, to the given player lobby
+     *
+     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param cloudId : id given to the cloud to empty
+     */
     public boolean moveStudentsToLobby(int playerId,int cloudId){
         Player player = players.get(playerId);
         if(!isMoveStudentsToLobbyLegal(player,cloudId))
@@ -215,11 +250,23 @@ public class Game {
         return lastRound;
     }
 
+    /**
+     * Method isMoveMNLegal checks  if the player with Player ID can move Mother Nature of numSteps
+     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param numSteps : number of islands that the player identified with the playerId wants to move mother nature
+     */
     public boolean isMoveMNLegal(int playerId,int numSteps){
         int playerMaxSteps = currentTurnAssistantCards.get(playerId).getNumMoves();
         return numSteps > playerMaxSteps ? false : true;
     }
 
+    /**
+     * Method isMoveStudentFromLobbyLegal checks  if the player with Player ID can move the student in his lobby to an island or
+     *  the corresponding table.
+     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param studentIndex : number of islands that the player identified with the playerId wants to move mother nature
+     * @param islandId : the id of the destination island (or -1 if no island is specified)
+     */
     public boolean isMoveStudentFromLobbyLegal(Player player,int studentIndex,int islandId){
         Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
         if(studentToMove != null){
@@ -236,12 +283,22 @@ public class Game {
         return false;
     }
 
+    /**
+     * Method isMoveStudentsToLobbyLegal checks if the given cloudId identifies a cloud which contains students
+     *
+     * @param player: reference of the player who wants to perform the
+     * @param cloudId : id given to the cloud to empty
+     */
     public boolean isMoveStudentsToLobbyLegal(Player player,int cloudId){
         if (cloudId >= 0 && cloudId <= clouds.size()-1)
             return (!clouds.get(cloudId).getStudents().isEmpty()) ? true : false;
         return false;
     }
 
+    /**
+     * Method refillClouds refills all the clouds in the clouds ArrayList
+     *
+     */
     public void refillClouds(){
         int numOfPicks = players.size()+1;
         ArrayList<Color> picks = new ArrayList<>();
@@ -256,12 +313,12 @@ public class Game {
 
 
 
-    //se ci sono due valori uguali => non accade nulla
-    //calculateInfluence deve segnalare se c'è stata parità oppure no al Controller
-
-
-    //returniamo isDraw e id giocatore (sarebbe meglio String, ma a quel punto non ci sarebbe modo di comunicare
-    //al controller che il giocatore returnato è sempre lo stesso e quindi che non deve far mettere torri a nessuno)
+    /**
+     * Method calculateInfluence calculate the player with the highest influence on the given island
+     *If two or more players have the highest influence, then only one of them is returned, together with the isDraw flag
+     * which tells to the Controller who called the calculateInfluence method if the outcome of the calculation was a draw or not.
+     * @param island : reference of the island on which the influence is calculated
+     */
     public HashMap<String,Number> calculateInfluence(Island island) {
         int max_infl = 0, infl = 0;
         short isDraw = 0;
