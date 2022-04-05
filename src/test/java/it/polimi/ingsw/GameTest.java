@@ -274,8 +274,8 @@ class GameTest {
         game.refillClouds();
         assertEquals(false,game.isMoveStudentsToLobbyLegal(game.getPlayers().get(0),-25));
         assertEquals(true,game.isMoveStudentsToLobbyLegal(game.getPlayers().get(0),1));
-        assertEquals(true,game.isMoveStudentsToLobbyLegal(game.getPlayers().get(1),2));
-        assertEquals(false,game.isMoveStudentsToLobbyLegal(game.getPlayers().get(0),1));
+        assertEquals(false,game.isMoveStudentsToLobbyLegal(game.getPlayers().get(1),2));
+        assertEquals(true,game.isMoveStudentsToLobbyLegal(game.getPlayers().get(0),1));
     }
 
     @Test
@@ -292,8 +292,10 @@ class GameTest {
         Color s2 = game.getPlayers().get(1).getBoard().getLobbyStudent(0);
         game.moveStudentFromLobby(0,0,3);
         game.moveStudentFromLobby(1,0,4);
-        assertEquals(true,game.getIslands().get(3).getStudents().contains(s1));
-        assertEquals(true, game.getIslands().get(4).getStudents().contains(s2));
+        assertEquals(3,game.getIslands().get(3).getStudents().size());
+        assertEquals(3,game.getIslands().get(4).getStudents().size());
+        assertEquals(s1,game.getIslands().get(3).getStudents().get(2));
+        assertEquals(s2, game.getIslands().get(4).getStudents().get(2));
         assertEquals(false,game.getPlayers().get(0).getBoard().getLobby().contains(s1));
         assertEquals(false, game.getPlayers().get(1).getBoard().getLobby().contains(s2));
 
