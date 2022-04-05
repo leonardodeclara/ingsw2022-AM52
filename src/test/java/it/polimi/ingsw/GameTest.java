@@ -211,8 +211,8 @@ class GameTest {
         assertEquals(false,game.getPlayers().get(0).getDeck().contains(a2));
         assertEquals(false,game.getPlayers().get(1).getDeck().contains(a1));
         //Ci si assicura che a1,a2 ora siano nelle celle dell'hashmap corrispondenti agli id dei giocatori che le hanno giocate
-        assertEquals(a1,game.getCurrentTurnAssistantCards().get(0));
-        assertEquals(a2,game.getCurrentTurnAssistantCards().get(1));
+        assertEquals(a2,game.getCurrentTurnAssistantCards().get(0));
+        assertEquals(a1,game.getCurrentTurnAssistantCards().get(1));
     }
 
 
@@ -258,7 +258,7 @@ class GameTest {
             game.getPlayers().get(1).getBoard().addToTable(BLUE);
 
         assertEquals(true, game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0),0,3));
-        assertEquals(true, game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0),0,-1));
+        assertEquals(false, game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0),0,-1));
         assertEquals(false, game.isMoveStudentFromLobbyLegal(game.getPlayers().get(1),0,23));
     }
 
