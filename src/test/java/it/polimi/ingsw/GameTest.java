@@ -279,7 +279,7 @@ class GameTest {
     }
 
     @Test
-    void moveStudentFromLobby(){
+    void moveStudentFromLobbyToIslandTest(){
         Game game = new Game();
         game.addPlayer(new Player(0,"leo",Tower.BLACK));
         game.addPlayer(new Player(1,"mari",Tower.WHITE));
@@ -290,28 +290,42 @@ class GameTest {
         //subtest per le isole
         Color s1 = game.getPlayers().get(0).getBoard().getLobbyStudent(0);
         Color s2 = game.getPlayers().get(1).getBoard().getLobbyStudent(0);
-        game.moveStudentFromLobby(0,0,3);
-        game.moveStudentFromLobby(1,0,4);
-        assertEquals(3,game.getIslands().get(3).getStudents().size());
-        assertEquals(3,game.getIslands().get(4).getStudents().size());
-        assertEquals(s1,game.getIslands().get(3).getStudents().get(2));
-        assertEquals(s2, game.getIslands().get(4).getStudents().get(2));
-        assertEquals(false,game.getPlayers().get(0).getBoard().getLobby().contains(s1));
-        assertEquals(false, game.getPlayers().get(1).getBoard().getLobby().contains(s2));
+        int mnPosition = 0;
+        for (Island island : game.getIslands()){
+            if (island.isMotherNature())
+                mnPosition= island.getIslandIndex();
+        }
 
-        //subtest per le table
-        Color s3 = game.getPlayers().get(0).getBoard().getLobbyStudent(1);
-        Color s4 = game.getPlayers().get(1).getBoard().getLobbyStudent(1);
-        Integer old1 = game.getPlayers().get(0).getBoard().getStudentsTable().get(s3);
-        Integer old2 = game.getPlayers().get(1).getBoard().getStudentsTable().get(s4);
-        game.moveStudentFromLobby(0,1,-1);
-        game.moveStudentFromLobby(1,1,-1);
-        assertEquals(old1 + 1,game.getPlayers().get(0).getBoard().getStudentsTable().get(s3));
-        assertEquals(old2 + 2, game.getPlayers().get(1).getBoard().getStudentsTable().get(s4));
-        assertEquals(false,game.getPlayers().get(0).getBoard().getLobby().contains(s1));
-        assertEquals(false, game.getPlayers().get(1).getBoard().getLobby().contains(s2));
+        game.moveStudentFromLobby(0, 0, mnPosition+1);
+        game.moveStudentFromLobby(1, 0, mnPosition+2);
+        assertEquals(2, game.getIslands().get(mnPosition+1).getStudents().size());
+        assertEquals(2, game.getIslands().get(mnPosition+2).getStudents().size());
+        assertEquals(s1, game.getIslands().get(mnPosition+1).getStudents().get(1));
+        assertEquals(s2, game.getIslands().get(mnPosition+2).getStudents().get(1));
     }
 
+    @Test
+    void moveStudentFromLobbyToTableTest(){
+        Game game = new Game();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK));
+        game.addPlayer(new Player(1,"mari",Tower.WHITE));
+        game.instantiateGameElements();
+        game.initiatePlayerLobby(0);
+        game.initiatePlayerLobby(1);
+
+        Color s0 = game.getPlayers().get(0).getBoard().getLobbyStudent(1);
+        int tableSizeP0 = game.getPlayers().get(0).getBoard().getStudentsTable().get(s0);
+        Color s1 = game.getPlayers().get(1).getBoard().getLobbyStudent(1);
+        int tableSizeP1 = game.getPlayers().get(1).getBoard().getStudentsTable().get(s1);
+        int lobbySizeP0 = game.getPlayers().get(0).getBoard().getLobby().size();
+        int lobbySizeP1 = game.getPlayers().get(1).getBoard().getLobby().size();
+        game.moveStudentFromLobby(0,1,-1);
+        game.moveStudentFromLobby(1,1,-1);
+        assertEquals(tableSizeP0+1, game.getPlayers().get(0).getBoard().getStudentsTable().get(s0));
+        assertEquals(tableSizeP1+1, game.getPlayers().get(1).getBoard().getStudentsTable().get(s1));
+        assertEquals(lobbySizeP0-1, game.getPlayers().get(0).getBoard().getLobby().size());
+        assertEquals(lobbySizeP1-1, game.getPlayers().get(1).getBoard().getLobby().size());
+    }
 
     @Test
     void moveStudentsToLobby(){

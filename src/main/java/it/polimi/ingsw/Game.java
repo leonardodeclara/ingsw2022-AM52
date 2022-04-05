@@ -1,10 +1,7 @@
 package it.polimi.ingsw;
 
 import java.sql.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * This class contains the majority of the game's elements and logic.
@@ -25,7 +22,6 @@ public class Game {
     private ArrayList<Assistant> assistantDecks;
     private HashMap<Integer,Assistant> currentTurnAssistantCards;
     protected Island currentMotherNatureIsland;
-    //private boolean motherNature;
     private boolean lastRound;
     protected HashMap<Color,Player> teachersOwners;
 
@@ -57,9 +53,7 @@ public class Game {
     //ad esempio: monete, divieti (solo nel costruttore di expert game),
     public void instantiateGameElements(){
         //istanziati i professori al tavolo di gioco
-        for (Color color: Color.values()){
-            teachers.add(color);
-        }
+        teachers.addAll(Arrays.asList(Color.values()));
         //aggiunte tutte le carte di tutti i maghi
         for(int numWizard = 0; numWizard < 4; numWizard++){
             int numMoves;
@@ -95,12 +89,9 @@ public class Game {
             clouds.add(new Cloud(i));
         }
 
-        //per l'aggiunta delle torri bisogna conoscere il numero di giocatori e la scelta dei giocatori
-        //vedere come fare
-        /*se facciamo con attributo Tower: team in player basta fare
+
         for (Player player: players)
-            player.getBoard().setTowers(players.size()==2? 6:8)
-         */
+            player.getBoard().setTowers(players.size()==2? 6:8);
 
 
     }
@@ -122,7 +113,6 @@ public class Game {
         //si potrebbe fare anche senza il bisogno di currentMotherNatureIsland
         for (Island island: islands){
             if(island.getIslandIndex()!= currentMotherNatureIsland.getIslandIndex() && !(island.getIslandIndex()==(6+currentMotherNatureIsland.getIslandIndex())%12)){
-                island.addStudent(basket.pickStudent());
                 island.addStudent(basket.pickStudent());
             }
         }

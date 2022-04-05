@@ -123,4 +123,8 @@ public class Board {
     public int getTableNumberOfStudents(Color tableColor){
         return studentsTable.get(tableColor);
     }
+
+    public void setTowers(int towers) {
+        this.towers = towers;
+    }
 }
