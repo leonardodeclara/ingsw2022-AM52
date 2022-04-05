@@ -188,11 +188,17 @@ public class Game {
         //aggiorna l'ownership dei teacher
         for(Color c : Color.values()) {
             Player owner = teachersOwners.get(c);
-            if (player.getBoard().getTableNumberOfStudents(c) > owner.getBoard().getTableNumberOfStudents(c)) {
-                owner.getBoard().removeTeacher(c);
+            if(owner != null){
+                if (player.getBoard().getTableNumberOfStudents(c) > owner.getBoard().getTableNumberOfStudents(c)) {
+                    owner.getBoard().removeTeacher(c);
+                    player.getBoard().addTeacher(c);
+                    teachersOwners.put(c, player);
+                }
+            }else{
                 player.getBoard().addTeacher(c);
                 teachersOwners.put(c, player);
             }
+
         }
         return true;
     }
@@ -239,7 +245,9 @@ public class Game {
     }
 
     public boolean isMoveStudentsToLobbyLegal(Player player,int cloudId){
-        return (cloudId >= 0 && cloudId <= clouds.size() && !clouds.get(cloudId).getStudents().isEmpty()) ? true : false;
+        if (cloudId >= 0 && cloudId <= clouds.size()-1)
+            return (!clouds.get(cloudId).getStudents().isEmpty()) ? true : false;
+        return false;
     }
 
     public void refillClouds(){
