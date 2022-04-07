@@ -365,37 +365,48 @@ class GameTest {
 
     }
 
-
+    //test senza torri e no pareggi
     @Test
-    void checkGameOverForIslandNumber(){
+    void onlyStudentsInfluenceTest(){
         Game game = new Game();
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"mari",Tower.WHITE));
+        game.addPlayer(new Player(0,"leo",Tower.WHITE));
+        game.addPlayer(new Player(1,"mari",Tower.BLACK));
         game.instantiateGameElements();
-        assertEquals(12,game.islands.size());
-        game.islands.clear();
-        while(game.players.get(1).getBoard().getTowers() > 5)
-            game.players.get(1).getBoard().removeTower();
-        assertEquals(5,game.players.get(1).getBoard().getTowers());
-        assertEquals(true,game.checkGameOver());
+        game.getPlayerByName("leo").getBoard().addTeacher(Color.BLUE);
+        game.getPlayerByName("leo").getBoard().addTeacher(Color.PINK);
+        game.getPlayerByName("leo").getBoard().addTeacher(Color.RED);
+        game.getPlayerByName("mari").getBoard().addTeacher(Color.YELLOW);
+        game.getPlayerByName("mari").getBoard().addTeacher(Color.GREEN);
+        game.getIslands().get(0).addStudent(Color.BLUE);
+        game.getIslands().get(0).addStudent(Color.BLUE);
+        assertEquals(0,game.calculateInfluence(game.getIslands().get(0)).get("ID Player"));
+        game.getIslands().get(0).addStudent(Color.YELLOW);
+        game.getIslands().get(0).addStudent(Color.YELLOW);
+        game.getIslands().get(0).addStudent(Color.YELLOW);
+        game.getIslands().get(0).addStudent(Color.YELLOW);
+        assertEquals(1,game.calculateInfluence(game.getIslands().get(0)).get("ID Player"));
     }
 
+    //test con torri e senza pareggi
     @Test
-    void checkGameOverForTowers(){
+    void towersAndStudentsInfluenceTest(){
         Game game = new Game();
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"mari",Tower.WHITE));
+        game.addPlayer(new Player(0,"leo",Tower.WHITE));
+        game.addPlayer(new Player(1,"mari",Tower.BLACK));
         game.instantiateGameElements();
-        assertEquals(false, game.checkGameOver());
-        for(int i = 0; i<2;i++)
-            game.players.get(0).getBoard().removeTower();
-        assertEquals(false, game.checkGameOver());
-        assertEquals(6,game.players.get(0).getBoard().getTowers());
-        assertEquals(8,game.players.get(1).getBoard().getTowers());
-        while(game.players.get(1).getBoard().getTowers() > 0)
-            game.players.get(1).getBoard().removeTower();
-
-        assertEquals(true, game.checkGameOver());
+        game.getPlayerByName("leo").getBoard().addTeacher(Color.BLUE);
+        game.getPlayerByName("leo").getBoard().addTeacher(Color.PINK);
+        game.getPlayerByName("leo").getBoard().addTeacher(Color.RED);
+        game.getPlayerByName("mari").getBoard().addTeacher(Color.YELLOW);
+        game.getPlayerByName("mari").getBoard().addTeacher(Color.GREEN);
+        game.getIslands().get(0).addTower(Tower.WHITE);
+        game.getIslands().get(0).addStudent(Color.BLUE);
+        assertEquals(0,game.calculateInfluence(game.getIslands().get(0)).get("ID Player"));
+        game.getIslands().get(0).removeTower();
+        game.getIslands().get(0).addTower(Tower.BLACK);
+        game.getIslands().get(0).addStudent(Color.GREEN);
+        game.getIslands().get(0).addStudent(Color.GREEN);
+        assertEquals(1,game.calculateInfluence(game.getIslands().get(0)).get("ID Player"));
     }
 
 
