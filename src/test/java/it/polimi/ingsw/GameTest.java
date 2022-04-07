@@ -425,12 +425,15 @@ class GameTest {
         game.addPlayer(new Player(0,"leo",Tower.BLACK));
         game.addPlayer(new Player(1,"mari",Tower.WHITE));
         game.instantiateGameElements();
-        assertEquals(12,game.islands.size());
-        game.islands.clear();
-        while(game.players.get(1).getBoard().getTowers() > 5)
-            game.players.get(1).getBoard().removeTower();
-        assertEquals(5,game.players.get(1).getBoard().getTowers());
-        assertEquals(true,game.checkGameOver());
+        assertEquals(12,game.getIslands().size());
+        game.getIslands().clear();
+        assertTrue(game.checkGameOver());
+        assertNull(game.getWinner());
+        while(game.getPlayers().get(1).getBoard().getTowers() > 5)
+            game.getPlayers().get(1).getBoard().removeTower();
+        assertEquals(5,game.getPlayers().get(1).getBoard().getTowers());
+        assertTrue(game.checkGameOver());
+        assertEquals(game.getPlayers().get(1), game.getWinner());
     }
 
     @Test
@@ -439,16 +442,16 @@ class GameTest {
         game.addPlayer(new Player(0, "leo", Tower.BLACK));
         game.addPlayer(new Player(1, "mari", Tower.WHITE));
         game.instantiateGameElements();
-        assertEquals(false, game.checkGameOver());
+        assertFalse(game.checkGameOver());
         for (int i = 0; i < 2; i++)
-            game.players.get(0).getBoard().removeTower();
-        assertEquals(false, game.checkGameOver());
-        assertEquals(6, game.players.get(0).getBoard().getTowers());
-        assertEquals(8, game.players.get(1).getBoard().getTowers());
-        while (game.players.get(1).getBoard().getTowers() > 0)
-            game.players.get(1).getBoard().removeTower();
+            game.getPlayers().get(0).getBoard().removeTower();
+        assertFalse(game.checkGameOver());
+        assertEquals(6, game.getPlayers().get(0).getBoard().getTowers());
+        assertEquals(8, game.getPlayers().get(1).getBoard().getTowers());
+        while (game.getPlayers().get(1).getBoard().getTowers() > 0)
+            game.getPlayers().get(1).getBoard().removeTower();
+        assertTrue(game.checkGameOver());
 
-        assertEquals(true, game.checkGameOver());
     }
 
 }

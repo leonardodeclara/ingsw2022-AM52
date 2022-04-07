@@ -424,6 +424,7 @@ public class Game {
             ArrayList<Player> potentialWinners = new ArrayList<>();
             for (Player potentialWinner: players){
                 if (potentialWinner.getBoard().getTowers()<minTowers){
+                    potentialWinners.clear();
                     potentialWinners.add(potentialWinner);
                     minTowers=potentialWinner.getBoard().getTowers();
                 }
@@ -446,10 +447,10 @@ public class Game {
                         winner = null;
                     }
                 }
+                return true;
             }
         }
         return false;
-
     }
 
     public Player getPlayerByName(String name){
@@ -458,6 +459,10 @@ public class Game {
                 return player;
         }
         return null;
+    }
+
+    public Player getWinner() {
+        return winner;
     }
 }
 
