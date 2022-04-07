@@ -11,11 +11,12 @@ public class ExpertGame extends Game {
 
     public ExpertGame(){
         super();
-
     }
     @Override
     public void instantiateGameElements() {
         super.instantiateGameElements();
+        coins=20;
+        bans=4;
     }
 
     public boolean moveStudentFromLobbyForCard2(int playerId,int studentIndex,int islandId){

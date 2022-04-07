@@ -298,15 +298,21 @@ public class Game {
     }
 
     /**
-     * Method refillClouds refills all the clouds in the clouds ArrayList
-     *
+     * Method refillClouds refills all the clouds in the clouds ArrayList.
+     * It's responsible for checking whether a picked student is null, in which case it sets lastRound flag to true.
      */
     public void refillClouds(){
         int numOfPicks = players.size()+1;
         ArrayList<Color> picks = new ArrayList<>();
+        Color pick;
         for (Cloud cloud: clouds){
             for(int i= 0; i< numOfPicks;i++){
-                picks.add(basket.pickStudent());
+                pick = basket.pickStudent();
+                if (pick==null){
+                    setLastRound(true);
+                    return;
+                }
+                picks.add(pick);
             }
             cloud.fillStudents(picks);
             picks.clear();

@@ -451,9 +451,28 @@ class GameTest {
         while (game.getPlayers().get(1).getBoard().getTowers() > 0)
             game.getPlayers().get(1).getBoard().removeTower();
         assertTrue(game.checkGameOver());
-
     }
 
+    /*
+    @Test
+    void updateTeacherPropertyTest(){
+        Game game = new Game();
+        game.addPlayer(new Player(0, "leo", Tower.BLACK));
+        game.addPlayer(new Player(1, "mari", Tower.WHITE));
+        game.instantiateGameElements();
+        for (int i = 0; i< 7;i++)
+            game.getPlayerByName("leo").getBoard().addToLobby(BLUE);
+        game.getPlayerByName("mari").getBoard().addTeacher(Color.YELLOW);
+        game.getPlayerByName("mari").getBoard().addTeacher(Color.PINK);
+        game.getPlayerByName("mari").getBoard().addTeacher(Color.RED);
+        game.getPlayerByName("mari").getBoard().addTeacher(Color.GREEN);
+        game.updateTeachersOwnership(game.getPlayerByName("leo"));
+        Color blueTeacher= game.getPlayerByName("leo").getBoard().getTeacherTable().get(0);
+        assertEquals(BLUE,blueTeacher);
+    }
+
+
+     */
 }
 
 
