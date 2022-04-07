@@ -9,6 +9,7 @@ import java.util.*;
 
 public class Game {
     private static final int MAX_NUM_ISLANDS = 12;
+    private static final int MAX_LOBBY_SIZE = 10;
     protected static final int ISLAND_ID_NOT_RECEIVED = -1;
     private static final int ISLAND_THRESHOLD_FOR_GAME_OVER = 3;
     private static final int MAX_TOWER_NUMBER = 10;
@@ -269,17 +270,17 @@ public class Game {
      * @param islandId : the id of the destination island (or -1 if no island is specified)
      */
     public boolean isMoveStudentFromLobbyLegal(Player player,int studentIndex,int islandId){
+        //non sono sicuro sia il modo giusto per gestire questo caso
+        if (studentIndex >= player.getBoard().getLobby().size() || studentIndex<0)
+            return false;
         Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
         if(studentToMove != null){
-            if(islandId == -1){
+            if(islandId == ISLAND_ID_NOT_RECEIVED){
                 if(!player.getBoard().isTableFull(studentToMove))
                     return true;
             }
-            else
-            {
-                if(islandId >= 0 && islandId <= islands.size())
+            else if(islandId >= 0 && islandId <= islands.size())
                     return true;
-            }
         }
         return false;
     }
