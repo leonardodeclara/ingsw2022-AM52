@@ -11,7 +11,7 @@ public class Cloud {
     private ArrayList<Color> students;
 
     /**
-     * Costructor creates a new cloud istance.
+     * Constructor creates a new cloud instance.
      * @param index: unique identification for the cloud tile.
      */
     public Cloud(int index){
@@ -36,7 +36,7 @@ public class Cloud {
     }
 
     /**
-     * This method empties the students's array on top of the cloud.
+     * This method empties the students' array on top of the cloud.
      * @return the attribute students' content
      */
     public ArrayList<Color> emptyStudents(){

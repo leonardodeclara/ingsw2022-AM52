@@ -28,6 +28,7 @@ public class Game {
     private boolean lastRound;
     protected HashMap<Color,Player> teachersOwners;
 
+
     //AGGIUNGERE TRY CATCH PER refillClouds()che setta lastRound = true
     //AGGIUNGERE TRY CATCH PER playAssistantCard() quando viene giocata l'ultima, che setta lastRound = true
     //AGGIUNGERE TRY CATCH per refillClouds() per quando non ci sono abbastanza studenti per le nuvole => si salta la fase letPlayerPickStudent
@@ -62,6 +63,10 @@ public class Game {
     public void instantiateGameElements(){
         //istanziati i professori al tavolo di gioco
         teachers.addAll(Arrays.asList(Color.values()));
+        for(int i =0; i< Color.values().length;i++){
+            teachersOwners.put(Color.values()[i], null);
+        }
+
         //aggiunte tutte le carte di tutti i maghi
         for(int numWizard = 0; numWizard < 4; numWizard++){
             int numMoves;
@@ -183,7 +188,7 @@ public class Game {
     /**
      * Method moveStudentFromLobby checks  if the player with Player ID can move the student in his lobby to an island or
      *  the corresponding table. If it's doable the student is moved from the lobby to the table/island. If the island id is -1
-     *  (ISLAND_ID_NOT_RECEIVED) the student is moved to the table. Otherwise the student is moved to the island
+     *  (ISLAND_ID_NOT_RECEIVED) the student is moved to the table. Otherwise, the student is moved to the island
      * @param playerId : id given to the player, used as the index for the players ArrayList
      * @param studentIndex : number of islands that the player identified with the playerId wants to move mother nature
      * @param islandId : the id of the destination island (or -1 if no island is specified)
@@ -222,6 +227,7 @@ public class Game {
                 }
             }else{
                 player.getBoard().addTeacher(c);
+                teachers.remove(c);
                 teachersOwners.put(c, player);
             }
 
@@ -328,7 +334,7 @@ public class Game {
      * @param island : reference of the island on which the influence is calculated
      */
     public HashMap<String,Number> calculateInfluence(Island island) {
-        int max_infl = 0, infl = 0;
+        int max_infl = 0, infl;
         short isDraw = 0;
         Player owner = island.getOwner();
         HashMap<String, Number> returnMap = new HashMap<>();
@@ -358,7 +364,7 @@ public class Game {
     }
     /**
      * Method lastRound sets the relative boolean flag to true or false, according to the game's state.
-     * @param lastRound : flag representative of the satisfaction of two gameover's conditions.
+     * @param lastRound : flag representative of the satisfaction of gameover's conditions.
      */
     public void setLastRound(boolean lastRound) {
         this.lastRound = lastRound;
@@ -469,6 +475,10 @@ public class Game {
 
     public Player getWinner() {
         return winner;
+    }
+
+    public HashMap<Color, Player> getTeachersOwners() {
+        return teachersOwners;
     }
 }
 

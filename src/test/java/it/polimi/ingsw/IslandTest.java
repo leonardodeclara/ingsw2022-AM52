@@ -45,7 +45,7 @@ class IslandTest {
     }
 
     /**
-     * Method studentTest checks that the inserition of students to the island's students attribute is accurate.
+     * Method studentTest checks that the insertion of students to the island's students attribute is accurate.
      */
     @Test
     void studentTest() {
@@ -62,7 +62,7 @@ class IslandTest {
      * Method mergingTest checks that two island are appropriately unified. As a matter of fact
      * the merger island must contain its previous students attribute combined with the merged one,
      * its previous towers combined with the merged ones, its index must not change and the boolean
-     * flag motherNature must return true if one of two island's flag was true before.
+     * flag motherNature must return true if one of the two island's flag was true before.
      */
     @Test
     void mergingTest() {

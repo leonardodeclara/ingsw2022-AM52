@@ -8,6 +8,7 @@ import static it.polimi.ingsw.Color.BLUE;
 import static it.polimi.ingsw.Color.PINK;
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("ALL")
 class GameTest {
 
     /**
@@ -37,6 +38,8 @@ class GameTest {
                     assertTrue(game.getTeachers().get(i)!=game.getTeachers().get(j));
                 }
         }
+        for (int i = 0; i<Color.values().length;i++)
+            assertNull(game.getTeachersOwners().get(Color.values()[i]));
     }
 
     /**
@@ -453,26 +456,43 @@ class GameTest {
         assertTrue(game.checkGameOver());
     }
 
-    /*
+
     @Test
-    void updateTeacherPropertyTest(){
+    void teacherMovementTest(){
         Game game = new Game();
         game.addPlayer(new Player(0, "leo", Tower.BLACK));
         game.addPlayer(new Player(1, "mari", Tower.WHITE));
         game.instantiateGameElements();
         for (int i = 0; i< 7;i++)
-            game.getPlayerByName("leo").getBoard().addToLobby(BLUE);
-        game.getPlayerByName("mari").getBoard().addTeacher(Color.YELLOW);
-        game.getPlayerByName("mari").getBoard().addTeacher(Color.PINK);
-        game.getPlayerByName("mari").getBoard().addTeacher(Color.RED);
-        game.getPlayerByName("mari").getBoard().addTeacher(Color.GREEN);
+            game.getPlayerByName("leo").getBoard().addToTable(Color.BLUE);
+        game.getPlayerByName("leo").getBoard().addToTable(Color.PINK);
+        game.getPlayerByName("leo").getBoard().addToTable(Color.YELLOW);
+        game.getPlayerByName("leo").getBoard().addToTable(Color.GREEN);
+        game.getPlayerByName("mari").getBoard().addToTable(Color.RED);
+
+        game.updateTeachersOwnership(game.getPlayerByName("mari"));
+        assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.BLUE));
+        assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.PINK));
+        assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.GREEN));
+        assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.YELLOW));
+        assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.RED));
         game.updateTeachersOwnership(game.getPlayerByName("leo"));
-        Color blueTeacher= game.getPlayerByName("leo").getBoard().getTeacherTable().get(0);
-        assertEquals(BLUE,blueTeacher);
+        assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.BLUE));
+        assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.PINK));
+        assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.GREEN));
+        assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.YELLOW));
+        assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.RED));
+
+        game.getPlayerByName("leo").getBoard().addToTable(Color.RED);
+        game.getPlayerByName("leo").getBoard().addToTable(Color.RED);
+        game.updateTeachersOwnership(game.getPlayerByName("leo"));
+        assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.RED));
+        assertFalse(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.RED));
+        assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.BLUE));
+        assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.PINK));
+        assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.GREEN));
+        assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.YELLOW));
     }
-
-
-     */
 }
 
 
