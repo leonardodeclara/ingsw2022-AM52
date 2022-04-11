@@ -16,6 +16,9 @@ class ExpertGameTest {
 
     @Test
     void moveStudentFromLobbyForCard2() {
+        ExpertGame game = new ExpertGame();
+
+
     }
 
     @Test

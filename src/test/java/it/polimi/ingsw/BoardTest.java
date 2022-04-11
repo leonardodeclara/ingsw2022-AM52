@@ -84,11 +84,16 @@ class BoardTest {
     }
 
     @Test
-    void addTowerTest() {
-    }
-
-    @Test
-    void removeTowerTest() {
+    void TowerTest(){
+        Board board = new Board();
+        board.addTower(Tower.BLACK);
+        assertEquals(1, board.getTowers());
+        board.addTower(Tower.WHITE);
+        assertEquals(2, board.getTowers());
+        board.addTower(Tower.GREY);
+        assertEquals(3, board.getTowers());
+        board.removeTower();
+        assertEquals(2, board.getTowers());
     }
 
     @Test
@@ -137,5 +142,27 @@ class BoardTest {
         assertFalse(board.isTableFull(Color.PINK));
         assertFalse(board.isTableFull(Color.RED));
     }
+
+     @Test
+    void getTableNumberOfStudentsTest(){
+        Board board = new Board();
+         board.addToTable(Color.BLUE);
+         HashMap<Color, Integer> colors = new HashMap<>();
+         colors.put(Color.GREEN,0);
+         colors.put(Color.RED,0);
+         colors.put(Color.YELLOW,0);
+         colors.put(Color.PINK,0);
+         colors.put(Color.BLUE,1);
+         assertEquals(1, board.getTableNumberOfStudents(Color.BLUE));
+     }
+
+     @Test
+    void setTowersTest(){
+        Board board = new Board();
+        board.setTowers(1);
+        assertEquals(1, board.getTowers());
+
+     }
+
 
 }
