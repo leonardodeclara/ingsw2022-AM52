@@ -154,6 +154,20 @@ public class ExpertGame extends Game {
         returnMap.put("ID Player", owner.getPlayerId());
         returnMap.put("Is Draw", isDraw);
         return returnMap;
+    }
+    public ArrayList<Personality> getPersonalities() {
+        return personalities;
+    }
 
+    public Personality getActivePersonality() {
+        return activePersonality;
+    }
+
+    public int getCoins() {
+        return coins;
+    }
+
+    public int getBans() {
+        return bans;
     }
 }
