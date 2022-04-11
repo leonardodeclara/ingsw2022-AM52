@@ -1,7 +1,8 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.Basket;
+import it.polimi.ingsw.model.Color;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.engine.support.descriptor.FileSystemSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 

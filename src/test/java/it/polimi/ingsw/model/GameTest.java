@@ -1,11 +1,10 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static it.polimi.ingsw.Color.BLUE;
-import static it.polimi.ingsw.Color.PINK;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("ALL")
@@ -38,7 +37,7 @@ class GameTest {
                     assertTrue(game.getTeachers().get(i)!=game.getTeachers().get(j));
                 }
         }
-        for (int i = 0; i<Color.values().length;i++)
+        for (int i = 0; i< Color.values().length; i++)
             assertNull(game.getTeachersOwners().get(Color.values()[i]));
     }
 

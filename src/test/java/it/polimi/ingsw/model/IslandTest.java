@@ -1,7 +1,9 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.Color;
+import it.polimi.ingsw.model.Island;
+import it.polimi.ingsw.model.Tower;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.engine.support.descriptor.FileSystemSource;
 
 import java.util.ArrayList;
 

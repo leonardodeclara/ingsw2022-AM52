@@ -1,7 +1,6 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * This class shapes the behaviour of the game's component represented by the island tile.

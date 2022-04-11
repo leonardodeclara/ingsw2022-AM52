@@ -1,11 +1,10 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model;
 
 
 
-import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Array;
-
+import it.polimi.ingsw.model.Board;
+import it.polimi.ingsw.model.Color;
+import it.polimi.ingsw.model.Tower;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
