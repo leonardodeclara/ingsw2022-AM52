@@ -16,7 +16,7 @@ public class Board {
     private int towers;
 
     /**
-     * Constructor creates a Board istance.
+     * Constructor creates a Board instance.
      *
      */
 
@@ -74,6 +74,7 @@ public class Board {
         studentsTable.put(student,numOfStudents);
     }
 
+    @SuppressWarnings("GrazieInspection")
     public void SwitchStudents() {
         /*cosa prende in input? Un colore? Un indice?*/
 
@@ -118,5 +119,13 @@ public class Board {
 
     public int getTowers() {
         return towers;
+    }
+
+    public int getTableNumberOfStudents(Color tableColor){
+        return studentsTable.get(tableColor);
+    }
+
+    public void setTowers(int towers) {
+        this.towers = towers;
     }
 }

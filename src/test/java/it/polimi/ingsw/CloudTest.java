@@ -3,6 +3,7 @@ package it.polimi.ingsw;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,8 +32,7 @@ class CloudTest {
     void emptyStudentsTest() {
         Cloud cloud = new Cloud(1);
         ArrayList<Color> newStudents = new ArrayList<>();
-        for (int i = 0; i< Color.values().length; i++)
-            newStudents.add(Color.values()[i]);
+        Collections.addAll(newStudents,Color.values());
         cloud.fillStudents(newStudents);
         assertEquals(newStudents, cloud.emptyStudents());
         assertEquals(0, cloud.getStudents().size());

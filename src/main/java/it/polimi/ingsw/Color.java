@@ -8,7 +8,7 @@ public enum Color {
     private final int index;
 
     /**
-     * Costructor creates a new color istance.
+     * Constructor creates a new color instance.
      * @param index: number representative for the color's index.
      */
     Color(int index) {

@@ -3,7 +3,7 @@ package it.polimi.ingsw;
 import java.util.ArrayList;
 
 /**
- * This class contanis the information of a PLayer.
+ * This class contains the information of a PLayer.
  * Each player can be identified by its playerId.
  * Each player has a Board (?)
  */
@@ -54,6 +54,7 @@ public class Player {
     public void setTeam(Tower team) {
         this.team = team;
     }
+
 }
 
 

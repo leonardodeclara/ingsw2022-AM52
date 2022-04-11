@@ -65,9 +65,9 @@ class BoardTest {
         Board board = new Board();
         board.addTeacher(Color.GREEN);
         assertEquals(1,board.getTeacherTable().size());
-        assertEquals(Color.GREEN, board.getTeacherTable().get(0));
+        assertTrue(board.getTeacherTable().contains(Color.GREEN));
         board.addTeacher(Color.BLUE);
-        assertEquals(Color.BLUE, board.getTeacherTable().get(1));
+        assertTrue(board.getTeacherTable().contains(Color.BLUE));
     }
 
     @Test

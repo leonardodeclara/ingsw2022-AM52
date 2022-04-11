@@ -1,9 +1,7 @@
 package it.polimi.ingsw;
 
 import java.sql.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 /**
  * This class contains the majority of the game's elements and logic.
@@ -11,30 +9,39 @@ import java.util.Random;
 
 public class Game {
     private static final int MAX_NUM_ISLANDS = 12;
+    private static final int MAX_LOBBY_SIZE = 10;
+    protected static final int ISLAND_ID_NOT_RECEIVED = -1;
+    private static final int ISLAND_THRESHOLD_FOR_GAME_OVER = 3;
+    private static final int MAX_TOWER_NUMBER = 10;
     private Basket basket;
-    private ArrayList<Player> players;
+    protected ArrayList<Player> players;
     //private ArrayList<Player> activePlayers;
     //potrebbe servire per gestire la resilienza
-    private Player currentPlayer;
+    protected Player currentPlayer;
     private Player winner;
-    private ArrayList<Island> islands;
+    protected ArrayList<Island> islands;
     private ArrayList<Cloud> clouds;
-    private ArrayList<Teacher> teachers;
+    private ArrayList<Color> teachers;
     private ArrayList<Assistant> assistantDecks;
     private HashMap<Integer,Assistant> currentTurnAssistantCards;
-    private Island currentMotherNatureIsland;
-    //private boolean motherNature;
+    protected Island currentMotherNatureIsland;
     private boolean lastRound;
+    protected HashMap<Color,Player> teachersOwners;
 
+
+    //AGGIUNGERE TRY CATCH PER refillClouds()che setta lastRound = true
+    //AGGIUNGERE TRY CATCH PER playAssistantCard() quando viene giocata l'ultima, che setta lastRound = true
+    //AGGIUNGERE TRY CATCH per refillClouds() per quando non ci sono abbastanza studenti per le nuvole => si salta la fase letPlayerPickStudent
     public Game() {
         players = new ArrayList<>();
         islands = new ArrayList<>();
         clouds = new ArrayList<>();
         teachers = new ArrayList<>();
-        assistantDecks = new ArrayList<>();
+        assistantDecks = new ArrayList<>(); //bisogna implementare effettivamente le 40 carte con relative statistiche
         currentTurnAssistantCards = new HashMap<Integer,Assistant>();
         this.lastRound = false;
         winner = null;
+        teachersOwners = new HashMap<>();
     }
 
     /**
@@ -49,13 +56,17 @@ public class Game {
             throw new RuntimeException("Superato limite di giocatori");
     }
 
-    //si potrebbe inserire parte del suo funzionamento all'interno del costruttore in modo da alleggerirlo
-    //ad esempio: monete, divieti (solo nel costruttore di expert game),
+    /**
+     * This method instantiates all the game elements (clouds,teachers,basket,islands and boards).
+     *
+     */
     public void instantiateGameElements(){
         //istanziati i professori al tavolo di gioco
-        for (Color color: Color.values()){
-            teachers.add(new Teacher(color));
+        teachers.addAll(Arrays.asList(Color.values()));
+        for(int i =0; i< Color.values().length;i++){
+            teachersOwners.put(Color.values()[i], null);
         }
+
         //aggiunte tutte le carte di tutti i maghi
         for(int numWizard = 0; numWizard < 4; numWizard++){
             int numMoves;
@@ -91,18 +102,18 @@ public class Game {
             clouds.add(new Cloud(i));
         }
 
-        //per l'aggiunta delle torri bisogna conoscere il numero di giocatori e la scelta dei giocatori
-        //vedere come fare
-        /*se facciamo con attributo Tower: team in player basta fare
+
         for (Player player: players)
-            player.getBoard().setTowers(players.size()==2? 6:8)
-         */
+            player.getBoard().setTowers(players.size()==2? 8:6);
 
 
     }
 
-    //pescata in automatico di 7 pedine se 2 player, 9 pedine se 3, ma in teoria dovrebbe essere il giocatore a pescarne una alla volta
-    //rivedere se cambiare o va bene così
+    /**
+     * Method initiatePlayerLobby calculates the number of students to put in the players' lobby
+     * and does it
+     * @param:playerId : id given to the player, used as the index for the players arrayList
+     */
     public void initiatePlayerLobby(int playerId){
         int studentLimit = players.size()==2? 7: 9;
         for(int k = 0; k < studentLimit; k++)
@@ -119,13 +130,15 @@ public class Game {
         for (Island island: islands){
             if(island.getIslandIndex()!= currentMotherNatureIsland.getIslandIndex() && !(island.getIslandIndex()==(6+currentMotherNatureIsland.getIslandIndex())%12)){
                 island.addStudent(basket.pickStudent());
-                island.addStudent(basket.pickStudent());
             }
         }
     }
 
-    //input: a player and its deck number
-    //gives him the relative cards
+    /**
+     * Method giveAssistantDeck assigns the deck of 10 assistant cards to the given player.
+     * @param playerId : id given to the player, used as the index for the players arrayList
+     * @param deckId : id given to the deck, the player uses it communicate which deck he wants
+     */
     public void giveAssistantDeck(int playerId, int deckId){
         ArrayList<Assistant> assignedDeck = new ArrayList<>();
         for (Assistant assistant: assistantDecks){
@@ -138,8 +151,12 @@ public class Game {
         players.get(playerId).setDeck(assignedDeck);
     }
 
-    //rimuove dalle carte del giocatore quella che ha appena giocata, la aggiunge in quelle giocate nel turno corrente
-    //e returna la priority (cardScore)
+    /**
+     * Method playAssistantCard removes the card to the player's deck and adds it to the current turn played assistant cards
+     * in order to calculate the playing order for the action phase
+     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param cardId : id given to the card, used as the index for the player's deck ArrayList
+     */
     public int playAssistantCard(int playerId,int cardId){
         ArrayList<Assistant> newDeck = players.get(playerId).getDeck();
         Assistant playedCard = newDeck.get(cardId);
@@ -150,7 +167,12 @@ public class Game {
         return cardScore;
     }
 
-    //chiamato nello step 1 della fase azione
+    /**
+     * Method moveMotherNature checks  if the player with Player ID can move Mother Nature of numSteps
+     *  and if it's doable, moves Mother Nature from the current island to the new one
+     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param numSteps : number of islands that the player identified with the playerId wants to move mother nature
+     */
     public boolean moveMotherNature(int playerId,int numSteps){
         if(!isMoveMNLegal(playerId,numSteps))
             return false;
@@ -158,36 +180,69 @@ public class Game {
         Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
         Island dest = islands.get(from.getIslandIndex() + numSteps % islands.size());
 
-        //manca il ricalcolo dell'influenza
-
         from.setMotherNature(false);
         dest.setMotherNature(true);
         return true;
     }
 
-    //chiamato dal Controller nello step 2 della fase Azione
-    public boolean moveStudentsFromLobby(int playerId,int studentIndex,int islandId){
+    /**
+     * Method moveStudentFromLobby checks  if the player with Player ID can move the student in his lobby to an island or
+     *  the corresponding table. If it's doable the student is moved from the lobby to the table/island. If the island id is -1
+     *  (ISLAND_ID_NOT_RECEIVED) the student is moved to the table. Otherwise, the student is moved to the island
+     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param studentIndex : number of islands that the player identified with the playerId wants to move mother nature
+     * @param islandId : the id of the destination island (or -1 if no island is specified)
+     */
+    public boolean moveStudentFromLobby(int playerId,int studentIndex,int islandId){
         Player player = players.get(playerId);
         if(!isMoveStudentFromLobbyLegal(player,studentIndex,islandId))
             return false;
-        if(islandId == -1){
-            player.getBoard().removeFromLobby(studentIndex);
-            Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
+        Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
+        player.getBoard().removeFromLobby(studentIndex);
+        if(islandId == ISLAND_ID_NOT_RECEIVED)
             player.getBoard().addToTable(studentToMove);
-        }
         else
         {
-            player.getBoard().removeFromLobby(studentIndex);
-            Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
             Island islandDest = islands.get(islandId);
             islandDest.addStudent(studentToMove);
         }
+        //aggiorna l'ownership dei teacher
+        updateTeachersOwnership(player);
         return true;
     }
-    //chiamato dal Controller nello step 3 della fase Azione
+    /**
+     * Method updateTeachersOwnership recalculates the given player's number of students and possibly assigns him 1+
+     *  teachers ownership
+     * @param player : reference of the player of whom we want to check teachers' ownership
+     *
+     */
+    public void updateTeachersOwnership(Player player){
+        for(Color c : Color.values()) {
+            Player owner = teachersOwners.get(c);
+            if(owner != null){
+                if (player.getBoard().getTableNumberOfStudents(c) > owner.getBoard().getTableNumberOfStudents(c)) {
+                    owner.getBoard().removeTeacher(c);
+                    player.getBoard().addTeacher(c);
+                    teachersOwners.put(c, player);
+                }
+            }else{
+                player.getBoard().addTeacher(c);
+                teachers.remove(c);
+                teachersOwners.put(c, player);
+            }
+
+        }
+    }
+
+    /**
+     * Method moveStudentsToLobby moves all the students on a given cloud, to the given player lobby
+     *
+     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param cloudId : id given to the cloud to empty
+     */
     public boolean moveStudentsToLobby(int playerId,int cloudId){
         Player player = players.get(playerId);
-        if(!IsMoveStudentsToLobbyLegal(player,cloudId))
+        if(!isMoveStudentsToLobbyLegal(player,cloudId))
             return false;
         Cloud cloud = clouds.get(cloudId);
         ArrayList<Color> studentsToMove = cloud.emptyStudents();
@@ -195,7 +250,6 @@ public class Game {
             player.getBoard().addToLobby(student);
         return true;
     }
-
     /**
      * Utility method used to check whether it's the game's last round or not.
      * @return true if the game will be over at the end of the current round, false if not.
@@ -204,52 +258,119 @@ public class Game {
         return lastRound;
     }
 
+    /**
+     * Method isMoveMNLegal checks  if the player with Player ID can move Mother Nature of numSteps
+     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param numSteps : number of islands that the player identified with the playerId wants to move mother nature
+     */
     public boolean isMoveMNLegal(int playerId,int numSteps){
         int playerMaxSteps = currentTurnAssistantCards.get(playerId).getNumMoves();
         return numSteps > playerMaxSteps ? false : true;
     }
 
+    /**
+     * Method isMoveStudentFromLobbyLegal checks  if the player with Player ID can move the student in his lobby to an island or
+     *  the corresponding table.
+     * @param player : id given to the player, used as the index for the players ArrayList
+     * @param studentIndex : number of islands that the player identified with the playerId wants to move mother nature
+     * @param islandId : the id of the destination island (or -1 if no island is specified)
+     */
     public boolean isMoveStudentFromLobbyLegal(Player player,int studentIndex,int islandId){
+        //non sono sicuro sia il modo giusto per gestire questo caso
+        if (studentIndex >= player.getBoard().getLobby().size() || studentIndex<0)
+            return false;
         Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
         if(studentToMove != null){
-            if(islandId == -1){
-                if(player.getBoard().isTableFull(studentToMove))
+            if(islandId == ISLAND_ID_NOT_RECEIVED){
+                if(!player.getBoard().isTableFull(studentToMove))
                     return true;
             }
-            else
-            {
-                if(islandId >= 0 && islandId <= islands.size())
+            else if(islandId >= 0 && islandId <= islands.size())
                     return true;
-            }
         }
         return false;
     }
 
-    public boolean IsMoveStudentsToLobbyLegal(Player player,int cloudId){
-        return (cloudId >= 0 && cloudId <= clouds.size() && !clouds.get(cloudId).getStudents().isEmpty()) ? true : false;
+    /**
+     * Method isMoveStudentsToLobbyLegal checks if the given cloudId identifies a cloud which contains students
+     *
+     * @param player: reference of the player who wants to perform the
+     * @param cloudId : id given to the cloud to empty
+     */
+    public boolean isMoveStudentsToLobbyLegal(Player player,int cloudId){
+        if (cloudId >= 0 && cloudId <= clouds.size()-1)
+            return (!clouds.get(cloudId).getStudents().isEmpty()) ? true : false;
+        return false;
     }
 
+    /**
+     * Method refillClouds refills all the clouds in the clouds ArrayList.
+     * It's responsible for checking whether a picked student is null, in which case it sets lastRound flag to true.
+     */
     public void refillClouds(){
         int numOfPicks = players.size()+1;
         ArrayList<Color> picks = new ArrayList<>();
+        Color pick;
         for (Cloud cloud: clouds){
             for(int i= 0; i< numOfPicks;i++){
-                picks.add(basket.pickStudent());
+                pick = basket.pickStudent();
+                if (pick==null){
+                    setLastRound(true);
+                    return;
+                }
+                picks.add(pick);
             }
             cloud.fillStudents(picks);
             picks.clear();
         }
     }
 
+
+
+    /**
+     * Method calculateInfluence calculate the player with the highest influence on the given island
+     *If two or more players have the highest influence, then only one of them is returned, together with the isDraw flag
+     * which tells to the Controller who called the calculateInfluence method if the outcome of the calculation was a draw or not.
+     * @param island : reference of the island on which the influence is calculated
+     */
+    public HashMap<String,Number> calculateInfluence(Island island) {
+        int max_infl = 0, infl;
+        short isDraw = 0;
+        Player owner = island.getOwner();
+        HashMap<String, Number> returnMap = new HashMap<>();
+
+        for (Player p : players) {
+            infl = 0;
+            for (Color t : p.getBoard().getTeacherTable()) {
+                infl += island.getStudentsOfColor(t).size();
+                if (island.getTowers().size() > 0)
+                    if (island.getOwnerTeam().equals(p.getTeam()))
+                        infl += island.getTowers().size();
+            }
+            if (infl > max_infl) {
+                max_infl = infl;
+                owner = p;
+                isDraw = 0;
+            } else if (infl == max_infl)
+                isDraw = 1;
+        }
+
+        if (!owner.equals(island.getOwner())&& isDraw==0)
+            island.setOwner(owner);
+
+            returnMap.put("ID Player", owner.getPlayerId());
+            returnMap.put("Is Draw", isDraw);
+            return returnMap;
+    }
     /**
      * Method lastRound sets the relative boolean flag to true or false, according to the game's state.
-     * @param lastRound : flag representative of the satisfaction of two gameover's conditions.
+     * @param lastRound : flag representative of the satisfaction of gameover's conditions.
      */
     public void setLastRound(boolean lastRound) {
         this.lastRound = lastRound;
     }
 
-    public ArrayList<Teacher> getTeachers() {
+    public ArrayList<Color> getTeachers() {
         return teachers;
     }
 
@@ -267,6 +388,10 @@ public class Game {
 
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public HashMap<Integer,Assistant> getCurrentTurnAssistantCards(){
+        return currentTurnAssistantCards;
     }
 
     public ArrayList<Integer> GetEmptyCloudsID(){
@@ -306,11 +431,12 @@ public class Game {
                 return true;
             }
         }
-        if (islands.size()<=3){
-            int minTowers = 10;
+        if (islands.size()<=ISLAND_THRESHOLD_FOR_GAME_OVER){
+            int minTowers = MAX_TOWER_NUMBER;
             ArrayList<Player> potentialWinners = new ArrayList<>();
             for (Player potentialWinner: players){
                 if (potentialWinner.getBoard().getTowers()<minTowers){
+                    potentialWinners.clear();
                     potentialWinners.add(potentialWinner);
                     minTowers=potentialWinner.getBoard().getTowers();
                 }
@@ -333,12 +459,31 @@ public class Game {
                         winner = null;
                     }
                 }
+                return true;
             }
         }
         return false;
+    }
 
+    public Player getPlayerByName(String name){
+        for (Player player: players){
+            if(player.getNickname().equalsIgnoreCase(name))
+                return player;
+        }
+        return null;
+    }
+
+    public Player getWinner() {
+        return winner;
+    }
+
+    public HashMap<Color, Player> getTeachersOwners() {
+        return teachersOwners;
     }
 }
+
+
+
 
 
 
