@@ -89,7 +89,8 @@ public class Board {
         return teacher;
     }
 
-    public void addTower(Tower tower) {
+    public void addTower() {
+        //bisogna inserire un controllo che non si inseriscano più torri di quanto permesso
         towers++;
     }
 

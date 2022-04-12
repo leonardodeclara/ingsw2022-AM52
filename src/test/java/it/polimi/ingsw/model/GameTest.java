@@ -492,6 +492,27 @@ class GameTest {
         assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.GREEN));
         assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.YELLOW));
     }
+
+    @Test
+    void lastRoundTest(){
+        Game game = new Game();
+        game.addPlayer(new Player(0, "mari", Tower.GREY));
+        game.addPlayer(new Player(1, "frizio", Tower.WHITE));
+        game.instantiateGameElements();
+        game.setBasket(new Basket(new int[]{0,0,0,0,0}));
+        game.refillClouds();
+        assertTrue(game.isLastRound());
+    }
+
+    @Test
+    void nullPlayerNameTest(){
+        Game game = new Game();
+        game.addPlayer(new Player(0, "mari", Tower.GREY));
+        game.addPlayer(new Player(1, "frizio", Tower.WHITE));
+        assertNull(game.getPlayerByName("leo"));
+    }
+
+    //mancano test su moveMN e getPlayableAssistantCard
 }
 
 
