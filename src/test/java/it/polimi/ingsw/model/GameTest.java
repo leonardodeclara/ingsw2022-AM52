@@ -378,13 +378,20 @@ class GameTest {
 
     }
 
-    //test senza torri e no pareggi
+    //test senza torri e con pareggi
     @Test
     void onlyStudentsInfluenceTest(){
         Game game = new Game();
         game.addPlayer(new Player(0,"leo",Tower.WHITE));
         game.addPlayer(new Player(1,"mari",Tower.BLACK));
         game.instantiateGameElements();
+        int mnIndex = 0;
+        for (int j = 0; j< 12;j++){
+            if(game.getIslands().get(j).isMotherNature())
+                mnIndex=j;
+        }
+        assertNull(game.calculateInfluence(game.getIslands().get(mnIndex)).get("ID Player"));
+        assertEquals((short) 1, game.calculateInfluence(game.getIslands().get(mnIndex)).get("Is Draw"));
         game.getPlayerByName("leo").getBoard().addTeacher(Color.BLUE);
         game.getPlayerByName("leo").getBoard().addTeacher(Color.PINK);
         game.getPlayerByName("leo").getBoard().addTeacher(Color.RED);

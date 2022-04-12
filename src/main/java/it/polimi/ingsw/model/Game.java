@@ -356,13 +356,21 @@ public class Game {
             } else if (infl == max_infl)
                 isDraw = 1;
         }
-        //se getOwner()restituisce null è un problema
-        if (!owner.equals(island.getOwner())&& isDraw==0)
-            island.setOwner(owner);
+        //se getOwner() restituisce null è un problema
+        //nel caso limite in cui si debba calcolare l'influenza su un'isola dove non ci sono pedine,
+        //e non ci sono torri getOwner() restituirebbe null, generando una NullPointerException in equals
 
+        if (owner==null ){
+            returnMap.put("ID Player", null);
+        }
+        else if (!owner.equals(island.getOwner()) && isDraw==0) {
+            island.setOwner(owner);
             returnMap.put("ID Player", owner.getPlayerId());
-            returnMap.put("Is Draw", isDraw);
-            return returnMap;
+        }
+        else
+            returnMap.put("ID Player", island.getOwner().getPlayerId());
+        returnMap.put("Is Draw", isDraw);
+        return returnMap;
     }
     /**
      * Method lastRound sets the relative boolean flag to true or false, according to the game's state.

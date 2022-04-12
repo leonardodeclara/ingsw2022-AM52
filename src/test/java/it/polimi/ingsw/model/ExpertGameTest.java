@@ -3,6 +3,8 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.ExpertGame;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ExpertGameTest {
@@ -107,23 +109,42 @@ class ExpertGameTest {
     void calculateInfluenceForCard8() {
     }
 
-    //va sistemato il calcolo dell'influenza
-    //ci sono problemi se l'isola non ha pedine e quindi non ha proprietari
+    //effetto: scelto un colore, quel colore non viene considerato nel calcolo dell'influenza
+    //
     @Test
-    void calculateInfluenceForCard9() {
-
-        /*
+    void card9EffectTest() {
         ExpertGame game = new ExpertGame();
         game.addPlayer(new Player(0,"mari",Tower.BLACK));
         game.addPlayer(new Player(1,"frizio",Tower.WHITE));
         game.instantiateGameElements();
+        int mnPosition = 0;
+        for (int i = 0; i< 12;i++){
+            if(game.getIslands().get(i).isMotherNature())
+                mnPosition=i;
+        }
+        //testo il calcolo dell'influenza su due isole vuote
+        HashMap<String,Number> result=game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.GREEN);
+        assertNull(result.get("ID Player"));
+        assertEquals((short) 1, result.get("Is Draw"));
+        result = game.calculateInfluenceForCard9(game.getIslands().get((mnPosition+6)%12), Color.GREEN);
+        assertNull(result.get("ID Player"));
+        assertEquals((short) 1,result.get("Is Draw"));//pareggio + proprietario era null, rimane null
+        //riempio le isole e ricalcolo l'influenza
+        game.getIslands().get(mnPosition).addStudent(Color.BLUE);
+        game.getIslands().get(mnPosition).addStudent(Color.PINK);
+        game.getIslands().get(mnPosition).addStudent(Color.YELLOW);
         game.getPlayerByName("frizio").getBoard().addTeacher(Color.BLUE);
-        game.getPlayerByName("frizio").getBoard().addTeacher(Color.PINK);
-        game.getPlayerByName("frizio").getBoard().addTeacher(Color.RED);
+        game.getPlayerByName("mari").getBoard().addTeacher(Color.PINK);
+        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.BLUE);
+        assertEquals(0,result.get("ID Player"));
+        assertEquals((short) 0, result.get("Is Draw"));
+        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.PINK);
+        assertEquals(1,result.get("ID Player"));
+        assertEquals((short) 0, result.get("Is Draw"));
         game.getPlayerByName("frizio").getBoard().addTeacher(Color.YELLOW);
-        game.getPlayerByName("mari").getBoard().addTeacher(Color.GREEN);
-        assertNotEquals(0,game.calculateInfluenceForCard9(game.getIslands().get(0), Color.GREEN).get("ID Player"));
-*/
-
+        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.YELLOW);
+        assertEquals(1,result.get("ID Player"));
+        assertEquals((short) 1, result.get("Is Draw")); //pareggio, resta proprietario il precedente proprietario
     }
+
 }

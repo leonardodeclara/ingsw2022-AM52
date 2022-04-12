@@ -78,12 +78,13 @@ public class ExpertGame extends Game {
     }
 
     public HashMap<String,Number> calculateInfluenceForCard6(Island island) {
-        int max_infl = 0, infl = 0;
+        int max_infl = 0, infl;
         short isDraw = 0;
         Player owner = island.getOwner();
         HashMap<String, Number> returnMap = new HashMap<>();
 
         for (Player p : players) {
+            infl = 0;
             for (Color t : p.getBoard().getTeacherTable()) {
                 infl += island.getStudentsOfColor(t).size();
             }
@@ -96,10 +97,15 @@ public class ExpertGame extends Game {
 
         }
 
-        if (!owner.equals(island.getOwner()))
+        if (owner==null ){
+            returnMap.put("ID Player", null);
+        }
+        else if (!owner.equals(island.getOwner()) && isDraw==0) {
             island.setOwner(owner);
-
-        returnMap.put("ID Player", owner.getPlayerId());
+            returnMap.put("ID Player", owner.getPlayerId());
+        }
+        else
+            returnMap.put("ID Player", island.getOwner().getPlayerId());
         returnMap.put("Is Draw", isDraw);
         return returnMap;
 
@@ -129,25 +135,28 @@ public class ExpertGame extends Game {
                 isDraw = 1;
         }
 
-        if (!owner.equals(island.getOwner()))
+        if (owner==null ){
+            returnMap.put("ID Player", null);
+        }
+        else if (!owner.equals(island.getOwner()) && isDraw==0) {
             island.setOwner(owner);
-
-        returnMap.put("ID Player", owner.getPlayerId());
+            returnMap.put("ID Player", owner.getPlayerId());
+        }
+        else
+            returnMap.put("ID Player", island.getOwner().getPlayerId());
         returnMap.put("Is Draw", isDraw);
         return returnMap;
 
     }
 
-    //da sistemare, ci sono problemi quando l'isola non ha proprietari (owner = null)
     public HashMap<String,Number> calculateInfluenceForCard9(Island island,Color bannedColor) {
-        int max_infl = 0, infl = 0;
+        int max_infl = 0, infl;
         short isDraw = 0;
         Player owner = island.getOwner();
         HashMap<String, Number> returnMap = new HashMap<>();
 
         for (Player p : players) {
-            if(p.equals(currentPlayer))
-                infl+=2;
+            infl = 0;
             for (Color t : p.getBoard().getTeacherTable()) {
                 if(!t.equals(bannedColor))
                     infl += island.getStudentsOfColor(t).size();
@@ -161,13 +170,18 @@ public class ExpertGame extends Game {
                 isDraw = 0;
             } else if (infl == max_infl)
                 isDraw = 1;
-            infl = 0;
-        }
-        //se getOwner()restituisce null è un problema
-        if (!owner.equals(island.getOwner()))
-            island.setOwner(owner);
 
-        returnMap.put("ID Player", owner.getPlayerId());
+        }
+
+        if (owner==null ){
+            returnMap.put("ID Player", null);
+        }
+        else if (!owner.equals(island.getOwner()) && isDraw==0) {
+            island.setOwner(owner);
+            returnMap.put("ID Player", owner.getPlayerId());
+        }
+        else
+            returnMap.put("ID Player", island.getOwner().getPlayerId());
         returnMap.put("Is Draw", isDraw);
         return returnMap;
     }
