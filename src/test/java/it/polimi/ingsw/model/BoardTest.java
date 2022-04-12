@@ -23,6 +23,15 @@ class BoardTest {
         assertEquals(2,board.getLobby().size());
         board.addToLobby(Color.PINK);
         assertEquals(3,board.getLobby().size());
+        int redCount=0, pinkCount=0;
+        for(Color tile: board.getLobby()){
+            if(tile.equals(Color.RED))
+                redCount+=1;
+            else if(tile.equals(Color.PINK))
+                pinkCount+=1;
+        }
+        assertEquals(2, redCount);
+        assertEquals(1,pinkCount);
     }
 
     @Test

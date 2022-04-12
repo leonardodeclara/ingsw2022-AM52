@@ -23,7 +23,7 @@ public class ExpertGame extends Game {
     public void instantiateGameElements() {
         super.instantiateGameElements();
         //l'estrazione potrebbe essere resa indipendente da instantiateGameElements
-        extractPersonalityCards();
+        //extractPersonalityCards();
     }
 
     public boolean moveStudentFromLobbyForCard2(int playerId,int studentIndex,int islandId){
@@ -46,10 +46,19 @@ public class ExpertGame extends Game {
     public void updateTeachersOwnershipForCard2(Player player){
         for(Color c : Color.values()) {
             Player owner = teachersOwners.get(c);
-            if (player.getBoard().getTableNumberOfStudents(c) >= owner.getBoard().getTableNumberOfStudents(c)) {
-                owner.getBoard().removeTeacher(c);
-                player.getBoard().addTeacher(c);
-                teachersOwners.put(c, player);
+            if(owner!=null){
+                if (player.getBoard().getTableNumberOfStudents(c) >= owner.getBoard().getTableNumberOfStudents(c)) {
+                    owner.getBoard().removeTeacher(c);
+                    player.getBoard().addTeacher(c);
+                    teachersOwners.put(c, player);
+                }
+            }
+            else {
+                if (player.getBoard().getTableNumberOfStudents(c)>0){
+                    player.getBoard().addTeacher(c);
+                    teachers.remove(c);
+                    teachersOwners.put(c, player);
+                }
             }
         }
     }
@@ -163,20 +172,25 @@ public class ExpertGame extends Game {
     }
 
     public void extractPersonalityCards() {
+        ArrayList<Integer> extractedIndexes = new ArrayList<>();
+        int randomIndex=0;
         for (int i = 0; i < NUM_PLAYABLE_PERSONALITY_CARDS; i++) {
             Random random = new Random();
-            int randomIndex = random.nextInt(NUM_EXISTING_PERSONALITY_CARDS);
-            if (randomIndex == 0 || randomIndex == 6 || randomIndex == 10) {
-                LobbyPersonality extractedCard = new LobbyPersonality(randomIndex, (randomIndex + 1) % 3);
-                int lobbyDimension = randomIndex == 6 ? 6 : 4;
+            do{
+                randomIndex = random.nextInt(NUM_EXISTING_PERSONALITY_CARDS)+1;
+            } while(extractedIndexes.contains(randomIndex));
+            extractedIndexes.add(randomIndex);
+            if (randomIndex == 1 || randomIndex == 7 || randomIndex == 11) {
+                LobbyPersonality extractedCard = new LobbyPersonality(randomIndex, randomIndex%3);
+                int lobbyDimension = randomIndex == 7 ? 6 : 4;
                 for (int j = 0; j < lobbyDimension; j++)
                     extractedCard.addStudent(basket.pickStudent());
                 personalities.add(extractedCard);
-            } else if (randomIndex == 4) {
-                BanPersonality extractedCard = new BanPersonality(randomIndex, (randomIndex + 1) % 3);
+            } else if (randomIndex == 5) {
+                BanPersonality extractedCard = new BanPersonality(randomIndex, (randomIndex) % 3);
                 personalities.add(extractedCard);
             } else {
-                Personality extractedCard = new Personality(randomIndex, (randomIndex + 1) % 3);
+                Personality extractedCard = new Personality(randomIndex, randomIndex%3!=0?(randomIndex) % 3:3);
                 personalities.add(extractedCard);
             }
         }

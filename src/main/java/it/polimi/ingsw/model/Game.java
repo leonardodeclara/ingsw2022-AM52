@@ -20,7 +20,7 @@ public class Game {
     private Player winner;
     protected ArrayList<Island> islands;
     private ArrayList<Cloud> clouds;
-    private ArrayList<Color> teachers;
+    protected ArrayList<Color> teachers;
     private ArrayList<Assistant> assistantDecks;
     private HashMap<Integer,Assistant> currentTurnAssistantCards;
     protected Island currentMotherNatureIsland;
@@ -224,12 +224,14 @@ public class Game {
                     player.getBoard().addTeacher(c);
                     teachersOwners.put(c, player);
                 }
-            }else{
-                player.getBoard().addTeacher(c);
-                teachers.remove(c);
-                teachersOwners.put(c, player);
             }
-
+            else {
+                if (player.getBoard().getTableNumberOfStudents(c)>0){
+                    player.getBoard().addTeacher(c);
+                    teachers.remove(c);
+                    teachersOwners.put(c, player);
+                }
+            }
         }
     }
 
