@@ -94,7 +94,6 @@ class ExpertGameTest {
         assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.PINK));
         assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.GREEN));
         assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.YELLOW));
-
     }
 
     @Test
@@ -107,7 +106,44 @@ class ExpertGameTest {
 
     @Test
     void calculateInfluenceForCard8() {
+        ExpertGame game = new ExpertGame();
+        game.addPlayer(new Player(0,"leo",Tower.GREY));
+        game.addPlayer(new Player(1,"mari",Tower.BLACK));
+        game.instantiateGameElements();
+        int mnPosition = 0;
+        for (int i = 0; i< 12;i++){
+            if(game.getIslands().get(i).isMotherNature())
+                mnPosition=i;
+        }
+        game.setCurrentPlayer(game.getPlayerByName("mari"));
+        //testo il calcolo dell'influenza su due isole vuote
+        HashMap<String,Number> result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
+        assertEquals(1,result.get("ID Player"));
+        assertEquals((short) 0, result.get("Is Draw"));
+        //riempio le isole e ricalcolo l'influenza
+        game.getIslands().get(mnPosition).addStudent(Color.RED);
+        game.getIslands().get(mnPosition).addStudent(Color.PINK);
+        game.getIslands().get(mnPosition).addStudent(Color.YELLOW);
+        game.getPlayerByName("leo").getBoard().addTeacher(Color.RED);
+        game.getPlayerByName("mari").getBoard().addTeacher(Color.PINK);
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
+        assertEquals(1,result.get("ID Player"));
+        assertEquals((short) 0, result.get("Is Draw"));
+        game.getPlayerByName("leo").getBoard().addTeacher(Color.YELLOW);
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
+        assertEquals(1,result.get("ID Player"));
+        assertEquals((short) 0, result.get("Is Draw"));
+        game.getIslands().get(mnPosition).addStudent(Color.YELLOW);
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
+        assertEquals(1,result.get("ID Player"));
+        assertEquals((short) 1, result.get("Is Draw"));
+        game.getIslands().get(mnPosition).addStudent(Color.RED);
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
+        assertEquals(0,result.get("ID Player"));
+        assertEquals((short) 0, result.get("Is Draw"));
+        //dovrei testare anche con le torri
     }
+
 
     //effetto: scelto un colore, quel colore non viene considerato nel calcolo dell'influenza
     //
@@ -145,6 +181,7 @@ class ExpertGameTest {
         result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.YELLOW);
         assertEquals(1,result.get("ID Player"));
         assertEquals((short) 1, result.get("Is Draw")); //pareggio, resta proprietario il precedente proprietario
+        //dovrei testare anche con le torri
     }
 
 }

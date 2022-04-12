@@ -490,6 +490,10 @@ public class Game {
     public HashMap<Color, Player> getTeachersOwners() {
         return teachersOwners;
     }
+
+    public void setCurrentPlayer(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
 }
 
 
