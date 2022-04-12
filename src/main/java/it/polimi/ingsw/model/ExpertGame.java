@@ -1,8 +1,6 @@
 package it.polimi.ingsw.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 public class ExpertGame extends Game {
     private ArrayList<Personality> personalities;
@@ -77,113 +75,41 @@ public class ExpertGame extends Game {
         return true;
     }
 
-    public HashMap<String,Number> calculateInfluenceForCard6(Island island) {
-        int max_infl = 0, infl;
-        short isDraw = 0;
-        Player owner = island.getOwner();
-        HashMap<String, Number> returnMap = new HashMap<>();
-
-        for (Player p : players) {
-            infl = 0;
-            for (Color t : p.getBoard().getTeacherTable()) {
-                infl += island.getStudentsOfColor(t).size();
-            }
-            if (infl > max_infl) {
-                max_infl = infl;
-                owner = p;
-                isDraw = 0;
-            } else if (infl == max_infl)
-                isDraw = 1;
-
-        }
-
-        if (owner==null ){
-            returnMap.put("ID Player", null);
-        }
-        else if (!owner.equals(island.getOwner()) && isDraw==0) {
-            island.setOwner(owner);
-            returnMap.put("ID Player", owner.getPlayerId());
-        }
-        else
-            returnMap.put("ID Player", island.getOwner().getPlayerId());
-        returnMap.put("Is Draw", isDraw);
-        return returnMap;
-
+    public HashMap<String,Number> calculateInfluenceForCard6(Island island){
+        ArrayList<Integer>  influences = calculateStudentsInfluences(island,players);
+        return calculateIslandOwner(island,influences);
     }
 
-    public HashMap<String,Number> calculateInfluenceForCard8(Island island) {
-        int max_infl = 0, infl;
-        short isDraw = 0;
-        Player owner = island.getOwner();
-        HashMap<String, Number> returnMap = new HashMap<>();
-
-        for (Player p : players) {
-            infl=0;
-            if(p.equals(currentPlayer))
-                infl+=2;
-            for (Color t : p.getBoard().getTeacherTable()) {
-                infl += island.getStudentsOfColor(t).size();
-                if (island.getTowers().size() > 0)
-                    if (island.getOwnerTeam().equals(p.getTeam()))
-                        infl += island.getTowers().size();
-            }
-            if (infl > max_infl) {
-                max_infl = infl;
-                owner = p;
-                isDraw = 0;
-            } else if (infl == max_infl)
-                isDraw = 1;
-        }
-
-        if (owner==null ){
-            returnMap.put("ID Player", null);
-        }
-        else if (!owner.equals(island.getOwner()) && isDraw==0) {
-            island.setOwner(owner);
-            returnMap.put("ID Player", owner.getPlayerId());
-        }
-        else
-            returnMap.put("ID Player", island.getOwner().getPlayerId());
-        returnMap.put("Is Draw", isDraw);
-        return returnMap;
-
+    public HashMap<String,Number> calculateInfluenceForCard8(Island island){
+        ArrayList<Integer>  influences = calculateStudentsInfluences(island,players);
+        int towersOwnerIndex = getTowersOwnerIndex(island,players);
+        influences.add(currentPlayer.getPlayerId(),2);
+        if(towersOwnerIndex != -1)
+            influences.add(towersOwnerIndex,island.getTowers().size());
+        return calculateIslandOwner(island,influences);
     }
 
-    public HashMap<String,Number> calculateInfluenceForCard9(Island island,Color bannedColor) {
-        int max_infl = 0, infl;
-        short isDraw = 0;
-        Player owner = island.getOwner();
-        HashMap<String, Number> returnMap = new HashMap<>();
+    public HashMap<String,Number> calculateInfluenceForCard9(Island island,Color bannedColor){
+        ArrayList<Integer>  influences = calculateStudentsInfluences(island,players,bannedColor);
+        int towersOwnerIndex = getTowersOwnerIndex(island,players);
+        if(towersOwnerIndex != -1)
+            influences.add(towersOwnerIndex,island.getTowers().size());
+        return calculateIslandOwner(island,influences);
+    }
 
-        for (Player p : players) {
+    protected ArrayList<Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players,Color bannedColor){
+        int infl = 0;
+        List<Color> allowedColors = new ArrayList<Color>();
+        Collections.addAll(allowedColors,Color.values());
+        allowedColors.remove(bannedColor);
+        ArrayList<Integer> influences = new ArrayList<>();
+        for(Player p: players){
             infl = 0;
-            for (Color t : p.getBoard().getTeacherTable()) {
-                if(!t.equals(bannedColor))
-                    infl += island.getStudentsOfColor(t).size();
-                if (island.getTowers().size() > 0)
-                    if (island.getOwnerTeam().equals(p.getTeam()))
-                        infl += island.getTowers().size();
+            for(Color t:allowedColors){
+                influences.add(island.getStudentsOfColor(t).size());
             }
-            if (infl > max_infl) {
-                max_infl = infl;
-                owner = p;
-                isDraw = 0;
-            } else if (infl == max_infl)
-                isDraw = 1;
-
         }
-
-        if (owner==null ){
-            returnMap.put("ID Player", null);
-        }
-        else if (!owner.equals(island.getOwner()) && isDraw==0) {
-            island.setOwner(owner);
-            returnMap.put("ID Player", owner.getPlayerId());
-        }
-        else
-            returnMap.put("ID Player", island.getOwner().getPlayerId());
-        returnMap.put("Is Draw", isDraw);
-        return returnMap;
+        return influences;
     }
 
     public void extractPersonalityCards() {

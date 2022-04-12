@@ -209,6 +209,7 @@ public class Game {
         updateTeachersOwnership(player);
         return true;
     }
+
     /**
      * Method updateTeachersOwnership recalculates the given player's number of students and possibly assigns him 1+
      *  teachers ownership
@@ -335,6 +336,51 @@ public class Game {
      * which tells to the Controller who called the calculateInfluence method if the outcome of the calculation was a draw or not.
      * @param island : reference of the island on which the influence is calculated
      */
+
+
+    public HashMap<String,Number> calculateInfluence(Island island){
+        ArrayList<Integer>  influences = calculateStudentsInfluences(island,players);
+        int towersOwnerIndex = getTowersOwnerIndex(island,players);
+        if(towersOwnerIndex != -1)
+            influences.add(towersOwnerIndex,island.getTowers().size());
+        //ArrayList<Integer>  influences = sumIntegerArrayLists(calculateStudentsInfluences(island,players),calculateTowerInfluence(island,players));
+        return calculateIslandOwner(island,influences);
+    }
+
+    protected HashMap<String,Number> calculateIslandOwner(Island island,ArrayList<Integer> influences){
+        int max = getMax(influences);
+        int isDraw = max != -1 ? 1 : 0;
+        HashMap<String, Number> returnMap = new HashMap<>();
+
+        Player owner = (isDraw == 1) ? island.getOwner() : players.get(influences.indexOf(max));
+        returnMap.put("Is Draw", isDraw);
+        returnMap.put("ID Player", owner.getPlayerId());
+        island.setOwner(owner);
+        return returnMap;
+    }
+
+
+    protected ArrayList<Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players){
+        int infl = 0;
+        ArrayList<Integer> influences = new ArrayList<>();
+        for(Player p: players){
+            infl = 0;
+            for(Color t:p.getBoard().getTeacherTable()){
+                influences.add(island.getStudentsOfColor(t).size());
+            }
+        }
+        return influences;
+    }
+
+    protected int getTowersOwnerIndex(Island island, ArrayList<Player> players){
+        if (island.getTowers().size() == 0) return -1;
+        for(Player p : players)
+                if (island.getOwnerTeam().equals(p.getTeam()))
+                    return players.indexOf(p);
+        return -1;
+    }
+
+/*
     public HashMap<String,Number> calculateInfluence(Island island) {
         int max_infl = 0, infl;
         short isDraw = 0;
@@ -344,10 +390,7 @@ public class Game {
         for (Player p : players) {
             infl = 0;
             for (Color t : p.getBoard().getTeacherTable()) {
-                infl += island.getStudentsOfColor(t).size();
-                if (island.getTowers().size() > 0)
-                    if (island.getOwnerTeam().equals(p.getTeam()))
-                        infl += island.getTowers().size();
+                infl += island.getStudentsOfColor(t).size() + calculateTowerInfluence(island,p);
             }
             if (infl > max_infl) {
                 max_infl = infl;
@@ -372,6 +415,8 @@ public class Game {
         returnMap.put("Is Draw", isDraw);
         return returnMap;
     }
+*/
+
     /**
      * Method lastRound sets the relative boolean flag to true or false, according to the game's state.
      * @param lastRound : flag representative of the satisfaction of gameover's conditions.
@@ -493,6 +538,13 @@ public class Game {
 
     public void setCurrentPlayer(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
+    }
+
+    private int getMax(ArrayList<Integer> list){
+        return list
+                .stream()
+                .mapToInt(v -> v)
+                .max().orElseGet(() -> -1);
     }
 }
 
