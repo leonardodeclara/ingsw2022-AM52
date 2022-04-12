@@ -2,21 +2,28 @@ package it.polimi.ingsw.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class ExpertGame extends Game {
     private ArrayList<Personality> personalities;
+    private static final int NUM_PLAYABLE_PERSONALITY_CARDS = 3;
+    private static final int NUM_EXISTING_PERSONALITY_CARDS = 12;
     private Personality activePersonality; //c'è un solo personaggio attivo per round
     private int coins;
     private int bans;
 
     public ExpertGame(){
         super();
+        personalities = new ArrayList<>();
+        coins=20;
+        bans=4;
     }
+
     @Override
     public void instantiateGameElements() {
         super.instantiateGameElements();
-        coins=20;
-        bans=4;
+        //l'estrazione potrebbe essere resa indipendente da instantiateGameElements
+        extractPersonalityCards();
     }
 
     public boolean moveStudentFromLobbyForCard2(int playerId,int studentIndex,int islandId){
@@ -46,7 +53,6 @@ public class ExpertGame extends Game {
             }
         }
     }
-
 
     public boolean moveMotherNatureForCard4(int playerId,int numSteps){
         if(!isMoveMNLegal(playerId,numSteps+2))
@@ -91,12 +97,13 @@ public class ExpertGame extends Game {
     }
 
     public HashMap<String,Number> calculateInfluenceForCard8(Island island) {
-        int max_infl = 0, infl = 0;
+        int max_infl = 0, infl;
         short isDraw = 0;
         Player owner = island.getOwner();
         HashMap<String, Number> returnMap = new HashMap<>();
 
         for (Player p : players) {
+            infl=0;
             if(p.equals(currentPlayer))
                 infl+=2;
             for (Color t : p.getBoard().getTeacherTable()) {
@@ -111,7 +118,6 @@ public class ExpertGame extends Game {
                 isDraw = 0;
             } else if (infl == max_infl)
                 isDraw = 1;
-            infl = 0;
         }
 
         if (!owner.equals(island.getOwner()))
@@ -155,6 +161,27 @@ public class ExpertGame extends Game {
         returnMap.put("Is Draw", isDraw);
         return returnMap;
     }
+
+    public void extractPersonalityCards() {
+        for (int i = 0; i < NUM_PLAYABLE_PERSONALITY_CARDS; i++) {
+            Random random = new Random();
+            int randomIndex = random.nextInt(NUM_EXISTING_PERSONALITY_CARDS);
+            if (randomIndex == 0 || randomIndex == 6 || randomIndex == 10) {
+                LobbyPersonality extractedCard = new LobbyPersonality(randomIndex, (randomIndex + 1) % 3);
+                int lobbyDimension = randomIndex == 6 ? 6 : 4;
+                for (int j = 0; j < lobbyDimension; j++)
+                    extractedCard.addStudent(basket.pickStudent());
+                personalities.add(extractedCard);
+            } else if (randomIndex == 4) {
+                BanPersonality extractedCard = new BanPersonality(randomIndex, (randomIndex + 1) % 3);
+                personalities.add(extractedCard);
+            } else {
+                Personality extractedCard = new Personality(randomIndex, (randomIndex + 1) % 3);
+                personalities.add(extractedCard);
+            }
+        }
+    }
+
     public ArrayList<Personality> getPersonalities() {
         return personalities;
     }

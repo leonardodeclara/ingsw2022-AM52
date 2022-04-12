@@ -12,7 +12,7 @@ public class Game {
     protected static final int ISLAND_ID_NOT_RECEIVED = -1;
     private static final int ISLAND_THRESHOLD_FOR_GAME_OVER = 3;
     private static final int MAX_TOWER_NUMBER = 10;
-    private Basket basket;
+    protected Basket basket;
     protected ArrayList<Player> players;
     //private ArrayList<Player> activePlayers;
     //potrebbe servire per gestire la resilienza
