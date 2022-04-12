@@ -107,7 +107,23 @@ class ExpertGameTest {
     void calculateInfluenceForCard8() {
     }
 
+    //va sistemato il calcolo dell'influenza
+    //ci sono problemi se l'isola non ha pedine e quindi non ha proprietari
     @Test
     void calculateInfluenceForCard9() {
+
+        /*
+        ExpertGame game = new ExpertGame();
+        game.addPlayer(new Player(0,"mari",Tower.BLACK));
+        game.addPlayer(new Player(1,"frizio",Tower.WHITE));
+        game.instantiateGameElements();
+        game.getPlayerByName("frizio").getBoard().addTeacher(Color.BLUE);
+        game.getPlayerByName("frizio").getBoard().addTeacher(Color.PINK);
+        game.getPlayerByName("frizio").getBoard().addTeacher(Color.RED);
+        game.getPlayerByName("frizio").getBoard().addTeacher(Color.YELLOW);
+        game.getPlayerByName("mari").getBoard().addTeacher(Color.GREEN);
+        assertNotEquals(0,game.calculateInfluenceForCard9(game.getIslands().get(0), Color.GREEN).get("ID Player"));
+*/
+
     }
 }

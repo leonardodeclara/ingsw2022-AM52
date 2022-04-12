@@ -1,13 +1,14 @@
 package it.polimi.ingsw.model;
 
 public class Personality {
-    private int characterId;
+    private final int characterId;
     private boolean hasBeenUsed;
     private int cost;
 
-    public Personality(int id, int initialCost){
+    public Personality(int id){
         characterId=id;
-        cost=initialCost;
+        cost=id%3==0? 3: id%3;
+        hasBeenUsed=false;
     }
 
     public void updateCost(){
@@ -19,10 +20,6 @@ public class Personality {
 
     public int getCharacterId() {
         return characterId;
-    }
-
-    public void setCharacterId(int characterId) {
-        this.characterId = characterId;
     }
 
     public boolean isHasBeenUsed() {

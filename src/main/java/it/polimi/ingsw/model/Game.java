@@ -314,6 +314,7 @@ public class Game {
         Color pick;
         for (Cloud cloud: clouds){
             for(int i= 0; i< numOfPicks;i++){
+                //questo andrebbe sostituito con un trycath, il caso null è per l'errore di estrazione
                 pick = basket.pickStudent();
                 if (pick==null){
                     setLastRound(true);
@@ -355,7 +356,7 @@ public class Game {
             } else if (infl == max_infl)
                 isDraw = 1;
         }
-
+        //se getOwner()restituisce null è un problema
         if (!owner.equals(island.getOwner())&& isDraw==0)
             island.setOwner(owner);
 

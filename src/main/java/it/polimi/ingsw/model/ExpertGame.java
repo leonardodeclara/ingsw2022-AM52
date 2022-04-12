@@ -138,6 +138,7 @@ public class ExpertGame extends Game {
 
     }
 
+    //da sistemare, ci sono problemi quando l'isola non ha proprietari (owner = null)
     public HashMap<String,Number> calculateInfluenceForCard9(Island island,Color bannedColor) {
         int max_infl = 0, infl = 0;
         short isDraw = 0;
@@ -162,7 +163,7 @@ public class ExpertGame extends Game {
                 isDraw = 1;
             infl = 0;
         }
-
+        //se getOwner()restituisce null è un problema
         if (!owner.equals(island.getOwner()))
             island.setOwner(owner);
 
@@ -181,16 +182,16 @@ public class ExpertGame extends Game {
             } while(extractedIndexes.contains(randomIndex));
             extractedIndexes.add(randomIndex);
             if (randomIndex == 1 || randomIndex == 7 || randomIndex == 11) {
-                LobbyPersonality extractedCard = new LobbyPersonality(randomIndex, randomIndex%3);
-                int lobbyDimension = randomIndex == 7 ? 6 : 4;
+                LobbyPersonality extractedCard = new LobbyPersonality(randomIndex);
+                int lobbyDimension = randomIndex==7 ? 6 : 4;
                 for (int j = 0; j < lobbyDimension; j++)
                     extractedCard.addStudent(basket.pickStudent());
                 personalities.add(extractedCard);
             } else if (randomIndex == 5) {
-                BanPersonality extractedCard = new BanPersonality(randomIndex, (randomIndex) % 3);
+                BanPersonality extractedCard = new BanPersonality(randomIndex);
                 personalities.add(extractedCard);
             } else {
-                Personality extractedCard = new Personality(randomIndex, randomIndex%3!=0?(randomIndex) % 3:3);
+                Personality extractedCard = new Personality(randomIndex);
                 personalities.add(extractedCard);
             }
         }
