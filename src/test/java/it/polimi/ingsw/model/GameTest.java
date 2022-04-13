@@ -390,8 +390,8 @@ class GameTest {
             if(game.getIslands().get(j).isMotherNature())
                 mnIndex=j;
         }
-        //assertNull(game.calculateInfluence(game.getIslands().get(mnIndex)).get("ID Player"));
-        //assertEquals(1, game.calculateInfluence(game.getIslands().get(mnIndex)).get("Is Draw"));
+        assertNull(game.calculateInfluence(game.getIslands().get(mnIndex)).get("ID Player"));
+        assertEquals(1, game.calculateInfluence(game.getIslands().get(mnIndex)).get("Is Draw"));
         game.getPlayerByName("leo").getBoard().addTeacher(Color.BLUE);
         game.getPlayerByName("leo").getBoard().addTeacher(Color.PINK);
         game.getPlayerByName("leo").getBoard().addTeacher(Color.RED);
