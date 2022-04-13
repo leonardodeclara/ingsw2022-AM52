@@ -32,6 +32,14 @@ class IslandTest {
 
     }
 
+    @Test
+    void OwnerTest(){
+        Island island = new Island(10);
+        island.setOwner(new Player(0, "leo", Tower.BLACK));
+        assertEquals(Tower.BLACK, island.getOwnerTeam());
+        assertEquals("leo", island.getOwner().getNickname());
+    }
+
     /**
      * Method TowerTest verifies that towers are correctly added and removed from the island.
      */
@@ -39,11 +47,16 @@ class IslandTest {
     void TowerTest() {
         Island island = new Island(1);
         island.addTower(Tower.BLACK);
-        assertEquals(Tower.BLACK, island.getTowers().get(0));
+        assertEquals(0, island.getTowers().size());
+        island.setOwner(new Player(0, "mari", Tower.BLACK));
+        island.addTower(Tower.BLACK);
+        assertEquals(1, island.getTowers().size());
+        island.addTower(Tower.WHITE);
         assertEquals(1, island.getTowers().size());
         ArrayList<Tower> oldTowers= island.removeTower();
+        assertEquals(1, oldTowers.size());
+        assertEquals(Tower.BLACK, oldTowers.get(0));
         assertEquals(0, island.getTowers().size());
-
     }
 
     /**
@@ -69,7 +82,9 @@ class IslandTest {
     @Test
     void mergingTest() {
         Island merger = new Island(7);
+        merger.setOwner(new Player(0, "leo", Tower.BLACK));
         Island merged = new Island( 10);
+        merged.setOwner(new Player(0, "leo", Tower.BLACK));
         merger.addStudent(Color.PINK);
         merger.addStudent(Color.RED);
         merger.addStudent(Color.BLUE);
@@ -82,8 +97,5 @@ class IslandTest {
         assertEquals(2, merger.getTowers().size());
         assertEquals(2, merger.getNumMergedIslands());
         assertTrue(merger.isMotherNature());
-
     }
-
-
 }

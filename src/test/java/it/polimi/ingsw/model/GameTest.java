@@ -4,6 +4,8 @@ import it.polimi.ingsw.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -378,9 +380,79 @@ class GameTest {
 
     }
 
+    @Test
+    void studentsInfluenceTest(){
+        Game game = new Game();
+        game.addPlayer(new Player(0,"leo",Tower.WHITE));
+        game.addPlayer(new Player(1,"mari",Tower.BLACK));
+        game.addPlayer(new Player(2,"frizio",Tower.GREY));
+        game.instantiateGameElements();
+        int mnIndex = 0;
+        for (int j = 0; j< 12;j++){
+            if(game.getIslands().get(j).isMotherNature())
+                mnIndex=j;
+        }
+        game.getIslands().get(mnIndex).addStudent(Color.BLUE);
+        game.getIslands().get(mnIndex).addStudent(Color.PINK);
+        game.getPlayerByName("leo").getBoard().addTeacher(Color.BLUE);
+        game.getPlayerByName("frizio").getBoard().addTeacher(Color.RED);
+        ArrayList<Integer> influences = new ArrayList<>();
+        influences.add(1);
+        influences.add(0);
+        influences.add(0);
+        ArrayList<Integer> result = game.calculateStudentsInfluences(game.getIslands().get(mnIndex), game.getPlayers());
+        assertEquals(influences,result);
+        assertEquals(3,result.size());
+        game.getPlayerByName("mari").getBoard().addTeacher(Color.PINK);
+        game.getIslands().get(mnIndex).addStudent(Color.BLUE);
+        influences.set(0,2);
+        influences.set(1,1);
+        result = game.calculateStudentsInfluences(game.getIslands().get(mnIndex), game.getPlayers());
+        assertEquals(influences,result);
+        assertEquals(3,result.size());
+        game.getIslands().get(mnIndex).addStudent(Color.PINK);
+        influences.set(1,2);
+        result = game.calculateStudentsInfluences(game.getIslands().get(mnIndex), game.getPlayers());
+        assertEquals(influences,result);
+        assertEquals(3,result.size());
+    }
+
+    @Test
+    void calculateIslandOwnerTest(){
+        Game game = new Game();
+        game.addPlayer(new Player(0,"mari",Tower.WHITE));
+        game.addPlayer(new Player(1,"frizio",Tower.BLACK));
+        game.addPlayer(new Player(2,"leo",Tower.GREY));
+        game.instantiateGameElements();
+        int mnIndex = 0;
+        for (int j = 0; j< 12;j++){
+            if(game.getIslands().get(j).isMotherNature())
+                mnIndex=j;
+        }
+        Island testedIsland = game.getIslands().get(mnIndex);
+        ArrayList<Integer> influences = new ArrayList<>();
+        influences.add(1);
+        influences.add(0);
+        influences.add(2);
+        HashMap<String,Integer> result = game.calculateIslandOwner(testedIsland,influences);
+        assertEquals(2, result.get("ID Player"));
+        assertEquals(0, result.get("Is Draw"));
+        assertEquals(game.getPlayerByName("leo"), testedIsland.getOwner());
+        influences.set(1,2);
+        result = game.calculateIslandOwner(testedIsland,influences);
+        assertEquals(2, result.get("ID Player"));
+        assertEquals(1, result.get("Is Draw"));
+        assertEquals(game.getPlayerByName("leo"), testedIsland.getOwner());
+        influences.set(1,3);
+        result = game.calculateIslandOwner(testedIsland,influences);
+        assertEquals(1, result.get("ID Player"));
+        assertEquals(0, result.get("Is Draw"));
+        assertEquals(game.getPlayerByName("frizio"), testedIsland.getOwner());
+    }
+
     //test senza torri e con pareggi
     @Test
-    void onlyStudentsInfluenceTest(){
+    void CalculateInfluenceWithTowersTest(){
         Game game = new Game();
         game.addPlayer(new Player(0,"leo",Tower.WHITE));
         game.addPlayer(new Player(1,"mari",Tower.BLACK));
@@ -409,7 +481,7 @@ class GameTest {
 
     //test con torri e senza pareggi
     @Test
-    void towersAndStudentsInfluenceTest(){
+    void totalCalculateInfluenceTest(){
         Game game = new Game();
         game.addPlayer(new Player(0,"leo",Tower.WHITE));
         game.addPlayer(new Player(1,"mari",Tower.BLACK));
@@ -419,10 +491,12 @@ class GameTest {
         game.getPlayerByName("leo").getBoard().addTeacher(Color.RED);
         game.getPlayerByName("mari").getBoard().addTeacher(Color.YELLOW);
         game.getPlayerByName("mari").getBoard().addTeacher(Color.GREEN);
+        game.getIslands().get(0).setOwner(game.getPlayerByName("leo"));
         game.getIslands().get(0).addTower(Tower.WHITE);
         game.getIslands().get(0).addStudent(Color.BLUE);
         assertEquals(0,game.calculateInfluence(game.getIslands().get(0)).get("ID Player"));
         game.getIslands().get(0).removeTower();
+        game.getIslands().get(0).setOwner(game.getPlayerByName("mari"));
         game.getIslands().get(0).addTower(Tower.BLACK);
         game.getIslands().get(0).addStudent(Color.GREEN);
         game.getIslands().get(0).addStudent(Color.GREEN);
@@ -517,6 +591,36 @@ class GameTest {
         game.addPlayer(new Player(0, "mari", Tower.GREY));
         game.addPlayer(new Player(1, "frizio", Tower.WHITE));
         assertNull(game.getPlayerByName("leo"));
+    }
+
+    @Test
+    void islandOwnerTest(){
+        Game game = new Game();
+        Player leo = new Player(0, "leo", Tower.BLACK);
+        Player frizio = new Player(1, "frizio", Tower.WHITE);
+        game.addPlayer(leo);
+        game.addPlayer(frizio);
+        game.instantiateGameElements();
+        game.getIslands().get(0).setOwner(leo);
+        assertEquals(-1, game.getTowersOwnerIndex(game.getIslands().get(0), game.getPlayers()));
+        game.getIslands().get(0).addTower(Tower.BLACK);
+        assertEquals(0, game.getTowersOwnerIndex(game.getIslands().get(0), game.getPlayers()));
+    }
+
+    @Test
+    void getPlayableAssistantCardTest(){
+        Game game = new Game();
+        Player mari = new Player(0, "mari", Tower.BLACK);
+        Player frizio = new Player(1, "frizio", Tower.WHITE);
+        game.addPlayer(mari);
+        game.addPlayer(frizio);
+        game.instantiateGameElements();
+        game.giveAssistantDeck(0, 0);
+        assertEquals(10,game.getPlayableAssistantCards(0).size());
+        game.playAssistantCard(0,0);
+        Assistant playedCard= new Assistant(1,1,0);
+        assertTrue(!game.getPlayableAssistantCards(0).contains(playedCard));
+        assertEquals(9,game.getPlayableAssistantCards(0).size());
     }
 
     //mancano test su moveMN e getPlayableAssistantCard

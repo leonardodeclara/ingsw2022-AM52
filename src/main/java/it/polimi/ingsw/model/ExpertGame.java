@@ -75,25 +75,30 @@ public class ExpertGame extends Game {
         return true;
     }
 
-    public HashMap<String,Number> calculateInfluenceForCard6(Island island){
+    public HashMap<String,Integer> calculateInfluenceForCard6(Island island){
         ArrayList<Integer>  influences = calculateStudentsInfluences(island,players);
         return calculateIslandOwner(island,influences);
     }
 
-    public HashMap<String,Number> calculateInfluenceForCard8(Island island){
+    public HashMap<String,Integer> calculateInfluenceForCard8(Island island){
         ArrayList<Integer>  influences = calculateStudentsInfluences(island,players);
         int towersOwnerIndex = getTowersOwnerIndex(island,players);
-        influences.add(currentPlayer.getPlayerId(),2);
-        if(towersOwnerIndex != -1)
-            influences.add(towersOwnerIndex,island.getTowers().size());
+        int incrementedValue = influences.get(currentPlayer.getPlayerId()) + 2;
+        influences.add(currentPlayer.getPlayerId(),incrementedValue);
+        if(towersOwnerIndex != -1) {
+            int towerIncrement = influences.get(towersOwnerIndex) + island.getTowers().size();
+            influences.set(towersOwnerIndex, towerIncrement);
+        }
         return calculateIslandOwner(island,influences);
     }
 
-    public HashMap<String,Number> calculateInfluenceForCard9(Island island,Color bannedColor){
+    public HashMap<String,Integer> calculateInfluenceForCard9(Island island,Color bannedColor){
         ArrayList<Integer>  influences = calculateStudentsInfluences(island,players,bannedColor);
         int towersOwnerIndex = getTowersOwnerIndex(island,players);
-        if(towersOwnerIndex != -1)
-            influences.add(towersOwnerIndex,island.getTowers().size());
+        if(towersOwnerIndex != -1){
+            int towerIncrement = influences.get(towersOwnerIndex) + island.getTowers().size();
+            influences.set(towersOwnerIndex,towerIncrement);
+        }
         return calculateIslandOwner(island,influences);
     }
 

@@ -82,7 +82,13 @@ public class Island {
      * @param tower: tower instance that needs to be added to the island's towers attribute.
      */
     public void addTower(Tower tower){
-        towers.add(tower);
+        try{
+            if(tower.equals(getOwnerTeam()) && towers.size()<numMergedIslands)
+                towers.add(tower);
+        }
+        catch (NullPointerException ignored){
+            System.out.println("Inserimento illegale");
+        }
     }
 
     /**
@@ -124,7 +130,10 @@ public class Island {
     }
 
     public Player getOwner(){
-        return owner;
+        if (owner!=null)
+            return owner;
+        else
+            return null;
     }
 
     public void setOwner(Player o){
@@ -132,6 +141,9 @@ public class Island {
     }
 
     public Tower getOwnerTeam(){
-        return towers.get(0);
+        if (owner!=null)
+            return owner.getTeam();
+        else
+            return null;
     }
 }

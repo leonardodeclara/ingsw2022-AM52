@@ -27,8 +27,9 @@ public class Player {
         this.team = team;
     }
 
-    public void setDeck(ArrayList<Assistant> deck){
-        this.deck.addAll(deck);
+    public void setDeck(ArrayList<Assistant> newDeck){
+        deck.clear();
+        deck.addAll(newDeck);
     }
 
     public Board getBoard() {
@@ -44,7 +45,7 @@ public class Player {
     }
 
     public ArrayList<Assistant> getDeck() {
-        return deck;
+        return new ArrayList<>(deck);
     }
 
     public Tower getTeam() {

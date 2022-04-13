@@ -111,7 +111,7 @@ public class Game {
     /**
      * Method initiatePlayerLobby calculates the number of students to put in the players' lobby
      * and does it
-     * @param:playerId : id given to the player, used as the index for the players arrayList
+     * @param playerId : id given to the player, used as the index for the players arrayList
      */
     public void initiatePlayerLobby(int playerId){
         int studentLimit = players.size()==2? 7: 9;
@@ -338,19 +338,19 @@ public class Game {
      */
 
 
-    public HashMap<String,Number> calculateInfluence(Island island){
+    public HashMap<String,Integer> calculateInfluence(Island island){
         ArrayList<Integer>  influences = calculateStudentsInfluences(island,players);
         int towersOwnerIndex = getTowersOwnerIndex(island,players);
         if(towersOwnerIndex != -1)
-            influences.add(towersOwnerIndex,influences.get(towersOwnerIndex) + island.getTowers().size());
+            influences.set(towersOwnerIndex,influences.get(towersOwnerIndex) + island.getTowers().size());
         //ArrayList<Integer>  influences = sumIntegerArrayLists(calculateStudentsInfluences(island,players),calculateTowerInfluence(island,players));
         return calculateIslandOwner(island,influences);
     }
 
-    protected HashMap<String,Number> calculateIslandOwner(Island island,ArrayList<Integer> influences){
+    protected HashMap<String,Integer> calculateIslandOwner(Island island,ArrayList<Integer> influences){
         int max = getMax(influences);
         int isDraw = isDuplicate(influences,max);
-        HashMap<String, Number> returnMap = new HashMap<>();
+        HashMap<String, Integer> returnMap = new HashMap<>();
 
         Player owner = (isDraw == 1) ? island.getOwner() : players.get(influences.indexOf(max));
         returnMap.put("Is Draw", isDraw);
@@ -359,7 +359,6 @@ public class Game {
             island.setOwner(owner);
         return returnMap;
     }
-
 
     protected ArrayList<Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players){
         int infl;
@@ -460,7 +459,9 @@ public class Game {
         return emptyClouds;
     }
 
-    public ArrayList<Assistant> getPlayableAssistantCards(int playerId){return players.get(playerId).getDeck();}
+    public ArrayList<Assistant> getPlayableAssistantCards(int playerId){
+        return players.get(playerId).getDeck();
+    }
 
     public void setCurrentMotherNatureIsland(Island currentMotherNatureIsland) {
         this.currentMotherNatureIsland = currentMotherNatureIsland;
@@ -550,7 +551,7 @@ public class Game {
     }
 
     private int isDuplicate(ArrayList<Integer> values, int value) {
-        return (values.indexOf(value) != values.lastIndexOf(value)) ? 1 : 0;
+        return Collections.frequency(values,value) > 1? 1:0;
     }
 }
 
