@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class contains the majority of the game's elements and logic.
@@ -159,12 +160,40 @@ public class Game {
     public int playAssistantCard(int playerId,int cardId){
         ArrayList<Assistant> newDeck = players.get(playerId).getDeck();
         Assistant playedCard = newDeck.get(cardId);
+        if(!isCardPlayable(playedCard, newDeck)) return -1;
         int cardScore = playedCard.getPriority();
         currentTurnAssistantCards.put(playerId,playedCard);
         newDeck.remove(cardId);
         players.get(playerId).setDeck(newDeck);
         return cardScore;
     }
+
+    /**
+     * Method isCardPlayable checks if a card can be played or not in the current turn.
+     * If it's the only card the player has or every other card in the player deck has already been played by someone else,
+     * or the played card is different from the ones played by the other players
+     * then return true
+     * otherwise, if the played card has already been played but the player has in its deck other cards, different from the ones already played
+     * return false
+     * @param playedCard : the card played by the player
+     * @param playerDeck : the deck of the player
+     */
+    private boolean isCardPlayable(Assistant playedCard, ArrayList<Assistant> playerDeck){
+        List<Integer> playerPriorities = playerDeck.stream().map(Assistant::getPriority).collect(Collectors.toList());
+        List<Integer> currentTurnPriorities = currentTurnAssistantCards.values().stream().map(Assistant::getNumMoves).collect(Collectors.toList());
+        if(currentTurnPriorities.containsAll(playerPriorities) || playerDeck.size() == 1)
+            return true;
+        else
+            if(currentTurnPriorities.contains(playedCard.getPriority()))
+                return false;
+            else
+                return true;
+    }
+
+    //se il deck del giocatore e quello currentTurnAssistantCards ha almeno un valore differente, ma il valore di playedCard è uguale -> false
+    //se il deck del biocatore e quello delle arte giocate hanno gli stessi valori  -> true
+
+
 
     /**
      * Method moveMotherNature checks  if the player with Player ID can move Mother Nature of numSteps
@@ -343,8 +372,33 @@ public class Game {
         int towersOwnerIndex = getTowersOwnerIndex(island,players);
         if(towersOwnerIndex != -1)
             influences.set(towersOwnerIndex,influences.get(towersOwnerIndex) + island.getTowers().size());
-        //ArrayList<Integer>  influences = sumIntegerArrayLists(calculateStudentsInfluences(island,players),calculateTowerInfluence(island,players));
-        return calculateIslandOwner(island,influences);
+            mergeIslands(island);
+            return calculateIslandOwner(island,influences);
+    }
+
+    protected void mergeIslands(Island island){
+        int islandId = islands.indexOf(island);
+        Island leftIsland = islands.get(islandId-1%islands.size());
+        Island rightIsland = islands.get(islandId+1%islands.size());
+
+        if(leftIsland.getOwnerTeam().equals(island.getOwnerTeam())){
+            if(leftIsland.getIslandIndex() < island.getIslandIndex()){
+                leftIsland.mergeIsland(island);
+                islands.remove(island);
+            }else{
+                island.mergeIsland(leftIsland);
+                islands.remove(leftIsland);
+            }
+        }
+        if(rightIsland.getOwnerTeam().equals(island.getOwnerTeam())){
+            if(rightIsland.getIslandIndex() < island.getIslandIndex()){
+                rightIsland.mergeIsland(island);
+                islands.remove(island);
+            }else{
+                island.mergeIsland(rightIsland);
+                islands.remove(rightIsland);
+            }
+        }
     }
 
     protected HashMap<String,Integer> calculateIslandOwner(Island island,ArrayList<Integer> influences){
@@ -380,43 +434,6 @@ public class Game {
                     return players.indexOf(p);
         return -1;
     }
-
-/*
-    public HashMap<String,Number> calculateInfluence(Island island) {
-        int max_infl = 0, infl;
-        short isDraw = 0;
-        Player owner = island.getOwner();
-        HashMap<String, Number> returnMap = new HashMap<>();
-
-        for (Player p : players) {
-            infl = 0;
-            for (Color t : p.getBoard().getTeacherTable()) {
-                infl += island.getStudentsOfColor(t).size() + calculateTowerInfluence(island,p);
-            }
-            if (infl > max_infl) {
-                max_infl = infl;
-                owner = p;
-                isDraw = 0;
-            } else if (infl == max_infl)
-                isDraw = 1;
-        }
-        //se getOwner() restituisce null è un problema
-        //nel caso limite in cui si debba calcolare l'influenza su un'isola dove non ci sono pedine,
-        //e non ci sono torri getOwner() restituirebbe null, generando una NullPointerException in equals
-
-        if (owner==null ){
-            returnMap.put("ID Player", null);
-        }
-        else if (!owner.equals(island.getOwner()) && isDraw==0) {
-            island.setOwner(owner);
-            returnMap.put("ID Player", owner.getPlayerId());
-        }
-        else
-            returnMap.put("ID Player", island.getOwner().getPlayerId());
-        returnMap.put("Is Draw", isDraw);
-        return returnMap;
-    }
-*/
 
     /**
      * Method lastRound sets the relative boolean flag to true or false, according to the game's state.
