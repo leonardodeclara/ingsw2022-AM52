@@ -391,7 +391,7 @@ class GameTest {
                 mnIndex=j;
         }
         assertNull(game.calculateInfluence(game.getIslands().get(mnIndex)).get("ID Player"));
-        assertEquals((short) 1, game.calculateInfluence(game.getIslands().get(mnIndex)).get("Is Draw"));
+        assertEquals(1, game.calculateInfluence(game.getIslands().get(mnIndex)).get("Is Draw"));
         game.getPlayerByName("leo").getBoard().addTeacher(Color.BLUE);
         game.getPlayerByName("leo").getBoard().addTeacher(Color.PINK);
         game.getPlayerByName("leo").getBoard().addTeacher(Color.RED);

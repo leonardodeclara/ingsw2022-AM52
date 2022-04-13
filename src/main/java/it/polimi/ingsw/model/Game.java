@@ -342,32 +342,34 @@ public class Game {
         ArrayList<Integer>  influences = calculateStudentsInfluences(island,players);
         int towersOwnerIndex = getTowersOwnerIndex(island,players);
         if(towersOwnerIndex != -1)
-            influences.add(towersOwnerIndex,island.getTowers().size());
+            influences.add(towersOwnerIndex,influences.get(towersOwnerIndex) + island.getTowers().size());
         //ArrayList<Integer>  influences = sumIntegerArrayLists(calculateStudentsInfluences(island,players),calculateTowerInfluence(island,players));
         return calculateIslandOwner(island,influences);
     }
 
     protected HashMap<String,Number> calculateIslandOwner(Island island,ArrayList<Integer> influences){
         int max = getMax(influences);
-        int isDraw = max != -1 ? 1 : 0;
+        int isDraw = isDuplicate(influences,max);
         HashMap<String, Number> returnMap = new HashMap<>();
 
         Player owner = (isDraw == 1) ? island.getOwner() : players.get(influences.indexOf(max));
         returnMap.put("Is Draw", isDraw);
         returnMap.put("ID Player", (owner==null) ? null : owner.getPlayerId());
-        island.setOwner(owner);
+        if(owner!=null && owner!=island.getOwner())
+            island.setOwner(owner);
         return returnMap;
     }
 
 
     protected ArrayList<Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players){
-        int infl = 0;
+        int infl;
         ArrayList<Integer> influences = new ArrayList<>();
         for(Player p: players){
             infl = 0;
             for(Color t:p.getBoard().getTeacherTable()){
-                influences.add(island.getStudentsOfColor(t).size());
+                infl += island.getStudentsOfColor(t).size();
             }
+            influences.add(players.indexOf(p),infl);
         }
         return influences;
     }
@@ -545,6 +547,10 @@ public class Game {
                 .stream()
                 .mapToInt(v -> v)
                 .max().orElseGet(() -> -1);
+    }
+
+    private int isDuplicate(ArrayList<Integer> values, int value) {
+        return (values.indexOf(value) != values.lastIndexOf(value)) ? 1 : 0;
     }
 }
 

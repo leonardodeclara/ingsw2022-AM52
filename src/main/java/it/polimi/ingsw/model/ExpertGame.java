@@ -99,15 +99,14 @@ public class ExpertGame extends Game {
 
     protected ArrayList<Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players,Color bannedColor){
         int infl = 0;
-        List<Color> allowedColors = new ArrayList<Color>();
-        Collections.addAll(allowedColors,Color.values());
-        allowedColors.remove(bannedColor);
         ArrayList<Integer> influences = new ArrayList<>();
         for(Player p: players){
             infl = 0;
-            for(Color t:allowedColors){
-                influences.add(island.getStudentsOfColor(t).size());
+            for(Color t:p.getBoard().getTeacherTable()){
+                if(t != bannedColor)
+                    infl+=island.getStudentsOfColor(t).size();
             }
+            influences.add(players.indexOf(p),infl);
         }
         return influences;
     }
