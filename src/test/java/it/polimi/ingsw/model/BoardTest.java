@@ -155,13 +155,10 @@ class BoardTest {
     void getTableNumberOfStudentsTest(){
         Board board = new Board();
          board.addToTable(Color.BLUE);
-         HashMap<Color, Integer> colors = new HashMap<>();
-         colors.put(Color.GREEN,0);
-         colors.put(Color.RED,0);
-         colors.put(Color.YELLOW,0);
-         colors.put(Color.PINK,0);
-         colors.put(Color.BLUE,1);
+         board.addToTable(Color.YELLOW);
          assertEquals(1, board.getTableNumberOfStudents(Color.BLUE));
+        assertEquals(1, board.getTableNumberOfStudents(Color.YELLOW));
+        assertEquals(0, board.getTableNumberOfStudents(Color.RED));
      }
 
     @Test
