@@ -354,7 +354,7 @@ public class Game {
 
         Player owner = (isDraw == 1) ? island.getOwner() : players.get(influences.indexOf(max));
         returnMap.put("Is Draw", isDraw);
-        returnMap.put("ID Player", owner.getPlayerId());
+        returnMap.put("ID Player", (owner==null) ? null : owner.getPlayerId());
         island.setOwner(owner);
         return returnMap;
     }
