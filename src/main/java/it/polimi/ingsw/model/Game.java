@@ -378,24 +378,25 @@ public class Game {
 
     protected void mergeIslands(Island island){
         int islandId = islands.indexOf(island);
-        Island leftIsland = islands.get(islandId-1%islands.size());
-        Island rightIsland = islands.get(islandId+1%islands.size());
+        Island leftIsland = islands.get((islandId-1)%islands.size());
+        Island rightIsland = islands.get((islandId+1)%islands.size());
 
+        //c'è un problema quando l'isola non ha owner
         if(leftIsland.getOwnerTeam().equals(island.getOwnerTeam())){
             if(leftIsland.getIslandIndex() < island.getIslandIndex()){
-                leftIsland.mergeIsland(island);
+                leftIsland.merge(island);
                 islands.remove(island);
             }else{
-                island.mergeIsland(leftIsland);
+                island.merge(leftIsland);
                 islands.remove(leftIsland);
             }
         }
         if(rightIsland.getOwnerTeam().equals(island.getOwnerTeam())){
             if(rightIsland.getIslandIndex() < island.getIslandIndex()){
-                rightIsland.mergeIsland(island);
+                rightIsland.merge(island);
                 islands.remove(island);
             }else{
-                island.mergeIsland(rightIsland);
+                island.merge(rightIsland);
                 islands.remove(rightIsland);
             }
         }

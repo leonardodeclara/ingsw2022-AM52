@@ -77,12 +77,6 @@ public class Island {
         this.motherNature = motherNature;
     }
 
-    public void mergeIsland(Island otherIsland){
-        towers.addAll(otherIsland.getTowers());
-        students.addAll(otherIsland.getStudents());
-        motherNature = this.motherNature || otherIsland.motherNature;
-        numMergedIslands++;
-    }
     /**
      * Add a tower object to the island's towers list.
      * @param tower: tower instance that needs to be added to the island's towers attribute.
