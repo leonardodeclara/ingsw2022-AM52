@@ -623,6 +623,46 @@ class GameTest {
         assertEquals(9,game.getPlayableAssistantCards(0).size());
     }
 
+    @Test
+    void mergeIslandsTest(){
+        Game game = new Game();
+        Player mari = new Player(0, "leoviatano", Tower.BLACK);
+        Player frizio = new Player(1, "frizio", Tower.WHITE);
+        game.addPlayer(mari);
+        game.addPlayer(frizio);
+        game.instantiateGameElements();
+        Island island1 = game.islands.get(0);
+        Island leftIsland = game.islands.get(11);
+        Island rightIsland = game.islands.get(1);
+        Island testIsland = game.islands.get(10);
+        island1.addStudent(Color.RED);
+        island1.addStudent(Color.RED);
+        island1.addStudent(Color.RED);
+        island1.addStudent(Color.PINK);
+        leftIsland.addStudent(Color.BLUE);
+        leftIsland.addStudent(Color.BLUE);
+        leftIsland.addStudent(Color.BLUE);
+        int[] oldNumbersOfStudent = new int[5];
+        oldNumbersOfStudent[0] = island1.getStudentsOfColor(Color.RED).size();
+        oldNumbersOfStudent[1] = island1.getStudentsOfColor(Color.PINK).size();
+        oldNumbersOfStudent[2] = island1.getStudentsOfColor(Color.BLUE).size();
+        oldNumbersOfStudent[3] = island1.getStudentsOfColor(Color.YELLOW).size();
+        oldNumbersOfStudent[4] = island1.getStudentsOfColor(Color.GREEN).size();
+        island1.setOwner(mari);
+        leftIsland.setOwner(mari);
+        rightIsland.setOwner(frizio);
+        game.mergeIslands(island1);
+        assertEquals(11,game.islands.size());
+        assertEquals(mari,island1.getOwner());
+        assertEquals(testIsland,game.islands.get(10));
+        assertEquals(oldNumbersOfStudent[0] + leftIsland.getStudentsOfColor(Color.RED).size(),island1.getStudentsOfColor(Color.RED).size());
+        assertEquals(oldNumbersOfStudent[1] + leftIsland.getStudentsOfColor(Color.PINK).size(),island1.getStudentsOfColor(Color.PINK).size());
+        assertEquals(oldNumbersOfStudent[2] + leftIsland.getStudentsOfColor(Color.BLUE).size(),island1.getStudentsOfColor(Color.BLUE).size()); //expected 3, actual 4
+    }
+
+
+
+
     //mancano test su moveMN e getPlayableAssistantCard
 }
 

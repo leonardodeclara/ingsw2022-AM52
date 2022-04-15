@@ -378,26 +378,31 @@ public class Game {
 
     protected void mergeIslands(Island island){
         int islandId = islands.indexOf(island);
-        Island leftIsland = islands.get((islandId-1)%islands.size());
-        Island rightIsland = islands.get((islandId+1)%islands.size());
+        Island leftIsland = islands.get((islandId + islands.size() - 1)%islands.size()); //previous island
+        Island rightIsland = islands.get((islandId+1)%islands.size()); //next island
 
         //c'è un problema quando l'isola non ha owner
-        if(leftIsland.getOwnerTeam().equals(island.getOwnerTeam())){
-            if(leftIsland.getIslandIndex() < island.getIslandIndex()){
-                leftIsland.merge(island);
-                islands.remove(island);
-            }else{
-                island.merge(leftIsland);
-                islands.remove(leftIsland);
+       if(leftIsland.getOwnerTeam() != null){
+            if(leftIsland.getOwnerTeam().equals(island.getOwnerTeam())){
+                if(leftIsland.getIslandIndex() < island.getIslandIndex()){
+                    leftIsland.merge(island);
+                    islands.remove(island);
+                }else{
+                    island.merge(leftIsland);
+                    islands.remove(leftIsland);
+                }
             }
         }
-        if(rightIsland.getOwnerTeam().equals(island.getOwnerTeam())){
-            if(rightIsland.getIslandIndex() < island.getIslandIndex()){
-                rightIsland.merge(island);
-                islands.remove(island);
-            }else{
-                island.merge(rightIsland);
-                islands.remove(rightIsland);
+
+        if(rightIsland.getOwnerTeam() != null){
+            if(rightIsland.getOwnerTeam().equals(island.getOwnerTeam())){
+                if(rightIsland.getIslandIndex() < island.getIslandIndex()){
+                    rightIsland.merge(island);
+                    islands.remove(island);
+                }else{
+                    island.merge(rightIsland);
+                    islands.remove(rightIsland);
+                }
             }
         }
     }
