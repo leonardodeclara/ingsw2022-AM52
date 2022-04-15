@@ -141,6 +141,37 @@ public class ExpertGame extends Game {
         }
     }
 
+    public void setActivePersonality(int cardId){
+        if (activePersonality!=null){
+            throw new RuntimeException("Non è possibile selezionare più di una carta personaggio per turno");
+        }
+
+        int playedCardIndex=-1;
+        for (Personality card: personalities){
+            if (card.getCharacterId()==cardId){
+                playedCardIndex=personalities.indexOf(card);
+            }
+        }
+        try {
+            activePersonality=personalities.remove(playedCardIndex);
+            activePersonality.setHasBeenUsed(true);
+            activePersonality.updateCost();
+        }
+        catch (IndexOutOfBoundsException exception){
+            throw new RuntimeException();
+        };
+        //bisogna creare una classe di eccezioni InvalidMoveException
+
+        //rivedere come gestire questo caso
+        //si potrebbe inserire all'interno di un blocco try questa chiamata + le modifiche alle monete ecc
+    }
+
+    public void resetActivePersonality(){
+        Personality oldCard = getActivePersonality();
+        if (oldCard != null && !personalities.contains(oldCard))
+            personalities.add(oldCard);
+    }
+
     public ArrayList<Personality> getPersonalities() {
         return personalities;
     }
