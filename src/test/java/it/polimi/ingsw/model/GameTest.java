@@ -624,7 +624,7 @@ class GameTest {
     }
 
     @Test
-    void mergeIslandsTest(){
+    void mergeTwoIslandsTest(){
         Game game = new Game();
         Player mari = new Player(0, "leoviatano", Tower.BLACK);
         Player frizio = new Player(1, "frizio", Tower.WHITE);
@@ -658,10 +658,50 @@ class GameTest {
         assertEquals(oldNumbersOfStudent[0] + leftIsland.getStudentsOfColor(Color.RED).size(),island1.getStudentsOfColor(Color.RED).size());
         assertEquals(oldNumbersOfStudent[1] + leftIsland.getStudentsOfColor(Color.PINK).size(),island1.getStudentsOfColor(Color.PINK).size());
         assertEquals(oldNumbersOfStudent[2] + leftIsland.getStudentsOfColor(Color.BLUE).size(),island1.getStudentsOfColor(Color.BLUE).size()); //expected 3, actual 4
+    //aggiungere caso in cui mergia 3 isole invece di 2
     }
-
-
-
+    @Test
+    void isCardPlayableTest(){
+        Game game = new Game();
+        Player mari = new Player(0, "mari", Tower.BLACK);
+        Player frizio = new Player(1, "frizio", Tower.WHITE);
+        Player leoviatano = new Player(2, "leoviatano", Tower.GREY);
+        game.addPlayer(mari);
+        game.addPlayer(frizio);
+        game.addPlayer(leoviatano);
+        game.instantiateGameElements();
+        game.giveAssistantDeck(0,0);
+        game.giveAssistantDeck(1,1);
+        game.giveAssistantDeck(2,2);
+        ArrayList<Assistant> deck0 = mari.getDeck();
+        ArrayList<Assistant> deck1 = frizio.getDeck();
+        ArrayList<Assistant> deck2 = leoviatano.getDeck();
+        assertEquals(true,game.isCardPlayable(deck0.get(0),deck0));
+        assertEquals(true,game.isCardPlayable(deck1.get(0),deck1));
+        game.playAssistantCard(0,0); //cardid = 0 <==> deck0.get(0)
+        assertEquals(false,game.isCardPlayable(deck1.get(0),deck1));
+        assertEquals(true,game.isCardPlayable(deck1.get(1),deck1));
+        assertEquals(false,game.isCardPlayable(deck2.get(0),deck2));
+        assertEquals(true,game.isCardPlayable(deck2.get(1),deck2));
+        game.playAssistantCard(1,1);
+        assertEquals(false,game.isCardPlayable(deck0.get(1),deck0));
+        assertEquals(true,game.isCardPlayable(deck0.get(2),deck0));
+        assertEquals(false,game.isCardPlayable(deck2.get(1),deck2));
+        assertEquals(true,game.isCardPlayable(deck2.get(2),deck2));
+        Assistant deck2FirstElement = deck2.get(0);
+        Assistant deck2SecondElement = deck2.get(1);
+        deck2.clear();
+        deck2.add(deck2FirstElement);
+        deck2.add(deck2SecondElement);
+        //a leoviatano rimangono solo carte già giocate da altri, quindi può giocarne una qualunque
+        assertEquals(true,game.isCardPlayable(deck2.get(0),deck2));
+        assertEquals(true,game.isCardPlayable(deck2.get(1),deck2));
+        //a mari viene lasciata in mano solo una carta e la deve giocare per forza non avendone altre
+        Assistant deck0FirstElement = deck0.get(0);
+        deck0.clear();
+        deck0.add(deck0FirstElement);
+        assertEquals(true,game.isCardPlayable(deck0.get(0),deck0));
+    }
 
     //mancano test su moveMN e getPlayableAssistantCard
 }

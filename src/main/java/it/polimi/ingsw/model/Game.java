@@ -178,9 +178,9 @@ public class Game {
      * @param playedCard : the card played by the player
      * @param playerDeck : the deck of the player
      */
-    private boolean isCardPlayable(Assistant playedCard, ArrayList<Assistant> playerDeck){
+    protected boolean isCardPlayable(Assistant playedCard, ArrayList<Assistant> playerDeck){
         List<Integer> playerPriorities = playerDeck.stream().map(Assistant::getPriority).collect(Collectors.toList());
-        List<Integer> currentTurnPriorities = currentTurnAssistantCards.values().stream().map(Assistant::getNumMoves).collect(Collectors.toList());
+        List<Integer> currentTurnPriorities = currentTurnAssistantCards.values().stream().map(Assistant::getPriority).collect(Collectors.toList());
         if(currentTurnPriorities.containsAll(playerPriorities) || playerDeck.size() == 1)
             return true;
         else
