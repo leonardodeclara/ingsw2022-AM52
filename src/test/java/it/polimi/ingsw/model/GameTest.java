@@ -343,6 +343,28 @@ class GameTest {
     }
 
     @Test
+    void moveMNTest(){
+        Game game = new Game();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK));
+        game.addPlayer(new Player(1,"mari",Tower.WHITE));
+        game.instantiateGameElements();
+        game.giveAssistantDeck(0,0);
+        game.giveAssistantDeck(1,2);
+        game.playAssistantCard(1,9);
+        Island oldMNIsland = game.currentMotherNatureIsland;
+        Island newMNIsland = game.islands.get((game.islands.indexOf(oldMNIsland) + 5)%game.islands.size());
+        assertEquals(true,oldMNIsland.isMotherNature());
+        assertEquals(false,newMNIsland.isMotherNature());
+        game.moveMotherNature(1,5);
+        assertEquals(false,oldMNIsland.isMotherNature());
+        assertEquals(true,newMNIsland.isMotherNature());
+
+
+
+
+
+    }
+    @Test
     void moveStudentsToLobby(){
         Game game = new Game();
         game.addPlayer(new Player(0,"leo",Tower.BLACK));
