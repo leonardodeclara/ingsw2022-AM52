@@ -206,7 +206,7 @@ public class Game {
             return false;
 
         Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
-        Island dest = islands.get(from.getIslandIndex() + numSteps % islands.size());
+        Island dest = islands.get((from.getIslandIndex() + numSteps) % islands.size());
 
         from.setMotherNature(false);
         dest.setMotherNature(true);
