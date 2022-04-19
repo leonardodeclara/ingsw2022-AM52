@@ -358,10 +358,7 @@ class GameTest {
         game.moveMotherNature(1,5);
         assertEquals(false,oldMNIsland.isMotherNature());
         assertEquals(true,newMNIsland.isMotherNature());
-
-
-
-
+        assertEquals(game.getIslands().get(newMNIsland.getIslandIndex()), game.currentMotherNatureIsland);
 
     }
     @Test
