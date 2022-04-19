@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,6 +12,8 @@ class ExpertGameTest {
     @Test
     void instantiateGameElementsTest() {
         ExpertGame game = new ExpertGame();
+        game.addPlayer(new Player(0,"mari",Tower.BLACK));
+        game.addPlayer(new Player(1,"frizio",Tower.WHITE));
         game.instantiateGameElements();
         assertEquals(20,game.getCoins());
         assertEquals(4, game.getBans());
@@ -19,6 +22,8 @@ class ExpertGameTest {
     @Test
     void personalityExtractionTest(){
         ExpertGame game = new ExpertGame();
+        game.addPlayer(new Player(0,"mari",Tower.BLACK));
+        game.addPlayer(new Player(1,"frizio",Tower.WHITE));
         game.instantiateGameElements();
         game.extractPersonalityCards();
         assertEquals(3, game.getPersonalities().size());
@@ -272,4 +277,55 @@ class ExpertGameTest {
         assertEquals(0,result.get("ID Player"));
         assertEquals(0,result.get("Is Draw"));
     }
+
+
+    @Test
+    void personalityCardManagementTest(){
+        ExpertGame game = new ExpertGame();
+        game.addPlayer(new Player(0,"leo",Tower.WHITE));
+        game.addPlayer(new Player(1,"mari",Tower.GREY));
+        game.addPlayer(new Player(2,"frizio",Tower.BLACK));
+        game.instantiateGameElements();
+        game.extractPersonalityCards();
+        ArrayList<Personality> playableCards= game.getPersonalities();
+        int idOfPlayedCard= playableCards.get(0).getCharacterId();
+        game.setActivePersonality(idOfPlayedCard);
+        assertEquals(idOfPlayedCard, game.getActivePersonality().getCharacterId());
+        assertEquals(2, game.getPersonalities().size());
+    }
+
+    @Test
+    void invalidPersonalitySelectionTest(){
+        ExpertGame game = new ExpertGame();
+        game.addPlayer(new Player(0,"leo",Tower.WHITE));
+        game.addPlayer(new Player(1,"mari",Tower.GREY));
+        game.addPlayer(new Player(2,"frizio",Tower.BLACK));
+        game.instantiateGameElements();
+        game.extractPersonalityCards();
+        assertThrows(RuntimeException.class, ()->game.setActivePersonality(0));
+        game.setActivePersonality(game.getPersonalities().get(0).getCharacterId());
+        assertThrows(RuntimeException.class, ()->game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
+    }
+
+    @Test
+    void personalityResetTest(){
+        ExpertGame game = new ExpertGame();
+        game.addPlayer(new Player(0,"mari",Tower.BLACK));
+        game.addPlayer(new Player(1,"frizio",Tower.WHITE));
+        game.addPlayer(new Player(2,"leo",Tower.GREY));
+        game.instantiateGameElements();
+        game.extractPersonalityCards();
+        ArrayList<Personality> playableCards = game.getPersonalities();
+        playableCards.get(0).setHasBeenUsed(true);
+        playableCards.get(0).updateCost();
+        game.setActivePersonality(game.getPersonalities().get(0).getCharacterId());
+        game.resetActivePersonality();
+        assertEquals(3, game.getPersonalities().size());
+        for (Personality personality: playableCards){
+            assertTrue(game.getPersonalities().contains(personality));
+        }
+    }
+
+
+
 }
