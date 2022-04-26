@@ -1,8 +1,10 @@
 package it.polimi.ingsw.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -25,6 +27,9 @@ public class Server {
             try {
                 Socket socket = serverSocket.accept();
                 executor.submit(new ClientHandler(socket));
+                System.out.println("Connessione avvenuta con successo ");
+                Scanner in = new Scanner(socket.getInputStream());
+                PrintWriter out = new PrintWriter(socket.getOutputStream());
             } catch(IOException e) {
                 break; // Entrerei qui se serverSocket venisse chiuso
             }

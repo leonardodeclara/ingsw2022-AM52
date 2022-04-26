@@ -20,7 +20,7 @@ public class ClientHandler implements Runnable {
                 if (line.equals("quit")) {
                     break;
                 } else {
-                    out.println("Received: " + line);
+                    out.println("Ricevuto: " + line);
                     out.flush();
                 }
             }
