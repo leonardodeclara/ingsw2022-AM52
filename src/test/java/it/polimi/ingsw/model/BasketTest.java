@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.EmptyBasketException;
 import it.polimi.ingsw.model.Basket;
 import it.polimi.ingsw.model.Color;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ class BasketTest {
     void emptyBasketTest(){
         int[] content = {0,0,0,0,0};
         Basket basket = new Basket(content);
-        assertNull(basket.pickStudent());
+        assertThrows(EmptyBasketException.class, ()->basket.pickStudent());
         assertEquals(0, basket.getSize());
     }
 

@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.EmptyBasketException;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -117,7 +119,9 @@ public class Game {
     public void initiatePlayerLobby(int playerId){
         int studentLimit = players.size()==2? 7: 9;
         for(int k = 0; k < studentLimit; k++)
+            //qui dovrei inserire un trycatch per l'emptybasket ma non dovrebbe mai verificarsi questa condizione qui
             players.get(playerId).getBoard().addToLobby(basket.pickStudent());
+
     }
 
     /**
@@ -129,6 +133,7 @@ public class Game {
         //si potrebbe fare anche senza il bisogno di currentMotherNatureIsland
         for (Island island: islands){
             if(island.getIslandIndex()!= currentMotherNatureIsland.getIslandIndex() && !(island.getIslandIndex()==(6+currentMotherNatureIsland.getIslandIndex())%12)){
+                //qui dovrei inserire un trycatch per l'emptybasket ma non dovrebbe mai verificarsi questa condizione qui
                 island.addStudent(basket.pickStudent());
             }
         }
@@ -342,14 +347,14 @@ public class Game {
     public void refillClouds(){
         int numOfPicks = players.size()+1;
         ArrayList<Color> picks = new ArrayList<>();
-        Color pick;
+        Color pick = null;
         for (Cloud cloud: clouds){
             for(int i= 0; i< numOfPicks;i++){
-                //questo andrebbe sostituito con un trycath, il caso null è per l'errore di estrazione
-                pick = basket.pickStudent();
-                if (pick==null){
+                try{
+                    pick = basket.pickStudent();
+                }
+                catch (EmptyBasketException e){
                     setLastRound(true);
-                    return;
                 }
                 picks.add(pick);
             }
