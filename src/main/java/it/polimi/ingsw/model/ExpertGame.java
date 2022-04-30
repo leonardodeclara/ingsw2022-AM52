@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.EmptyBasketException;
+
 import java.util.*;
 
 public class ExpertGame extends Game {
@@ -128,8 +130,14 @@ public class ExpertGame extends Game {
             if (randomIndex == 1 || randomIndex == 7 || randomIndex == 11) {
                 LobbyPersonality extractedCard = new LobbyPersonality(randomIndex);
                 int lobbyDimension = randomIndex==7 ? 6 : 4;
-                for (int j = 0; j < lobbyDimension; j++)
-                    extractedCard.addStudent(basket.pickStudent());
+                for (int j = 0; j < lobbyDimension; j++){
+                    //rivedere
+                    try{
+                        extractedCard.addStudent(basket.pickStudent());}
+                    catch (EmptyBasketException e){
+                        setLastRound(true);
+                    }
+                }
                 personalities.add(extractedCard);
             } else if (randomIndex == 5) {
                 BanPersonality extractedCard = new BanPersonality(randomIndex);
