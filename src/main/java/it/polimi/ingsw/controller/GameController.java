@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.Game;
 import java.util.ArrayList;
 import java.util.Random;
 
+//aggiorna model
 public class GameController {
     Game GM;
     String currentPlayer;
