@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+//AGGIUNGERE ACTIVE PER DISATTIVARE QUELLE IN WAIT STATE (TANTO PER SICUREZZA)
 
 public class ClientHandler implements Runnable {
     private Socket socket;
