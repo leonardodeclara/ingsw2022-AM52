@@ -2,22 +2,21 @@ package it.polimi.ingsw.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Server {
+public class ServerSocket {
     private int port;
-    public Server(int port) {
+    public ServerSocket(int port) {
         this.port = port;
     }
     public void startServer() {
         ExecutorService executor = Executors.newCachedThreadPool();
-        ServerSocket serverSocket;
+        java.net.ServerSocket serverSocket;
         try {
-            serverSocket = new ServerSocket(port);
+            serverSocket = new java.net.ServerSocket(port);
         } catch (IOException e) {
             System.err.println(e.getMessage()); // Porta non disponibile
             return;
@@ -27,7 +26,7 @@ public class Server {
             try {
                 Socket socket = serverSocket.accept();
                 executor.submit(new ClientHandler(socket));
-                System.out.println("Connessione avvenuta con successo ");
+                System.out.println("Connessione avvenuta con successo");
                 Scanner in = new Scanner(socket.getInputStream());
                 PrintWriter out = new PrintWriter(socket.getOutputStream());
             } catch(IOException e) {
@@ -37,7 +36,7 @@ public class Server {
         executor.shutdown();
     }
     public static void main(String[] args) {
-        Server server = new Server(1234);
-        server.startServer();
+        ServerSocket serverSocket = new ServerSocket(1234);
+        serverSocket.startServer();
     }
 }
