@@ -9,10 +9,11 @@ public class GameHandler {
     GameController GC;
     ArrayList<String> playerNames;
     ServerSocketConnection server;
+    Server serverFather;
 
-    public GameHandler(){
+    public GameHandler(Server serverFather){
         playerNames = new ArrayList<String>();
-
+        this.serverFather = serverFather;
     }
 
     public void handleMessage(Message message,int playerID){
@@ -30,14 +31,18 @@ public class GameHandler {
 
         if(!playerNames.contains(playerProposedNickname)){
             playerNames.add(playerProposedNickname);
-            Message confirmation = new SuccessMessage();
-            playerSocket.sendTo(confirmation);
+
+            //if() //se esiste una lobby inserisci il giocatore là e manda stato wait_lobby
+            //else // altrimenti manda stato insert_new_game_parameters e fagliene creare una
+            //Message newState = new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS);
+            //playerSocket.sendTo(newState);
         }else{
             ErrorMessage error = new ErrorMessage(ErrorKind.INVALID_NICKNAME);
             playerSocket.sendTo(error);
         }
 
     }
+
 
 
 

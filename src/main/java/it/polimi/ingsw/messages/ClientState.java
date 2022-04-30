@@ -1,7 +1,8 @@
 package it.polimi.ingsw.messages;
 
 public enum ClientState {
-    WAITTURN(0),PLAYASSISTANTCARD(1),MOVEFROMLOBBY(2),MOVEMOTHERNATURE(3),MOVETOLOBBY(4);
+    WAIT_TURN(0),PLAY_ASSISTANT_CARD(1),MOVE_FROM_LOBBY(2),MOVE_MOTHER_NATURE(3),MOVE_TO_LOBBY(4),
+    INSERT_NEW_GAME_PARAMETERS(5);
 
     private final int index;
 
