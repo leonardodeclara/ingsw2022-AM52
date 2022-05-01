@@ -35,8 +35,8 @@ public class ClientHandler implements Runnable {
             // Leggo l'input dal player, lo deserializzo, lo mando a gameHandler, mando la rispost al player
             while (true) {
                 Message receivedMessage = (Message) in.readObject();
-                gameHandler.handleMessage(receivedMessage,ID);
-                out.writeObject(responseMessage);
+                gameHandler.handleMessage(receivedMessage,ID); //attende che gamehandler,gamecontroller e gli altri facciano quello che devono
+                out.writeObject(responseMessage); //infine manda fuori la risposta del server
                 }
             } catch (IOException e) {
             System.err.println(e.getMessage());

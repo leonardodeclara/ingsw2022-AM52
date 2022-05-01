@@ -67,11 +67,4 @@ public class ServerSocketConnection implements Runnable {
         return clienthandlers;
     }
 
-    public static void main(String[] args) {
-        Server server = new Server();
-        GameHandler gameHandler = new GameHandler();
-        ServerSocketConnection serverSocket = new ServerSocketConnection(1234,server,gameHandler);
-        gameHandler.setServer(serverSocket);
-        serverSocket.run();
-    }
 }

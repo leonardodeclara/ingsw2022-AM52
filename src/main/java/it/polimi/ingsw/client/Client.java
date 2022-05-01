@@ -11,7 +11,7 @@ import it.polimi.ingsw.messages.Message;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class Client {
+public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall'altro
     ClientState currentState;
     ClientSocket clientSocket;
 
@@ -22,7 +22,7 @@ public class Client {
         clientSocket = new ClientSocket(ip,port);
     }
 
-    public boolean connect(String nickname) throws IOException, ClassNotFoundException {
+    public boolean connect(String nickname) throws IOException, ClassNotFoundException { //returna boolean in modo da far sapere al chiamante (CLI/GUI) se deve chiedere di nuovo l'input o no
         Message serverResponse = clientSocket.connect(nickname);
         if(serverResponse instanceof ClientStateMessage) {
             System.out.println("\nConnessione avvenuta con successo,"+nickname); //sostituiremo i print con metodi di GUI/CLI
@@ -37,15 +37,23 @@ public class Client {
         return false; //mai raggiunto, è per forza error o client state
     }
 
-    public void executeCurrentState(){
+    public void executeCurrentState(){ //andrebbe aggiunto un listener così quando lo stato cambia viene in automatico chiamato questo
         switch(currentState){
-            case INSERT_NEW_GAME_PARAMETERS:
-
+            case INSERT_NEW_GAME_PARAMETERS: //prima viene richiesto al giocatore l'input mediante CLI/GUI e poi lo si inserisce nel metodo previsto
+                //insertNewGameParameters();
 
         }
 
     }
 
+
+    public void insertNewGameParameters(int numberPlayers,boolean expertGame) throws IOException, ClassNotFoundException {
+        Message serverResponse = clientSocket.sendGameParameters(numberPlayers,expertGame);
+        if(serverResponse instanceof ClientStateMessage){
+            ClientStateMessage newStateMessage = (ClientStateMessage) serverResponse;
+            currentState = newStateMessage.getNewState(); //switch del client al prossimo stato
+        }
+    }
 
 
     public ClientState getCurrentState() {
@@ -60,7 +68,7 @@ public class Client {
         Client client = new Client();
         client.instantiateSocket("127.0.0.1",1234);
 
-        String nickname = "Frizio";
+        String nickname = "Frizio"; //verrà inserito dal giocatore nella CLI/GUI
         client.connect(nickname);
 
         nickname = "Leoviatano";

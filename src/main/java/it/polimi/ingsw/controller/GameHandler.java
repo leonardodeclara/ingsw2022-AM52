@@ -4,45 +4,74 @@ import com.sun.net.httpserver.Authenticator;
 import it.polimi.ingsw.messages.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class GameHandler {
     GameController GC;
-    ArrayList<String> playerNames;
+    HashMap<Integer,String> clientToNickname;
     ServerSocketConnection server;
     Server serverFather;
 
     public GameHandler(Server serverFather){
-        playerNames = new ArrayList<String>();
+        clientToNickname = new HashMap<>();
         this.serverFather = serverFather;
     }
 
     public void handleMessage(Message message,int playerID){
         if(message instanceof NicknameMessage)
             handleNicknameMessage((NicknameMessage) message, playerID);
+        if(message instanceof GameParametersMessage)
+            handleGameParametersMessage((GameParametersMessage)message, playerID);
     }
 
     public void setServer(ServerSocketConnection server) {
         this.server = server;
     }
 
-    public void handleNicknameMessage(NicknameMessage message, int playerID){
+    public void handleNicknameMessage(NicknameMessage message, int playerID){ //playerID = id clienthandler
         String playerProposedNickname = ((NicknameMessage) message).getPlayerNickname();
         ClientHandler playerSocket = server.getClienthandlers().get(playerID);
 
-        if(!playerNames.contains(playerProposedNickname)){
-            playerNames.add(playerProposedNickname);
-
-            //if() //se esiste una lobby inserisci il giocatore là e manda stato wait_lobby
-            //else // altrimenti manda stato insert_new_game_parameters e fagliene creare una
-            //Message newState = new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS);
-            //playerSocket.sendTo(newState);
+        if(!clientToNickname.containsKey(playerProposedNickname)){
+            clientToNickname.put(playerID,playerProposedNickname);
+            Message newState = new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS);
+            playerSocket.sendTo(newState);
         }else{
             ErrorMessage error = new ErrorMessage(ErrorKind.INVALID_NICKNAME);
             playerSocket.sendTo(error);
         }
-
     }
 
+    public void handleGameParametersMessage(GameParametersMessage message, int playerID){
+        String playerNickname = clientToNickname.get(playerID);
+        boolean expertGame = message.isExpertGame();
+        int numberOfPlayers = message.getNumberPlayers();
+        ClientHandler playerSocket = server.getClienthandlers().get(playerID);
+
+        if(serverFather.joinLobby(playerNickname,numberOfPlayers,expertGame)){ //c'è una lobby e il gioco sta per partire
+            startGame();
+        }else{ //lobby appena creata/lobby già esistente ma non abbastanza players
+            Message newState = new ClientStateMessage(ClientState.WAIT_IN_LOBBY);
+            playerSocket.sendTo(newState);
+        }
+
+        //IDEA:
+        //se si volesse fare un'interfaccia della lobby lato client con gli altri giocatori all'interno, basterebbe fare in modo che il client richieda
+        //i giocatori con cui è in lobby così da poterne scrivere i nomi sulla GUI/CLI
+    }
+
+
+
+    /*
+    si svuota la lobby inserendo tutto in un game controller (che inizializza il model)
+    si mappano i nickname a degli id player (in ordine di join nella lobby, usando quindi la lista players di lobby)
+    si manda in broadcast a tutti wait_turn e al primo della lista setup_phase
+    quando poi giunge il messaggio dal giocatore usando handleMessages si passa in un altro metodo che fa la setup phase così questo
+    non viene riempito di robe che non gli competono
+     */
+    public void startGame(){
+
+    }
 
 
 

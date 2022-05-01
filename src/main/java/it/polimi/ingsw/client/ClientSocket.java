@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.messages.GameParametersMessage;
 import it.polimi.ingsw.messages.Message;
 import it.polimi.ingsw.messages.NicknameMessage;
 
@@ -30,6 +31,14 @@ public class ClientSocket {
         return response;
     }
 
+    public Message sendGameParameters(int numberPlayers,boolean expertGame) throws IOException, ClassNotFoundException {
+        GameParametersMessage parametersMessage = new GameParametersMessage(numberPlayers,expertGame);
+        send(parametersMessage);
+        System.out.println("Ho mandato i dati per la lobby");
+        Message response = (Message) in.readObject();
+        System.out.println("Risposta ricevuta!");
+        return response;
+    }
 
     public void send(Message msg) throws IOException {
         out.writeObject(msg);
