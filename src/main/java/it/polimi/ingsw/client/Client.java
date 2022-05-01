@@ -47,12 +47,16 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
     }
 
 
-    public void insertNewGameParameters(int numberPlayers,boolean expertGame) throws IOException, ClassNotFoundException {
+    public boolean insertNewGameParameters(int numberPlayers,boolean expertGame) throws IOException, ClassNotFoundException { //returna boolean in modo da far sapere al chiamante (CLI/GUI) se deve chiedere di nuovo l'input o no
         Message serverResponse = clientSocket.sendGameParameters(numberPlayers,expertGame);
         if(serverResponse instanceof ClientStateMessage){
             ClientStateMessage newStateMessage = (ClientStateMessage) serverResponse;
             currentState = newStateMessage.getNewState(); //switch del client al prossimo stato
+        }else if(serverResponse instanceof ErrorMessage) {
+            System.out.println("\nI dati inseriti non sono corretti");
+            return false;
         }
+        return false;  //mai raggiunto, è per forza error o client state
     }
 
 
@@ -64,7 +68,7 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
         this.currentState = currentState;
     }
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException { //simula CLI
         Client client = new Client();
         client.instantiateSocket("127.0.0.1",1234);
 

@@ -47,7 +47,7 @@ public class GameHandler {
         boolean expertGame = message.isExpertGame();
         int numberOfPlayers = message.getNumberPlayers();
         ClientHandler playerSocket = server.getClienthandlers().get(playerID);
-
+        //manca il controllo dell'input e l'eventuale invio di INVALID_INPUT error message
         if(serverFather.joinLobby(playerNickname,numberOfPlayers,expertGame)){ //c'è una lobby e il gioco sta per partire
             startGame();
         }else{ //lobby appena creata/lobby già esistente ma non abbastanza players
