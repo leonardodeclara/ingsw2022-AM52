@@ -15,10 +15,12 @@ import java.util.Scanner;
 public class ClientHandler implements Runnable {
     private Socket socket;
     private int ID; //same id of player
-    ObjectOutputStream out;
-    ObjectInputStream in;
-    GameHandler gameHandler;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
+    private GameHandler gameHandler;
     private Message responseMessage;
+    private boolean active;
+
 
     public ClientHandler(Socket socket,GameHandler gameHandler) throws IOException {
         this.socket = socket;
@@ -30,12 +32,16 @@ public class ClientHandler implements Runnable {
     public void setID(int ID){
         this.ID = ID;
     }
+
     public void run() {
         try {
             // Leggo l'input dal player, lo deserializzo, lo mando a gameHandler, mando la rispost al player
             while (true) {
                 Message receivedMessage = (Message) in.readObject();
                 gameHandler.handleMessage(receivedMessage,ID); //attende che gamehandler,gamecontroller e gli altri facciano quello che devono
+
+                //invece di salvare un attributo responseMessage si potrebbe gestire la scrittura della risposta all'interno della
+                //catena di metodi che vengono chiamati
                 out.writeObject(responseMessage); //infine manda fuori la risposta del server
                 }
             } catch (IOException e) {

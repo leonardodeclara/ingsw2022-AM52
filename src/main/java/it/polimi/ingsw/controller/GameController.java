@@ -11,6 +11,8 @@ public class GameController {
     Game GM;
     String currentPlayer;
     ArrayList<String> players;
+
+    //risoluzione stupida al problema del tipo statico di Game GM: cast esplicito in base al boolean isExpert
     public GameController(boolean isExpert) {
         GM = (isExpert) ? new ExpertGame() : new Game();
 

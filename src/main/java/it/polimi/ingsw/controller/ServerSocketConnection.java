@@ -11,7 +11,7 @@ public class ServerSocketConnection implements Runnable {
     private final ExecutorService executorService;
     private final Server server;
     private final GameHandler gameHandler;
-    ArrayList<ClientHandler> clienthandlers;
+    ArrayList<ClientHandler> clientHandlers;
 
     /**
      * Constructor SocketServer creates a new SocketServer instance.
@@ -23,13 +23,13 @@ public class ServerSocketConnection implements Runnable {
         this.server = server;
         this.port = port;
         this.gameHandler = gameHandler;
-        clienthandlers = new ArrayList<ClientHandler>();
+        clientHandlers = new ArrayList<ClientHandler>();
         executorService = Executors.newCachedThreadPool();
     }
 
     /**
-     * Method acceptConnections accepts connections from clients and create a new thread, one for each
-     * connection. Each thread lasts until client disconnection.
+     * Method acceptConnections handles the process of accepting connections from clients and is responsible for the
+     * creations of new threads, one for each connection. Each thread is kept alive until client disconnection.
      *
      * @param serverSocket of type ServerSocket - the server socket, which accepts connections.
      */
@@ -40,8 +40,8 @@ public class ServerSocketConnection implements Runnable {
                 ClientHandler clientHandler = new ClientHandler(serverSocket.accept(),gameHandler);
                 System.out.println("Connessione avvenuta con successo");
                 executorService.submit(clientHandler);
-                clienthandlers.add(clientHandler);
-                clientHandler.setID(clienthandlers.indexOf(clientHandler));
+                clientHandlers.add(clientHandler);
+                clientHandler.setID(clientHandlers.indexOf(clientHandler));
             } catch (IOException e) {
                 System.err.println("Error: " + e.getMessage());
             }
@@ -63,8 +63,8 @@ public class ServerSocketConnection implements Runnable {
         }
     }
 
-    public ArrayList<ClientHandler> getClienthandlers() {
-        return clienthandlers;
+    public ArrayList<ClientHandler> getClientHandlers() {
+        return clientHandlers;
     }
 
 }

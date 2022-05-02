@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GameHandler {
-    GameController GC;
+    GameController gameController;
     HashMap<Integer,String> clientToNickname;
     ServerSocketConnection server;
     Server serverFather;
@@ -21,7 +21,7 @@ public class GameHandler {
         if(message instanceof NicknameMessage)
             handleNicknameMessage((NicknameMessage) message, playerID);
         if(message instanceof GameParametersMessage)
-            handleGameParametersMessage((GameParametersMessage)message, playerID);
+            handleGameParametersMessage((GameParametersMessage) message, playerID);
     }
 
     public void setServer(ServerSocketConnection server) {
@@ -30,8 +30,9 @@ public class GameHandler {
 
     public void handleNicknameMessage(NicknameMessage message, int playerID){ //playerID = id clienthandler
         String playerProposedNickname = ((NicknameMessage) message).getPlayerNickname();
-        ClientHandler playerSocket = server.getClienthandlers().get(playerID);
+        ClientHandler playerSocket = server.getClientHandlers().get(playerID);
 
+        //questo controllo deve essere a livello server perché in teoria il nome deve essere univoco a livello server, non a livello partita
         if(!clientToNickname.containsKey(playerProposedNickname)){
             clientToNickname.put(playerID,playerProposedNickname);
             Message newState = new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS);
@@ -46,11 +47,12 @@ public class GameHandler {
         String playerNickname = clientToNickname.get(playerID);
         boolean expertGame = message.isExpertGame();
         int numberOfPlayers = message.getNumberPlayers();
-        ClientHandler playerSocket = server.getClienthandlers().get(playerID);
+        //si potrebbe aggiungere in ServerSocketConnection getClientHandlerById
+        ClientHandler playerSocket = server.getClientHandlers().get(playerID);
         //manca il controllo dell'input e l'eventuale invio di INVALID_INPUT error message
         if(serverFather.joinLobby(playerNickname,numberOfPlayers,expertGame)){ //c'è una lobby e il gioco sta per partire
             startGame();
-        }else{ //lobby appena creata/lobby già esistente ma non abbastanza players
+        } else { //lobby appena creata/lobby già esistente ma non abbastanza players
             Message newState = new ClientStateMessage(ClientState.WAIT_IN_LOBBY);
             playerSocket.sendTo(newState);
         }
@@ -72,10 +74,6 @@ public class GameHandler {
     public void startGame(){
 
     }
-
-
-
-
 
 
 }

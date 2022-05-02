@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 public class Server {
     ServerSocketConnection serverSocket;
@@ -13,19 +14,32 @@ public class Server {
 
 
     public boolean joinLobby(String nickname,int numberPlayers, boolean expertGame){
+        try{
+            Lobby matchingLobby = getMatchingLobby(numberPlayers,expertGame);
+            matchingLobby.addToLobby(nickname);
+            return matchingLobby.enoughPlayerToStart();
+        }
+        catch (NoSuchElementException e){
+            Lobby newLobby = new Lobby(numberPlayers,expertGame);
+            lobbies.add(newLobby);
+            return false;
+        }
+
+        /*
         Lobby matchingLobby = getMatchingLobby(numberPlayers,expertGame);
-        if(matchingLobby!=null){
+        if (matchingLobby!=null){
             matchingLobby.addToLobby(nickname);
             if(matchingLobby.enoughPlayerToStart())
                 return true;
             else
                 return false;
         }
-        else{
+        else {
             Lobby newLobby = new Lobby(numberPlayers,expertGame);
             lobbies.add(newLobby);
             return false;
         }
+        */
 
 
     }
