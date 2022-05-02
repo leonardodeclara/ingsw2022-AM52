@@ -8,20 +8,20 @@ import java.util.Random;
 
 //aggiorna model
 public class GameController {
-    Game GM;
+    Game game;
     String currentPlayer;
     ArrayList<String> players;
 
     //risoluzione stupida al problema del tipo statico di Game GM: cast esplicito in base al boolean isExpert
     public GameController(boolean isExpert) {
-        GM = (isExpert) ? new ExpertGame() : new Game();
+        game = (isExpert) ? new ExpertGame() : new Game();
 
     }
 
     public void setUpPhase(){
         //attende che il server dia conferma che i giocatori sono connessi e riceve anche l'arrayList string players
         //la passa anche a Game così può fare addPlayer
-        GM.instantiateGameElements();
+        game.instantiateGameElements();
         assignAssistantDeck();
         assignInitialStudents();
         currentPlayer = getRandomPlayer();

@@ -11,7 +11,7 @@ public class Server {
     HashMap<Integer,String> idToNicknameMap;
     HashMap<String, ClientHandler> nameToHandlerMap;
     ArrayList<Lobby> lobbies;
-    HashMap<String, GameHandler> games;
+    HashMap<String, GameHandler> playerToGameMap;
     int clientIdCounter;
     //per le lobby si potrebbe creare una struttura dati tipo hashmap con chiave a due valori < int NumberPlayers, boolean expertOrNot>
 
@@ -19,16 +19,27 @@ public class Server {
         idToNicknameMap= new HashMap<>();
         nameToHandlerMap= new HashMap<>();
         lobbies = new ArrayList<>();
-        games = new HashMap<>();
+        playerToGameMap = new HashMap<>();
         clientIdCounter=0;
     }
 
-
-    public boolean joinLobby(String nickname,int numberPlayers, boolean expertGame){
+    //questo metodo deve essere sincronizzato (?)
+    public boolean joinLobby(int playerID,int numberPlayers, boolean expertGame){
         try{
             Lobby matchingLobby = getMatchingLobby(numberPlayers,expertGame);
-            matchingLobby.addToLobby(nickname);
-            return matchingLobby.enoughPlayerToStart();
+            matchingLobby.addToLobby(idToNicknameMap.get(playerID));
+            if (matchingLobby.enoughPlayerToStart()) {
+                GameHandler newGameHandler = new GameHandler(this, numberPlayers, expertGame);
+                for (String nickname : matchingLobby.getPlayers()){
+                    nameToHandlerMap.get(nickname).setGameHandler(newGameHandler);
+                    playerToGameMap.put(nickname, newGameHandler);
+                }
+                lobbies.remove(matchingLobby);
+
+                return true;
+            }
+            else
+                return false;
         }
         catch (NoSuchElementException e){
             Lobby newLobby = new Lobby(numberPlayers,expertGame);
@@ -76,13 +87,6 @@ public class Server {
         return nameToHandlerMap.get(nickname);
     }
 
-    public boolean checkExistingLobby(int playersNumber,boolean expertGame){
-        for (Lobby lobby: lobbies){
-            if (lobby.isExpertGame()==expertGame && lobby.getNumberPlayersRequired()==playersNumber)
-                return true;
-        }
-        return false;
-    }
 
     public static void main(String[] args) {
         Server server = new Server();

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Game;
 
@@ -13,8 +14,8 @@ import java.util.Scanner;
 //AGGIUNGERE ACTIVE PER DISATTIVARE I CLIENTHANDLER DEI CLIENT IN WAIT STATE (TANTO PER SICUREZZA)
 
 public class ClientHandler implements Runnable {
-    private Socket socket;
-    private Server server;
+    private final Socket socket;
+    private final Server server;
     private int ID; //same id of player
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -39,9 +40,7 @@ public class ClientHandler implements Runnable {
             // Leggo l'input dal player, lo deserializzo, lo mando a gameHandler, mando la rispost al player
             while (true) {
                 Message receivedMessage = (Message) in.readObject();
-
                 readMessage(receivedMessage);
-
 
                 //invece di salvare un attributo responseMessage si potrebbe gestire la scrittura della risposta all'interno della
                 //catena di metodi che vengono chiamati
@@ -79,27 +78,20 @@ public class ClientHandler implements Runnable {
         }
     }
 
+
     public void handleGameParameters(GameParametersMessage message){
         boolean expertGame = message.isExpertGame();
         int numberOfPlayers = message.getNumberPlayers();
-        //manca il controllo dell'input e l'eventuale invio di INVALID_INPUT error message
-        if (numberOfPlayers<2 || numberOfPlayers>3){
+        if (numberOfPlayers< Constants.MIN_NUMBER_OF_PLAYERS || numberOfPlayers>Constants.MAX_NUMBER_OF_PLAYERS){
             sendMessage(new ErrorMessage(ErrorKind.INVALID_INPUT));
             sendMessage(new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS)); //non so se serve
             return;
         }
-
-        /*
-        if (!server.checkExistingLobby(numberOfPlayers, expertGame))
-            server.joinLobby(numberOfPlayers, expertGame)
-
-        if(server.joinLobby(playerNickname,numberOfPlayers,expertGame)){ //c'è una lobby e il gioco sta per partire
+        if(server.joinLobby(ID,numberOfPlayers,expertGame)){ //c'è una lobby e il gioco sta per partire
             gameHandler.startGame();
         } else { //lobby appena creata/lobby già esistente ma non abbastanza players
-            playerSocket.sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY));
+            sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY));
         }
-
-       */
     }
 
     public void sendMessage(Message message){
@@ -108,6 +100,10 @@ public class ClientHandler implements Runnable {
         catch (IOException e){
             //chiudo la connessione.
         }
+    }
+
+    public void setGameHandler(GameHandler gameHandler) {
+        this.gameHandler = gameHandler;
     }
 
     //public void sendTo(Message message){
