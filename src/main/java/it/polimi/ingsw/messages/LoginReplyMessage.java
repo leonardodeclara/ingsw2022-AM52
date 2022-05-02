@@ -1,10 +1,10 @@
 package it.polimi.ingsw.messages;
 
-public class NicknameMessage extends Message{
+public class LoginReplyMessage implements Message {
     private final String playerNickname;
 
-    public NicknameMessage(String playerInput){
-        this.playerNickname = playerInput;
+    public LoginReplyMessage(String nickname){
+        playerNickname = nickname;
     }
 
     public String getPlayerNickname() {

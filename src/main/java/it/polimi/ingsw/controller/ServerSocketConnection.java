@@ -11,7 +11,8 @@ public class ServerSocketConnection implements Runnable {
     private final ExecutorService executorService;
     private final Server server;
     private final GameHandler gameHandler;
-    ArrayList<ClientHandler> clientHandlers;
+    //ArrayList<ClientHandler> clientHandlers;
+    private final boolean serverRunning;
 
     /**
      * Constructor SocketServer creates a new SocketServer instance.
@@ -23,8 +24,9 @@ public class ServerSocketConnection implements Runnable {
         this.server = server;
         this.port = port;
         this.gameHandler = gameHandler;
-        clientHandlers = new ArrayList<ClientHandler>();
+        //clientHandlers = new ArrayList<ClientHandler>();
         executorService = Executors.newCachedThreadPool();
+        serverRunning =true;
     }
 
     /**
@@ -34,14 +36,18 @@ public class ServerSocketConnection implements Runnable {
      * @param serverSocket of type ServerSocket - the server socket, which accepts connections.
      */
     public void acceptClientConnections(ServerSocket serverSocket) {
-        while (true) {
+        while (serverRunning) {
             try {
                 System.out.println("In attesa...");
-                ClientHandler clientHandler = new ClientHandler(serverSocket.accept(),gameHandler);
+
+                //costruttore va modificato, ho tolto il parametro gameHandler
+                ClientHandler clientHandler = new ClientHandler(serverSocket.accept());
                 System.out.println("Connessione avvenuta con successo");
                 executorService.submit(clientHandler);
-                clientHandlers.add(clientHandler);
-                clientHandler.setID(clientHandlers.indexOf(clientHandler));
+                //queste cose le ho fatto aggiungere direttamente a clientHandler via classe Server
+                //clientHandlers.add(clientHandler);
+                //clientHandler.setID(clientHandlers.indexOf(clientHandler));
+
             } catch (IOException e) {
                 System.err.println("Error: " + e.getMessage());
             }
@@ -63,8 +69,5 @@ public class ServerSocketConnection implements Runnable {
         }
     }
 
-    public ArrayList<ClientHandler> getClientHandlers() {
-        return clientHandlers;
-    }
 
 }

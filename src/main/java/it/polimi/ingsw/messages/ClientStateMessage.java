@@ -1,6 +1,6 @@
 package it.polimi.ingsw.messages;
 
-public class ClientStateMessage extends Message{
+public class ClientStateMessage implements Message{
     private ClientState newState;
 
     public ClientStateMessage(ClientState newState){

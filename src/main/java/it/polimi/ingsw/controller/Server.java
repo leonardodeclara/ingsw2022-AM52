@@ -2,14 +2,21 @@ package it.polimi.ingsw.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class Server {
     ServerSocketConnection serverSocket;
+    HashMap<Integer,String> idToNicknameMap;
+    HashMap<String, ClientHandler> nameToHandlerMap;
     ArrayList<Lobby> lobbies;
-    //si potrebbe creare una struttura dati tipo hashmap con chiave a due valori < int NumberPlayers, boolean expertOrNot>
+    HashMap<String, GameHandler> games;
+    int clientIdCounter;
+    //per le lobby si potrebbe creare una struttura dati tipo hashmap con chiave a due valori < int NumberPlayers, boolean expertOrNot>
 
     public Server(){
+        clientIdCounter=0;
 
     }
 
@@ -42,6 +49,38 @@ public class Server {
                 removedLobby=lobby;
         lobbies.remove(removedLobby);
     }
+
+    //controllo se il nickname inserito è disponibile oppure no
+    public boolean isNicknameAvailable(String nickname){
+        for (Map.Entry<Integer,String> entry: idToNicknameMap.entrySet())
+            if (entry.getValue().equals(nickname))
+                return false;
+        return true;
+    }
+
+    //aggiungo un giocatore alla mappa che associa l'id al nome
+    public void registerPlayer(String nickname){
+        idToNicknameMap.put(clientIdCounter, nickname);
+        clientIdCounter++;
+    }
+
+    public void registerClientConnection(String nickname, ClientHandler clientConnection){
+        nameToHandlerMap.put(nickname, clientConnection);
+    }
+
+    public ClientHandler getClientHandlerById(int playerId){
+        String nickname = idToNicknameMap.get(playerId);
+        return nameToHandlerMap.get(nickname);
+    }
+
+    public boolean checkExistingLobby(int playersNumber,boolean expertGame){
+        for (Lobby lobby: lobbies){
+            if (lobby.isExpertGame()==expertGame && lobby.getNumberPlayersRequired()==playersNumber)
+                return true;
+        }
+        return false;
+    }
+
 }
 
 /*

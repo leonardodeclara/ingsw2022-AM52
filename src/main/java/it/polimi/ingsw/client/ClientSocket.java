@@ -2,7 +2,7 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.messages.GameParametersMessage;
 import it.polimi.ingsw.messages.Message;
-import it.polimi.ingsw.messages.NicknameMessage;
+import it.polimi.ingsw.messages.*;
 
 import java.io.*;
 import java.net.Socket;
@@ -22,7 +22,7 @@ public class ClientSocket {
         socket = new Socket(ip,port);
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(socket.getInputStream());
-        NicknameMessage nicknameMessage = new NicknameMessage(nickname);
+        LoginRequestMessage nicknameMessage = new LoginRequestMessage(nickname);
         send(nicknameMessage);
         System.out.println("Ho mandato il nickname!");
         //qui il metodo rimane in attesa finchè non gli arriva response

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.messages;
 
-public class GameParametersMessage extends Message {
+public class GameParametersMessage implements Message {
     int numberPlayers;
     boolean expertGame;
 
