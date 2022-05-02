@@ -93,7 +93,7 @@ public class Island {
 
     /**
      * Add a student tile to the island's students list.
-     * @param student: studente tile that needs to be added to the island's students attribute.
+     * @param student: student tile that needs to be added to the island's students attribute.
      */
     public void addStudent(Color student){
         students.add(student);
@@ -121,6 +121,11 @@ public class Island {
         motherNature = motherNature || merged.isMotherNature();
     }
 
+    /**
+     * This method extracts the list of the students of a chosen color that are on the island
+     * @param c: color of students I want to get the list of
+     * @return ArrayList<Color>: list containing the Color students placed on the island
+     */
     public ArrayList<Color> getStudentsOfColor(Color c) {
         ArrayList<Color> studentsOfColor = new ArrayList<>();
         for(Color s : students)
@@ -129,6 +134,10 @@ public class Island {
         return studentsOfColor;
     }
 
+    /**
+     * Method that returns the Owner of the island
+     * @return Player that has the major influence on the island
+     */
     public Player getOwner(){
         if (owner!=null)
             return owner;
@@ -136,10 +145,18 @@ public class Island {
             return null;
     }
 
+    /**
+     * This method set a Player as owner of the island
+     * @param o: Player that has the major influence on the island
+     */
     public void setOwner(Player o){
         this.owner = o;
     }
 
+    /**
+     * Method that returns the color of the Tower associated with the Owner of the island
+     * @return the color of the Tower that represents the team of the owner
+     */
     public Tower getOwnerTeam(){
         if (owner!=null)
             return owner.getTeam();
