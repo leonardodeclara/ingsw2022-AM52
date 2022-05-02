@@ -10,7 +10,7 @@ public class ServerSocketConnection implements Runnable {
     private final int port;
     private final ExecutorService executorService;
     private final Server server;
-    private final GameHandler gameHandler;
+    //private final GameHandler gameHandler;
     //ArrayList<ClientHandler> clientHandlers;
     private final boolean serverRunning;
 
@@ -20,10 +20,10 @@ public class ServerSocketConnection implements Runnable {
      * @param port of type int - the port on which server will listen.
      * @param server of type Server - the main server object.
      */
-    public ServerSocketConnection(int port, Server server,GameHandler gameHandler) {
+    public ServerSocketConnection(int port, Server server) {
         this.server = server;
         this.port = port;
-        this.gameHandler = gameHandler;
+        //this.gameHandler = gameHandler;
         //clientHandlers = new ArrayList<ClientHandler>();
         executorService = Executors.newCachedThreadPool();
         serverRunning =true;
@@ -41,7 +41,7 @@ public class ServerSocketConnection implements Runnable {
                 System.out.println("In attesa...");
 
                 //costruttore va modificato, ho tolto il parametro gameHandler
-                ClientHandler clientHandler = new ClientHandler(serverSocket.accept());
+                ClientHandler clientHandler = new ClientHandler(serverSocket.accept(), server);
                 System.out.println("Connessione avvenuta con successo");
                 executorService.submit(clientHandler);
                 //queste cose le ho fatto aggiungere direttamente a clientHandler via classe Server

@@ -16,8 +16,11 @@ public class Server {
     //per le lobby si potrebbe creare una struttura dati tipo hashmap con chiave a due valori < int NumberPlayers, boolean expertOrNot>
 
     public Server(){
+        idToNicknameMap= new HashMap<>();
+        nameToHandlerMap= new HashMap<>();
+        lobbies = new ArrayList<>();
+        games = new HashMap<>();
         clientIdCounter=0;
-
     }
 
 
@@ -79,6 +82,14 @@ public class Server {
                 return true;
         }
         return false;
+    }
+
+    public static void main(String[] args) {
+        Server server = new Server();
+        //GameHandler gameHandler = new GameHandler();
+        ServerSocketConnection serverSocket = new ServerSocketConnection(1234,server);
+        //gameHandler.setServer(serverSocket);
+        serverSocket.run();
     }
 
 }

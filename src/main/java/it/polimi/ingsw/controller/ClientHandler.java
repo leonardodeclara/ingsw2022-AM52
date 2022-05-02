@@ -23,9 +23,9 @@ public class ClientHandler implements Runnable {
     private boolean active;
 
 
-    public ClientHandler(Socket socket) throws IOException {
+    public ClientHandler(Socket socket, Server server) throws IOException {
         this.socket = socket;
-        //this.gameHandler = gameHandler;
+        this.server = server;
         in = new ObjectInputStream(socket.getInputStream());
         out = new ObjectOutputStream(socket.getOutputStream());
     }
@@ -104,7 +104,7 @@ public class ClientHandler implements Runnable {
 
     public void sendMessage(Message message){
         try{
-            out.writeObject(responseMessage);}
+            out.writeObject(message);}
         catch (IOException e){
             //chiudo la connessione.
         }

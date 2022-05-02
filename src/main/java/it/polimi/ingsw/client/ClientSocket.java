@@ -1,7 +1,5 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.messages.GameParametersMessage;
-import it.polimi.ingsw.messages.Message;
 import it.polimi.ingsw.messages.*;
 
 import java.io.*;
