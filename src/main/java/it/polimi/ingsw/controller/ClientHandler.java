@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.messages.Message;
+import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Game;
 
 import java.io.IOException;
@@ -14,6 +14,7 @@ import java.util.Scanner;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
+    private Server server;
     private int ID; //same id of player
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -22,9 +23,9 @@ public class ClientHandler implements Runnable {
     private boolean active;
 
 
-    public ClientHandler(Socket socket,GameHandler gameHandler) throws IOException {
+    public ClientHandler(Socket socket, Server server) throws IOException {
         this.socket = socket;
-        this.gameHandler = gameHandler;
+        this.server = server;
         in = new ObjectInputStream(socket.getInputStream());
         out = new ObjectOutputStream(socket.getOutputStream());
     }
@@ -38,11 +39,13 @@ public class ClientHandler implements Runnable {
             // Leggo l'input dal player, lo deserializzo, lo mando a gameHandler, mando la rispost al player
             while (true) {
                 Message receivedMessage = (Message) in.readObject();
-                gameHandler.handleMessage(receivedMessage,ID); //attende che gamehandler,gamecontroller e gli altri facciano quello che devono
+
+                readMessage(receivedMessage);
+
 
                 //invece di salvare un attributo responseMessage si potrebbe gestire la scrittura della risposta all'interno della
                 //catena di metodi che vengono chiamati
-                out.writeObject(responseMessage); //infine manda fuori la risposta del server
+                //out.writeObject(responseMessage); //infine manda fuori la risposta del server
                 }
             } catch (IOException e) {
             System.err.println(e.getMessage());
@@ -51,9 +54,65 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public void sendTo(Message message){
-        responseMessage = message;
+    public void readMessage(Message message){
+        if (message instanceof LoginRequestMessage)
+            handleLogin((LoginRequestMessage) message);
+        else if (message instanceof GameParametersMessage)
+            handleGameParameters((GameParametersMessage) message);
+        else
+            gameHandler.handleMessage(message,ID); //attende che gamehandler,gamecontroller e gli altri facciano quello che devono
     }
+
+    public void handleLogin(LoginRequestMessage message ){
+        String nickname = ((LoginRequestMessage) message).getPlayerNickname();
+
+        //questo controllo deve essere a livello server perché in teoria il nome deve essere univoco a livello server, non a livello partita
+        if(server.isNicknameAvailable(nickname)){
+            server.registerPlayer(nickname);
+            server.registerClientConnection(nickname, this);
+            sendMessage(new LoginReplyMessage(nickname));
+            sendMessage(new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS));
+
+        }else{
+            ErrorMessage error = new ErrorMessage(ErrorKind.INVALID_NICKNAME);
+            sendMessage(error);
+        }
+    }
+
+    public void handleGameParameters(GameParametersMessage message){
+        boolean expertGame = message.isExpertGame();
+        int numberOfPlayers = message.getNumberPlayers();
+        //manca il controllo dell'input e l'eventuale invio di INVALID_INPUT error message
+        if (numberOfPlayers<2 || numberOfPlayers>3){
+            sendMessage(new ErrorMessage(ErrorKind.INVALID_INPUT));
+            sendMessage(new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS)); //non so se serve
+            return;
+        }
+
+        /*
+        if (!server.checkExistingLobby(numberOfPlayers, expertGame))
+            server.joinLobby(numberOfPlayers, expertGame)
+
+        if(server.joinLobby(playerNickname,numberOfPlayers,expertGame)){ //c'è una lobby e il gioco sta per partire
+            gameHandler.startGame();
+        } else { //lobby appena creata/lobby già esistente ma non abbastanza players
+            playerSocket.sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY));
+        }
+
+       */
+    }
+
+    public void sendMessage(Message message){
+        try{
+            out.writeObject(message);}
+        catch (IOException e){
+            //chiudo la connessione.
+        }
+    }
+
+    //public void sendTo(Message message){
+    //    responseMessage = message;
+    //}
 }
 
 

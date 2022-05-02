@@ -75,7 +75,7 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
         String nickname = "Frizio"; //verrà inserito dal giocatore nella CLI/GUI
         client.connect(nickname);
 
-        nickname = "Leoviatano";
+        nickname = "Frizio";
         client.connect(nickname);
 
 

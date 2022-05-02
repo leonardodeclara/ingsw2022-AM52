@@ -2,14 +2,25 @@ package it.polimi.ingsw.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class Server {
     ServerSocketConnection serverSocket;
+    HashMap<Integer,String> idToNicknameMap;
+    HashMap<String, ClientHandler> nameToHandlerMap;
     ArrayList<Lobby> lobbies;
+    HashMap<String, GameHandler> games;
+    int clientIdCounter;
+    //per le lobby si potrebbe creare una struttura dati tipo hashmap con chiave a due valori < int NumberPlayers, boolean expertOrNot>
 
     public Server(){
-
+        idToNicknameMap= new HashMap<>();
+        nameToHandlerMap= new HashMap<>();
+        lobbies = new ArrayList<>();
+        games = new HashMap<>();
+        clientIdCounter=0;
     }
 
 
@@ -24,24 +35,6 @@ public class Server {
             lobbies.add(newLobby);
             return false;
         }
-
-        /*
-        Lobby matchingLobby = getMatchingLobby(numberPlayers,expertGame);
-        if (matchingLobby!=null){
-            matchingLobby.addToLobby(nickname);
-            if(matchingLobby.enoughPlayerToStart())
-                return true;
-            else
-                return false;
-        }
-        else {
-            Lobby newLobby = new Lobby(numberPlayers,expertGame);
-            lobbies.add(newLobby);
-            return false;
-        }
-        */
-
-
     }
 
     private Lobby getMatchingLobby(int numberPlayers, boolean expertGame){
@@ -50,6 +43,55 @@ public class Server {
                 .findFirst()
                 .get();
     }
+
+    //alla creazione di una nuova partita viene rimossa da lobbies la lobby riferita a quella partita
+    private void removeLobby(int numberPlayers, boolean expertGame){
+        Lobby removedLobby=null;
+        for (Lobby lobby: lobbies)
+            if (lobby.getNumberPlayersRequired()== numberPlayers && lobby.isExpertGame()==expertGame)
+                removedLobby=lobby;
+        lobbies.remove(removedLobby);
+    }
+
+    //controllo se il nickname inserito è disponibile oppure no
+    public boolean isNicknameAvailable(String nickname){
+        for (Map.Entry<Integer,String> entry: idToNicknameMap.entrySet())
+            if (entry.getValue().equals(nickname))
+                return false;
+        return true;
+    }
+
+    //aggiungo un giocatore alla mappa che associa l'id al nome
+    public void registerPlayer(String nickname){
+        idToNicknameMap.put(clientIdCounter, nickname);
+        clientIdCounter++;
+    }
+
+    public void registerClientConnection(String nickname, ClientHandler clientConnection){
+        nameToHandlerMap.put(nickname, clientConnection);
+    }
+
+    public ClientHandler getClientHandlerById(int playerId){
+        String nickname = idToNicknameMap.get(playerId);
+        return nameToHandlerMap.get(nickname);
+    }
+
+    public boolean checkExistingLobby(int playersNumber,boolean expertGame){
+        for (Lobby lobby: lobbies){
+            if (lobby.isExpertGame()==expertGame && lobby.getNumberPlayersRequired()==playersNumber)
+                return true;
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        Server server = new Server();
+        //GameHandler gameHandler = new GameHandler();
+        ServerSocketConnection serverSocket = new ServerSocketConnection(1234,server);
+        //gameHandler.setServer(serverSocket);
+        serverSocket.run();
+    }
+
 }
 
 /*
