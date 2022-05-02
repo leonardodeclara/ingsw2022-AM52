@@ -46,8 +46,8 @@ public class Basket {
         int colorIndex = weightedRandomIndex();
         if (colorIndex==-1)
             return null;
-        studentsNum[colorIndex]-= 1;
-        size-= 1;
+        studentsNum[colorIndex]-=1;
+        size-=1;
         return Color.values()[colorIndex];
     }
 
@@ -58,7 +58,7 @@ public class Basket {
     public void putStudent(Color color){
         int colorIndex = color.getIndex();
         studentsNum[colorIndex]=studentsNum[colorIndex]+1;
-        size+= 1;
+        size+=1;
     }
 
     /**
@@ -78,10 +78,18 @@ public class Basket {
         return -1;
     }
 
+    /**
+     * Method that returns the number of students that are in the basket
+     * @return array of integers indicate the students number, divided by colors
+     */
     public int[] getStudentsNum() {
         return studentsNum;
     }
 
+    /**
+     * Method that returns the size of the basket
+     * @return integer that rapresents the size of the basket
+     */
     public int getSize() {
         return size;
     }

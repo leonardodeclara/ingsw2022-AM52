@@ -52,8 +52,10 @@ public class Board {
 
     /**
      * Add each student object to the table corresponding to their color
-     * @param student
-     * @return
+     * This method also check if the students is the third, the sixth or the ninth added to the table for the expert
+     * game mode for earn money
+     * @param student instance of the student that has to be added
+     * @return true if the student is the third, the sixth or the ninth added to the table, false otherwise
      */
 
     //vedo il colore del nuovo studente e lo uso come chiave ricavando l'attuale table di quel colore
@@ -67,6 +69,7 @@ public class Board {
             return true;
         return false;
     }
+
 
     public void removeFromTable(Color student){
         Integer numOfStudents = studentsTable.get(student);

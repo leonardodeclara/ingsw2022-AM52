@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.exceptions.EmptyBasketException;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,6 +29,9 @@ public class Game {
     protected HashMap<Color,Player> teachersOwners;
 
 
+    /**
+     * Constructor creates a Game instance
+     */
     //AGGIUNGERE TRY CATCH PER refillClouds()che setta lastRound = true
     //AGGIUNGERE TRY CATCH PER playAssistantCard() quando viene giocata l'ultima, che setta lastRound = true
     //AGGIUNGERE TRY CATCH per refillClouds() per quando non ci sono abbastanza studenti per le nuvole => si salta la fase letPlayerPickStudent
@@ -119,9 +120,7 @@ public class Game {
     public void initiatePlayerLobby(int playerId){
         int studentLimit = players.size()==2? 7: 9;
         for(int k = 0; k < studentLimit; k++)
-            //qui dovrei inserire un trycatch per l'emptybasket ma non dovrebbe mai verificarsi questa condizione qui
             players.get(playerId).getBoard().addToLobby(basket.pickStudent());
-
     }
 
     /**
@@ -133,7 +132,6 @@ public class Game {
         //si potrebbe fare anche senza il bisogno di currentMotherNatureIsland
         for (Island island: islands){
             if(island.getIslandIndex()!= currentMotherNatureIsland.getIslandIndex() && !(island.getIslandIndex()==(6+currentMotherNatureIsland.getIslandIndex())%12)){
-                //qui dovrei inserire un trycatch per l'emptybasket ma non dovrebbe mai verificarsi questa condizione qui
                 island.addStudent(basket.pickStudent());
             }
         }
@@ -347,14 +345,14 @@ public class Game {
     public void refillClouds(){
         int numOfPicks = players.size()+1;
         ArrayList<Color> picks = new ArrayList<>();
-        Color pick = null;
+        Color pick;
         for (Cloud cloud: clouds){
             for(int i= 0; i< numOfPicks;i++){
-                try{
-                    pick = basket.pickStudent();
-                }
-                catch (EmptyBasketException e){
+                //questo andrebbe sostituito con un trycath, il caso null è per l'errore di estrazione
+                pick = basket.pickStudent();
+                if (pick==null){
                     setLastRound(true);
+                    return;
                 }
                 picks.add(pick);
             }
@@ -382,6 +380,11 @@ public class Game {
             return calculateIslandOwner(island,influences);
     }
 
+    /**
+     * Method responsible for the merging of two islands
+     * Two island is merged when they are close and they have the same owner
+     * @param island: reference of the island that has to be merged
+     */
     protected void mergeIslands(Island island){
         int islandId = islands.indexOf(island);
         Island leftIsland = islands.get((islandId + islands.size() - 1)%islands.size()); //previous island
@@ -413,6 +416,14 @@ public class Game {
         }
     }
 
+    /**
+     * Method that calculates the Owner of an island according to his influence on that island
+     * If there is a draw of influence there's no change about the island's owner
+     * @param island: reference to the island on I want to calculate influence
+     * @param influences: list of the calculated influences of each player on that island
+     * @return HashMap<String, Integer>: Hashmap that contains the information about a possible draw about the influence
+     * and the PlayerID of of the Owner
+     */
     protected HashMap<String,Integer> calculateIslandOwner(Island island,ArrayList<Integer> influences){
         int max = getMax(influences);
         int isDraw = isDuplicate(influences,max);
@@ -426,6 +437,12 @@ public class Game {
         return returnMap;
     }
 
+    /**
+     * Method that calculates the influence of each player on an island
+     * @param island: instance of the island on which I want to calculate influence
+     * @param players: list of all the players of the game
+     * @return ArrayList<Integer>: list of integer that represents the influence of each players on that island
+     */
     protected ArrayList<Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players){
         int infl;
         ArrayList<Integer> influences = new ArrayList<>();
@@ -439,6 +456,13 @@ public class Game {
         return influences;
     }
 
+    /**
+     * Method that returns the PlayerID of the player that are of the team corresponding to the color of the towers
+     * on the island. If the team of the player and the tower color on the island it's not the same it returns -1
+     * @param island: reference of the island of which I want to know the OwnerID
+     * @param players: list of all the players of the game
+     * @return PlayerID of the owner of the island or -1 if there's not an owner
+     */
     protected int getTowersOwnerIndex(Island island, ArrayList<Player> players){
         if (island.getTowers().size() == 0) return -1;
         for(Player p : players)
@@ -455,30 +479,52 @@ public class Game {
         this.lastRound = lastRound;
     }
 
+    /**
+     * @return ArrayList<color>: list of teachers in the game
+     *     */
     public ArrayList<Color> getTeachers() {
         return teachers;
     }
 
+    /**
+     * @return ArrayList<island>: list of islands in the game
+     */
     public ArrayList<Island> getIslands() {
         return islands;
     }
 
+    /**
+     * @return ArrayList<Cloud>: list of Clouds in the game
+     */
     public ArrayList<Cloud> getClouds() {
         return clouds;
     }
 
+    /**
+     * @return istance of the basket used in the game
+     */
     public Basket getBasket() {
         return basket;
     }
 
+    /**
+     * @return ArrayList<Player>: list of players of the game
+     */
     public ArrayList<Player> getPlayers() {
         return players;
     }
 
+    /**
+     * @return HashMap<Integer,Assistant>: List of Assistant Cards that have been played on a turn
+     *     */
     public HashMap<Integer,Assistant> getCurrentTurnAssistantCards(){
         return currentTurnAssistantCards;
     }
 
+    /**
+     * Method that returns the ID of the Clouds that are empty
+     * @return ArrayList<Integer>: list of the CloudID of the empty clouds
+     */
     public ArrayList<Integer> GetEmptyCloudsID(){
         ArrayList<Integer> emptyClouds = new ArrayList<>();
         for(Cloud cloud : clouds){
@@ -488,22 +534,41 @@ public class Game {
         return emptyClouds;
     }
 
+    /**
+     * Method that returns the list of the Assistant card that have not been played yet
+     * @param playerId: id given to the player, used as the index for the players ArrayList
+     * @return ArrayList<Assistant>: list of Assistant Card that are still playable
+     */
     public ArrayList<Assistant> getPlayableAssistantCards(int playerId){
         return players.get(playerId).getDeck();
     }
 
+    /**
+     * Method that set an Island as the Island on where Mother Nature is located
+     * @param currentMotherNatureIsland: reference of the Island where I want to place Mother Nature
+     */
     public void setCurrentMotherNatureIsland(Island currentMotherNatureIsland) {
         this.currentMotherNatureIsland = currentMotherNatureIsland;
     }
+
 
     public void setBasket(Basket basket) {
         this.basket = basket;
     }
 
+    /**
+     * This method returns the entire list of Assistant cards of the game
+     * @return ArrayList<Assistant>: list of Assistant cards
+     */
     public ArrayList<Assistant> getAssistantDecks() {
         return assistantDecks;
     }
 
+
+    /**
+     * Method that checks if the Game is ended
+     * @return true if there's a Game over. false if there isn't
+     */
 
     /*Da rivedere*/
     /*potremmo aggiungere attributo winner a game*/
@@ -552,6 +617,11 @@ public class Game {
         return false;
     }
 
+    /**
+     * Method that returns the instance of a Player based on his nickname
+     * @param name: nickname of a Player
+     * @return instance of the Player corresponding to the given nickname
+     */
     public Player getPlayerByName(String name){
         for (Player player: players){
             if(player.getNickname().equalsIgnoreCase(name))
@@ -560,18 +630,35 @@ public class Game {
         return null;
     }
 
+    /**
+     * Method that returns the instance of the winner
+     * @return instance of the Winner
+     */
     public Player getWinner() {
         return winner;
     }
 
+    /**
+     * Method that returns a Map that identifies the player that is the owner of a given color teacher
+     * @return HashMap<Color, Player>: Map that associates at every color the owner of its corresponding teacher
+     */
     public HashMap<Color, Player> getTeachersOwners() {
         return teachersOwners;
     }
 
+    /**
+     * Method that sets a player as a current player according to the turn priority
+     * @param currentPlayer: reference of the player
+     */
     public void setCurrentPlayer(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
     }
 
+    /**
+     * Method that returns the max from an ArrayList of integer
+     * @param list: generic list of integer
+     * @return the max number of the list
+     */
     private int getMax(ArrayList<Integer> list){
         return list
                 .stream()
@@ -579,6 +666,12 @@ public class Game {
                 .max().orElseGet(() -> -1);
     }
 
+    /**
+     * Method that checks if a value occurs more than once in an ArrayList
+     * @param values: ArrayList that method has to check
+     * @param value: integer that method has to check if there's a duplicate
+     * @return 1 if there's a duplicate of the value or 0
+     */
     private int isDuplicate(ArrayList<Integer> values, int value) {
         return Collections.frequency(values,value) > 1? 1:0;
     }
