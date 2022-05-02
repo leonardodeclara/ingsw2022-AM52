@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 public class Server {
     ServerSocketConnection serverSocket;
     ArrayList<Lobby> lobbies;
+    //si potrebbe creare una struttura dati tipo hashmap con chiave a due valori < int NumberPlayers, boolean expertOrNot>
 
     public Server(){
 
@@ -24,24 +25,6 @@ public class Server {
             lobbies.add(newLobby);
             return false;
         }
-
-        /*
-        Lobby matchingLobby = getMatchingLobby(numberPlayers,expertGame);
-        if (matchingLobby!=null){
-            matchingLobby.addToLobby(nickname);
-            if(matchingLobby.enoughPlayerToStart())
-                return true;
-            else
-                return false;
-        }
-        else {
-            Lobby newLobby = new Lobby(numberPlayers,expertGame);
-            lobbies.add(newLobby);
-            return false;
-        }
-        */
-
-
     }
 
     private Lobby getMatchingLobby(int numberPlayers, boolean expertGame){
@@ -49,6 +32,15 @@ public class Server {
                 .filter(x -> x.getNumberPlayersRequired() == numberPlayers && x.isExpertGame() == expertGame)
                 .findFirst()
                 .get();
+    }
+
+    //alla creazione di una nuova partita viene rimossa da lobbies la lobby riferita a quella partita
+    private void removeLobby(int numberPlayers, boolean expertGame){
+        Lobby removedLobby=null;
+        for (Lobby lobby: lobbies)
+            if (lobby.getNumberPlayersRequired()== numberPlayers && lobby.isExpertGame()==expertGame)
+                removedLobby=lobby;
+        lobbies.remove(removedLobby);
     }
 }
 
