@@ -4,6 +4,12 @@ import it.polimi.ingsw.exceptions.EmptyBasketException;
 
 import java.util.*;
 
+/**
+ * This is a subclass of game
+ * contains the informations and the actions that can be performed in the expert game mode
+ * Each player can play 3 Personality card
+ * Each player can earn money to purchase Personality card
+ */
 public class ExpertGame extends Game {
     private ArrayList<Personality> personalities;
     private static final int NUM_PLAYABLE_PERSONALITY_CARDS = 3;
@@ -12,6 +18,9 @@ public class ExpertGame extends Game {
     private int coins;
     private int bans;
 
+    /**
+     * Constructor creates an ExpertGame instance
+     */
     public ExpertGame(){
         super();
         personalities = new ArrayList<>();
@@ -19,6 +28,9 @@ public class ExpertGame extends Game {
         bans=4;
     }
 
+    /**
+     * This method instantiates all the game elements (clouds,teachers,basket,islands and boards)
+     */
     @Override
     public void instantiateGameElements() {
         super.instantiateGameElements();
@@ -26,6 +38,15 @@ public class ExpertGame extends Game {
         //extractPersonalityCards();
     }
 
+    /**
+     * This method is called when a player uses the Personality card whit CardID 2
+     * The student can be moved to an island or to the table according to the parameters of the method
+     * @param playerId: id given to the player, used as the index for the players arrayList
+     * @param studentIndex: index that identifies the position of the student in the lobby
+     * @param islandId: ID of the island where I want to place the student, if I want to move the student
+     *                to the table I have to write -1
+     * @return false if the move isn't legal, true otherwise
+     */
     public boolean moveStudentFromLobbyForCard2(int playerId,int studentIndex,int islandId){
         Player player = players.get(playerId);
         if(!isMoveStudentFromLobbyLegal(player,studentIndex,islandId))
@@ -43,6 +64,13 @@ public class ExpertGame extends Game {
         return true;
     }
 
+    /**
+     * This Method recalculates the given player's number of students and possibly assigns him 1+
+     * teachers ownership
+     * It's different from the updateTeachersOwnership method because the player takes control
+     * of the professors even if they have the same number of students in the Table as the current owner
+     * @param player : reference of the player of whom we want to check teachers' ownership
+     */
     public void updateTeachersOwnershipForCard2(Player player){
         for(Color c : Color.values()) {
             Player owner = teachersOwners.get(c);
@@ -63,6 +91,13 @@ public class ExpertGame extends Game {
         }
     }
 
+    /**
+     *Method moveMotherNature checks  if the player with Player ID can move Mother Nature of numSteps
+     *  and if it's doable, moves Mother Nature from the current island to the new one
+     *  It's different from the MoveMotherNature method because MotherNature can do 2 additional moves
+     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param numSteps : number of islands that the player identified with the playerId wants to move mother nature
+     */
     public boolean moveMotherNatureForCard4(int playerId,int numSteps){
         if(!isMoveMNLegal(playerId,numSteps+2))
             return false;
@@ -77,11 +112,19 @@ public class ExpertGame extends Game {
         return true;
     }
 
+    /**
+     * Method that calculates influence of an island but doesn't consider the towers
+     * @param island: instance of the island on which I want to calculate influence
+     */
     public HashMap<String,Integer> calculateInfluenceForCard6(Island island){
         ArrayList<Integer>  influences = calculateStudentsInfluences(island,players);
         return calculateIslandOwner(island,influences);
     }
 
+    /**
+     * Method that calculates influence of an island and adds 2 additional points
+     * @param island: instance of the island on which I want to calculates influence
+     */
     public HashMap<String,Integer> calculateInfluenceForCard8(Island island){
         ArrayList<Integer>  influences = calculateStudentsInfluences(island,players);
         int towersOwnerIndex = getTowersOwnerIndex(island,players);
@@ -94,6 +137,11 @@ public class ExpertGame extends Game {
         return calculateIslandOwner(island,influences);
     }
 
+    /**
+     * Method that calculates influence on an island but doesn't consider the bannedColor students
+     * @param island: instance of the island on which I want to calculate influence
+     * @param bannedColor: Color that I want to exclude from the influence count
+     */
     public HashMap<String,Integer> calculateInfluenceForCard9(Island island,Color bannedColor){
         ArrayList<Integer>  influences = calculateStudentsInfluences(island,players,bannedColor);
         int towersOwnerIndex = getTowersOwnerIndex(island,players);
@@ -104,6 +152,13 @@ public class ExpertGame extends Game {
         return calculateIslandOwner(island,influences);
     }
 
+    /**
+     * Method that calculates the influence of each player on an island but doesn't consider the bannedColor students
+     * @param island: instance of the island on which I want to calculate influence
+     * @param players: list of all the players of the game
+     * @param bannedColor: Color that I want to exclude from the influence count
+     * @return ArrayList<Integer>: list of integer that represents the influence of each players on that island
+     */
     protected ArrayList<Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players,Color bannedColor){
         int infl = 0;
         ArrayList<Integer> influences = new ArrayList<>();
@@ -118,6 +173,10 @@ public class ExpertGame extends Game {
         return influences;
     }
 
+    /**
+     * Method that randomly extract 3 Personality card
+     * This method differentiates the types of card drawn according to the ID
+     */
     public void extractPersonalityCards() {
         ArrayList<Integer> extractedIndexes = new ArrayList<>();
         int randomIndex=0;
@@ -149,6 +208,10 @@ public class ExpertGame extends Game {
         }
     }
 
+    /**
+     * Method that sets the Personality card that is active in the round
+     * @param cardId: ID of the Personality card that is active in the round
+     */
     public void setActivePersonality(int cardId){
         if (activePersonality!=null){
             throw new RuntimeException("Non è possibile selezionare più di una carta personaggio per turno");
@@ -174,24 +237,39 @@ public class ExpertGame extends Game {
         //si potrebbe inserire all'interno di un blocco try questa chiamata + le modifiche alle monete ecc
     }
 
+    /**
+     * Method that reset the active Personality card
+     */
     public void resetActivePersonality(){
         Personality oldCard = getActivePersonality();
         if (oldCard != null && !personalities.contains(oldCard))
             personalities.add(oldCard);
     }
 
+    /**
+     * Method that returns the list of all personality cards
+     */
     public ArrayList<Personality> getPersonalities() {
         return personalities;
     }
 
+    /**
+     * Method that returns the Personality card instance of the active card in the round
+     */
     public Personality getActivePersonality() {
         return activePersonality;
     }
 
+    /**
+     * Method that returns the number of coins in the game
+     */
     public int getCoins() {
         return coins;
     }
 
+    /**
+     * Method that returns the number of bans in the game
+     */
     public int getBans() {
         return bans;
     }

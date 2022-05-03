@@ -71,6 +71,10 @@ public class Board {
     }
 
 
+    /**
+     * Remove each student object from the table
+     * @param student: instance of the student that has to be removed
+     */
     public void removeFromTable(Color student){
         Integer numOfStudents = studentsTable.get(student);
         numOfStudents--;
@@ -83,52 +87,104 @@ public class Board {
 
     }
 
+    /**
+     * Add each teacher object to the table corresponding to its color
+     * @param teacher: instance of the teacher that has to be added
+     */
     public void addTeacher(Color teacher){
         teacherTable.add(teacher);
     }
 
+    /**
+     * Remove each teacher from the table
+     * @param teacher: instance of the teacher that has to be removed
+     * @return instance of the teacher that has been removed
+     */
     public Color removeTeacher(Color teacher) {
         teacherTable.remove(teacher);
         return teacher;
     }
 
+    /**
+     * Add each tower to the board
+     */
     public void addTower() {
         //bisogna inserire un controllo che non si inseriscano più torri di quanto permesso
         towers++;
     }
 
+    /**
+     * Remove each tower from the board
+     */
     public void removeTower(){
         towers--;
     }
 
+    /**
+     * Method that returns the list of the students that are in the board's lobby
+     * @return ArrayList<Color>: list of the students from the lobby
+     */
     public ArrayList<Color> getLobby() {
         return lobby;
     }
 
+    /**
+     * Method that returns the instance of the student that are in a specific position in the lobby
+     * indicated by an index
+     * @param lobbyIndex index that identifies the position of the student in the lobby
+     * @return color of the student in lobbyIndex position
+     */
     public Color getLobbyStudent(int lobbyIndex){
         return lobby.get(lobbyIndex);
     }
 
+    /**
+     * Method that returns the number of the students in the Table divided by color
+     * @return HashMap<Color, Integer>: Map that associates every student's color with the number of students
+     * of that color
+     */
     public HashMap<Color, Integer> getStudentsTable() {
         return studentsTable;
     }
 
+    /**
+     * Method that returns the list of teacher in the table
+     * @return ArrayList<Color>: ArrayList of teacher
+     */
     public ArrayList<Color> getTeacherTable() {
         return teacherTable;
     }
 
+    /**
+     * Method that checks if the table is true analyzing each color
+     * @param color: color I want to know if its part of table is full
+     * @return true if the part of table corresponding to the color is full, false otherwise
+     */
     public boolean isTableFull(Color color){
         return studentsTable.get(color) == 10 ? true : false;
     }
 
+    /**
+     * Method that returns the number of towers in the board
+     * @return number of towers in the board
+     */
     public int getTowers() {
         return towers;
     }
 
+    /**
+     * Method that returns the number of the student in the table of each color
+     * @param tableColor: color I want to know the number of students
+     * @return number of students of that color in the Table
+     */
     public int getTableNumberOfStudents(Color tableColor){
         return studentsTable.get(tableColor);
     }
 
+    /**
+     * Method that set the number of towers in the board
+     * @param towers: number of towers
+     */
     public void setTowers(int towers) {
         this.towers = towers;
     }
