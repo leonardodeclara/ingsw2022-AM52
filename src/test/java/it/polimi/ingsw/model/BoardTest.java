@@ -13,6 +13,10 @@ import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BoardTest {
+
+    /**
+     * Method addToLobbyTest verify that students are correctly added to lobby
+     */
     @Test
     void addToLobbyTest() {
         Board board = new Board();
@@ -34,6 +38,9 @@ class BoardTest {
         assertEquals(1,pinkCount);
     }
 
+    /**
+     * Method removeFromLobbyTest verifies that students are correctly removed from lobby
+     */
     @Test
     void removeFromLobbyTest() {
         Board board = new Board();
@@ -43,6 +50,9 @@ class BoardTest {
         assertEquals(1, board.getLobby().size());
     }
 
+    /**
+     * Method addToTableTest verifies that students are correctly added to table
+     */
     @Test
     void addToTableTest() {
         Board board = new Board();
@@ -55,6 +65,9 @@ class BoardTest {
         assertTrue(board.addToTable(Color.PINK));
     }
 
+    /**
+     * Method removeFromTableTest verifies that students are correctly removed from table
+     */
     @Test
     void removeFromTableTest() {
         Board board = new Board();
@@ -68,6 +81,9 @@ class BoardTest {
     void switchStudentsTest() {
     }
 
+    /**
+     * Method addTeacherTest verifies that teachers are correctly added to the board
+     */
     @Test
     void addTeacherTest() {
         Board board = new Board();
@@ -78,6 +94,9 @@ class BoardTest {
         assertTrue(board.getTeacherTable().contains(Color.BLUE));
     }
 
+    /**
+     * Method removeTeacherTest verifies that teachers are correctly removed from the board
+     */
     @Test
     void removeTeacherTest() {
         Board board = new Board();
@@ -91,6 +110,9 @@ class BoardTest {
         }
     }
 
+    /**
+     * Method TowerTest verifies that towers are correctly added and removed from the board
+     */
     @Test
     void TowerTest(){
         Board board = new Board();
@@ -104,6 +126,9 @@ class BoardTest {
         assertEquals(2, board.getTowers());
     }
 
+    /**
+     * Method getLobbyTest verifies that the getLobby method returns the correct ArrayList of students
+     */
     @Test
     void getLobbyTest() {
         Board board = new Board();
@@ -115,6 +140,10 @@ class BoardTest {
         assertEquals(colors, board.getLobby());
     }
 
+    /**
+     * Method getLobbyStudentTest verifies that the getLobbyStudent method returns the correct instance of
+     * the student corresponding to the required index
+     */
     @Test
     void getLobbyStudentTest() {
         Board board = new Board();
@@ -126,6 +155,10 @@ class BoardTest {
         assertEquals(Color.BLUE, board.getLobbyStudent(3));
     }
 
+    /**
+     * Method getStudentsTableTest verifies that getStudentsTable method returns the correct ArrayList of students
+     * that are located in the board's table
+     */
     @Test
     void getStudentsTableTest() {
         Board board = new Board();
@@ -139,6 +172,10 @@ class BoardTest {
         assertEquals(colors, board.getStudentsTable());
     }
 
+    /**
+     * Method isTableFullTest verifies if isTableFull method returns true when the table is full
+     * and false otherwise
+     */
     @Test
     void isTableFullTest() {
         Board board = new Board();
@@ -151,6 +188,10 @@ class BoardTest {
         assertFalse(board.isTableFull(Color.RED));
     }
 
+    /**
+     * Method getTableNumberOfStudents verifies that method getTableNumberOfStudents return the
+     * correct number of students in the board
+     */
     @Test
     void getTableNumberOfStudentsTest(){
         Board board = new Board();
@@ -161,6 +202,10 @@ class BoardTest {
         assertEquals(0, board.getTableNumberOfStudents(Color.RED));
      }
 
+    /**
+     * Method setTowersTest verifies that method setTowers returns the correct
+     * number of inserted towers
+     */
     @Test
     void setTowersTest(){
         Board board = new Board();
@@ -168,6 +213,11 @@ class BoardTest {
         assertEquals(1, board.getTowers());
      }
 
+    /**
+     * Method changeTowerNumber verifies if the getTowers method continue to return the correct number of towers
+     * after changing the number of towers
+     *
+     */
     @Test
     void changeTowerNumber(){
         Board board = new Board();

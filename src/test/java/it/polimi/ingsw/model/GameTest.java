@@ -79,6 +79,9 @@ class GameTest {
         assertEquals(0,game.getIslands().get((indexMN+6)%12).getStudents().size());
     }
 
+    /**
+     * Method cloudInstantiationTest verifies the correct instantiation of the newly created cloud tiles
+     */
     @Test
     void cloudInstantiationTest(){
         Game game = new Game();
@@ -92,6 +95,9 @@ class GameTest {
     @Test
     void towerInstantiationTest(){}
 
+    /**
+     * Method deckInstantiationTest verifies the correct instantiation of the Assistant card deck
+     */
     @Test
     void deckInstantiationTest() {
         Game game = new Game();
@@ -223,7 +229,10 @@ class GameTest {
     }
 
 
-
+    /**
+     * Method isMoveMNLegal is responsible for verifying that Mother Nature moves are legal according to
+     * the numMoves written on the Assistant card played
+     */
     @Test
     void isMoveMNLegal(){
         Game game = new Game();
@@ -250,6 +259,10 @@ class GameTest {
         assertEquals(true,game.isMoveMNLegal(1,0));
     }
 
+    /**
+     * Method isMoveStudentFromLobbyLegalTest verifies that method isMoveStudentFromLobby returns the
+     * correct boolean values according to the availability of places in the board's table
+     */
     @Test
     void isMoveStudentFromLobbyLegalTest(){
         Game game = new Game();
@@ -278,6 +291,10 @@ class GameTest {
     }
 
 
+    /**
+     * Method isMoveStudentsToLobbyLegal verifies if method isMoveStudentsToLobbyLegal returns the correct
+     * boolean value according to the correct cloudID
+     */
     @Test
     void isMoveStudentsToLobbyLegal(){
         Game game = new Game();
@@ -293,6 +310,11 @@ class GameTest {
         assertTrue(game.isMoveStudentsToLobbyLegal(game.getPlayers().get(0), 1));
     }
 
+    /**
+     * This method verifies that method moveStudentFromLobby works corectly when I want to move a student to an island
+     * according to the current Mother Nature position
+     *
+     */
     @Test
     void moveStudentFromLobbyToIslandTest(){
         Game game = new Game();
@@ -319,6 +341,10 @@ class GameTest {
         assertEquals(s2, game.getIslands().get((mnPosition+2)%12).getStudents().get(1));
     }
 
+    /**
+     * This method verifies that moveStudentFromLobby wors correctly when I want to move a student to the table
+     * according to the availability of the places in the Table
+     */
     @Test
     void moveStudentFromLobbyToTableTest(){
         Game game = new Game();
@@ -342,6 +368,10 @@ class GameTest {
         assertEquals(lobbySizeP1-1, game.getPlayers().get(1).getBoard().getLobby().size());
     }
 
+    /**
+     * This method verifies the correct working of moveMotherNature method checking the old and the new position
+     * of Mother Nature before and after the move
+     */
     @Test
     void moveMNTest(){
         Game game = new Game();
@@ -361,6 +391,10 @@ class GameTest {
         assertEquals(game.getIslands().get(newMNIsland.getIslandIndex()), game.currentMotherNatureIsland);
 
     }
+
+    /**
+     * This method verifies the size of the lobby before and after the addition of a student
+     */
     @Test
     void moveStudentsToLobby(){
         Game game = new Game();
@@ -383,6 +417,9 @@ class GameTest {
 
     }
 
+    /**
+     * This method verifies if the Cloud with the ID returned by the getEmptyClouds method is empty
+     */
     @Test
     void getEmptyClouds(){
         Game game = new Game();
@@ -399,6 +436,9 @@ class GameTest {
 
     }
 
+    /**
+     * This method verifies the correct calculation of the influence of each  player
+     */
     @Test
     void studentsInfluenceTest(){
         Game game = new Game();
@@ -436,6 +476,10 @@ class GameTest {
         assertEquals(3,result.size());
     }
 
+    /**
+     * This method verifies if the calculateIslandOwner method returns the correct playerID of the player
+     * that is the owner of the island
+     */
     @Test
     void calculateIslandOwnerTest(){
         Game game = new Game();
@@ -470,6 +514,10 @@ class GameTest {
     }
 
     //test senza torri e con pareggi
+
+    /**
+     * This method verifies the correct calculation of the influence excluding the towers
+     */
     @Test
     void CalculateInfluenceWithTowersTest(){
         Game game = new Game();
@@ -499,6 +547,10 @@ class GameTest {
     }
 
     //test con torri e senza pareggi
+
+    /**
+     * Method that verifies the correct calculation of influence excluding the draw cases
+     */
     @Test
     void totalCalculateInfluenceTest(){
         Game game = new Game();
@@ -521,6 +573,10 @@ class GameTest {
         game.getIslands().get(0).addStudent(Color.GREEN);
         assertEquals(1,game.calculateInfluence(game.getIslands().get(0)).get("ID Player"));
     }
+
+    /**
+     * This method verifies the correct working of checkGameOver method according to the island number
+     */
     @Test
     void checkGameOverForIslandNumber(){
         Game game = new Game();
@@ -538,6 +594,9 @@ class GameTest {
         assertEquals(game.getPlayers().get(1), game.getWinner());
     }
 
+    /**
+     * This method verifies the correct working of checkGameOver method according to the number of towers
+     */
     @Test
     void checkGameOverForTowers() {
         Game game = new Game();
@@ -556,6 +615,10 @@ class GameTest {
     }
 
 
+    /**
+     * This method verifies the correct working of the method that moves the teachers
+     * according to their color
+     */
     @Test
     void teacherMovementTest(){
         Game game = new Game();
@@ -593,6 +656,9 @@ class GameTest {
         assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.YELLOW));
     }
 
+    /**
+     * This method
+     */
     @Test
     void lastRoundTest(){
         Game game = new Game();
