@@ -1,8 +1,12 @@
 package it.polimi.ingsw.client;
 import it.polimi.ingsw.messages.ClientState;
 
-public class CLI {
+public class CLI implements Runnable{
 
+    @Override
+    public void run() {
+
+    }
 }
 
 

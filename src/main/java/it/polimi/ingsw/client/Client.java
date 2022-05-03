@@ -64,6 +64,10 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
         return currentState;
     }
 
+    public ClientSocket getClientSocket() {
+        return clientSocket;
+    }
+
     public void setCurrentState(ClientState currentState) {
         this.currentState = currentState;
     }
@@ -72,11 +76,13 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
         Client client = new Client();
         client.instantiateSocket("127.0.0.1",1234);
 
+        //client.getClientSocket().run();
+
+
         String nickname = "Frizio"; //verrà inserito dal giocatore nella CLI/GUI
         client.connect(nickname);
-
-        nickname = "Frizio";
-        client.connect(nickname);
+        //nickname = "Leoviatano";
+        //client.connect(nickname);
 
 
 
@@ -86,7 +92,7 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
 
 
 
-
+//send dei messaggi vanno gestiti separatamente dai metodi che si occupano dell'elaborazione
 
 
 
