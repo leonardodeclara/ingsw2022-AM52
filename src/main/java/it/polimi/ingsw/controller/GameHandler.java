@@ -10,9 +10,13 @@ public class GameHandler {
     GameController gameController;
     ServerSocketConnection serverConnection;
     Server server;
+    int numOfPlayers;
+    boolean expertGame;
 
-    public GameHandler(Server server){
+    public GameHandler(Server server, int numOfPlayers, boolean expertGame){
         this.server = server;
+        this.numOfPlayers= numOfPlayers;
+        this.expertGame=expertGame;
     }
 
     public void handleMessage(Message message,int playerID){
@@ -48,7 +52,6 @@ public class GameHandler {
     */
 
 
-
     /*
     si svuota la lobby inserendo tutto in un game controller (che inizializza il model)
     si mappano i nickname a degli id player (in ordine di join nella lobby, usando quindi la lista players di lobby)
@@ -57,8 +60,11 @@ public class GameHandler {
     non viene riempito di robe che non gli competono
      */
     public void startGame(){
+        gameController= new GameController(expertGame);
 
     }
 
-
+    public GameController getGameController() {
+        return gameController;
+    }
 }

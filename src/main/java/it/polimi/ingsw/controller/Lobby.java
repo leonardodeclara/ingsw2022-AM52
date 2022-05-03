@@ -25,6 +25,10 @@ public class Lobby {
         return numberPlayersRequired;
     }
 
+    public ArrayList<String> getPlayers() {
+        return new ArrayList<>(players);
+    }
+
     public boolean isExpertGame() {
         return expertGame;
     }
