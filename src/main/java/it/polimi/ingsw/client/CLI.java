@@ -8,19 +8,27 @@ public class CLI implements Runnable{
     private final Scanner inputStream;
     private final PrintStream outputStream;
     private final Client client;
+    private boolean active;
 
     public CLI() {
         inputStream = new Scanner(System.in);
         outputStream = new PrintStream(System.out);
         client = new Client();
+        active = true;
     }
 
     @Override
     public void run() {
         outputStream.println("Benvenuto nel gioco");
         startConnection();
-        client.executeCurrentState();
-        while (true){}
+
+        while (active){
+            //String input = inputStream.nextLine();
+            //client.executeCurrentState(input);
+            client.executeCurrentState();
+            //concettualmente non dovrebbe funzionare così, ma intanto proviamo
+
+        }
     }
 
     public void startConnection() {

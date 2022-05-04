@@ -15,10 +15,10 @@ public class ClientSocket implements Runnable{
     boolean active;
     Client client;
 
-    public ClientSocket(String ip,int port) throws IOException {
+    public ClientSocket(String ip,int port, Client client) throws IOException {
         this.ip = ip;
         this.port = port;
-        client = new Client();
+        this.client = client;
         socket = new Socket(ip, port);
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(socket.getInputStream());
@@ -52,8 +52,11 @@ public class ClientSocket implements Runnable{
 
     @Override
     public void run() {
+        System.out.println("Thread del client socket partito");
+        active=true;
         try{
             while(active){
+                System.out.println("Qui aspetto messaggi dal server");
                 Message receivedMessage = (Message) in.readObject();
                 client.handleServerMessage(receivedMessage);
             }

@@ -57,10 +57,17 @@ public class ClientHandler implements Runnable {
     }
 
     public void readMessage(Message message){
+        System.out.println("Ho ricevuto un messaggio da");
         if (message instanceof LoginRequestMessage) //manda al server, fase di connessione
+        {
+            System.out.println("è arrivato un messaggio di loginRequest");
             server.handleMessage(message,this);
+        }
         else if (message instanceof GameParametersMessage) //manda al server, fase di connessione
+        {
+            System.out.println("è arrivato un messaggio di gameParameters");
             server.handleMessage(message,this);
+        }
         else
             gameHandler.handleMessage(message,this); //attende che gamehandler,gamecontroller e gli altri facciano quello che devono
     }

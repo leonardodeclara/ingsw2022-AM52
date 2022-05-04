@@ -13,16 +13,20 @@ import java.io.IOException;
 public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall'altro
     ClientState currentState;
     ClientSocket clientSocket;
+    InputParser inputParser;
 
     public Client() {
+        inputParser=new InputParser();
     }
 
     public boolean instantiateSocket(String ip,int port) throws IOException {
-        clientSocket = new ClientSocket(ip,port);
+        clientSocket = new ClientSocket(ip,port,this);
         return true;
     }
 
-    public void handleServerMessage(Message message){}
+    public void handleServerMessage(Message message){
+        System.out.println("Ho ricevuto un messaggio dal server");
+    }
 
     public boolean connect(String nickname) throws IOException, ClassNotFoundException { //returna boolean in modo da far sapere al chiamante (CLI/GUI) se deve chiedere di nuovo l'input o no
         Message serverResponse = clientSocket.connect(nickname);
@@ -30,7 +34,11 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
             System.out.println("\nConnessione avvenuta con successo, "+nickname); //sostituiremo i print con metodi di GUI/CLI
             ClientStateMessage newStateMessage = (ClientStateMessage) serverResponse;
             currentState = newStateMessage.getNewState(); //switch del client al prossimo stato
-            clientSocket.run(); //faccio partire il thread che gestisce la connessione server-client
+            System.out.println("il mio stato attuale è " + currentState.toString());
+            //clientSocket.run();
+            //faccio partire il thread che gestisce la connessione server-client, non so dove farlo partire
+            //se lo eseguo qui poi non termina l'esecuzione del metodo (why?)
+
             return true;
         }
         else if(serverResponse instanceof ErrorMessage) {
@@ -41,9 +49,29 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
     }
 
     public void executeCurrentState(){ //andrebbe aggiunto un listener così quando lo stato cambia viene in automatico chiamato questo
+        System.out.println("Qui eseguo azioni in base allo stato");
+        //String[] inputTokens = playerInput.split(" ");
         switch(currentState){
             case INSERT_NEW_GAME_PARAMETERS: //prima viene richiesto al giocatore l'input mediante CLI/GUI e poi lo si inserisce nel metodo previsto
-                //insertNewGameParameters();
+                //questa parte non va gestita con try catch molto probabilmente
+                //try{
+                //    send(inputParser.parseGameParameters(inputTokens));
+                //}
+                //catch (IOException e){
+                //    System.out.println("qualcosa è andato storto");
+                //}
+
+                //qui in base allo stato dovrebbe essere comunicato un messaggio al client -> input ->
+                //input viene processato e scatta il messaggio al server
+
+                System.out.println("Adesso procedo come previsto dallo stato INSERT_NEW_GAME_PARAMETERS");
+                try{
+                    insertNewGameParameters(3, true);
+                }
+                catch (IOException | ClassNotFoundException e){
+                    //gestire in qualche modo
+                }
+
 
         }
 
