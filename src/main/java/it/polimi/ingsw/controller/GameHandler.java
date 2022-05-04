@@ -1,25 +1,30 @@
 package it.polimi.ingsw.controller;
 
 import com.sun.net.httpserver.Authenticator;
+import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.messages.*;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class GameHandler {
     GameController gameController;
     ServerSocketConnection serverConnection;
     Server server;
-    int numOfPlayers;
+    ArrayList<String> players;
+    HashMap<String, ClientHandler> nameToHandlerMap;
     boolean expertGame;
 
-    public GameHandler(Server server, int numOfPlayers, boolean expertGame){
+    public GameHandler(Server server,HashMap<String, ClientHandler> nameToHandlerMap, boolean expertGame){
         this.server = server;
-        this.numOfPlayers= numOfPlayers;
+        this.nameToHandlerMap =nameToHandlerMap;
         this.expertGame=expertGame;
+        players.addAll(nameToHandlerMap.keySet());
     }
 
-    public void handleMessage(Message message,int playerID){
+    public void handleMessage(Message message,ClientHandler clientHandler){
         //if(message instanceof LoginRequestMessage)
         //    handleLoginRequestMessage((LoginRequestMessage) message, playerID);
         //if(message instanceof GameParametersMessage)
@@ -61,8 +66,25 @@ public class GameHandler {
      */
     public void startGame(){
         gameController= new GameController(expertGame);
+        ClientStateMessage waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
+        ClientStateMessage setUpPhaseStateMessage = new ClientStateMessage(ClientState.SET_UP_PHASE);
+        sendAllExcept((ArrayList<ClientHandler>) nameToHandlerMap.values(),nameToHandlerMap.get(players.get(0)),waitStateMessage);
+        sendTo(players.get(0),setUpPhaseStateMessage);
 
     }
+
+    private void sendAllExcept(ArrayList<ClientHandler> clientHandlers,ClientHandler except, Message message){
+        for( ClientHandler clientHandler : clientHandlers){
+            if(!clientHandler.equals(except))
+                clientHandler.sendMessage(message);
+        }
+    }
+
+    private void sendTo(String nickname,Message message){
+        ClientHandler clientHandler = nameToHandlerMap.get(nickname);
+        clientHandler.sendMessage(message);
+    }
+
 
     public GameController getGameController() {
         return gameController;

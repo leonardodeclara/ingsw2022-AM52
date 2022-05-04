@@ -35,13 +35,16 @@ public class ClientHandler implements Runnable {
         this.ID = ID;
     }
 
+    public int getID(){
+        return ID;
+    }
+
     public void run() {
         try {
             // Leggo l'input dal player, lo deserializzo, lo mando a gameHandler, mando la rispost al player
             while (true) {
                 Message receivedMessage = (Message) in.readObject();
                 readMessage(receivedMessage);
-
                 //invece di salvare un attributo responseMessage si potrebbe gestire la scrittura della risposta all'interno della
                 //catena di metodi che vengono chiamati
                 //out.writeObject(responseMessage); //infine manda fuori la risposta del server
@@ -54,45 +57,14 @@ public class ClientHandler implements Runnable {
     }
 
     public void readMessage(Message message){
-        if (message instanceof LoginRequestMessage)
-            handleLogin((LoginRequestMessage) message);
-        else if (message instanceof GameParametersMessage)
-            handleGameParameters((GameParametersMessage) message);
+        if (message instanceof LoginRequestMessage) //manda al server, fase di connessione
+            server.handleMessage(message,this);
+        else if (message instanceof GameParametersMessage) //manda al server, fase di connessione
+            server.handleMessage(message,this);
         else
-            gameHandler.handleMessage(message,ID); //attende che gamehandler,gamecontroller e gli altri facciano quello che devono
+            gameHandler.handleMessage(message,this); //attende che gamehandler,gamecontroller e gli altri facciano quello che devono
     }
 
-    public void handleLogin(LoginRequestMessage message ){
-        String nickname = ((LoginRequestMessage) message).getPlayerNickname();
-
-        //questo controllo deve essere a livello server perché in teoria il nome deve essere univoco a livello server, non a livello partita
-        if(server.isNicknameAvailable(nickname)){
-            server.registerPlayer(nickname);
-            server.registerClientConnection(nickname, this);
-            //sendMessage(new LoginReplyMessage(nickname));
-            sendMessage(new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS));
-
-        }else{
-            ErrorMessage error = new ErrorMessage(ErrorKind.INVALID_NICKNAME);
-            sendMessage(error);
-        }
-    }
-
-
-    public void handleGameParameters(GameParametersMessage message){
-        boolean expertGame = message.isExpertGame();
-        int numberOfPlayers = message.getNumberPlayers();
-        if (numberOfPlayers< Constants.MIN_NUMBER_OF_PLAYERS || numberOfPlayers>Constants.MAX_NUMBER_OF_PLAYERS){
-            sendMessage(new ErrorMessage(ErrorKind.INVALID_INPUT));
-            sendMessage(new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS)); //non so se serve
-            return;
-        }
-        if(server.joinLobby(ID,numberOfPlayers,expertGame)){ //c'è una lobby e il gioco sta per partire
-            gameHandler.startGame();
-        } else { //lobby appena creata/lobby già esistente ma non abbastanza players
-            sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY));
-        }
-    }
 
     public void sendMessage(Message message){
         try{
@@ -101,6 +73,7 @@ public class ClientHandler implements Runnable {
             //chiudo la connessione.
         }
     }
+
 
     public void setGameHandler(GameHandler gameHandler) {
         this.gameHandler = gameHandler;
