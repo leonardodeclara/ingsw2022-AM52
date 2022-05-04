@@ -19,7 +19,7 @@ public class CLI implements Runnable{
     public void run() {
         outputStream.println("Benvenuto nel gioco");
         startConnection();
-        handleGameParameters();
+        client.executeCurrentState();
         while (true){}
     }
 
@@ -34,7 +34,7 @@ public class CLI implements Runnable{
                 ip = inputStream.nextLine();
                 outputStream.println("Inserisci port: ");
                 outputStream.println(">");
-                port = Integer.parseInt(inputStream.nextLine());
+                port = Integer.parseInt(inputStream.nextLine()); //se scrivo \n salta tutto
                 connectionResult= client.instantiateSocket(ip, port);
             }
             catch (IOException e){
@@ -53,10 +53,6 @@ public class CLI implements Runnable{
         catch (IOException | ClassNotFoundException e){
             outputStream.println("Errore");
         }
-    }
-
-    public void handleGameParameters() {
-
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException { //simula CLI

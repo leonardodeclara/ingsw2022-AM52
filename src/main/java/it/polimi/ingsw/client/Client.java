@@ -30,6 +30,7 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
             System.out.println("\nConnessione avvenuta con successo, "+nickname); //sostituiremo i print con metodi di GUI/CLI
             ClientStateMessage newStateMessage = (ClientStateMessage) serverResponse;
             currentState = newStateMessage.getNewState(); //switch del client al prossimo stato
+            clientSocket.run(); //faccio partire il thread che gestisce la connessione server-client
             return true;
         }
         else if(serverResponse instanceof ErrorMessage) {
