@@ -11,6 +11,8 @@ public class ClientSocket implements Runnable{
     ObjectInputStream in;
     String ip;
     int port;
+    boolean active;
+
     public ClientSocket(String ip,int port){
         this.ip = ip;
         this.port = port;
@@ -46,7 +48,7 @@ public class ClientSocket implements Runnable{
     @Override
     public void run() {
 
-        while(true){
+        while(active){
 
         }
 

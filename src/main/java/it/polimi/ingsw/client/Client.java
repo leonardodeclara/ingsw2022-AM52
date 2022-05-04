@@ -25,7 +25,7 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
     public boolean connect(String nickname) throws IOException, ClassNotFoundException { //returna boolean in modo da far sapere al chiamante (CLI/GUI) se deve chiedere di nuovo l'input o no
         Message serverResponse = clientSocket.connect(nickname);
         if(serverResponse instanceof ClientStateMessage) {
-            System.out.println("\nConnessione avvenuta con successo,"+nickname); //sostituiremo i print con metodi di GUI/CLI
+            System.out.println("\nConnessione avvenuta con successo, "+nickname); //sostituiremo i print con metodi di GUI/CLI
             ClientStateMessage newStateMessage = (ClientStateMessage) serverResponse;
             currentState = newStateMessage.getNewState(); //switch del client al prossimo stato
             return true;
@@ -79,10 +79,10 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
         //client.getClientSocket().run();
 
 
-        String nickname = "Frizio"; //verrà inserito dal giocatore nella CLI/GUI
-        client.connect(nickname);
-        //nickname = "Leoviatano";
+        //String nickname = "Frizio"; //verrà inserito dal giocatore nella CLI/GUI
         //client.connect(nickname);
+        String nickname = "Leoviatano";
+        client.connect(nickname);
 
 
 

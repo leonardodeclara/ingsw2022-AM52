@@ -69,7 +69,7 @@ public class ClientHandler implements Runnable {
         if(server.isNicknameAvailable(nickname)){
             server.registerPlayer(nickname);
             server.registerClientConnection(nickname, this);
-            sendMessage(new LoginReplyMessage(nickname));
+            //sendMessage(new LoginReplyMessage(nickname));
             sendMessage(new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS));
 
         }else{
