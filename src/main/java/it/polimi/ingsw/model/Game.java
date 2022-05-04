@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.EmptyBasketException;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -349,12 +351,17 @@ public class Game {
         for (Cloud cloud: clouds){
             for(int i= 0; i< numOfPicks;i++){
                 //questo andrebbe sostituito con un trycath, il caso null è per l'errore di estrazione
-                pick = basket.pickStudent();
-                if (pick==null){
+                try{
+                    pick = basket.pickStudent();
+                    if (pick == null)
+                        throw new IllegalStateException(); //rivedere se questo è il modo giusto per gestire questo caso
+                    picks.add(pick);
+                }
+                catch (EmptyBasketException e){
                     setLastRound(true);
+                    //vedere poi come funziona la segnalazione del last round a tutti i giocatori
                     return;
                 }
-                picks.add(pick);
             }
             cloud.fillStudents(picks);
             picks.clear();

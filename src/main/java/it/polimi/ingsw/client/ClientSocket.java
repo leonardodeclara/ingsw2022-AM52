@@ -5,12 +5,14 @@ import it.polimi.ingsw.messages.*;
 import java.io.*;
 import java.net.Socket;
 
-public class ClientSocket {
+public class ClientSocket implements Runnable{
     Socket socket;
     ObjectOutputStream out;
     ObjectInputStream in;
     String ip;
     int port;
+    boolean active;
+
     public ClientSocket(String ip,int port){
         this.ip = ip;
         this.port = port;
@@ -43,6 +45,12 @@ public class ClientSocket {
     }
 
 
+    @Override
+    public void run() {
 
+        while(active){
 
+        }
+
+    }
 }

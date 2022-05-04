@@ -1,6 +1,12 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.messages.*;
+import it.polimi.ingsw.model.Game;
+
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +18,7 @@ public class Server {
     HashMap<String, ClientHandler> nameToHandlerMap;
     ArrayList<Lobby> lobbies;
     HashMap<String, GameHandler> playerToGameMap;
-    int clientIdCounter;
+    ArrayList<GameHandler> gameHandlers;
     //per le lobby si potrebbe creare una struttura dati tipo hashmap con chiave a due valori < int NumberPlayers, boolean expertOrNot>
 
     public Server(){
@@ -20,31 +26,83 @@ public class Server {
         nameToHandlerMap= new HashMap<>();
         lobbies = new ArrayList<>();
         playerToGameMap = new HashMap<>();
-        clientIdCounter=0;
     }
 
-    //questo metodo deve essere sincronizzato (?)
-    public boolean joinLobby(int playerID,int numberPlayers, boolean expertGame){
+    public void handleMessage(Message message, ClientHandler sender){
+        if (message instanceof LoginRequestMessage) //
+            handleLogin((LoginRequestMessage) message, sender);
+        else if (message instanceof GameParametersMessage) //manda al server, fase di connessione
+            handleGameParameters((GameParametersMessage)message,sender );
+    }
+
+    public void handleGameParameters(GameParametersMessage message,ClientHandler sender){
+        boolean expertGame = message.isExpertGame();
+        int numberOfPlayers = message.getNumberPlayers();
+        if (numberOfPlayers< Constants.MIN_NUMBER_OF_PLAYERS || numberOfPlayers>Constants.MAX_NUMBER_OF_PLAYERS){ //controllo i parametri
+            sender.sendMessage(new ErrorMessage(ErrorKind.INVALID_INPUT));
+            sender.sendMessage(new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS)); //non so se serve
+            return;
+        }
+        Lobby matchingLobby = joinLobby(sender.getID(),numberOfPlayers,expertGame);
+        if(matchingLobby.getShouldStart()){ //c'è una lobby e il gioco sta per partire
+            createMatch(matchingLobby);
+        } else { //lobby appena creata/lobby già esistente ma non abbastanza players
+            sender.sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY));
+        }
+    }
+
+
+    private void createMatch(Lobby lobby){ //cancella la lobby, crea la lista giocatori, crea gamehandler e manda i messaggi ai giocatori
+        ArrayList<String> players = lobby.getPlayers();
+        boolean expert = lobby.isExpertGame();
+        lobbies.remove(lobby); //cancella la lobby
+        GameHandler gameHandler = new GameHandler(this,removeUnusedPlayers(nameToHandlerMap,players),expert);
+        gameHandlers.add(gameHandler);
+        for (String player : players) {
+            playerToGameMap.put(player,gameHandler);
+        }
+        ArrayList<ClientHandler> clienthandlers = new ArrayList<>();
+        for (String nickname : players){ //fetching degli id dei giocatori della partita creata
+            clienthandlers.add(nameToHandlerMap.get(nickname));
+        }
+        for(ClientHandler ch : clienthandlers) //aggiungi al reference del gamehandler creato a ogni clienthandler
+            ch.setGameHandler(gameHandler);
+        gameHandler.startGame();
+    }
+
+    private HashMap<String,ClientHandler> removeUnusedPlayers(HashMap<String,ClientHandler> hashMap, ArrayList<String> list){
+        for (String nickname : hashMap.keySet()){
+            if(!list.contains(nickname))
+                hashMap.remove(nickname);
+        }
+        return hashMap;
+    }
+    public void handleLogin(LoginRequestMessage message, ClientHandler sender){
+        String nickname = ((LoginRequestMessage) message).getPlayerNickname();
+
+        //questo controllo deve essere a livello server perché in teoria il nome deve essere univoco a livello server, non a livello partita
+        if(isNicknameAvailable(nickname)){
+            registerPlayer(nickname,sender.getID());
+            registerClientConnection(nickname, sender);
+            sender.sendMessage(new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS));
+        }else{
+            ErrorMessage error = new ErrorMessage(ErrorKind.INVALID_NICKNAME);
+            sender.sendMessage(error);
+        }
+    }
+
+    //questo metodo deve essere sincronizzato
+    public Lobby joinLobby(int playerID,int numberPlayers, boolean expertGame){
         try{
             Lobby matchingLobby = getMatchingLobby(numberPlayers,expertGame);
             matchingLobby.addToLobby(idToNicknameMap.get(playerID));
-            if (matchingLobby.enoughPlayerToStart()) {
-                GameHandler newGameHandler = new GameHandler(this, numberPlayers, expertGame);
-                for (String nickname : matchingLobby.getPlayers()){
-                    nameToHandlerMap.get(nickname).setGameHandler(newGameHandler);
-                    playerToGameMap.put(nickname, newGameHandler);
-                }
-                lobbies.remove(matchingLobby);
-
-                return true;
-            }
-            else
-                return false;
+            matchingLobby.checkIfShouldStart();
+            return matchingLobby;
         }
         catch (NoSuchElementException e){
             Lobby newLobby = new Lobby(numberPlayers,expertGame);
             lobbies.add(newLobby);
-            return false;
+            return newLobby;
         }
     }
 
@@ -73,9 +131,8 @@ public class Server {
     }
 
     //aggiungo un giocatore alla mappa che associa l'id al nome
-    public void registerPlayer(String nickname){
-        idToNicknameMap.put(clientIdCounter, nickname);
-        clientIdCounter++;
+    public void registerPlayer(String nickname,int clientHandlerID){
+        idToNicknameMap.put(clientHandlerID, nickname);
     }
 
     public void registerClientConnection(String nickname, ClientHandler clientConnection){
