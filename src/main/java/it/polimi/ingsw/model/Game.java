@@ -354,7 +354,7 @@ public class Game {
                 try{
                     pick = basket.pickStudent();
                     if (pick == null)
-                        throw new IllegalStateException(); //rivedere questo
+                        throw new IllegalStateException(); //rivedere se questo è il modo giusto per gestire questo caso
                     picks.add(pick);
                 }
                 catch (EmptyBasketException e){
