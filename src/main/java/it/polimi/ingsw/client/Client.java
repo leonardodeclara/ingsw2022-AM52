@@ -9,7 +9,6 @@ import it.polimi.ingsw.messages.ErrorMessage;
 import it.polimi.ingsw.messages.Message;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall'altro
     ClientState currentState;
@@ -18,9 +17,12 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
     public Client() {
     }
 
-    public void instantiateSocket(String ip,int port) {
+    public boolean instantiateSocket(String ip,int port) throws IOException {
         clientSocket = new ClientSocket(ip,port);
+        return true;
     }
+
+    public void handleServerMessage(Message message){}
 
     public boolean connect(String nickname) throws IOException, ClassNotFoundException { //returna boolean in modo da far sapere al chiamante (CLI/GUI) se deve chiedere di nuovo l'input o no
         Message serverResponse = clientSocket.connect(nickname);
@@ -31,7 +33,7 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
             return true;
         }
         else if(serverResponse instanceof ErrorMessage) {
-            System.out.println("\nIl nome selezionato non è disponibile");
+            System.out.println("\nIl nome selezionato non è disponibile, riprova");
             return false;
         }
         return false; //mai raggiunto, è per forza error o client state
@@ -59,6 +61,10 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
         return false;  //mai raggiunto, è per forza error o client state
     }
 
+    public void send(Message message) throws IOException{
+            clientSocket.send(message);
+    }
+
 
     public ClientState getCurrentState() {
         return currentState;
@@ -70,22 +76,6 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
 
     public void setCurrentState(ClientState currentState) {
         this.currentState = currentState;
-    }
-
-    public static void main(String[] args) throws IOException, ClassNotFoundException { //simula CLI
-        Client client = new Client();
-        client.instantiateSocket("127.0.0.1",1234);
-
-        //client.getClientSocket().run();
-
-
-        //String nickname = "Frizio"; //verrà inserito dal giocatore nella CLI/GUI
-        //client.connect(nickname);
-        String nickname = "Leoviatano";
-        client.connect(nickname);
-
-
-
     }
 }
 

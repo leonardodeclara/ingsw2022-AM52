@@ -4,6 +4,7 @@ import it.polimi.ingsw.messages.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class ClientSocket implements Runnable{
     Socket socket;
@@ -12,16 +13,18 @@ public class ClientSocket implements Runnable{
     String ip;
     int port;
     boolean active;
+    Client client;
 
-    public ClientSocket(String ip,int port){
+    public ClientSocket(String ip,int port) throws IOException {
         this.ip = ip;
         this.port = port;
-    }
-
-    public Message connect(String nickname) throws IOException, ClassNotFoundException { //connectionPhase
-        socket = new Socket(ip,port);
+        client = new Client();
+        socket = new Socket(ip, port);
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(socket.getInputStream());
+    }
+
+    public Message connect(String nickname) throws IOException, ClassNotFoundException, UnknownHostException { //connectionPhase
         LoginRequestMessage nicknameMessage = new LoginRequestMessage(nickname);
         send(nicknameMessage);
         System.out.println("Ho mandato il nickname!");
@@ -41,15 +44,28 @@ public class ClientSocket implements Runnable{
     }
 
     public void send(Message msg) throws IOException {
+        out.reset();
         out.writeObject(msg);
+        out.flush();
     }
 
 
     @Override
     public void run() {
-
-        while(active){
-
+        try{
+            while(active){
+                Message receivedMessage = (Message) in.readObject();
+                client.handleServerMessage(receivedMessage);
+            }
+        }
+        catch (IOException ioException){
+            //gestione dell'errore
+        }
+        catch (ClassNotFoundException classNotFoundException){
+            //gestione dell'errore
+        }
+        finally {
+            //chiusura connessione
         }
 
     }
