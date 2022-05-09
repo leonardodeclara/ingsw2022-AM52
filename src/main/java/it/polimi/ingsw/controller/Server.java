@@ -26,6 +26,7 @@ public class Server {
         nameToHandlerMap= new HashMap<>();
         lobbies = new ArrayList<>();
         playerToGameMap = new HashMap<>();
+        gameHandlers = new ArrayList<>();
     }
 
     public void handleMessage(Message message, ClientHandler sender){
@@ -33,49 +34,6 @@ public class Server {
             handleLogin((LoginRequestMessage) message, sender);
         else if (message instanceof GameParametersMessage) //manda al server, fase di connessione
             handleGameParameters((GameParametersMessage)message,sender );
-    }
-
-    public void handleGameParameters(GameParametersMessage message,ClientHandler sender){
-        boolean expertGame = message.isExpertGame();
-        int numberOfPlayers = message.getNumberPlayers();
-        if (numberOfPlayers< Constants.MIN_NUMBER_OF_PLAYERS || numberOfPlayers>Constants.MAX_NUMBER_OF_PLAYERS){ //controllo i parametri
-            sender.sendMessage(new ErrorMessage(ErrorKind.INVALID_INPUT));
-            sender.sendMessage(new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS)); //non so se serve
-            return;
-        }
-        Lobby matchingLobby = joinLobby(sender.getID(),numberOfPlayers,expertGame);
-        if(matchingLobby.getShouldStart()){ //c'è una lobby e il gioco sta per partire
-            createMatch(matchingLobby);
-        } else { //lobby appena creata/lobby già esistente ma non abbastanza players
-            sender.sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY));
-        }
-    }
-
-
-    private void createMatch(Lobby lobby){ //cancella la lobby, crea la lista giocatori, crea gamehandler e manda i messaggi ai giocatori
-        ArrayList<String> players = lobby.getPlayers();
-        boolean expert = lobby.isExpertGame();
-        lobbies.remove(lobby); //cancella la lobby
-        GameHandler gameHandler = new GameHandler(this,removeUnusedPlayers(nameToHandlerMap,players),expert);
-        gameHandlers.add(gameHandler);
-        for (String player : players) {
-            playerToGameMap.put(player,gameHandler);
-        }
-        ArrayList<ClientHandler> clienthandlers = new ArrayList<>();
-        for (String nickname : players){ //fetching degli id dei giocatori della partita creata
-            clienthandlers.add(nameToHandlerMap.get(nickname));
-        }
-        for(ClientHandler ch : clienthandlers) //aggiungi al reference del gamehandler creato a ogni clienthandler
-            ch.setGameHandler(gameHandler);
-        gameHandler.startGame();
-    }
-
-    private HashMap<String,ClientHandler> removeUnusedPlayers(HashMap<String,ClientHandler> hashMap, ArrayList<String> list){
-        for (String nickname : hashMap.keySet()){
-            if(!list.contains(nickname))
-                hashMap.remove(nickname);
-        }
-        return hashMap;
     }
     public void handleLogin(LoginRequestMessage message, ClientHandler sender){
         String nickname = ((LoginRequestMessage) message).getPlayerNickname();
@@ -91,20 +49,65 @@ public class Server {
         }
     }
 
+    public void handleGameParameters(GameParametersMessage message,ClientHandler sender){
+        boolean expertGame = message.isExpertGame();
+        int numberOfPlayers = message.getNumberPlayers();
+        Lobby matchingLobby = joinLobby(sender.getID(),numberOfPlayers,expertGame);
+        if(matchingLobby.getShouldStart()){ //c'è una lobby e il gioco sta per partire
+            System.out.println("Si parte!");
+            createMatch(matchingLobby);
+        } else { //lobby appena creata/lobby già esistente ma non abbastanza players
+            System.out.println("Mando lo stato di attesa della lobby");
+            sender.sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY));
+        }
+    }
+
     //questo metodo deve essere sincronizzato
-    public Lobby joinLobby(int playerID,int numberPlayers, boolean expertGame){
+    public Lobby joinLobby(int playerID,int numberPlayers, boolean expertGame){ //clientHandler id, parametri della lobby
         try{
             Lobby matchingLobby = getMatchingLobby(numberPlayers,expertGame);
             matchingLobby.addToLobby(idToNicknameMap.get(playerID));
             matchingLobby.checkIfShouldStart();
+            System.out.println("Esiste già una lobby di questo tipo e ha "+(matchingLobby.getPlayers().size()- 1)+" giocatori in attesa");
             return matchingLobby;
         }
         catch (NoSuchElementException e){
             Lobby newLobby = new Lobby(numberPlayers,expertGame);
+            newLobby.addToLobby(idToNicknameMap.get(playerID));
             lobbies.add(newLobby);
+            System.out.println("Non esiste una lobby con questi parametri quindi la creiamo");
             return newLobby;
         }
     }
+
+    private void createMatch(Lobby lobby){ //cancella la lobby, crea la lista giocatori, crea gamehandler e manda i messaggi ai giocatori
+        ArrayList<String> players = lobby.getPlayers();
+        boolean expert = lobby.isExpertGame();
+        lobbies.remove(lobby); //cancella la lobby
+        System.out.println("Inizializziamo il GH");
+        GameHandler gameHandler = new GameHandler(this,removeUnusedPlayers(nameToHandlerMap,players),expert);
+        gameHandlers.add(gameHandler);
+        for (String player : players) {
+            playerToGameMap.put(player,gameHandler);
+        }
+        ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
+        for (String nickname : players){ //fetching degli id dei giocatori della partita creata
+            clientHandlers.add(nameToHandlerMap.get(nickname));
+        }
+        for(ClientHandler ch : clientHandlers) //aggiungi al reference del gamehandler creato a ogni clienthandler
+            ch.setGameHandler(gameHandler);
+
+        gameHandler.startGame();
+    }
+
+    private HashMap<String,ClientHandler> removeUnusedPlayers(HashMap<String,ClientHandler> hashMap, ArrayList<String> list){
+        for (String nickname : hashMap.keySet()){
+            if(!list.contains(nickname))
+                hashMap.remove(nickname);
+        }
+        return hashMap;
+    }
+
 
     private Lobby getMatchingLobby(int numberPlayers, boolean expertGame){
         return lobbies.stream()

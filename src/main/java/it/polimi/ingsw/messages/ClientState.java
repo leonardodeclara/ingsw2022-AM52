@@ -2,7 +2,7 @@ package it.polimi.ingsw.messages;
 
 public enum ClientState {
     WAIT_TURN(0),PLAY_ASSISTANT_CARD(1),MOVE_FROM_LOBBY(2),MOVE_MOTHER_NATURE(3),MOVE_TO_LOBBY(4),
-    INSERT_NEW_GAME_PARAMETERS(5),WAIT_IN_LOBBY(6),SET_UP_PHASE(7);
+    INSERT_NEW_GAME_PARAMETERS(5),WAIT_IN_LOBBY(6),SET_UP_PHASE(7),CONNECT_STATE(8);
 
     private final int index;
 

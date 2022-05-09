@@ -15,18 +15,14 @@ public class GameController {
     //risoluzione stupida al problema del tipo statico di Game GM: cast esplicito in base al boolean isExpert
     public GameController(boolean isExpert) {
         game = (isExpert) ? new ExpertGame() : new Game();
-
+        game.instantiateGameElements(); //va inizializzato il model
     }
 
-    public void setUpPhase(){
-        //attende che il server dia conferma che i giocatori sono connessi e riceve anche l'arrayList string players
-        //la passa anche a Game così può fare addPlayer
-        game.instantiateGameElements();
-        assignAssistantDeck();
-        assignInitialStudents();
-        currentPlayer = getRandomPlayer();
+    /*
+    public void updateTeamAndWizard(){
+        game.giveAssistantDeck(); //assegna il deck
     }
-
+*/
     public void assignAssistantDeck(){
 
     }

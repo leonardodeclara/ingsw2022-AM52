@@ -107,7 +107,7 @@ public class Game {
             clouds.add(new Cloud(i));
         }
 
-
+        //setto il numero di torri nella board
         for (Player player: players)
             player.getBoard().setTowers(players.size()==2? 8:6);
 

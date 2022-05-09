@@ -16,10 +16,12 @@ public class Lobby {
     }
 
     public void addToLobby(String nickname){
+        System.out.println("Aggiungo "+nickname);
         players.add(nickname);
     }
 
     public void checkIfShouldStart(){
+
         shouldStart = players.size() == numberPlayersRequired ? true:false;
     }
 

@@ -4,9 +4,11 @@ import it.polimi.ingsw.messages.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
-public class ClientSocket implements Runnable{
+public class ClientSocket {
     Socket socket;
     ObjectOutputStream out;
     ObjectInputStream in;
@@ -15,7 +17,7 @@ public class ClientSocket implements Runnable{
     boolean active;
     Client client;
 
-    public ClientSocket(String ip,int port, Client client) throws IOException {
+    public ClientSocket(String ip,int port, Client client) throws IOException, SocketException {
         this.ip = ip;
         this.port = port;
         this.client = client;
@@ -27,19 +29,21 @@ public class ClientSocket implements Runnable{
     public Message connect(String nickname) throws IOException, ClassNotFoundException, UnknownHostException { //connectionPhase
         LoginRequestMessage nicknameMessage = new LoginRequestMessage(nickname);
         send(nicknameMessage);
-        System.out.println("Ho mandato il nickname!");
+        //System.out.println("Ho mandato il nickname!");
         //qui il metodo rimane in attesa finchè non gli arriva response
         Message response = (Message) in.readObject(); //Deserializza il messaggio del server
-        System.out.println("Risposta ricevuta");
+        //System.out.println("Risposta ricevuta");
         return response;
     }
 
-    public Message sendGameParameters(int numberPlayers,boolean expertGame) throws IOException, ClassNotFoundException {
-        GameParametersMessage parametersMessage = new GameParametersMessage(numberPlayers,expertGame);
+    public Message sendGameParameters(ArrayList<Object> parameters) throws IOException, ClassNotFoundException {
+        int numberOfPlayers = (int)parameters.get(0);
+        boolean expertGame = (boolean)parameters.get(1);
+        GameParametersMessage parametersMessage = new GameParametersMessage(numberOfPlayers,expertGame);
         send(parametersMessage);
-        System.out.println("Ho mandato i dati per la lobby");
+        //System.out.println("Ho mandato i dati per la lobby");
         Message response = (Message) in.readObject();
-        System.out.println("Risposta ricevuta!");
+        //System.out.println("Risposta ricevuta!");
         return response;
     }
 
@@ -49,7 +53,7 @@ public class ClientSocket implements Runnable{
         out.flush();
     }
 
-
+/* se poi va fatto runnable, lo rimettiamo runnable, ma per ora non ne vedo il motivo actually
     @Override
     public void run() {
         System.out.println("Thread del client socket partito");
@@ -72,4 +76,6 @@ public class ClientSocket implements Runnable{
         }
 
     }
+
+    */
 }

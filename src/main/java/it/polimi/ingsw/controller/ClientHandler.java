@@ -57,7 +57,7 @@ public class ClientHandler implements Runnable {
     }
 
     public void readMessage(Message message){
-        System.out.println("Ho ricevuto un messaggio da");
+        System.out.println("Messaggio in arrivo dal client: "+ID);
         if (message instanceof LoginRequestMessage) //manda al server, fase di connessione
         {
             System.out.println("è arrivato un messaggio di loginRequest");
