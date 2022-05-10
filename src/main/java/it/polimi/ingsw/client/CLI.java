@@ -10,10 +10,16 @@ public class CLI{
     private final PrintStream outputStream;
     private boolean active;
 
+
     public CLI() {
         inputStream = new Scanner(System.in);
         outputStream = new PrintStream(System.out);
         active = true;
+    }
+
+    public void print(){
+        //GB.print()
+
     }
 
     /*

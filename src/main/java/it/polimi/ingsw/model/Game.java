@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.exceptions.EmptyBasketException;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,9 +25,10 @@ public class Game {
     protected ArrayList<Island> islands;
     private ArrayList<Cloud> clouds;
     protected ArrayList<Color> teachers;
+    private ArrayList<Integer> wizards;
     private ArrayList<Assistant> assistantDecks;
     private HashMap<Integer,Assistant> currentTurnAssistantCards;
-    protected Island currentMotherNatureIsland;
+    protected Island currentMotherNatureIsland; //firePropertyChange
     private boolean lastRound;
     protected HashMap<Color,Player> teachersOwners;
 
@@ -38,14 +40,19 @@ public class Game {
     //AGGIUNGERE TRY CATCH PER playAssistantCard() quando viene giocata l'ultima, che setta lastRound = true
     //AGGIUNGERE TRY CATCH per refillClouds() per quando non ci sono abbastanza studenti per le nuvole => si salta la fase letPlayerPickStudent
     public Game() {
-        players = new ArrayList<>();
-        islands = new ArrayList<>();
-        clouds = new ArrayList<>();
+        players = new ArrayList<>(); //firePropertyChange
+        islands = new ArrayList<>(); //firePropertyChange
+        clouds = new ArrayList<>(); //firePropertyChange
         teachers = new ArrayList<>();
+        wizards = new ArrayList<>(); //firePropertyChange
+        wizards.add(1);
+        wizards.add(2);
+        wizards.add(3);
+        wizards.add(4);
         assistantDecks = new ArrayList<>(); //bisogna implementare effettivamente le 40 carte con relative statistiche
-        currentTurnAssistantCards = new HashMap<Integer,Assistant>();
+        currentTurnAssistantCards = new HashMap<Integer,Assistant>(); //firePropertyChange
         this.lastRound = false;
-        winner = null;
+        winner = null; //firePropertyChange
         teachersOwners = new HashMap<>();
     }
 
@@ -146,6 +153,7 @@ public class Game {
      */
     public void giveAssistantDeck(int playerId, int deckId){
         ArrayList<Assistant> assignedDeck = new ArrayList<>();
+        wizards.remove((Integer)deckId); //firePropertyChange
         for (Assistant assistant: assistantDecks){
             if (assistant.getWizard()==deckId){
                 assignedDeck.add(assistant);
@@ -167,7 +175,7 @@ public class Game {
         Assistant playedCard = newDeck.get(cardId);
         if(!isCardPlayable(playedCard, newDeck)) return -1;
         int cardScore = playedCard.getPriority();
-        currentTurnAssistantCards.put(playerId,playedCard);
+        currentTurnAssistantCards.put(playerId,playedCard); //firePropertyChange
         newDeck.remove(cardId);
         players.get(playerId).setDeck(newDeck);
         return cardScore;
@@ -213,7 +221,7 @@ public class Game {
         Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
         Island dest = islands.get((from.getIslandIndex() + numSteps) % islands.size());
 
-        currentMotherNatureIsland=islands.get(dest.getIslandIndex());
+        currentMotherNatureIsland=islands.get(dest.getIslandIndex()); //firePropertyChange
         from.setMotherNature(false);
         dest.setMotherNature(true);
         return true;
@@ -232,7 +240,7 @@ public class Game {
         if(!isMoveStudentFromLobbyLegal(player,studentIndex,islandId))
             return false;
         Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
-        player.getBoard().removeFromLobby(studentIndex);
+        player.getBoard().removeFromLobby(studentIndex); //firePropertyChange
         if(islandId == ISLAND_ID_NOT_RECEIVED)
             player.getBoard().addToTable(studentToMove);
         else
@@ -256,8 +264,8 @@ public class Game {
             Player owner = teachersOwners.get(c);
             if(owner != null){
                 if (player.getBoard().getTableNumberOfStudents(c) > owner.getBoard().getTableNumberOfStudents(c)) {
-                    owner.getBoard().removeTeacher(c);
-                    player.getBoard().addTeacher(c);
+                    owner.getBoard().removeTeacher(c); //firePropertyChange
+                    player.getBoard().addTeacher(c); //firePropertyChange
                     teachersOwners.put(c, player);
                 }
             }
@@ -282,9 +290,9 @@ public class Game {
         if(!isMoveStudentsToLobbyLegal(player,cloudId))
             return false;
         Cloud cloud = clouds.get(cloudId);
-        ArrayList<Color> studentsToMove = cloud.emptyStudents();
+        ArrayList<Color> studentsToMove = cloud.emptyStudents(); //firePropertyChange
         for(Color student : studentsToMove)
-            player.getBoard().addToLobby(student);
+            player.getBoard().addToLobby(student); //firePropertyChange
         return true;
     }
     /**
@@ -358,12 +366,12 @@ public class Game {
                     picks.add(pick);
                 }
                 catch (EmptyBasketException e){
-                    setLastRound(true);
+                    setLastRound(true); //firePropertyChange per messaggio di Last Round
                     //vedere poi come funziona la segnalazione del last round a tutti i giocatori
                     return;
                 }
             }
-            cloud.fillStudents(picks);
+            cloud.fillStudents(picks); //firePropertyChange
             picks.clear();
         }
     }
@@ -409,7 +417,7 @@ public class Game {
                 }
             }
         }
-
+//firePropertyChange
         if(rightIsland.getOwnerTeam() != null){
             if(rightIsland.getOwnerTeam().equals(island.getOwnerTeam())){
                 if(rightIsland.getIslandIndex() < island.getIslandIndex()){
@@ -603,7 +611,7 @@ public class Game {
                     potentialWinners.add(potentialWinner);
             }
             if (potentialWinners.size() == 1){
-                winner = potentialWinners.get(0);
+                winner = potentialWinners.get(0); //firePropertyChange
                 return true;
 
             }
@@ -611,7 +619,7 @@ public class Game {
                 int minTeachers = 5;
                 for (Player finalPlayer : potentialWinners) {
                     if (finalPlayer.getBoard().getTeacherTable().size()<minTeachers){
-                        winner = finalPlayer;
+                        winner = finalPlayer; //firePropertyChange
                         minTeachers= finalPlayer.getBoard().getTeacherTable().size();
                     }
                     else if (finalPlayer.getBoard().getTeacherTable().size()==minTeachers){

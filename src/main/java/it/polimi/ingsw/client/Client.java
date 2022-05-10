@@ -65,6 +65,9 @@ public class Client implements  Runnable{ //gestisce la socket da un lato e dial
             ClientStateMessage newStateMessage = (ClientStateMessage) message;
             currentState = newStateMessage.getNewState(); //switch del client al prossimo stato
         }
+        //if(message instanceof UpdateInterfaceMessage){
+          //  userInterface.update();
+        //}
     }
 
     public void connect() throws IOException, ClassNotFoundException, InterruptedException { //client è il ponte tra socket e user interface, quindi è qui che facciamo error handling per input e/o errori lato server
@@ -119,12 +122,14 @@ public class Client implements  Runnable{ //gestisce la socket da un lato e dial
         //final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         //executorService.scheduleAtFixedRate(CLI::waitInLobby, 0, 5, TimeUnit.SECONDS);
         //bisogna capire come printare qualcosa ogni tot finchè non cambia stato
+        //fare arrivar qui i giocatori della lobby (che poi diventano anche quelli del gioco)
     }
     public void waitTurn(){
         //bisogna capire come printare qualcosa ogni tot finchè non cambia stato
+        //qui dobbiamo sapere chi sta giocando (glielo passa il server)
     }
     public void chooseAssistantDeck(){
-        //set up phase
+        cli.visualizeCustomMessage("Scegli un mazzoooooooo");
     }
 
     public void insertNewGameParameters() throws IOException, ClassNotFoundException, InterruptedException { //returna boolean in modo da far sapere al chiamante (CLI/GUI) se deve chiedere di nuovo l'input o no
