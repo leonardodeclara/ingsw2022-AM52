@@ -112,6 +112,7 @@ public class ExpertGame extends Game {
 
         from.setMotherNature(false);
         dest.setMotherNature(true);
+        listeners.firePropertyChange("MotherNature", from.getIslandIndex(), currentMotherNatureIsland.getIslandIndex());
         return true;
     }
 
@@ -281,7 +282,7 @@ public class ExpertGame extends Game {
     public void setPropertyChangeListeners(GameController controller) {
         super.setPropertyChangeListeners(controller);
         listeners.addPropertyChangeListener("ActivePersonality", controller);
-        listeners.addPropertyChangeListener("Coins", controller);
+        listeners.addPropertyChangeListener("NotOwnedCoins", controller);
         listeners.addPropertyChangeListener("Bans", controller);
         listeners.addPropertyChangeListener("SelectedPersonality", controller);
     }

@@ -174,6 +174,7 @@ public class Game {
         if(!isCardPlayable(playedCard, newDeck)) return -1;
         int cardScore = playedCard.getPriority();
         currentTurnAssistantCards.put(playerId,playedCard); //firePropertyChange
+        listeners.firePropertyChange("CurrentTurnAssistantCards", null, currentTurnAssistantCards);
         newDeck.remove(cardId);
         players.get(playerId).setDeck(newDeck);
         return cardScore;
@@ -222,6 +223,7 @@ public class Game {
         currentMotherNatureIsland=islands.get(dest.getIslandIndex()); //firePropertyChange
         from.setMotherNature(false);
         dest.setMotherNature(true);
+        listeners.firePropertyChange("MotherNature", from.getIslandIndex(), currentMotherNatureIsland.getIslandIndex());
         return true;
     }
 
@@ -364,12 +366,15 @@ public class Game {
                     picks.add(pick);
                 }
                 catch (EmptyBasketException e){
+                    boolean oldLastRound = lastRound;
                     setLastRound(true); //firePropertyChange per messaggio di Last Round
+                    listeners.firePropertyChange("LastRound", oldLastRound, lastRound);
                     //vedere poi come funziona la segnalazione del last round a tutti i giocatori
                     return;
                 }
             }
             cloud.fillStudents(picks); //firePropertyChange
+            listeners.firePropertyChange("CloudsRefill", null, clouds); //rivedere come mandare effettivamente
             picks.clear();
         }
     }
@@ -394,12 +399,13 @@ public class Game {
     }
 
     /**
-     * Method responsible for the merging of two islands
-     * Two island is merged when they are close and they have the same owner
+     * Method responsible for the merging of two islands.
+     * Two islands are merged when they are close and they have the same owner.
      * @param island: reference of the island that has to be merged
      */
     protected void mergeIslands(Island island){
         int islandId = islands.indexOf(island);
+        int mergerId;
         Island leftIsland = islands.get((islandId + islands.size() - 1)%islands.size()); //previous island
         Island rightIsland = islands.get((islandId+1)%islands.size()); //next island
 
@@ -407,24 +413,30 @@ public class Game {
        if(leftIsland.getOwnerTeam() != null){
             if(leftIsland.getOwnerTeam().equals(island.getOwnerTeam())){
                 if(leftIsland.getIslandIndex() < island.getIslandIndex()){
+                    mergerId = leftIsland.getIslandIndex();
                     leftIsland.merge(island);
                     islands.remove(island);
                 }else{
+                    mergerId = island.getIslandIndex();
                     island.merge(leftIsland);
                     islands.remove(leftIsland);
                 }
+                listeners.firePropertyChange("Merge", null, mergerId);
             }
         }
-//firePropertyChange
+
         if(rightIsland.getOwnerTeam() != null){
             if(rightIsland.getOwnerTeam().equals(island.getOwnerTeam())){
                 if(rightIsland.getIslandIndex() < island.getIslandIndex()){
+                    mergerId = rightIsland.getIslandIndex();
                     rightIsland.merge(island);
                     islands.remove(island);
                 }else{
+                    mergerId = island.getIslandIndex();
                     island.merge(rightIsland);
                     islands.remove(rightIsland);
                 }
+                listeners.firePropertyChange("Merge", null, mergerId);
             }
         }
     }
@@ -593,6 +605,7 @@ public class Game {
         for(Player player: players){
             if(player.getBoard().getTowers()==0){
                 winner = player;
+                listeners.firePropertyChange("GameOver", null, winner.getNickname());
                 return true;
             }
         }
@@ -610,6 +623,7 @@ public class Game {
             }
             if (potentialWinners.size() == 1){
                 winner = potentialWinners.get(0); //firePropertyChange
+                listeners.firePropertyChange("GameOver", null, winner.getNickname());
                 return true;
 
             }
@@ -624,6 +638,7 @@ public class Game {
                         winner = null;
                     }
                 }
+                listeners.firePropertyChange("GameOver", null, null); //rivedere, magari mando un dato strutturato
                 return true;
             }
         }
@@ -691,22 +706,28 @@ public class Game {
 
     //metodo che aggiunge i listener a tutte le classi ascoltate
     public void setPropertyChangeListeners(GameController controller){
-        listeners.addPropertyChangeListener("MotherNature", controller);
-        listeners.addPropertyChangeListener("Merge", controller);
-        listeners.addPropertyChangeListener("LastRound", controller);
-        listeners.addPropertyChangeListener("Gameover", controller);
-        listeners.addPropertyChangeListener("CloudsRefill", controller);
-        listeners.addPropertyChangeListener("CurrentTurnAssistantCards", controller);
+        listeners.addPropertyChangeListener("MotherNature", controller); //fire fatto, anche in exp
+        listeners.addPropertyChangeListener("Merge", controller); //fire fatto
+        listeners.addPropertyChangeListener("LastRound", controller); //fire fatto
+        listeners.addPropertyChangeListener("Gameover", controller); //fire fatto, rivedere un po' cosa viene mandato
+        listeners.addPropertyChangeListener("CloudsRefill", controller); //fire fatto
+        listeners.addPropertyChangeListener("CurrentTurnAssistantCards", controller); //fire fatto
         //mancano tutti i listeners nelle relative classi
         for (Cloud cloud: clouds){
-            cloud.setPropertyChangeListener(controller);
+            cloud.setPropertyChangeListener(controller); //fire fatto
         }
         for (Island island: islands){
-            island.setPropertyChangeListener(controller);
+            island.setPropertyChangeListener(controller); //fire fatto, in teoria
         }
         for (Player player: players){
             player.setPropertyChangeListener(controller);
         }
+        //per le board è un po' un problema perché non hanno un identificativo
+        //si potrebbe creando un attributo String owner
+        //oppure (meglio imho) creare in player dei metodi che chiamano i metodi di modifica delle board, in questo modo
+        // posso fare firePropertyChange in quei metodi passando player
+        //in quanto sono i player che sono stati modificati
+        //poi è comodo visto che lato client le board sono identificate dal nome del player
     }
 
     //in teoria

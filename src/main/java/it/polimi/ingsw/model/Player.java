@@ -87,7 +87,7 @@ public class Player {
 
     public void setPropertyChangeListener(GameController controller) {
         listeners.addPropertyChangeListener("Deck", controller);
-        board.setPropertyChangeListener(controller);
+        //board.setPropertyChangeListener(controller);
 
     }
 }

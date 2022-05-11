@@ -88,8 +88,10 @@ public class Island {
      */
     public void addTower(Tower tower){
         try{
-            if(tower.equals(getOwnerTeam()) && towers.size()<numMergedIslands)
+            if(tower.equals(getOwnerTeam()) && towers.size()<numMergedIslands){
                 towers.add(tower);
+                listeners.firePropertyChange("IslandTowers", null, towers);
+            }
         }
         catch (NullPointerException ignored){
             System.out.println("Inserimento illegale");
@@ -102,6 +104,7 @@ public class Island {
      */
     public void addStudent(Color student){
         students.add(student);
+        listeners.firePropertyChange("IslandStudents", null, new ArrayList<>(students));
     }
 
     /**
@@ -111,6 +114,7 @@ public class Island {
     public ArrayList<Tower> removeTower(){
         ArrayList<Tower> removedTowers = new ArrayList<>(towers);
         towers.clear();
+        listeners.firePropertyChange("IslandTowers", null, towers);
         return removedTowers;
     }
 
@@ -170,6 +174,7 @@ public class Island {
     }
 
     public void setPropertyChangeListener(GameController controller){
-        listeners.addPropertyChangeListener("Island", controller);
+        listeners.addPropertyChangeListener("IslandTowers", controller);
+        listeners.addPropertyChangeListener("IslandStudents", controller);
     }
 }

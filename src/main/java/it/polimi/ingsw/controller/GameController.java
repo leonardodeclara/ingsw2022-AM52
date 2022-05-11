@@ -54,6 +54,10 @@ public class GameController implements PropertyChangeListener {
             case "Board":
             case "Island":
             case "PickedCloud":
+            case "ActivePersonality":
+            case "NotOwnedCoinds":
+            case "Bans":
+            case "SelectedPersonality":
         }
 
 

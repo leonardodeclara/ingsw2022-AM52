@@ -12,12 +12,10 @@ import java.util.HashMap;
  */
 
 public class Board {
-
     private HashMap<Color,Integer> studentsTable;
     private ArrayList<Color> teacherTable;
     private ArrayList<Color> lobby;
     private int towers;
-    private PropertyChangeSupport listeners;
 
     /**
      * Constructor creates a Board instance.
@@ -193,7 +191,4 @@ public class Board {
         this.towers = towers;
     }
 
-    public void setPropertyChangeListener(GameController controller){
-
-    }
 }

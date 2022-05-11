@@ -21,6 +21,7 @@ public class Cloud {
     public Cloud(int index){
         cloudIndex = index;
         students = new ArrayList<>();
+        listeners= new PropertyChangeSupport(this);
     }
 
     /**
