@@ -51,6 +51,7 @@ public class GameController implements PropertyChangeListener {
             case "Gameover":
             case "CloudsRefill":
             case "CurrentAssistantCards":
+            case "Deck":
             case "Board":
             case "Island":
             case "PickedCloud":

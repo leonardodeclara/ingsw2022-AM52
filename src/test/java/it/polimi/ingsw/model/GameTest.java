@@ -272,14 +272,14 @@ class GameTest {
         //game.initiatePlayerLobby(0);
         //game.initiatePlayerLobby(1);
         for(int i = 0;i<7;i++)
-            game.getPlayerByName("leo").getBoard().addToLobby(Color.RED);
+            game.getPlayerByName("leo").addToBoardLobby(Color.RED);
         for(int i = 0;i<7;i++)
-            game.getPlayerByName("mari").getBoard().addToLobby(Color.YELLOW);
+            game.getPlayerByName("mari").addToBoardLobby(Color.YELLOW);
 
         for(int i = 0;i<10;i++) //riempie completamente la table rosa di "leo"
-            game.getPlayers().get(0).getBoard().addToTable(Color.RED);
+            game.getPlayers().get(0).addToBoardTable(Color.RED);
         for(int i = 0;i<10;i++) //riempie completamente la table blu di "mari"
-            game.getPlayers().get(1).getBoard().addToTable(Color.BLUE);
+            game.getPlayers().get(1).addToBoardTable(Color.BLUE);
 
         assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0), 0, 3));
         assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayers().get(0), 0, -1));
@@ -453,8 +453,8 @@ class GameTest {
         }
         game.getIslands().get(mnIndex).addStudent(Color.BLUE);
         game.getIslands().get(mnIndex).addStudent(Color.PINK);
-        game.getPlayerByName("leo").getBoard().addTeacher(Color.BLUE);
-        game.getPlayerByName("frizio").getBoard().addTeacher(Color.RED);
+        game.getPlayerByName("leo").addTeacherToBoard(Color.BLUE);
+        game.getPlayerByName("frizio").addTeacherToBoard(Color.RED);
         ArrayList<Integer> influences = new ArrayList<>();
         influences.add(1);
         influences.add(0);
@@ -462,7 +462,7 @@ class GameTest {
         ArrayList<Integer> result = game.calculateStudentsInfluences(game.getIslands().get(mnIndex), game.getPlayers());
         assertEquals(influences,result);
         assertEquals(3,result.size());
-        game.getPlayerByName("mari").getBoard().addTeacher(Color.PINK);
+        game.getPlayerByName("mari").addTeacherToBoard(Color.PINK);
         game.getIslands().get(mnIndex).addStudent(Color.BLUE);
         influences.set(0,2);
         influences.set(1,1);
@@ -531,11 +531,11 @@ class GameTest {
         }
         assertNull(game.calculateInfluence(game.getIslands().get(mnIndex)).get("ID Player"));
         assertEquals(1, game.calculateInfluence(game.getIslands().get(mnIndex)).get("Is Draw"));
-        game.getPlayerByName("leo").getBoard().addTeacher(Color.BLUE);
-        game.getPlayerByName("leo").getBoard().addTeacher(Color.PINK);
-        game.getPlayerByName("leo").getBoard().addTeacher(Color.RED);
-        game.getPlayerByName("mari").getBoard().addTeacher(Color.YELLOW);
-        game.getPlayerByName("mari").getBoard().addTeacher(Color.GREEN);
+        game.getPlayerByName("leo").addTeacherToBoard(Color.BLUE);
+        game.getPlayerByName("leo").addTeacherToBoard(Color.PINK);
+        game.getPlayerByName("leo").addTeacherToBoard(Color.RED);
+        game.getPlayerByName("mari").addTeacherToBoard(Color.YELLOW);
+        game.getPlayerByName("mari").addTeacherToBoard(Color.GREEN);
         game.getIslands().get(0).addStudent(Color.BLUE);
         game.getIslands().get(0).addStudent(Color.BLUE);
         assertEquals(0,game.calculateInfluence(game.getIslands().get(0)).get("ID Player"));
@@ -557,11 +557,11 @@ class GameTest {
         game.addPlayer(new Player(0,"leo",Tower.WHITE));
         game.addPlayer(new Player(1,"mari",Tower.BLACK));
         game.instantiateGameElements();
-        game.getPlayerByName("leo").getBoard().addTeacher(Color.BLUE);
-        game.getPlayerByName("leo").getBoard().addTeacher(Color.PINK);
-        game.getPlayerByName("leo").getBoard().addTeacher(Color.RED);
-        game.getPlayerByName("mari").getBoard().addTeacher(Color.YELLOW);
-        game.getPlayerByName("mari").getBoard().addTeacher(Color.GREEN);
+        game.getPlayerByName("leo").addTeacherToBoard(Color.BLUE);
+        game.getPlayerByName("leo").addTeacherToBoard(Color.PINK);
+        game.getPlayerByName("leo").addTeacherToBoard(Color.RED);
+        game.getPlayerByName("mari").addTeacherToBoard(Color.YELLOW);
+        game.getPlayerByName("mari").addTeacherToBoard(Color.GREEN);
         game.getIslands().get(0).setOwner(game.getPlayerByName("leo"));
         game.getIslands().get(0).addTower(Tower.WHITE);
         game.getIslands().get(0).addStudent(Color.BLUE);
@@ -588,7 +588,7 @@ class GameTest {
         assertTrue(game.checkGameOver());
         assertNull(game.getWinner());
         while(game.getPlayers().get(1).getBoard().getTowers() > 5)
-            game.getPlayers().get(1).getBoard().removeTower();
+            game.getPlayers().get(1).removeTowerFromBoard();
         assertEquals(5,game.getPlayers().get(1).getBoard().getTowers());
         assertTrue(game.checkGameOver());
         assertEquals(game.getPlayers().get(1), game.getWinner());
@@ -605,12 +605,12 @@ class GameTest {
         game.instantiateGameElements();
         assertFalse(game.checkGameOver());
         for (int i = 0; i < 2; i++)
-            game.getPlayers().get(0).getBoard().removeTower();
+            game.getPlayers().get(0).removeTowerFromBoard();
         assertFalse(game.checkGameOver());
         assertEquals(6, game.getPlayers().get(0).getBoard().getTowers());
         assertEquals(8, game.getPlayers().get(1).getBoard().getTowers());
         while (game.getPlayers().get(1).getBoard().getTowers() > 0)
-            game.getPlayers().get(1).getBoard().removeTower();
+            game.getPlayers().get(1).removeTowerFromBoard();
         assertTrue(game.checkGameOver());
     }
 
@@ -626,11 +626,11 @@ class GameTest {
         game.addPlayer(new Player(1, "mari", Tower.WHITE));
         game.instantiateGameElements();
         for (int i = 0; i< 7;i++)
-            game.getPlayerByName("leo").getBoard().addToTable(Color.BLUE);
-        game.getPlayerByName("leo").getBoard().addToTable(Color.PINK);
-        game.getPlayerByName("leo").getBoard().addToTable(Color.YELLOW);
-        game.getPlayerByName("leo").getBoard().addToTable(Color.GREEN);
-        game.getPlayerByName("mari").getBoard().addToTable(Color.RED);
+            game.getPlayerByName("leo").addToBoardTable(Color.BLUE);
+        game.getPlayerByName("leo").addToBoardTable(Color.PINK);
+        game.getPlayerByName("leo").addToBoardTable(Color.YELLOW);
+        game.getPlayerByName("leo").addToBoardTable(Color.GREEN);
+        game.getPlayerByName("mari").addToBoardTable(Color.RED);
 
         game.updateTeachersOwnership(game.getPlayerByName("mari"));
         assertFalse(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.BLUE));
@@ -645,8 +645,8 @@ class GameTest {
         assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.YELLOW));
         assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.RED));
 
-        game.getPlayerByName("leo").getBoard().addToTable(Color.RED);
-        game.getPlayerByName("leo").getBoard().addToTable(Color.RED);
+        game.getPlayerByName("leo").addToBoardTable(Color.RED);
+        game.getPlayerByName("leo").addToBoardTable(Color.RED);
         game.updateTeachersOwnership(game.getPlayerByName("leo"));
         assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.RED));
         assertFalse(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.RED));

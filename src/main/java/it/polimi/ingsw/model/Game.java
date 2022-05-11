@@ -23,7 +23,7 @@ public class Game {
     protected ArrayList<Color> teachers;
     private ArrayList<Integer> wizards;
     private ArrayList<Assistant> assistantDecks;
-    private HashMap<Integer,Assistant> currentTurnAssistantCards;
+    protected HashMap<Integer,Assistant> currentTurnAssistantCards;
     protected Island currentMotherNatureIsland; //firePropertyChange
     private boolean lastRound;
     protected HashMap<Color,Player> teachersOwners;
@@ -127,7 +127,7 @@ public class Game {
     public void initiatePlayerLobby(int playerId){
         int studentLimit = players.size()==2? 7: 9;
         for(int k = 0; k < studentLimit; k++)
-            players.get(playerId).getBoard().addToLobby(basket.pickStudent());
+            players.get(playerId).addToBoardLobby(basket.pickStudent());
     }
 
     /**
@@ -239,8 +239,7 @@ public class Game {
         Player player = players.get(playerId);
         if(!isMoveStudentFromLobbyLegal(player,studentIndex,islandId))
             return false;
-        Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
-        player.getBoard().removeFromLobby(studentIndex); //firePropertyChange
+        Color studentToMove = player.removeFromBoardLobby(studentIndex);
         if(islandId == Constants.ISLAND_ID_NOT_RECEIVED)
             player.getBoard().addToTable(studentToMove);
         else
@@ -264,14 +263,14 @@ public class Game {
             Player owner = teachersOwners.get(c);
             if(owner != null){
                 if (player.getBoard().getTableNumberOfStudents(c) > owner.getBoard().getTableNumberOfStudents(c)) {
-                    owner.getBoard().removeTeacher(c); //firePropertyChange
-                    player.getBoard().addTeacher(c); //firePropertyChange
+                    owner.removeTeacherFromBoard(c); //firePropertyChange
+                    player.addTeacherToBoard(c); //firePropertyChange
                     teachersOwners.put(c, player);
                 }
             }
             else {
                 if (player.getBoard().getTableNumberOfStudents(c)>0){
-                    player.getBoard().addTeacher(c);
+                    player.addTeacherToBoard(c);
                     teachers.remove(c);
                     teachersOwners.put(c, player);
                 }
@@ -292,7 +291,7 @@ public class Game {
         Cloud cloud = clouds.get(cloudId);
         ArrayList<Color> studentsToMove = cloud.emptyStudents(); //firePropertyChange
         for(Color student : studentsToMove)
-            player.getBoard().addToLobby(student); //firePropertyChange
+            player.addToBoardLobby(student); //firePropertyChange
         return true;
     }
     /**
@@ -310,7 +309,7 @@ public class Game {
      */
     public boolean isMoveMNLegal(int playerId,int numSteps){
         int playerMaxSteps = currentTurnAssistantCards.get(playerId).getNumMoves();
-        return numSteps > playerMaxSteps ? false : true;
+        return numSteps > playerMaxSteps? false : true;
     }
 
     /**
@@ -712,15 +711,14 @@ public class Game {
         listeners.addPropertyChangeListener("Gameover", controller); //fire fatto, rivedere un po' cosa viene mandato
         listeners.addPropertyChangeListener("CloudsRefill", controller); //fire fatto
         listeners.addPropertyChangeListener("CurrentTurnAssistantCards", controller); //fire fatto
-        //mancano tutti i listeners nelle relative classi
         for (Cloud cloud: clouds){
             cloud.setPropertyChangeListener(controller); //fire fatto
         }
         for (Island island: islands){
-            island.setPropertyChangeListener(controller); //fire fatto, in teoria
+            island.setPropertyChangeListener(controller); //fire fatto, in teoria (vedere per students)
         }
         for (Player player: players){
-            player.setPropertyChangeListener(controller);
+            player.setPropertyChangeListener(controller); //fire fatto
         }
         //per le board è un po' un problema perché non hanno un identificativo
         //si potrebbe creando un attributo String owner
@@ -728,6 +726,7 @@ public class Game {
         // posso fare firePropertyChange in quei metodi passando player
         //in quanto sono i player che sono stati modificati
         //poi è comodo visto che lato client le board sono identificate dal nome del player
+        //poi si può fare un solo listener per board oppure più listener specifici per table, lobby, teachers ecc
     }
 
     //in teoria
