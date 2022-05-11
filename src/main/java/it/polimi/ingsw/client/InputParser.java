@@ -1,23 +1,51 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.messages.ClientState;
 import it.polimi.ingsw.messages.GameParametersMessage;
 import it.polimi.ingsw.messages.Message;
 
-public class InputParser {
-    //classe che si occupa del parsing delle stringhe scritte su CLI
-    //estrae il contenuto e si occupa di chiamare i metodi necessari per l'invio di messaggi al server
+import java.util.ArrayList;
 
-    public Message parseGameParameters(String[] input) throws NumberFormatException{
-        boolean mode;
-        int numOfPlayers = Integer.parseInt(input[0]);
-        if (input[1].equals("expert"))
-            mode = true;
-        else if (input[1].equals("base"))
-            mode = false;
-        else
-            throw new IllegalArgumentException("Input non valido");
-        return new GameParametersMessage(numOfPlayers, mode);
+public class InputParser {
+    ArrayList<Object> data;
+
+    public ArrayList<Object> parse(String input, ClientState state) throws NumberFormatException{
+        data = new ArrayList<>();
+        switch(state){
+            case CONNECT_STATE:
+                parseConnectString(input);
+            case INSERT_NEW_GAME_PARAMETERS:
+                parseNewGameParametersString(input);
+            case SET_UP_PHASE:
+                parseSetUpPhaseString(input);
+        }
+        return data;
     }
 
+
+    private void parseConnectString(String input){
+        if(input.length() <= 16 && !input.equals("") && !input.equals(" "))
+            data.add(input);}
+
+    private void parseNewGameParametersString(String input){ //gestiamo base/expert case insensitive e consideriamo separatore spazio
+        int numberOfPlayers = 0;
+        boolean expert = false;
+        String[] words = input.split(" ");
+
+        if(words.length == 2){
+            if(words[0].equals("2")|| words[0].equalsIgnoreCase("3")){
+                if(words[1].equalsIgnoreCase("base") || words[1].equalsIgnoreCase("expert")){
+                    numberOfPlayers = Integer.parseInt(words[0]);
+                    expert = words[1].equalsIgnoreCase("expert");
+                    data.add(numberOfPlayers);
+                    data.add(expert);
+                }
+            }
+        }
+    }
+
+    private void parseSetUpPhaseString(String input){
+
+    }
 
 }
