@@ -3,11 +3,14 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.ExpertGame;
 import it.polimi.ingsw.model.Game;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.prefs.PreferenceChangeListener;
 
 //aggiorna model
-public class GameController {
+public class GameController implements PropertyChangeListener {
     Game game;
     String currentPlayer;
     ArrayList<String> players;
@@ -38,4 +41,21 @@ public class GameController {
     }
 
 
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        String event = (String) evt.getPropertyName();
+        switch (event) {
+            case "MotherNature":
+            case "Merge":
+            case "LastRound":
+            case "Gameover":
+            case "CloudsRefill":
+            case "CurrentAssistantCards":
+            case "Board":
+            case "Island":
+            case "PickedCloud":
+        }
+
+
+    }
 }

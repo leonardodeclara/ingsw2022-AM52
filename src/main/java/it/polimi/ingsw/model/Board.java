@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.GameController;
+
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -14,6 +17,7 @@ public class Board {
     private ArrayList<Color> teacherTable;
     private ArrayList<Color> lobby;
     private int towers;
+    private PropertyChangeSupport listeners;
 
     /**
      * Constructor creates a Board instance.
@@ -187,5 +191,9 @@ public class Board {
      */
     public void setTowers(int towers) {
         this.towers = towers;
+    }
+
+    public void setPropertyChangeListener(GameController controller){
+
     }
 }

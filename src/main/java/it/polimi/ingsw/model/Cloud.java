@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.GameController;
+
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
 /**
@@ -9,6 +12,7 @@ import java.util.ArrayList;
 public class Cloud {
     private final int cloudIndex;
     private ArrayList<Color> students;
+    private PropertyChangeSupport listeners;
 
     /**
      * Constructor creates a new cloud instance.
@@ -42,6 +46,7 @@ public class Cloud {
     public ArrayList<Color> emptyStudents(){
         ArrayList<Color> outStudents = new ArrayList<>(students);
         students.clear();
+        listeners.firePropertyChange("PickedCloud", outStudents, null);
         return outStudents;
     }
     /**
@@ -50,5 +55,10 @@ public class Cloud {
      */
     public ArrayList<Color> getStudents() {
         return students;
+    }
+
+    public void setPropertyChangeListener(GameController controller){
+        listeners.addPropertyChangeListener("PickedCloud", controller);
+
     }
 }

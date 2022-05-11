@@ -1,7 +1,10 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.exceptions.EmptyBasketException;
 
+import java.beans.PropertyChangeSupport;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,15 +14,8 @@ import java.util.stream.Collectors;
  */
 
 public class Game {
-    private static final int MAX_NUM_ISLANDS = 12;
-    private static final int MAX_LOBBY_SIZE = 10;
-    protected static final int ISLAND_ID_NOT_RECEIVED = -1;
-    private static final int ISLAND_THRESHOLD_FOR_GAME_OVER = 3;
-    private static final int MAX_TOWER_NUMBER = 10;
     protected Basket basket;
     protected ArrayList<Player> players;
-    //private ArrayList<Player> activePlayers;
-    //potrebbe servire per gestire la resilienza
     protected Player currentPlayer;
     private Player winner;
     protected ArrayList<Island> islands;
@@ -31,6 +27,7 @@ public class Game {
     protected Island currentMotherNatureIsland; //firePropertyChange
     private boolean lastRound;
     protected HashMap<Color,Player> teachersOwners;
+    protected PropertyChangeSupport listeners;
 
 
     /**
@@ -51,9 +48,10 @@ public class Game {
         wizards.add(4);
         assistantDecks = new ArrayList<>(); //bisogna implementare effettivamente le 40 carte con relative statistiche
         currentTurnAssistantCards = new HashMap<Integer,Assistant>(); //firePropertyChange
-        this.lastRound = false;
+        lastRound = false;
         winner = null; //firePropertyChange
         teachersOwners = new HashMap<>();
+        listeners = new PropertyChangeSupport(this);
     }
 
     /**
@@ -89,12 +87,12 @@ public class Game {
         }
 
         //istanziate le isole
-        for (int i = 0; i< MAX_NUM_ISLANDS; i++){
+        for (int i = 0; i< Constants.MAX_NUM_ISLANDS; i++){
             islands.add(new Island(i));
         }
         //posizionata in maniera randomica madre natura
         Random indexGenerator = new Random();
-        int initialMotherNature = indexGenerator.nextInt(MAX_NUM_ISLANDS);
+        int initialMotherNature = indexGenerator.nextInt(Constants.MAX_NUM_ISLANDS);
 
         //non creo un metodo placeMotherNature solo per fare questa azione
         islands.get(initialMotherNature).setMotherNature(true);
@@ -241,7 +239,7 @@ public class Game {
             return false;
         Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
         player.getBoard().removeFromLobby(studentIndex); //firePropertyChange
-        if(islandId == ISLAND_ID_NOT_RECEIVED)
+        if(islandId == Constants.ISLAND_ID_NOT_RECEIVED)
             player.getBoard().addToTable(studentToMove);
         else
         {
@@ -326,7 +324,7 @@ public class Game {
             return false;
         Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
         if(studentToMove != null){
-            if(islandId == ISLAND_ID_NOT_RECEIVED){
+            if(islandId == Constants.ISLAND_ID_NOT_RECEIVED){
                 if(!player.getBoard().isTableFull(studentToMove))
                     return true;
             }
@@ -598,8 +596,8 @@ public class Game {
                 return true;
             }
         }
-        if (islands.size()<=ISLAND_THRESHOLD_FOR_GAME_OVER){
-            int minTowers = MAX_TOWER_NUMBER;
+        if (islands.size()<=Constants.ISLAND_THRESHOLD_FOR_GAME_OVER){
+            int minTowers = Constants.MAX_TOWER_NUMBER;
             ArrayList<Player> potentialWinners = new ArrayList<>();
             for (Player potentialWinner: players){
                 if (potentialWinner.getBoard().getTowers()<minTowers){
@@ -690,6 +688,33 @@ public class Game {
     private int isDuplicate(ArrayList<Integer> values, int value) {
         return Collections.frequency(values,value) > 1? 1:0;
     }
+
+    //metodo che aggiunge i listener a tutte le classi ascoltate
+    public void setPropertyChangeListeners(GameController controller){
+        listeners.addPropertyChangeListener("MotherNature", controller);
+        listeners.addPropertyChangeListener("Merge", controller);
+        listeners.addPropertyChangeListener("LastRound", controller);
+        listeners.addPropertyChangeListener("Gameover", controller);
+        listeners.addPropertyChangeListener("CloudsRefill", controller);
+        listeners.addPropertyChangeListener("CurrentTurnAssistantCards", controller);
+        //mancano tutti i listeners nelle relative classi
+        for (Cloud cloud: clouds){
+            cloud.setPropertyChangeListener(controller);
+        }
+        for (Island island: islands){
+            island.setPropertyChangeListener(controller);
+        }
+        for (Player player: players){
+            player.setPropertyChangeListener(controller);
+        }
+    }
+
+    //in teoria
+    //ordine di chiamata metodi Game inizio partita:
+    //costruttore
+    //addPlayer per ogni player
+    //game.instantiateGameElements()
+    //game.setPropertyChangeListeners(controller)
 }
 
 

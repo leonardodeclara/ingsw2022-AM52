@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.GameController;
+
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
 /**
@@ -15,6 +18,7 @@ public class Island {
     private boolean motherNature;
     private int numMergedIslands;
     private Player owner;
+    private PropertyChangeSupport listeners;
 
     /**
      * Constructor creates an island instance.
@@ -26,6 +30,7 @@ public class Island {
         students = new ArrayList<>();
         motherNature=false;
         numMergedIslands=1;
+        listeners= new PropertyChangeSupport(this);
     }
 
     /**
@@ -162,5 +167,9 @@ public class Island {
             return owner.getTeam();
         else
             return null;
+    }
+
+    public void setPropertyChangeListener(GameController controller){
+        listeners.addPropertyChangeListener("Island", controller);
     }
 }

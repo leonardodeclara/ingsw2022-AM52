@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.exceptions.EmptyBasketException;
+import it.polimi.ingsw.exceptions.InvalidMoveException;
 
 import java.util.*;
 
@@ -53,7 +56,7 @@ public class ExpertGame extends Game {
             return false;
         Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
         player.getBoard().removeFromLobby(studentIndex);
-        if(islandId == ISLAND_ID_NOT_RECEIVED)
+        if(islandId == Constants.ISLAND_ID_NOT_RECEIVED)
             player.getBoard().addToTable(studentToMove);
         else {
             Island islandDest = islands.get(islandId);
@@ -214,7 +217,7 @@ public class ExpertGame extends Game {
      */
     public void setActivePersonality(int cardId){
         if (activePersonality!=null){
-            throw new RuntimeException("Non è possibile selezionare più di una carta personaggio per turno");
+            throw new InvalidMoveException(); //vedere se aggiungere messaggio
         }
 
         int playedCardIndex=-1;
@@ -272,5 +275,14 @@ public class ExpertGame extends Game {
      */
     public int getBans() {
         return bans;
+    }
+
+    @Override
+    public void setPropertyChangeListeners(GameController controller) {
+        super.setPropertyChangeListeners(controller);
+        listeners.addPropertyChangeListener("ActivePersonality", controller);
+        listeners.addPropertyChangeListener("Coins", controller);
+        listeners.addPropertyChangeListener("Bans", controller);
+        listeners.addPropertyChangeListener("SelectedPersonality", controller);
     }
 }

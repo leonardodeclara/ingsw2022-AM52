@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.GameController;
+
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
 /**
@@ -14,6 +17,7 @@ public class Player {
     private Board board;
     private ArrayList<Assistant> deck;
     private Tower team;
+    private PropertyChangeSupport listeners;
 
     /**
      * Constructor creates a Player instance.
@@ -81,6 +85,11 @@ public class Player {
         this.team = team;
     }
 
+    public void setPropertyChangeListener(GameController controller) {
+        listeners.addPropertyChangeListener("Deck", controller);
+        board.setPropertyChangeListener(controller);
+
+    }
 }
 
 
