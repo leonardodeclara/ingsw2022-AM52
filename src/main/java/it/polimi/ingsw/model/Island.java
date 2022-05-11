@@ -177,4 +177,5 @@ public class Island {
         listeners.addPropertyChangeListener("IslandTowers", controller);
         listeners.addPropertyChangeListener("IslandStudents", controller);
     }
+    //manca un metodo remove student (?) non so se serve per le carte
 }

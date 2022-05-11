@@ -29,6 +29,7 @@ public class Player {
         board = new Board();
         deck = new ArrayList<>();
         this.team = team;
+        listeners = new PropertyChangeSupport(this);
     }
 
     /**
@@ -85,9 +86,55 @@ public class Player {
         this.team = team;
     }
 
+    public void addToBoardLobby(Color student){
+        board.addToLobby(student);
+        listeners.firePropertyChange("Board", null, this);
+    }
+
+    public Color removeFromBoardLobby(int index){
+        Color removed = board.removeFromLobby(index);
+        listeners.firePropertyChange("Board", null, this);
+        return removed;
+    }
+
+    //in expert game ci sarà moveToTable di game per guadagnare le monete
+    public boolean addToBoardTable(Color student){
+        boolean gainCoin = board.addToTable(student);
+        listeners.firePropertyChange("Board", null, this);
+        return gainCoin;
+    }
+
+    public void removeFromBoardTable(Color student){
+        board.removeFromTable(student);
+        listeners.firePropertyChange("Board", null, this);
+    }
+
+    public void addTeacherToBoard(Color teacher){
+        board.addTeacher(teacher);
+        listeners.firePropertyChange("Board", null, this);
+    }
+
+    public Color removeTeacherFromBoard(Color teacher){
+        Color removed = board.removeTeacher(teacher);
+        listeners.firePropertyChange("Board", null, this);
+        return removed;
+    }
+
+    public void addTowerToBoard(){
+        board.addTower();
+        listeners.firePropertyChange("Board", null, this);
+    }
+
+    public void removeTowerFromBoard(){
+        board.removeTower();
+        listeners.firePropertyChange("Board", null, this);
+    }
+
+    //vanno cambiati tutti i test
+
     public void setPropertyChangeListener(GameController controller) {
-        listeners.addPropertyChangeListener("Deck", controller);
-        //board.setPropertyChangeListener(controller);
+        listeners.addPropertyChangeListener("Deck", controller); //non sono sicuro sia un'informazione visibile a tutti
+        listeners.addPropertyChangeListener("Board", controller);
 
     }
 }

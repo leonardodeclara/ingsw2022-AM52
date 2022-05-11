@@ -48,8 +48,8 @@ public class Board {
      * @param index
      */
 
-    public void removeFromLobby(int index){
-        lobby.remove(index);
+    public Color removeFromLobby(int index){
+        return lobby.remove(index);
     }
 
     /**

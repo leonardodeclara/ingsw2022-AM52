@@ -54,10 +54,9 @@ public class ExpertGame extends Game {
         Player player = players.get(playerId);
         if(!isMoveStudentFromLobbyLegal(player,studentIndex,islandId))
             return false;
-        Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
-        player.getBoard().removeFromLobby(studentIndex);
+        Color studentToMove = player.removeFromBoardLobby(studentIndex);
         if(islandId == Constants.ISLAND_ID_NOT_RECEIVED)
-            player.getBoard().addToTable(studentToMove);
+            player.addToBoardTable(studentToMove);
         else {
             Island islandDest = islands.get(islandId);
             islandDest.addStudent(studentToMove);
@@ -79,14 +78,14 @@ public class ExpertGame extends Game {
             Player owner = teachersOwners.get(c);
             if(owner!=null){
                 if (player.getBoard().getTableNumberOfStudents(c) >= owner.getBoard().getTableNumberOfStudents(c)) {
-                    owner.getBoard().removeTeacher(c);
-                    player.getBoard().addTeacher(c);
+                    owner.removeTeacherFromBoard(c);
+                    player.addTeacherToBoard(c);
                     teachersOwners.put(c, player);
                 }
             }
             else {
                 if (player.getBoard().getTableNumberOfStudents(c)>0){
-                    player.getBoard().addTeacher(c);
+                    player.addTeacherToBoard(c);
                     teachers.remove(c);
                     teachersOwners.put(c, player);
                 }
@@ -102,18 +101,28 @@ public class ExpertGame extends Game {
      * @param numSteps : number of islands that the player identified with the playerId wants to move mother nature
      */
     public boolean moveMotherNatureForCard4(int playerId,int numSteps){
-        if(!isMoveMNLegal(playerId,numSteps+2))
+        if(!isMoveMNLegalForCard4(playerId,numSteps))
             return false;
 
         Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
-        Island dest = islands.get(from.getIslandIndex() + numSteps+2 % islands.size());
+        Island dest = islands.get((from.getIslandIndex() + numSteps) % islands.size());
 
         //manca il ricalcolo dell'influenza
-
+        currentMotherNatureIsland=islands.get(dest.getIslandIndex());
         from.setMotherNature(false);
         dest.setMotherNature(true);
         listeners.firePropertyChange("MotherNature", from.getIslandIndex(), currentMotherNatureIsland.getIslandIndex());
         return true;
+    }
+
+    /**
+     * Method isMoveMNLegalForCard4 checks  if the player with Player ID can move Mother Nature of numSteps
+     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param numSteps : number of islands that the player identified with the playerId wants to move mother nature
+     */
+    public boolean isMoveMNLegalForCard4(int playerId,int numSteps){
+        int playerMaxSteps = currentTurnAssistantCards.get(playerId).getNumMoves() + 2;
+        return numSteps > playerMaxSteps? false : true;
     }
 
     /**
