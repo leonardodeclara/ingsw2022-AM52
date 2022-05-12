@@ -1,11 +1,9 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.controller.Server;
-import it.polimi.ingsw.controller.ServerSocketConnection;
+import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.messages.*;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -13,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class CLI implements Runnable{
     private final Scanner inputStream;

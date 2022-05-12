@@ -1,6 +1,5 @@
-package it.polimi.ingsw.client;
+package it.polimi.ingsw.CLI;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class GameBoard {
