@@ -102,5 +102,16 @@ public class UpdateMessageBuilder {
         return new BoardUpdateMessage(updatedBoard.getStudentsTable(), updatedBoard.getLobby(), updatedBoard.getTeacherTable(), updatedOwner);
     }
 
+    public Message buildActivePersonalityMessage(PropertyChangeEvent event){
+        int activeCardId = (int) event.getNewValue();
+        return new ActiveCharacterCardMessage(activeCardId);
+    }
+
+    //poi vedere se effettivamente è utile o no o se posso inglobare in messaggi di fine round
+    public Message builNoLongerActivePersonalityMessage(PropertyChangeEvent event){
+        int inactiveCardId = (int) event.getNewValue();
+        return new InactiveCharacterCardMessage(inactiveCardId);
+    }
+
 
 }

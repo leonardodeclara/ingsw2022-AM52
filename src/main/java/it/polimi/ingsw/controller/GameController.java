@@ -81,10 +81,13 @@ public class GameController implements PropertyChangeListener {
             case "Board":
                 toSend = updateMessageBuilder.buildBoardUpdateMessage(event);
             case "ActivePersonality":
-            case "NotOwnedCoins":
-            case "Bans":
+                toSend = updateMessageBuilder.buildActivePersonalityMessage(event);
+            case "NoLongerActivePersonality":
+                toSend = updateMessageBuilder.builNoLongerActivePersonalityMessage(event);
+            case "NotOwnedCoins": //vedere se effettivamente è utile
+            case "Bans": //vedere se effettivamente è utile
             case "SelectedPersonality":
-
+            //dovrebbero mancare listener per gli effetti "istant" delle carte personaggio, vedere quelle a parte
         }
         listener.firePropertyChange("UpdateMessage", null, toSend);
         //in propertyChange di GameHandler bisogna fare il controllo oldValue-newValue perché se

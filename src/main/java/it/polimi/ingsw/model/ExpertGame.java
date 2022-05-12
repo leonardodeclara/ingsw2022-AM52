@@ -240,6 +240,7 @@ public class ExpertGame extends Game {
             activePersonality=personalities.remove(playedCardIndex);
             activePersonality.setHasBeenUsed(true);
             activePersonality.updateCost();
+            listeners.firePropertyChange("ActivePersonality", null, cardId);
         }
         catch (IndexOutOfBoundsException exception){
             throw new RuntimeException();
