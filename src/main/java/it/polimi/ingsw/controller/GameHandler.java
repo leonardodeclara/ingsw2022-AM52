@@ -4,12 +4,14 @@ import com.sun.net.httpserver.Authenticator;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.messages.*;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
-public class GameHandler {
+public class GameHandler implements PropertyChangeListener {
     GameController gameController;
     ServerSocketConnection serverConnection;
     Server server;
@@ -49,6 +51,7 @@ public class GameHandler {
      */
     public void startGame(){
         gameController= new GameController(expertGame);
+        //settaggio dei listener in gameController da aggiungere (devo dargli this in input)
         ClientStateMessage waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         ClientStateMessage setUpPhaseStateMessage = new ClientStateMessage(ClientState.SET_UP_PHASE);
         ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
@@ -78,5 +81,10 @@ public class GameHandler {
 
     public GameController getGameController() {
         return gameController;
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        //spacchetta l'evento, prende il messaggio e lo invia
     }
 }

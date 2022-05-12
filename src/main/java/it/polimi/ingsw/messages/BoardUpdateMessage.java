@@ -2,16 +2,24 @@ package it.polimi.ingsw.messages;
 
 import it.polimi.ingsw.model.Color;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-
+//da cambiare, bisogna creare un messaggio ad hoc per ogni cosa della lobby che cambia.
+//altrimenti quando il messaggio di update arriva al client non capisce cosa è cambiato
 public class BoardUpdateMessage implements Message{
-    HashMap<Color, Integer> updatedBoard;
+    HashMap<Color, Integer> updatedBoardTable;
+    ArrayList<Color> updatedLobbyTable;
+    ArrayList<Color> updatedTeacherTable;
+    String owner;
 
-    public BoardUpdateMessage(HashMap<Color, Integer> updatedBoard) {
-        this.updatedBoard = updatedBoard;
+    public BoardUpdateMessage(HashMap<Color, Integer> updatedBoardTable, ArrayList<Color> updatedLobbyTable, ArrayList<Color> updatedTeacherTable, String owner) {
+        this.updatedBoardTable = updatedBoardTable;
+        this.updatedLobbyTable = updatedLobbyTable;
+        this.updatedTeacherTable = updatedTeacherTable;
+        this.owner = owner;
     }
 
-    public HashMap<Color, Integer> getUpdatedBoard() {
-        return updatedBoard;
+    public HashMap<Color, Integer> getUpdatedBoardTable() {
+        return updatedBoardTable;
     }
 }

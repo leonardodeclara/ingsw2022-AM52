@@ -2,20 +2,22 @@ package it.polimi.ingsw.messages;
 
 import it.polimi.ingsw.model.Tower;
 
+import java.util.ArrayList;
+
 public class IslandTowersUpdateMessage implements Message{
     int islandIndex;
-    Tower tower;
+    ArrayList<Tower> towers;
 
-    public IslandTowersUpdateMessage(int islandIndex, Tower tower) {
+    public IslandTowersUpdateMessage(int islandIndex, ArrayList<Tower> towers) {
         this.islandIndex = islandIndex;
-        this.tower = tower;
+        this.towers = towers;
     }
 
     public int getIslandIndex() {
         return islandIndex;
     }
 
-    public Tower getTower() {
-        return tower;
+    public ArrayList<Tower> getTower() {
+        return new ArrayList<>(towers);
     }
 }

@@ -5,11 +5,11 @@ import it.polimi.ingsw.model.Color;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class IslandStudentsUpdate implements Message{
+public class IslandStudentsUpdateMessage implements Message{
     int islandIndex;
     ArrayList<Color> students;
 
-    public IslandStudentsUpdate(int islandIndex, ArrayList<Color> students) {
+    public IslandStudentsUpdateMessage(int islandIndex, ArrayList<Color> students) {
         this.islandIndex = islandIndex;
         this.students = students;
     }

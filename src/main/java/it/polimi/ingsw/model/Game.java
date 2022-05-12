@@ -373,7 +373,7 @@ public class Game {
                 }
             }
             cloud.fillStudents(picks); //firePropertyChange
-            listeners.firePropertyChange("CloudsRefill", null, clouds); //rivedere come mandare effettivamente
+            listeners.firePropertyChange("CloudsRefill", null, new ArrayList<>(clouds)); //rivedere come mandare effettivamente
             picks.clear();
         }
     }
@@ -420,7 +420,8 @@ public class Game {
                     island.merge(leftIsland);
                     islands.remove(leftIsland);
                 }
-                listeners.firePropertyChange("Merge", null, mergerId);
+
+                listeners.firePropertyChange("Merge", null, new int[]{mergerId, leftIsland.getIslandIndex()});
             }
         }
 
@@ -435,7 +436,7 @@ public class Game {
                     island.merge(rightIsland);
                     islands.remove(rightIsland);
                 }
-                listeners.firePropertyChange("Merge", null, mergerId);
+                listeners.firePropertyChange("Merge", null, new int[]{mergerId, rightIsland.getIslandIndex()});
             }
         }
     }
