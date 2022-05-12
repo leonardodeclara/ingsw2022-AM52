@@ -108,12 +108,12 @@ class ExpertGameTest {
         game.instantiateGameElements();
         game.giveAssistantDeck(0,0);
         game.giveAssistantDeck(1,2);
-        game.playAssistantCard(1,1);
+        game.playAssistantCard("leo",1);
         Island oldMNIsland = game.currentMotherNatureIsland;
         Island newMNIsland = game.islands.get((game.islands.indexOf(oldMNIsland) + 3)%game.islands.size());
         assertTrue(oldMNIsland.isMotherNature());
         assertFalse(newMNIsland.isMotherNature());
-        game.moveMotherNatureForCard4(1,3);
+        game.moveMotherNatureForCard4("leo",3);
         assertFalse(oldMNIsland.isMotherNature());
         assertTrue(newMNIsland.isMotherNature());
         assertEquals(game.getIslands().get(newMNIsland.getIslandIndex()), game.currentMotherNatureIsland);

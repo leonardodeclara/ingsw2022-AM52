@@ -55,7 +55,7 @@ public class GameController implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent event) {
-        String eventName = (String) event.getPropertyName();
+        String eventName = event.getPropertyName();
         Message toSend = null;
         switch (eventName) {
             case "MotherNature":
@@ -69,15 +69,17 @@ public class GameController implements PropertyChangeListener {
             case "CloudsRefill":
                 toSend = updateMessageBuilder.buildCloudsRefillMessage(event);
             case "CurrentAssistantCards": //vedere cosa mandare effettivamente nel messaggio
-
+                toSend = updateMessageBuilder.buildCurrentTurnAssistantCardsMessage(event);
             case "Deck": //non se è messaggio broadcast, forse in gameHandler va gestito in maniera diversa
+                toSend = updateMessageBuilder.buildDeckUpdateMessage(event);
             case "IslandTowers":
                 toSend = updateMessageBuilder.buildIslandTowersMessage(event);
             case "IslandStudents":
                 toSend = updateMessageBuilder.buildIslandStudentsMessage(event);
             case "PickedCloud":
-                toSend = updateMessageBuilder.builPickedCloudMessage(event);
+                toSend = updateMessageBuilder.buildPickedCloudMessage(event);
             case "Board":
+                toSend = updateMessageBuilder.buildBoardUpdateMessage(event);
             case "ActivePersonality":
             case "NotOwnedCoins":
             case "Bans":

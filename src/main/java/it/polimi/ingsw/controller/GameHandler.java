@@ -47,6 +47,7 @@ public class GameHandler implements PropertyChangeListener{
      */
     public void startGame(){
         gameController= new GameController(expertGame);
+        gameController.setUpdateListener(this);
         ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
         ClientStateMessage waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         ClientStateMessage setUpPhaseStateMessage = new ClientStateMessage(ClientState.SET_UP_PHASE);
@@ -64,6 +65,7 @@ public class GameHandler implements PropertyChangeListener{
         System.out.println("Mando a "+nickname+" su client handler "+clientHandler.getID());
         clientHandler.sendMessage(message);
     }
+    //non si può cambiare e tenere in input solo il messaggio ? tanto il metodo ricava la lista di clientHandlers da solo. stessa cosa per il metodo sotto
     private void sendAll(ArrayList<ClientHandler> clientHandlers,Message message){
         for( ClientHandler clientHandler : clientHandlers){
             clientHandler.sendMessage(message);
@@ -76,14 +78,17 @@ public class GameHandler implements PropertyChangeListener{
         }
     }
 
-
-
     public GameController getGameController() {
         return gameController;
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        //spacchetta l'evento, prende il messaggio e lo invia
+        String eventName = evt.getPropertyName();
+        if (eventName.equals("UpdateMessage") && evt.getNewValue()!=null){
+            Message outwardsMessage = (Message) evt.getNewValue();
+            ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
+            sendAll(clientHandlers, outwardsMessage);
+        }
     }
 }

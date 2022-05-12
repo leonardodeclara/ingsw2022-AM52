@@ -97,11 +97,11 @@ public class ExpertGame extends Game {
      *Method moveMotherNature checks  if the player with Player ID can move Mother Nature of numSteps
      *  and if it's doable, moves Mother Nature from the current island to the new one
      *  It's different from the MoveMotherNature method because MotherNature can do 2 additional moves
-     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param nickname : name given to the player, TO DO
      * @param numSteps : number of islands that the player identified with the playerId wants to move mother nature
      */
-    public boolean moveMotherNatureForCard4(int playerId,int numSteps){
-        if(!isMoveMNLegalForCard4(playerId,numSteps))
+    public boolean moveMotherNatureForCard4(String nickname,int numSteps){
+        if(!isMoveMNLegalForCard4(nickname,numSteps))
             return false;
 
         Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
@@ -117,11 +117,11 @@ public class ExpertGame extends Game {
 
     /**
      * Method isMoveMNLegalForCard4 checks  if the player with Player ID can move Mother Nature of numSteps
-     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param nickname : name given to the player, TO DO
      * @param numSteps : number of islands that the player identified with the playerId wants to move mother nature
      */
-    public boolean isMoveMNLegalForCard4(int playerId,int numSteps){
-        int playerMaxSteps = currentTurnAssistantCards.get(playerId).getNumMoves() + 2;
+    public boolean isMoveMNLegalForCard4(String nickname,int numSteps){
+        int playerMaxSteps = currentTurnAssistantCards.get(nickname).getNumMoves() + 2;
         return numSteps > playerMaxSteps? false : true;
     }
 

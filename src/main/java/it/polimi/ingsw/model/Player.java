@@ -86,6 +86,12 @@ public class Player {
         this.team = team;
     }
 
+    //TO DO: TESTARLA
+    public void removeAssistantCard(int cardIndex){
+        deck.remove(cardIndex);
+        listeners.firePropertyChange("Deck", null, this);
+    }
+
     public void addToBoardLobby(Color student){
         board.addToLobby(student);
         listeners.firePropertyChange("Board", null, this);
