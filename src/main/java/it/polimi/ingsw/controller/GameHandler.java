@@ -4,12 +4,14 @@ import com.sun.net.httpserver.Authenticator;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.messages.*;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
-public class GameHandler {
+public class GameHandler implements PropertyChangeListener{
     GameController gameController;
     ServerSocketConnection serverConnection;
     Server server;
@@ -26,7 +28,7 @@ public class GameHandler {
     }
 
     public void handleMessage(Message message,ClientHandler clientHandler){
-        //if(message instanceof SetUpPhaseMessage)
+        //if(message instanceof SetUpMessage)
         //    handleSetupMessage((SetUpMessage) message, clientHandler);
     }
 
@@ -57,7 +59,6 @@ public class GameHandler {
         gameController.updateTeamAndWizard();
     }
 */
-
     private void sendTo(String nickname,Message message){
         ClientHandler clientHandler = nameToHandlerMap.get(nickname);
         System.out.println("Mando a "+nickname+" su client handler "+clientHandler.getID());
@@ -65,7 +66,7 @@ public class GameHandler {
     }
     private void sendAll(ArrayList<ClientHandler> clientHandlers,Message message){
         for( ClientHandler clientHandler : clientHandlers){
-                clientHandler.sendMessage(message);
+            clientHandler.sendMessage(message);
         }
     }
     private void sendAllExcept(ArrayList<ClientHandler> clientHandlers,ClientHandler except, Message message){
@@ -79,5 +80,10 @@ public class GameHandler {
 
     public GameController getGameController() {
         return gameController;
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        //spacchetta l'evento, prende il messaggio e lo invia
     }
 }

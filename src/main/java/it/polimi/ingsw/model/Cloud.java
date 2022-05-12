@@ -47,7 +47,7 @@ public class Cloud {
     public ArrayList<Color> emptyStudents(){
         ArrayList<Color> outStudents = new ArrayList<>(students);
         students.clear();
-        listeners.firePropertyChange("PickedCloud", outStudents, null);
+        listeners.firePropertyChange("PickedCloud", outStudents, cloudIndex);
         return outStudents;
     }
     /**
@@ -55,7 +55,7 @@ public class Cloud {
      * @return ArrayList<Students>: students attribute content
      */
     public ArrayList<Color> getStudents() {
-        return students;
+        return new ArrayList<>(students);
     }
 
     public void setPropertyChangeListener(GameController controller){

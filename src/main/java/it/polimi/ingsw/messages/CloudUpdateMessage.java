@@ -1,5 +1,5 @@
 package it.polimi.ingsw.messages;
-
+//messaggio che notifica che una nuvola è stata svuotata
 public class CloudUpdateMessage implements Message{
     int cloudIndex;
 

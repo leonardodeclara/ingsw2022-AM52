@@ -90,7 +90,7 @@ public class Island {
         try{
             if(tower.equals(getOwnerTeam()) && towers.size()<numMergedIslands){
                 towers.add(tower);
-                listeners.firePropertyChange("IslandTowers", null, towers);
+                listeners.firePropertyChange("IslandTowers", null, this);
             }
         }
         catch (NullPointerException ignored){
@@ -104,7 +104,7 @@ public class Island {
      */
     public void addStudent(Color student){
         students.add(student);
-        listeners.firePropertyChange("IslandStudents", null, new ArrayList<>(students));
+        listeners.firePropertyChange("IslandStudents", null, this);
     }
 
     /**
@@ -114,7 +114,7 @@ public class Island {
     public ArrayList<Tower> removeTower(){
         ArrayList<Tower> removedTowers = new ArrayList<>(towers);
         towers.clear();
-        listeners.firePropertyChange("IslandTowers", null, towers);
+        listeners.firePropertyChange("IslandTowers", null, this);
         return removedTowers;
     }
 
@@ -177,5 +177,4 @@ public class Island {
         listeners.addPropertyChangeListener("IslandTowers", controller);
         listeners.addPropertyChangeListener("IslandStudents", controller);
     }
-    //manca un metodo remove student (?) non so se serve per le carte
 }

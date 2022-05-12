@@ -10,12 +10,14 @@ public class ClientBoard {
     private ArrayList<Color> teacherTable;
     private ArrayList<Color> lobby;
     private int towers;
+    String owner;
 
-    public ClientBoard(HashMap<Color, Integer> studentsTable, ArrayList<Color> teacherTable, ArrayList<Color> lobby, int towers) {
+    public ClientBoard(HashMap<Color, Integer> studentsTable, ArrayList<Color> teacherTable, ArrayList<Color> lobby, int towers, String owner) {
         this.studentsTable = studentsTable;
         this.teacherTable = teacherTable;
         this.lobby = lobby;
         this.towers = towers;
+        this.owner = owner;
     }
 
     public HashMap<Color, Integer> getStudentsTable() {
@@ -49,4 +51,5 @@ public class ClientBoard {
     public void setTowers(int towers) {
         this.towers = towers;
     }
+
 }

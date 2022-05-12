@@ -1,13 +1,19 @@
 package it.polimi.ingsw.messages;
 
 public class EndGameMessage implements Message{
-    String endgamemessage;
+    String message;
+    String winnerName;
 
-    public EndGameMessage(String endgamemessage) {
-        this.endgamemessage = endgamemessage;
+    public EndGameMessage(String message, String winnerName) {
+        this.message = message;
+        this.winnerName = winnerName;
     }
 
-    public String getEndgamemessage() {
-        return endgamemessage;
+    public String getMessage() {
+        return message;
+    }
+
+    public String getWinnerName() {
+        return winnerName;
     }
 }
