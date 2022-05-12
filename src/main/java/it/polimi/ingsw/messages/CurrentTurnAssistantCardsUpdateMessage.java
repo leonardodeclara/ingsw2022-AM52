@@ -1,7 +1,15 @@
 package it.polimi.ingsw.messages;
 
-public class CurrentTurnAssistantCardsUpdateMessage {
-    //vedere cosa mandare
-    public CurrentTurnAssistantCardsUpdateMessage() {
+import java.util.HashMap;
+
+public class CurrentTurnAssistantCardsUpdateMessage implements Message{
+    private HashMap<String, Integer> currentTurnAssistantCards;
+
+    public CurrentTurnAssistantCardsUpdateMessage(HashMap<String, Integer> currentTurnAssistantCards) {
+        this.currentTurnAssistantCards = currentTurnAssistantCards;
+    }
+
+    public HashMap<String, Integer> getCurrentTurnAssistantCards() {
+        return currentTurnAssistantCards;
     }
 }

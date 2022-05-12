@@ -2,14 +2,12 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.CLI.ClientCloud;
 import it.polimi.ingsw.messages.*;
-import it.polimi.ingsw.model.Cloud;
-import it.polimi.ingsw.model.Color;
-import it.polimi.ingsw.model.Island;
-import it.polimi.ingsw.model.Tower;
+import it.polimi.ingsw.model.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 //v1 di UpdateMessageBuilder: la classe si occupa di generare il messaggio di update in base al contenuto dell'evento ricevuto
 //questo messaggio viene restituito al controller, ascoltato da gameHandler che riceverà il messaggio da controller via firePropertyChange e ne gestirà l'invio ai client
@@ -56,6 +54,28 @@ public class UpdateMessageBuilder {
         return new CloudsRefillMessage(clientClouds);
     }
 
+    public Message buildCurrentTurnAssistantCardsMessage(PropertyChangeEvent event){
+        HashMap<String, Assistant> cards = (HashMap<String, Assistant>) event.getNewValue();
+        HashMap<String, Integer> playerToCardMap = new HashMap<>();
+        int cardPriority;
+        for (String name: cards.keySet()){
+            cardPriority = cards.get(name).getPriority();
+            playerToCardMap.put(name, cardPriority);
+        }
+        return new CurrentTurnAssistantCardsUpdateMessage(playerToCardMap); //ritorno solo l'associazione <Giocatore, Priorità>
+    }
+
+    public Message buildDeckUpdateMessage(PropertyChangeEvent event){
+        Player updatedPlayer = (Player) event.getNewValue();
+        ArrayList<Assistant> updatedDeck = updatedPlayer.getDeck();
+        HashMap<Integer, Integer> availableCards = new HashMap<>();
+        for (Assistant card: updatedDeck){
+            availableCards.put(card.getPriority(), card.getNumMoves());
+        }
+        return new AssistantDeckUpdateMessage(updatedPlayer.getNickname(), availableCards);
+    }
+
+    //questo metodo e quello dopo potrebbero essere collassati. rivedere
     public Message buildIslandTowersMessage(PropertyChangeEvent event){
         Island updatedIsland = (Island) event.getNewValue();
         ArrayList<Tower> towers = updatedIsland.getTowers();
@@ -70,9 +90,17 @@ public class UpdateMessageBuilder {
         return new IslandStudentsUpdateMessage(index, students);
     }
 
-    public Message builPickedCloudMessage(PropertyChangeEvent event){
+    public Message buildPickedCloudMessage(PropertyChangeEvent event){
         int cloudIndex = (int) event.getNewValue();
         return new CloudUpdateMessage(cloudIndex);
     }
+
+    public Message buildBoardUpdateMessage(PropertyChangeEvent event){
+        Player updatedPlayer = (Player) event.getNewValue();
+        Board updatedBoard = updatedPlayer.getBoard();
+        String updatedOwner = updatedPlayer.getNickname();
+        return new BoardUpdateMessage(updatedBoard.getStudentsTable(), updatedBoard.getLobby(), updatedBoard.getTeacherTable(), updatedOwner);
+    }
+
 
 }

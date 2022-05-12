@@ -11,7 +11,7 @@ public class GameBoard {
     //board di tutti i giocatori
     //nomi dei giocatori
     //nuvole
-    ArrayList<ClientCloud> clients;
+    ArrayList<ClientCloud> clouds;
     ArrayList<ClientBoard> clientBoards;
     //carte personaggio
     //monete
@@ -54,11 +54,11 @@ public class GameBoard {
     }
 
     public ArrayList<ClientCloud> getClients() {
-        return clients;
+        return clouds;
     }
 
-    public void setClients(ArrayList<ClientCloud> clients) {
-        this.clients = clients;
+    public void setClients(ArrayList<ClientCloud> clouds) {
+        this.clouds = clouds;
     }
 
     public ArrayList<ClientBoard> getClientBoards() {

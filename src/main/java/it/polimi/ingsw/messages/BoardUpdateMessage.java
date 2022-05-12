@@ -22,4 +22,16 @@ public class BoardUpdateMessage implements Message{
     public HashMap<Color, Integer> getUpdatedBoardTable() {
         return updatedBoardTable;
     }
+
+    public ArrayList<Color> getUpdatedLobbyTable() {
+        return updatedLobbyTable;
+    }
+
+    public ArrayList<Color> getUpdatedTeacherTable() {
+        return updatedTeacherTable;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
 }

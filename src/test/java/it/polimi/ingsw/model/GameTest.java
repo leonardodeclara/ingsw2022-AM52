@@ -216,16 +216,16 @@ class GameTest {
         d1.add(a2);
         d2.add(a1);
         d2.add(a3);
-        game.getPlayers().get(0).setDeck(d1);
-        game.getPlayers().get(1).setDeck(d2);
-        game.playAssistantCard(0,1); //giochiamo a2
-        game.playAssistantCard(1,0); //giochiamo a1
+        game.getPlayerByName("leo").setDeck(d1);
+        game.getPlayerByName("mari").setDeck(d2);
+        game.playAssistantCard("leo",1); //giochiamo a2
+        game.playAssistantCard("mari",0); //giochiamo a1
         //ci si assicura che a1,a2 siano stati rimossi dai rispettivi deck
-        assertEquals(false,game.getPlayers().get(0).getDeck().contains(a2));
-        assertEquals(false,game.getPlayers().get(1).getDeck().contains(a1));
+        assertEquals(false,game.getPlayerByName("leo").getDeck().contains(a2));
+        assertEquals(false,game.getPlayerByName("mari").getDeck().contains(a1));
         //Ci si assicura che a1,a2 ora siano nelle celle dell'hashmap corrispondenti agli id dei giocatori che le hanno giocate
-        assertEquals(a2,game.getCurrentTurnAssistantCards().get(0));
-        assertEquals(a1,game.getCurrentTurnAssistantCards().get(1));
+        assertEquals(a2,game.getCurrentTurnAssistantCards().get("leo"));
+        assertEquals(a1,game.getCurrentTurnAssistantCards().get("mari"));
     }
 
 
@@ -251,12 +251,12 @@ class GameTest {
         d2.add(a3);
         game.getPlayers().get(0).setDeck(d1);
         game.getPlayers().get(1).setDeck(d2);
-        game.playAssistantCard(0,0); //giochiamo a0
-        game.playAssistantCard(1,0); //giochaimo a1
-        assertEquals(false,game.isMoveMNLegal(0,25));
-        assertEquals(true,game.isMoveMNLegal(0,3));
-        assertEquals(false,game.isMoveMNLegal(1,6));
-        assertEquals(true,game.isMoveMNLegal(1,0));
+        game.playAssistantCard("leo",0); //giochiamo a0
+        game.playAssistantCard("mari",0); //giochaimo a1
+        assertEquals(false,game.isMoveMNLegal("leo",25));
+        assertEquals(true,game.isMoveMNLegal("leo",3));
+        assertEquals(false,game.isMoveMNLegal("mari",6));
+        assertEquals(true,game.isMoveMNLegal("mari",0));
     }
 
     /**
@@ -380,12 +380,12 @@ class GameTest {
         game.instantiateGameElements();
         game.giveAssistantDeck(0,0);
         game.giveAssistantDeck(1,2);
-        game.playAssistantCard(1,9);
+        game.playAssistantCard("mari",9);
         Island oldMNIsland = game.currentMotherNatureIsland;
         Island newMNIsland = game.islands.get((game.islands.indexOf(oldMNIsland) + 5)%game.islands.size());
         assertEquals(true,oldMNIsland.isMotherNature());
         assertEquals(false,newMNIsland.isMotherNature());
-        game.moveMotherNature(1,5);
+        game.moveMotherNature("mari",5);
         assertEquals(false,oldMNIsland.isMotherNature());
         assertEquals(true,newMNIsland.isMotherNature());
         assertEquals(game.getIslands().get(newMNIsland.getIslandIndex()), game.currentMotherNatureIsland);
@@ -701,11 +701,11 @@ class GameTest {
         game.addPlayer(frizio);
         game.instantiateGameElements();
         game.giveAssistantDeck(0, 0);
-        assertEquals(10,game.getPlayableAssistantCards(0).size());
-        game.playAssistantCard(0,0);
+        assertEquals(10,game.getPlayableAssistantCards("mari").size());
+        game.playAssistantCard("mari",0);
         Assistant playedCard= new Assistant(1,1,0);
-        assertTrue(!game.getPlayableAssistantCards(0).contains(playedCard));
-        assertEquals(9,game.getPlayableAssistantCards(0).size());
+        assertTrue(!game.getPlayableAssistantCards("mari").contains(playedCard));
+        assertEquals(9,game.getPlayableAssistantCards("mari").size());
     }
 
     @Test
@@ -763,12 +763,12 @@ class GameTest {
         ArrayList<Assistant> deck2 = leoviatano.getDeck();
         assertEquals(true,game.isCardPlayable(deck0.get(0),deck0));
         assertEquals(true,game.isCardPlayable(deck1.get(0),deck1));
-        game.playAssistantCard(0,0); //cardid = 0 <==> deck0.get(0)
+        game.playAssistantCard("mari",0); //cardid = 0 <==> deck0.get(0)
         assertEquals(false,game.isCardPlayable(deck1.get(0),deck1));
         assertEquals(true,game.isCardPlayable(deck1.get(1),deck1));
         assertEquals(false,game.isCardPlayable(deck2.get(0),deck2));
         assertEquals(true,game.isCardPlayable(deck2.get(1),deck2));
-        game.playAssistantCard(1,1);
+        game.playAssistantCard("frizio",1);
         assertEquals(false,game.isCardPlayable(deck0.get(1),deck0));
         assertEquals(true,game.isCardPlayable(deck0.get(2),deck0));
         assertEquals(false,game.isCardPlayable(deck2.get(1),deck2));

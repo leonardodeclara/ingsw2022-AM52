@@ -23,7 +23,7 @@ public class Game {
     protected ArrayList<Color> teachers;
     private ArrayList<Integer> wizards;
     private ArrayList<Assistant> assistantDecks;
-    protected HashMap<Integer,Assistant> currentTurnAssistantCards;
+    protected HashMap<String,Assistant> currentTurnAssistantCards;
     protected Island currentMotherNatureIsland; //firePropertyChange
     private boolean lastRound;
     protected HashMap<Color,Player> teachersOwners;
@@ -47,7 +47,7 @@ public class Game {
         wizards.add(3);
         wizards.add(4);
         assistantDecks = new ArrayList<>(); //bisogna implementare effettivamente le 40 carte con relative statistiche
-        currentTurnAssistantCards = new HashMap<Integer,Assistant>(); //firePropertyChange
+        currentTurnAssistantCards = new HashMap<String,Assistant>(); //firePropertyChange
         lastRound = false;
         winner = null; //firePropertyChange
         teachersOwners = new HashMap<>();
@@ -149,6 +149,7 @@ public class Game {
      * @param playerId : id given to the player, used as the index for the players arrayList
      * @param deckId : id given to the deck, the player uses it communicate which deck he wants
      */
+    //da cambiare, in input deve prendere il nickname. cambiare anche tutti i relativi test
     public void giveAssistantDeck(int playerId, int deckId){
         ArrayList<Assistant> assignedDeck = new ArrayList<>();
         wizards.remove((Integer)deckId); //firePropertyChange
@@ -165,18 +166,17 @@ public class Game {
     /**
      * Method playAssistantCard removes the card to the player's deck and adds it to the current turn played assistant cards
      * in order to calculate the playing order for the action phase
-     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param nickname :
      * @param cardId : id given to the card, used as the index for the player's deck ArrayList
      */
-    public int playAssistantCard(int playerId,int cardId){
-        ArrayList<Assistant> newDeck = players.get(playerId).getDeck();
+    public int playAssistantCard(String nickname,int cardId){
+        ArrayList<Assistant> newDeck = getPlayerByName(nickname).getDeck();
         Assistant playedCard = newDeck.get(cardId);
         if(!isCardPlayable(playedCard, newDeck)) return -1;
         int cardScore = playedCard.getPriority();
-        currentTurnAssistantCards.put(playerId,playedCard); //firePropertyChange
+        currentTurnAssistantCards.put(nickname,playedCard); //firePropertyChange
         listeners.firePropertyChange("CurrentTurnAssistantCards", null, currentTurnAssistantCards);
-        newDeck.remove(cardId);
-        players.get(playerId).setDeck(newDeck);
+        getPlayerByName(nickname).removeAssistantCard(cardId);
         return cardScore;
     }
 
@@ -210,11 +210,11 @@ public class Game {
     /**
      * Method moveMotherNature checks  if the player with Player ID can move Mother Nature of numSteps
      *  and if it's doable, moves Mother Nature from the current island to the new one
-     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param nickname : name given to the player, TO DO
      * @param numSteps : number of islands that the player identified with the playerId wants to move mother nature
      */
-    public boolean moveMotherNature(int playerId,int numSteps){
-        if(!isMoveMNLegal(playerId,numSteps))
+    public boolean moveMotherNature(String nickname,int numSteps){
+        if(!isMoveMNLegal(nickname,numSteps))
             return false;
 
         Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
@@ -235,6 +235,7 @@ public class Game {
      * @param studentIndex : number of islands that the player identified with the playerId wants to move mother nature
      * @param islandId : the id of the destination island (or -1 if no island is specified)
      */
+    //da cambiare, in input deve prendere il nickname. cambiare anche tutti i relativi test
     public boolean moveStudentFromLobby(int playerId,int studentIndex,int islandId){
         Player player = players.get(playerId);
         if(!isMoveStudentFromLobbyLegal(player,studentIndex,islandId))
@@ -284,6 +285,7 @@ public class Game {
      * @param playerId : id given to the player, used as the index for the players ArrayList
      * @param cloudId : id given to the cloud to empty
      */
+    //da cambiare, in input deve prendere il nickname. cambiare anche tutti i relativi test
     public boolean moveStudentsToLobby(int playerId,int cloudId){
         Player player = players.get(playerId);
         if(!isMoveStudentsToLobbyLegal(player,cloudId))
@@ -304,11 +306,11 @@ public class Game {
 
     /**
      * Method isMoveMNLegal checks  if the player with Player ID can move Mother Nature of numSteps
-     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param nickname : name given to the player, .. TO DO
      * @param numSteps : number of islands that the player identified with the playerId wants to move mother nature
      */
-    public boolean isMoveMNLegal(int playerId,int numSteps){
-        int playerMaxSteps = currentTurnAssistantCards.get(playerId).getNumMoves();
+    public boolean isMoveMNLegal(String nickname,int numSteps){
+        int playerMaxSteps = currentTurnAssistantCards.get(nickname).getNumMoves();
         return numSteps > playerMaxSteps? false : true;
     }
 
@@ -542,7 +544,7 @@ public class Game {
     /**
      * @return HashMap<Integer,Assistant>: List of Assistant Cards that have been played on a turn
      *     */
-    public HashMap<Integer,Assistant> getCurrentTurnAssistantCards(){
+    public HashMap<String,Assistant> getCurrentTurnAssistantCards(){
         return currentTurnAssistantCards;
     }
 
@@ -561,11 +563,12 @@ public class Game {
 
     /**
      * Method that returns the list of the Assistant card that have not been played yet
-     * @param playerId: id given to the player, used as the index for the players ArrayList
+     * @param nickname: name given to the player,TO DO
      * @return ArrayList<Assistant>: list of Assistant Card that are still playable
      */
-    public ArrayList<Assistant> getPlayableAssistantCards(int playerId){
-        return players.get(playerId).getDeck();
+    //da cambiare, in input deve prendere il nickname. cambiare anche tutti i relativi test
+    public ArrayList<Assistant> getPlayableAssistantCards(String nickname){
+        return getPlayerByName(nickname).getDeck();
     }
 
     /**

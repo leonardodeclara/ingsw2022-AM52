@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.controller.GameController;
 
 import java.beans.PropertyChangeSupport;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -127,7 +128,7 @@ public class Board {
      * @return ArrayList<Color>: list of the students from the lobby
      */
     public ArrayList<Color> getLobby() {
-        return lobby;
+        return new ArrayList<>(lobby);
     }
 
     /**
@@ -146,7 +147,7 @@ public class Board {
      * of that color
      */
     public HashMap<Color, Integer> getStudentsTable() {
-        return studentsTable;
+        return new HashMap<>(studentsTable);
     }
 
     /**
@@ -154,7 +155,7 @@ public class Board {
      * @return ArrayList<Color>: ArrayList of teacher
      */
     public ArrayList<Color> getTeacherTable() {
-        return teacherTable;
+        return new ArrayList<>(teacherTable);
     }
 
     /**
