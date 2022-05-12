@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.client.ClientCloud;
+import it.polimi.ingsw.CLI.ClientCloud;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Cloud;
 import it.polimi.ingsw.model.Color;

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.messages;
 
-import it.polimi.ingsw.client.ClientCloud;
+import it.polimi.ingsw.CLI.ClientCloud;
 
 import java.util.ArrayList;
 
