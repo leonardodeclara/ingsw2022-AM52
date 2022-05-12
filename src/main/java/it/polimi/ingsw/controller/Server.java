@@ -29,10 +29,12 @@ public class Server {
         gameHandlers = new ArrayList<>();
     }
 
-    public void handleMessage(Message message, ClientHandler sender){
-        if (message instanceof LoginRequestMessage) //
+
+    //questo in teoria è l'unico punto d'accesso tra i thread clienthandlers e il server, quindi lo sincronizziamo per gestirne l'uso concorrente da parte di più thread
+    public synchronized void handleMessage(Message message, ClientHandler sender){
+        if (message instanceof LoginRequestMessage)
             handleLogin((LoginRequestMessage) message, sender);
-        else if (message instanceof GameParametersMessage) //manda al server, fase di connessione
+        else if (message instanceof GameParametersMessage)
             handleGameParameters((GameParametersMessage)message,sender );
     }
     public void handleLogin(LoginRequestMessage message, ClientHandler sender){
@@ -62,7 +64,6 @@ public class Server {
         }
     }
 
-    //questo metodo deve essere sincronizzato
     public Lobby joinLobby(int playerID,int numberPlayers, boolean expertGame){ //clientHandler id, parametri della lobby
         try{
             Lobby matchingLobby = getMatchingLobby(numberPlayers,expertGame);

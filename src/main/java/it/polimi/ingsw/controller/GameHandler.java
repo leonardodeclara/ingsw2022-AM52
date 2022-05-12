@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
-public class GameHandler implements PropertyChangeListener {
+public class GameHandler implements PropertyChangeListener{
     GameController gameController;
     ServerSocketConnection serverConnection;
     Server server;
@@ -30,8 +30,6 @@ public class GameHandler implements PropertyChangeListener {
     public void handleMessage(Message message,ClientHandler clientHandler){
         //if(message instanceof SetUpMessage)
         //    handleSetupMessage((SetUpMessage) message, clientHandler);
-       // if(message instanceof GameParametersMessage)
-        //    handleGameParametersMessage((GameParametersMessage) message, playerID);
     }
 
     public void setServer(ServerSocketConnection serverConnection) {
@@ -45,19 +43,15 @@ public class GameHandler implements PropertyChangeListener {
     /*
     si svuota la lobby inserendo tutto in un game controller (che inizializza il model)
     si mappano i nickname a degli id player (in ordine di join nella lobby, usando quindi la lista players di lobby)
-    si manda in broadcast a tutti wait_turn e al primo della lista setup_phase
-    quando poi giunge il messaggio dal giocatore usando handleMessages si passa in un altro metodo che fa la setup phase così questo
-    non viene riempito di robe che non gli competono
+    si manda in broadcast a tutti i client il numero di giocatori e il tipo di partita così che possano inizializzare la view
      */
     public void startGame(){
         gameController= new GameController(expertGame);
-        //settaggio dei listener in gameController da aggiungere (devo dargli this in input)
+        ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
         ClientStateMessage waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         ClientStateMessage setUpPhaseStateMessage = new ClientStateMessage(ClientState.SET_UP_PHASE);
-        ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
         sendAllExcept((ArrayList<ClientHandler>) clientHandlers,nameToHandlerMap.get(players.get(0)),waitStateMessage);
         sendTo(players.get(0),setUpPhaseStateMessage);
-
     }
 
     /*
@@ -65,6 +59,16 @@ public class GameHandler implements PropertyChangeListener {
         gameController.updateTeamAndWizard();
     }
 */
+    private void sendTo(String nickname,Message message){
+        ClientHandler clientHandler = nameToHandlerMap.get(nickname);
+        System.out.println("Mando a "+nickname+" su client handler "+clientHandler.getID());
+        clientHandler.sendMessage(message);
+    }
+    private void sendAll(ArrayList<ClientHandler> clientHandlers,Message message){
+        for( ClientHandler clientHandler : clientHandlers){
+            clientHandler.sendMessage(message);
+        }
+    }
     private void sendAllExcept(ArrayList<ClientHandler> clientHandlers,ClientHandler except, Message message){
         for( ClientHandler clientHandler : clientHandlers){
             if(!clientHandler.equals(except))
@@ -72,11 +76,6 @@ public class GameHandler implements PropertyChangeListener {
         }
     }
 
-    private void sendTo(String nickname,Message message){
-        ClientHandler clientHandler = nameToHandlerMap.get(nickname);
-        System.out.println("Mando a "+nickname+" su client handler "+clientHandler.getID());
-        clientHandler.sendMessage(message);
-    }
 
 
     public GameController getGameController() {

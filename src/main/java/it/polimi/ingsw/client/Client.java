@@ -14,20 +14,35 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class Client implements  Runnable{ //gestisce la socket da un lato e dialoga con CLI/GUI dall'altro
-    ClientState currentState;
+public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall'altro
     ClientSocket clientSocket;
     InputParser inputParser;
     CLI cli;
     boolean active;
 
     public Client() {
-        //inputParser=new InputParser();
-        cli = new CLI();
-        currentState = ClientState.CONNECT_STATE;
         active = true;
     }
 
+    public Message buildMessageFromPlayerInput(ArrayList<Object> data,ClientState currentState){
+        switch (currentState){ //in base allo stato costruiamo messaggi differenti
+            case CONNECT_STATE:
+                return buildConnectMessage(data);
+            case INSERT_NEW_GAME_PARAMETERS:
+                return buildNewGameParametersMessage(data);
+        }
+        return null;
+    }
+
+    private Message buildConnectMessage(ArrayList<Object> data){
+        return new LoginRequestMessage((String)data.get(0));
+    }
+
+    private Message buildNewGameParametersMessage(ArrayList<Object> data){
+        return new GameParametersMessage((Integer)data.get(0),(Boolean)data.get(1));
+    }
+}
+    /*
     @Override
     public void run(){
         try {
@@ -179,7 +194,7 @@ public class Client implements  Runnable{ //gestisce la socket da un lato e dial
 //send dei messaggi vanno gestiti separatamente dai metodi che si occupano dell'elaborazione
 
 
-
+*/
 
 
 

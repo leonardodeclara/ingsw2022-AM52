@@ -1,51 +1,178 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.controller.Server;
+import it.polimi.ingsw.controller.ServerSocketConnection;
+import it.polimi.ingsw.messages.*;
+
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-public class CLI{
+public class CLI implements Runnable{
     private final Scanner inputStream;
     private final PrintStream outputStream;
     private boolean active;
+    Client client;
+    ClientSocket clientSocket;
+    ClientState currentState;
+    InputParser inputParser;
+    ArrayList<Object> playerInput;
+    private volatile Message receivedMessage;
+    final ScheduledExecutorService executorService;
+    GameBoard GB;
 
-
+    /*
+    TODO:
+    controllare se mandare più messaggi di fila funziona. Se funziona potrebbero essere usati per arricchire un po' alcune fasi di gioco preliminari
+    (messaggi dal server ad esempio o informazioni utili come il nome degli altri giocatori )
+     */
     public CLI() {
         inputStream = new Scanner(System.in);
         outputStream = new PrintStream(System.out);
+        client = new Client();
+        receivedMessage = null;
+        currentState = ClientState.CONNECT_STATE;
+        inputParser = new InputParser();
+        executorService = Executors.newSingleThreadScheduledExecutor();
+        GB = new GameBoard();
+    }
+
+
+    public void run(){
+        try {
+            instantiateSocket();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         active = true;
+
+        while(active){
+                receivedMessage = null;
+                if(!currentState.equals(ClientState.WAIT_IN_LOBBY) && !currentState.equals(ClientState.WAIT_TURN)){
+                    visualizeContextMessage();
+                    playerInput = inputParser.parse(inputStream.nextLine(),currentState);
+
+                    if(currentState.equals(ClientState.INSERT_NEW_GAME_PARAMETERS)) //comunichiamo alla view i parametri expertGame e numberOfPlayers così non deve darceli il server
+                        prepareView(playerInput);
+
+
+                    if(playerInput.size() > 0){
+                        Message messageToSend = client.buildMessageFromPlayerInput(playerInput,currentState);
+                        try {
+                            clientSocket.send(messageToSend);
+                            waitForResponse();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        handleMessageFromServer(receivedMessage);
+                    }
+                    else{
+                        visualizeErrorMessage();
+                    }
+                }
+                else{ //printa ogni 5 secondi il messaggio di attesa
+                    //executorService.scheduleWithFixedDelay(this::visualizeContextMessage, 0, 5, TimeUnit.SECONDS);
+                }
+            }
+        }
+
+    private void waitForResponse(){ //come wait() ma più semplice da gestire e comprendere
+        while (receivedMessage == null) {
+        }
+
+    }
+
+    public void setReceivedMessage(Message message){ //usato da clientSocket per passare la risposta asincrona del server alla CLI
+        receivedMessage = message;
+    }
+
+    public void instantiateSocket() throws IOException {
+        boolean connectionAccepted = false;
+        while(!connectionAccepted){
+            try{
+                String ip = askIP();
+                int port = askPort();
+                clientSocket = new ClientSocket(ip,port,this);
+                Thread socketThread = new Thread(clientSocket); //la sposti su un nuovo thread (parte run() in automatico)
+                socketThread.start();
+                connectionAccepted = true;
+            }catch(UnknownHostException |SocketException e){
+                visualizeCustomMessage("Connessione fallita. Scegli un altro server o riprova più tardi");
+                connectionAccepted = false;
+            }
+        }
+
+    }
+
+
+
+    private void handleMessageFromServer(Message receivedMessage){
+        if(receivedMessage instanceof ClientStateMessage){
+            currentState = ((ClientStateMessage) receivedMessage).getNewState();
+        }
+        if(receivedMessage instanceof ErrorMessage){
+            visualizeErrorMessage();
+        }
+
+        //if(message instanceof updateViewMessage){
+            //gameBoard.update(); //aggiorna la view
+            //gameBoard.print(); //la ristampa a schermo
+        //}
+
     }
 
     public void print(){
         //GB.print()
-
     }
 
-    /*
-    @Override
-    public void run() {
-        outputStream.println("Benvenuto in Eriantys"); //ascii art
-        startConnection();
+    public void prepareView(ArrayList<Object> data){
+        GB.setNumberOfPlayers((Integer)data.get(0));
+        GB.setExpertGame((Boolean)data.get(1));
+    }
 
-        while (active){
-            //String input = inputStream.nextLine();
-            //client.executeCurrentState(input);
-            client.executeCurrentState();
-            //concettualmente non dovrebbe funzionare così, ma intanto proviamo
+    private void visualizeContextMessage(){
+        switch(currentState){
+            case CONNECT_STATE:
+                outputStream.println("Inserisci il tuo nickname:");
+                break;
+            case INSERT_NEW_GAME_PARAMETERS:
+                outputStream.println("Inserisci il numero di giocatori (2/3) e la tipologia di partita (base o expert) per dare via al matchmaking:");
+                break;
+            case WAIT_IN_LOBBY:
+                outputStream.println("Resta in attesa di altri giocatori...");
+                break;
+            case WAIT_TURN:
+                outputStream.println("Resta in attesa del tuo turno");
+                break;
+            case SET_UP_PHASE:
+                outputStream.println("Inserisci il deck che vuoi utilizzare");
+                outputStream.println("Deck disponibili:"+GB.getAvailableWizards()); //prendiamo dalla view le informazioni da stampare a schermo
+                break;
+
+        }
+
+    }
+    private void visualizeErrorMessage(){
+        switch (currentState){
+            case CONNECT_STATE:
+                outputStream.println("Il nickname scelto non è disponibile! Scegline un'altro");
 
         }
     }
-*/
-
-    //è nella cli/gui che deve avvenire l'error handling degli input (per quanto riguarda la tipizzazione, es: chiedo nickname, mi dai un numero float)
-    //nel client invece avviene l'error handling dei messaggi che vengono dal server
-    //il problema è che non possiamo mandare indietro a client una serie di parametri di tipi diversi (grazie java).
-    //o ritorniamo array object, o creiamo una classe che crea messaggi ad hoc
 
     public void visualizeCustomMessage(String customMessage){
         outputStream.println(customMessage);
     }
+
+
     public String askIP(){
         outputStream.println("Inserisci ip: ");
         outputStream.println(">");
@@ -70,90 +197,11 @@ public class CLI{
     }
 
 
-    public String askNickname(){
-        String nickname = "\n";
-
-        while((nickname.length() < 3)){
-                outputStream.println("Inserisci il nickname desiderato (almeno 3 caratteri): ");
-                outputStream.println(">");
-                nickname = inputStream.nextLine();
-        }
-
-        return nickname;
+    public static void main(String[] args) throws IOException {
+        CLI cli = new CLI(); //partirà su questo thread
+        cli.run();
     }
 
-
-    public ArrayList<Object> askGameParameters(){
-        int numberOfPlayers = 0;
-        boolean expertGame = false;
-        boolean validInput = false; //questo lo mettiamo quando ci sono i try catch, così quando c'è eccezione, ricominciamo il ciclo
-
-        outputStream.println("Inserisci numero di giocatori (2 o 3) e tipologia di partita (expert o base) per avviare il matchmaking!");
-        while(!validInput || (numberOfPlayers <= 1 || numberOfPlayers > 3)){
-            try{
-                outputStream.println("Numero di giocatori: ");
-                numberOfPlayers = Integer.parseInt(inputStream.nextLine());
-                validInput = true;
-            }catch(NumberFormatException e){
-                outputStream.println("Il numero di giocatori deve essere un numero intero, riprova");
-                validInput = false;
-            }
-        }
-
-        String expertString = "\n";
-        while(!expertString.equalsIgnoreCase("expert") && !expertString.equalsIgnoreCase("base")){
-                outputStream.println("Scrivi expert per cercare una partita esperto e base per cercare una partita base: ");
-                expertString = inputStream.nextLine();
-        }
-        expertGame = expertString.equalsIgnoreCase("expert") ? true : false;
-
-        ArrayList<Object> parameters = new ArrayList<>();
-        parameters.add(numberOfPlayers);
-        parameters.add(expertGame);
-        return parameters;
-    }
-
-    public void waitInLobby(){
-        outputStream.println("La partita sta per cominciare! Attendi gli altri giocatori...");
-    }
-
-    public void waitTurn(){
-        outputStream.println("Un altro giocatore sta pianificando la sua mossa. Attendi il tuo turno!");
-    }
-
-    /*
-    public void startConnection() {
-        boolean connectionResult=false;
-        String ip;
-        int port;
-        do{
-            try{
-                outputStream.println("Inserisci ip: ");
-                outputStream.println(">");
-                ip = inputStream.nextLine();
-                outputStream.println("Inserisci port: ");
-                outputStream.println(">");
-                port = Integer.parseInt(inputStream.nextLine()); //se scrivo \n salta tutto
-                connectionResult= client.instantiateSocket(ip, port);
-            }
-            catch (IOException e){
-                outputStream.println("Non è stato possibile instaurare una connessione. Reinserire ip e port");
-            }
-        } while(!connectionResult);
-
-        try{
-            outputStream.println("Inserisci il nickname desiderato: ");
-            outputStream.println(">");
-            do{
-                String input = inputStream.nextLine();
-                connectionResult = client.connect(input);
-            } while (!connectionResult);
-        }
-        catch (IOException | ClassNotFoundException e){
-            outputStream.println("Errore");
-        }
-    }
-    */
 }
 
 
