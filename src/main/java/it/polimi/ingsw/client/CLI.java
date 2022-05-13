@@ -30,18 +30,24 @@ public class CLI implements Runnable{
     controllare se mandare più messaggi di fila funziona. Se funziona potrebbero essere usati per arricchire un po' alcune fasi di gioco preliminari
     (messaggi dal server ad esempio o informazioni utili come il nome degli altri giocatori )
      */
-    public CLI() {
+    public CLI() throws IOException {
         inputStream = new Scanner(System.in);
         outputStream = new PrintStream(System.out);
         client = new Client();
         receivedMessage = null;
-        currentState = ClientState.CONNECT_STATE;
-        inputParser = new InputParser();
         executorService = Executors.newSingleThreadScheduledExecutor();
         GB = new GameBoard();
+        inputParser = new InputParser(GB);
     }
 
+    public void setClientSocket(ClientSocket clientSocket) {
+        this.clientSocket = clientSocket;
+    }
 
+    public void setNextState(ClientState newState){
+        currentState = newState;
+        visualizeContextMessage();
+    }
     public void run(){
         try {
             instantiateSocket();
@@ -49,38 +55,29 @@ public class CLI implements Runnable{
             e.printStackTrace();
         }
 
-        active = true;
+        setNextState(ClientState.CONNECT_STATE); //stato iniziale
 
         while(active){
-                receivedMessage = null;
-                //if(!currentState.equals(ClientState.WAIT_IN_LOBBY) && !currentState.equals(ClientState.WAIT_TURN)){
-                if(!currentState.equals(ClientState.WAIT_TURN)){
-                    visualizeContextMessage();
-                    playerInput = inputParser.parse(inputStream.nextLine(),currentState);
-
-                    if(currentState.equals(ClientState.INSERT_NEW_GAME_PARAMETERS)) //comunichiamo alla view i parametri expertGame e numberOfPlayers così non deve darceli il server
-                        prepareView(playerInput);
-
-
-                    if(playerInput.size() > 0){
-                        Message messageToSend = client.buildMessageFromPlayerInput(playerInput,currentState);
-                        try {
-                            clientSocket.send(messageToSend);
-                            waitForResponse();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        handleMessageFromServer(receivedMessage);
-                    }
-                    else{
-                        visualizeErrorMessage();
-                    }
+            playerInput = inputParser.parse(inputStream.nextLine(),currentState);
+            if(playerInput.size() > 0){
+                Message messageToSend = client.buildMessageFromPlayerInput(playerInput,currentState);
+                try {
+                    clientSocket.send(messageToSend);
+                    waitForResponse();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                else{ //printa ogni 5 secondi il messaggio di attesa
-                    //executorService.scheduleWithFixedDelay(this::visualizeContextMessage, 0, 5, TimeUnit.SECONDS);
-                }
+                System.out.println("Ho ricevuto "+receivedMessage);
+                handleMessageFromServer(receivedMessage);
+            }
+            else{
+                visualizeErrorMessage();
             }
         }
+
+    }
+
+
 
     private void waitForResponse(){ //come wait() ma più semplice da gestire e comprendere
         while (receivedMessage == null) {
@@ -90,6 +87,7 @@ public class CLI implements Runnable{
 
     public void setReceivedMessage(Message message){ //usato da clientSocket per passare la risposta asincrona del server alla CLI
         receivedMessage = message;
+        System.out.println("Messaggio ricevuto dalla CLI");
     }
 
     public void instantiateSocket() throws IOException {
@@ -116,7 +114,7 @@ public class CLI implements Runnable{
 
     private void handleMessageFromServer(Message receivedMessage){
         if(receivedMessage instanceof ClientStateMessage){
-            currentState = ((ClientStateMessage) receivedMessage).getNewState();
+            setNextState(((ClientStateMessage) receivedMessage).getNewState());
         }
         if(receivedMessage instanceof ErrorMessage){
             visualizeErrorMessage();
@@ -138,6 +136,9 @@ public class CLI implements Runnable{
         GB.setExpertGame((Boolean)data.get(1));
     }
 
+    public void updateView(Message updateMessage){
+
+    }
     private void visualizeContextMessage(){
         System.out.println("Vediamo che messaggio ho ricevuto");
         switch(currentState){
@@ -199,8 +200,11 @@ public class CLI implements Runnable{
 
 
     public static void main(String[] args) throws IOException {
-        CLI cli = new CLI(); //partirà su questo thread
+        CLI cli = new CLI();
+
+
         cli.run();
+
     }
 
 }

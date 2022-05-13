@@ -1,14 +1,20 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.messages.ClientState;
 import it.polimi.ingsw.messages.GameParametersMessage;
 import it.polimi.ingsw.messages.Message;
+import it.polimi.ingsw.model.Game;
 
 import java.util.ArrayList;
 
 public class InputParser {
     ArrayList<Object> data;
+    GameBoard GB;
 
+    public InputParser(GameBoard GB){
+        this.GB = GB;
+    }
     public ArrayList<Object> parse(String input, ClientState state) throws NumberFormatException{
         data = new ArrayList<>();
         switch(state){
@@ -45,7 +51,15 @@ public class InputParser {
     }
 
     private void parseSetUpPhaseString(String input){
+        int deckID = 0;
 
+        try{
+            deckID = Integer.parseInt(input);
+            if(GB.getAvailableWizards().contains(deckID))
+                data.add(deckID);
+        }catch(NumberFormatException e){
+
+        }
     }
 
 }

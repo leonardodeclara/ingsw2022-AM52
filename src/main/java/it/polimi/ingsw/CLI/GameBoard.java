@@ -17,9 +17,12 @@ public class GameBoard {
     //monete
 
     public GameBoard(){
-
+        availableWizards = new ArrayList<>();
+        availableWizards.add(1);
+        availableWizards.add(2);
+        availableWizards.add(3);
+        availableWizards.add(4);
     }
-
 
     void print(){
 
