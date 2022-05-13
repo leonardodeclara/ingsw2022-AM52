@@ -16,6 +16,10 @@ public class GameBoard {
     //carte personaggio
     //monete
 
+    public GameBoard(){
+
+    }
+
 
     void print(){
 

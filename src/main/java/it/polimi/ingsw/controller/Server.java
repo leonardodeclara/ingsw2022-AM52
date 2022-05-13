@@ -19,6 +19,7 @@ public class Server {
     ArrayList<Lobby> lobbies;
     HashMap<String, GameHandler> playerToGameMap;
     ArrayList<GameHandler> gameHandlers;
+    int clientHandlerCounter; //assegna gli id ai clientHandler
     //per le lobby si potrebbe creare una struttura dati tipo hashmap con chiave a due valori < int NumberPlayers, boolean expertOrNot>
 
     public Server(){
@@ -27,6 +28,8 @@ public class Server {
         lobbies = new ArrayList<>();
         playerToGameMap = new HashMap<>();
         gameHandlers = new ArrayList<>();
+        clientHandlerCounter=0;
+
     }
 
 
@@ -42,6 +45,8 @@ public class Server {
 
         //questo controllo deve essere a livello server perché in teoria il nome deve essere univoco a livello server, non a livello partita
         if(isNicknameAvailable(nickname)){
+            sender.setID(clientHandlerCounter);
+            clientHandlerCounter++;
             registerPlayer(nickname,sender.getID());
             registerClientConnection(nickname, sender);
             sender.sendMessage(new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS));
@@ -60,7 +65,7 @@ public class Server {
             createMatch(matchingLobby);
         } else { //lobby appena creata/lobby già esistente ma non abbastanza players
             System.out.println("Mando lo stato di attesa della lobby");
-            sender.sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY));
+            sender.sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY)); //questo messaggio non arriva mai, capire perché
         }
     }
 
@@ -102,11 +107,12 @@ public class Server {
     }
 
     private HashMap<String,ClientHandler> removeUnusedPlayers(HashMap<String,ClientHandler> hashMap, ArrayList<String> list){
-        for (String nickname : hashMap.keySet()){
+        HashMap<String, ClientHandler> inGamePlayers = (HashMap<String, ClientHandler>) hashMap.clone();
+        for (String nickname : inGamePlayers.keySet()){
             if(!list.contains(nickname))
-                hashMap.remove(nickname);
+                inGamePlayers.remove(nickname);
         }
-        return hashMap;
+        return inGamePlayers;
     }
 
 

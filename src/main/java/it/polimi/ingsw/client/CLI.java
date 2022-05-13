@@ -53,7 +53,8 @@ public class CLI implements Runnable{
 
         while(active){
                 receivedMessage = null;
-                if(!currentState.equals(ClientState.WAIT_IN_LOBBY) && !currentState.equals(ClientState.WAIT_TURN)){
+                //if(!currentState.equals(ClientState.WAIT_IN_LOBBY) && !currentState.equals(ClientState.WAIT_TURN)){
+                if(!currentState.equals(ClientState.WAIT_TURN)){
                     visualizeContextMessage();
                     playerInput = inputParser.parse(inputStream.nextLine(),currentState);
 
@@ -138,6 +139,7 @@ public class CLI implements Runnable{
     }
 
     private void visualizeContextMessage(){
+        System.out.println("Vediamo che messaggio ho ricevuto");
         switch(currentState){
             case CONNECT_STATE:
                 outputStream.println("Inserisci il tuo nickname:");

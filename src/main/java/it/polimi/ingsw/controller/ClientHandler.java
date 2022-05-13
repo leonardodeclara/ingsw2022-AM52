@@ -59,18 +59,17 @@ public class ClientHandler implements Runnable {
     }
 
     public void readMessage(Message message){
-        System.out.println("Messaggio in arrivo dal client: "+ID);
         if (message instanceof Ping){
-            System.out.println("Ricevuto ping da " + ID);
+            //System.out.println("Ricevuto ping da " + ID);
         }
         else if (message instanceof LoginRequestMessage) //manda al server, fase di connessione
         {
-            System.out.println("è arrivato un messaggio di loginRequest");
+            System.out.println("è arrivato un messaggio di loginRequest da " + ID);
             server.handleMessage(message,this);
         }
         else if (message instanceof GameParametersMessage) //manda al server, fase di connessione
         {
-            System.out.println("è arrivato un messaggio di gameParameters");
+            System.out.println("è arrivato un messaggio di gameParameters" + ID);
             server.handleMessage(message,this);
         }
         else
@@ -80,7 +79,10 @@ public class ClientHandler implements Runnable {
 
     public void sendMessage(Message message){
         try{
-            out.writeObject(message);}
+            out.reset();
+            out.writeObject(message);
+            out.flush();
+        }
         catch (IOException e){
             //chiudo la connessione.
         }

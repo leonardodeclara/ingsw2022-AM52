@@ -40,7 +40,7 @@ public class ClientSocket implements Runnable{
                 //rivedere gestione active
                 while(active){
                     Thread.sleep(PING_PERIOD);
-                    System.out.println("mando ping");
+                    //System.out.println("mando ping");
                     send(new Ping());
                 }
             } catch (InterruptedException | IOException e) {
