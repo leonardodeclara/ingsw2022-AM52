@@ -50,15 +50,20 @@ public class ClientHandler implements Runnable {
                 //out.writeObject(responseMessage); //infine manda fuori la risposta del server
                 }
             } catch (IOException e) {
-            System.err.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
-            System.err.println(e.getMessage());
-        }
+            System.out.println("Chiudo la connessione con il client");
+            closeConnection();
+            //System.err.println(e.getMessage());
+            } catch (ClassNotFoundException e) {
+                System.err.println(e.getMessage());
+            }
     }
 
     public void readMessage(Message message){
         System.out.println("Messaggio in arrivo dal client: "+ID);
-        if (message instanceof LoginRequestMessage) //manda al server, fase di connessione
+        if (message instanceof Ping){
+            System.out.println("Ricevuto ping da " + ID);
+        }
+        else if (message instanceof LoginRequestMessage) //manda al server, fase di connessione
         {
             System.out.println("è arrivato un messaggio di loginRequest");
             server.handleMessage(message,this);
@@ -86,9 +91,26 @@ public class ClientHandler implements Runnable {
         this.gameHandler = gameHandler;
     }
 
+    public GameHandler getGameHandler() {
+        return gameHandler;
+    }
+
     //public void sendTo(Message message){
     //    responseMessage = message;
     //}
+
+    //questo metodo va chiamato in caso di termine/crash partita,
+    // chiusura inaspettata della connessione lato client, chiusura volontaria lato client (manca messaggio disconnect)
+    public void closeConnection() {
+        //toglie da tutte le mappe di server questo client, connessioni ecc.
+        server.removeClientConnection(this);
+        try {
+            socket.close();
+        }
+        catch (IOException e){
+            System.err.println(e.getMessage());
+        }
+    }
 }
 
 

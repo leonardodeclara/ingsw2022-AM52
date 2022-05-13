@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class ClientSocket implements Runnable{
+    private static int PING_PERIOD = 5000;
     Socket socket;
     ObjectOutputStream out;
     ObjectInputStream in;
@@ -16,6 +17,7 @@ public class ClientSocket implements Runnable{
     int port;
     boolean active;
     CLI cli; //andrà sostituita con una classe madre User Interface a breve o con client
+    Thread pinger;
 
     public ClientSocket(String ip,int port, CLI cli) throws IOException, SocketException {
         this.ip = ip;
@@ -32,6 +34,21 @@ public class ClientSocket implements Runnable{
     public void run() {
         //System.out.println("Thread del client socket partito");
         active=true;
+        //Sezione pinger
+        pinger = new Thread(() ->{
+            try {
+                //rivedere gestione active
+                while(active){
+                    Thread.sleep(PING_PERIOD);
+                    System.out.println("mando ping");
+                    send(new Ping());
+                }
+            } catch (InterruptedException | IOException e) {
+                //gestione dell'eccezione
+            }
+        });
+        pinger.start();
+
         try{
             while(active){
                 //System.out.println("Qui aspetto messaggi dal server");

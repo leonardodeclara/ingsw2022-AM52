@@ -2,12 +2,14 @@ package it.polimi.ingsw.controller;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ServerSocketConnection implements Runnable {
     private final int port;
+    private final int TIMEOUT = 10000;
     private final ExecutorService executorService;
     private final Server server;
     //private final GameHandler gameHandler;
@@ -41,7 +43,9 @@ public class ServerSocketConnection implements Runnable {
                 System.out.println("In attesa...");
 
                 //costruttore va modificato, ho tolto il parametro gameHandler
-                ClientHandler clientHandler = new ClientHandler(serverSocket.accept(), server);
+                Socket socket = serverSocket.accept();
+                socket.setSoTimeout(TIMEOUT);
+                ClientHandler clientHandler = new ClientHandler(socket, server);
                 System.out.println("Connessione avvenuta con successo");
                 executorService.submit(clientHandler);
                 //queste cose le ho fatto aggiungere direttamente a clientHandler via classe Server

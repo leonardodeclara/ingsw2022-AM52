@@ -88,6 +88,7 @@ public class GameController implements PropertyChangeListener {
             case "Bans": //vedere se effettivamente è utile
             case "SelectedPersonality":
             //dovrebbero mancare listener per gli effetti "istant" delle carte personaggio, vedere quelle a parte
+            //si potrebbe mettere come listener in quel caso cardController
         }
         listener.firePropertyChange("UpdateMessage", null, toSend);
         //in propertyChange di GameHandler bisogna fare il controllo oldValue-newValue perché se

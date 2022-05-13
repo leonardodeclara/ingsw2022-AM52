@@ -148,6 +148,25 @@ public class Server {
         return nameToHandlerMap.get(nickname);
     }
 
+    public void removeClientConnection(ClientHandler clientHandler){
+        String clientName = idToNicknameMap.get(clientHandler.getID());
+        idToNicknameMap.remove(clientHandler.getID());
+        //bisogna gestire in maniera diversa il caso in cui il client sia ancora in attesa o il caso in cui sia a partita iniziata
+        //intanto facciamo così
+
+        //partita esiste
+        if (clientHandler.getGameHandler()!=null){
+            playerToGameMap.remove(clientName);
+        }
+        else //è ancora in lobby
+        {
+            //cancello il giocatore dalla lista di membri alla lobby
+            //ora come ora non riesco a risalire conoscendo lobbies e clientHandler la relazione di appartenenza
+        }
+        nameToHandlerMap.remove(clientName);
+
+    }
+
 
     public static void main(String[] args) {
         Server server = new Server();
