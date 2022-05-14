@@ -5,6 +5,7 @@ import it.polimi.ingsw.messages.ClientState;
 import it.polimi.ingsw.messages.GameParametersMessage;
 import it.polimi.ingsw.messages.Message;
 import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.model.Tower;
 
 import java.util.ArrayList;
 
@@ -22,8 +23,10 @@ public class InputParser {
                 parseConnectString(input);
             case INSERT_NEW_GAME_PARAMETERS:
                 parseNewGameParametersString(input);
-            case SET_UP_PHASE:
-                parseSetUpPhaseString(input);
+            case SET_UP_WIZARD_PHASE:
+                parseSetUpWizardPhaseString(input);
+            case SET_UP_TOWER_PHASE:
+                parseSetUpTowerPhaseString(input);
         }
         return data;
     }
@@ -50,16 +53,38 @@ public class InputParser {
         }
     }
 
-    private void parseSetUpPhaseString(String input){
-        int deckID = 0;
+    private void parseSetUpWizardPhaseString(String input){
+        int chosenDeckID = 0;
 
         try{
-            deckID = Integer.parseInt(input);
-            if(GB.getAvailableWizards().contains(deckID))
-                data.add(deckID);
+            chosenDeckID = Integer.parseInt(input);
+            /* Questo controllo si dovrebbe fare lato server, vedere se eventualmente fare qualche controllo lato client. per ora no
+            if(GB.getAvailableWizards().contains(chosenDeckID))
+                data.add(chosenDeckID);
+             */
+            data.add(chosenDeckID);
         }catch(NumberFormatException e){
-
+            /*
+            TO DO
+             */
         }
+    }
+
+    private void parseSetUpTowerPhaseString(String input){
+        try{
+            if (input.equalsIgnoreCase("grey"))
+                data.add(Tower.GREY);
+            else if (input.equalsIgnoreCase("black"))
+                data.add(Tower.BLACK);
+            else if (input.equalsIgnoreCase("white"))
+                data.add(Tower.BLACK);
+            else{}                //inserire la gestione input errato;
+        }catch(NumberFormatException e){
+            /*
+            TO DO
+             */
+        }
+
     }
 
 }

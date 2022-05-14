@@ -3,10 +3,10 @@ package it.polimi.ingsw.messages;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class ChooseWizardMessage implements Message{
+public class AvailableWizardMessage implements Message{
     ArrayList<Integer> remainingWizards;
 
-    public ChooseWizardMessage(ArrayList<Integer> remainingWizards) {
+    public AvailableWizardMessage(ArrayList<Integer> remainingWizards) {
         this.remainingWizards = remainingWizards;
     }
 

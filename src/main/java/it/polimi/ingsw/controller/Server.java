@@ -52,6 +52,7 @@ public class Server {
             sender.sendMessage(new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS));
         }else{
             ErrorMessage error = new ErrorMessage(ErrorKind.INVALID_NICKNAME);
+            System.out.println("Mando un messaggio di invalid nickname al client " + sender.getID());
             sender.sendMessage(error);
         }
     }
@@ -91,7 +92,11 @@ public class Server {
         boolean expert = lobby.isExpertGame();
         lobbies.remove(lobby); //cancella la lobby
         System.out.println("Inizializziamo il GH");
-        GameHandler gameHandler = new GameHandler(this,removeUnusedPlayers(nameToHandlerMap,players),expert);
+        HashMap<String, ClientHandler> playerInGame = removeUnusedPlayers(nameToHandlerMap,players);
+        for (String player: playerInGame.keySet()){
+            System.out.println("Nella nuova partita c'è "+ player +", clientHandler numero " + playerInGame.get(player).getID());
+        }
+        GameHandler gameHandler = new GameHandler(this,playerInGame,expert);
         gameHandlers.add(gameHandler);
         for (String player : players) {
             playerToGameMap.put(player,gameHandler);
@@ -152,6 +157,10 @@ public class Server {
     public ClientHandler getClientHandlerById(int playerId){
         String nickname = idToNicknameMap.get(playerId);
         return nameToHandlerMap.get(nickname);
+    }
+
+    public HashMap<Integer, String> getIdToNicknameMap() {
+        return idToNicknameMap;
     }
 
     public void removeClientConnection(ClientHandler clientHandler){

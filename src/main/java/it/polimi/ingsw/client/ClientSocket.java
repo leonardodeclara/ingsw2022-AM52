@@ -26,15 +26,7 @@ public class ClientSocket implements Runnable{
         socket = new Socket(ip, port);
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(socket.getInputStream());
-    }
-
-
-
-    @Override
-    public void run() {
-        //System.out.println("Thread del client socket partito");
-        active=true;
-        //Sezione pinger
+        active= true;
         pinger = new Thread(() ->{
             try {
                 //rivedere gestione active
@@ -47,6 +39,16 @@ public class ClientSocket implements Runnable{
                 //gestione dell'eccezione
             }
         });
+    }
+
+
+
+    @Override
+    public void run() {
+        //System.out.println("Thread del client socket partito");
+        active=true;
+        //Sezione pinger
+
         pinger.start();
 
         try{
@@ -54,12 +56,12 @@ public class ClientSocket implements Runnable{
                 Message receivedMessage = (Message) in.readObject();
                 //System.out.println("Ho ricevuto un messaggio! "+ receivedMessage);
                 //SE IL MESSAGGIO è DI TIPO ERROR/CLIENTSTATE/ALTRO
-                cli.setReceivedMessage(receivedMessage); //gli passi il messaggio (Risvegliandolo in automatico)
-
-
-                //SE IL MESSAGGIO è DI TIPO UPDATEVIEW
-                cli.updateView(receivedMessage); //aggiorna la view senza risvegliare il run() di CLI
-
+                if (receivedMessage instanceof ClientStateMessage)
+                    cli.setReceivedMessage(receivedMessage); //gli passi il messaggio (Risvegliandolo in automatico)
+                else {
+                    //SE IL MESSAGGIO è DI TIPO UPDATEVIEW
+                    cli.updateView(receivedMessage); //aggiorna la view senza risvegliare il run() di CLI
+                }
             }
         }
         catch (IOException | ClassNotFoundException ioException){

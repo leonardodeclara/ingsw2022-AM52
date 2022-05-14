@@ -64,12 +64,12 @@ public class ClientHandler implements Runnable {
         }
         else if (message instanceof LoginRequestMessage) //manda al server, fase di connessione
         {
-            System.out.println("è arrivato un messaggio di loginRequest da " + ID);
+            System.out.println("ClientHandler: è arrivato un messaggio di loginRequest");
             server.handleMessage(message,this);
         }
         else if (message instanceof GameParametersMessage) //manda al server, fase di connessione
         {
-            System.out.println("è arrivato un messaggio di gameParameters" + ID);
+            System.out.println("ClientHandler: è arrivato un messaggio di gameParameters");
             server.handleMessage(message,this);
         }
         else
