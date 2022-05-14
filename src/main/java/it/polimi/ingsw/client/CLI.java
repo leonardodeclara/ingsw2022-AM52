@@ -55,28 +55,29 @@ public class CLI implements Runnable{
             e.printStackTrace();
         }
 
+        active = true;
         setNextState(ClientState.CONNECT_STATE); //stato iniziale
 
         while(active){
-            if(inputStream.hasNext()){
-                playerInput = inputParser.parse(inputStream.nextLine(),currentState);
-                if(playerInput.size() > 0){
-                    Message messageToSend = client.buildMessageFromPlayerInput(playerInput,currentState);
-                    try {
-                        clientSocket.send(messageToSend);
-                        waitForResponse();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println("Ho ricevuto "+receivedMessage);
-                    handleMessageFromServer(receivedMessage);
+            playerInput = inputParser.parse(inputStream.nextLine(),currentState);
+            if(playerInput.size() > 0){
+                Message messageToSend = client.buildMessageFromPlayerInput(playerInput,currentState);
+                try {
+                    clientSocket.send(messageToSend);
+                    waitForResponse(); //si blocca qui in teoria
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                else{
-                    visualizeErrorMessage();
-                }
+                System.out.println("Ho ricevuto "+ ((ClientStateMessage) receivedMessage).getNewState());
+                handleMessageFromServer(receivedMessage); //qui si aggiorna lo stato del client, al ciclo successivo si legge l'input relativo a questo nuovo stato
             }
+            else{
+                visualizeErrorMessage();
             }
-
+            resetReceivedMessage();
+            //resetto la variabile received Message, sennò il ciclo si ripeterebbe
+            // stampando due volte il messaggio relativo ad uno stesso stato (ad es succedeva con insertGameParameters)
+        }
 
     }
 
@@ -90,7 +91,11 @@ public class CLI implements Runnable{
 
     public void setReceivedMessage(Message message){ //usato da clientSocket per passare la risposta asincrona del server alla CLI
         receivedMessage = message;
-        System.out.println("Messaggio ricevuto dalla CLI");
+        System.out.println("Messaggio ricevuto dalla CLI " + (message.getClass().toString()) + "del tipo " + ((ClientStateMessage) message).getNewState());
+    }
+
+    public void resetReceivedMessage(){
+        receivedMessage=null;
     }
 
     public void instantiateSocket() throws IOException {
@@ -139,9 +144,21 @@ public class CLI implements Runnable{
         GB.setExpertGame((Boolean)data.get(1));
     }
 
-    public void updateView(Message updateMessage){
-
+    public void updateView(Message updateMessage) {
+        if (updateMessage instanceof AvailableWizardMessage)
+            updateAvailableWizard((AvailableWizardMessage) updateMessage);
+        if (updateMessage instanceof AvailableTowerMessage)
+            updateAvailableTower((AvailableTowerMessage) updateMessage);
     }
+
+    public void updateAvailableWizard(AvailableWizardMessage message){
+        GB.setAvailableWizards(message.getRemainingWizards());
+    }
+
+    public void updateAvailableTower(AvailableTowerMessage message){
+        GB.setAvailableTowers(message.getRemainingTowers());
+    }
+
     private void visualizeContextMessage(){
         System.out.println("Vediamo che messaggio ho ricevuto");
         switch(currentState){
@@ -157,9 +174,13 @@ public class CLI implements Runnable{
             case WAIT_TURN:
                 outputStream.println("Resta in attesa del tuo turno");
                 break;
-            case SET_UP_PHASE:
+            case SET_UP_WIZARD_PHASE:
                 outputStream.println("Inserisci il deck che vuoi utilizzare");
                 outputStream.println("Deck disponibili:"+GB.getAvailableWizards()); //prendiamo dalla view le informazioni da stampare a schermo
+                break;
+            case SET_UP_TOWER_PHASE:
+                outputStream.println("Inserisci il deck che vuoi utilizzare");
+                outputStream.println("Torri disponibili:"+GB.getAvailableTowers()); //prendiamo dalla view le informazioni da stampare a schermo
                 break;
 
         }
@@ -168,8 +189,11 @@ public class CLI implements Runnable{
     private void visualizeErrorMessage(){
         switch (currentState){
             case CONNECT_STATE:
-                outputStream.println("Il nickname scelto non è disponibile! Scegline un'altro");
-
+                outputStream.println("Il nickname scelto non è disponibile! Scegline un altro");
+            case SET_UP_WIZARD_PHASE:
+                outputStream.println("Il wizard scelto non è disponibile! Scegline un altro");
+            case SET_UP_TOWER_PHASE:
+                outputStream.println("La torre scelta non è disponibile! Scegline un'altra");
         }
     }
 

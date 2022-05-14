@@ -1,5 +1,7 @@
 package it.polimi.ingsw.CLI;
 
+import it.polimi.ingsw.model.Tower;
+
 import java.util.ArrayList;
 
 public class GameBoard {
@@ -7,6 +9,7 @@ public class GameBoard {
     boolean expertGame;
     //isole (con madre natura)
     ArrayList<Integer> availableWizards; //sono 4 e a ogni propagazione diminuiscono
+    ArrayList<Tower> availableTowers;
     ArrayList<ClientIsland> islands;
     //board di tutti i giocatori
     //nomi dei giocatori
@@ -18,10 +21,16 @@ public class GameBoard {
 
     public GameBoard(){
         availableWizards = new ArrayList<>();
+        availableTowers = new ArrayList<>();
+        islands = new ArrayList<>();
+        clouds = new ArrayList<>();
+        clientBoards = new ArrayList<>();
+        /*
         availableWizards.add(1);
         availableWizards.add(2);
         availableWizards.add(3);
         availableWizards.add(4);
+        */
     }
 
     void print(){
@@ -48,8 +57,16 @@ public class GameBoard {
         return availableWizards;
     }
 
+    public ArrayList<Tower> getAvailableTowers() {
+        return availableTowers;
+    }
+
     public void setAvailableWizards(ArrayList<Integer> availableWizards) {
         this.availableWizards = availableWizards;
+    }
+
+    public void setAvailableTowers(ArrayList<Tower> availableTowers) {
+        this.availableTowers = availableTowers;
     }
 
     public ArrayList<ClientIsland> getIslands() {

@@ -1,13 +1,17 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.messages.Message;
+import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.ExpertGame;
 import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.Tower;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.prefs.PreferenceChangeListener;
 
@@ -18,6 +22,9 @@ public class GameController implements PropertyChangeListener {
     ArrayList<String> players;
     PropertyChangeSupport listener;
     UpdateMessageBuilder updateMessageBuilder;
+    private ArrayList<Tower> availableTowers;
+    private ArrayList<Integer> availableWizards; //poi sta cosa va tolta da game
+    private HashMap<String, Integer> playerToWizardMap;
 
     //risoluzione stupida al problema del tipo statico di Game GM: cast esplicito in base al boolean isExpert
     public GameController(boolean isExpert) {
@@ -25,13 +32,45 @@ public class GameController implements PropertyChangeListener {
         listener = new PropertyChangeSupport(this);
         game = (isExpert) ? new ExpertGame() : new Game();
         //game.instantiateGameElements(); //va inizializzato il model, ma non so se questa chiamata va qui
+        availableWizards = new ArrayList<>();
+        for (int i = 0; i< 4; i++){
+            availableWizards.add(i);
+        }
+        availableTowers = new ArrayList<>();
+        availableTowers.addAll(Arrays.asList(Tower.values()));
+        playerToWizardMap = new HashMap<>();
+
     }
 
-    /*
-    public void updateTeamAndWizard(){
-        game.giveAssistantDeck(); //assegna il deck
+
+    //creo l'associazione giocatore-wizard, mi servirà dopo per fare game.giveAssistantDeck()
+    public Message updateWizardSelection(String player, Integer wizard){
+        if (availableWizards.contains(wizard)){
+            playerToWizardMap.put(player, wizard);
+            availableWizards.remove(wizard);
+            System.out.println("GameController: ho aggiornato i mazzi disponibili togliendo il deck " + wizard);
+            return new AvailableTowerMessage(availableTowers);
+        }
+        else
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
+
+        //game.giveAssistantDeck(); //assegna il deck
+        //questo lo posso fare solo dopo
     }
-*/
+
+    //creo l'assocazione giocatore-torre, mi serve per poter aggiungere i giocatori alla partita
+    //potrei mettere qui dentro l'assegnamento del deck, ma posso anche farlo a parte
+    public Message updateTowerSelection(String player, Tower tower){
+        if (availableTowers.contains(tower)){
+            game.addPlayer(new Player(game.getPlayers().size(),player, tower)); //rivedere l'assegnamento dell'indice
+            availableTowers.remove(tower);
+            System.out.println("GameController: ho aggiornato le torri disponibili togliendo " + tower.toString());
+            return new ClientStateMessage(ClientState.WAIT_TURN);
+        }
+        else
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
+    }
+
     public void assignAssistantDeck(){
 
     }
@@ -46,6 +85,13 @@ public class GameController implements PropertyChangeListener {
         return randomPlayer;
     }
 
+    public ArrayList<Integer> getAvailableWizards() {
+        return availableWizards;
+    }
+
+    public ArrayList<Tower> getAvailableTowers() {
+        return availableTowers;
+    }
 
     public void setUpdateListener(GameHandler gameHandler){
         listener.addPropertyChangeListener("UpdateMessage", gameHandler);

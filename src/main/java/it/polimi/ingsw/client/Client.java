@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.GameHandler;
 import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.controller.ServerSocketConnection;
 import it.polimi.ingsw.messages.*;
+import it.polimi.ingsw.model.Tower;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -30,6 +31,10 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
                 return buildConnectMessage(data);
             case INSERT_NEW_GAME_PARAMETERS:
                 return buildNewGameParametersMessage(data);
+            case SET_UP_WIZARD_PHASE:
+                return buildWizardSelectionMessage(data);
+            case SET_UP_TOWER_PHASE:
+                return buildTowerSelectionMessage(data);
         }
         return null;
     }
@@ -40,6 +45,14 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
 
     private Message buildNewGameParametersMessage(ArrayList<Object> data){
         return new GameParametersMessage((Integer)data.get(0),(Boolean)data.get(1));
+    }
+
+    private Message buildWizardSelectionMessage(ArrayList<Object> data){
+        return new WizardSelectionMessage((int) data.get(0));
+    }
+
+    private Message buildTowerSelectionMessage(ArrayList<Object> data){
+        return new TowerSelectionMessage((Tower) data.get(0));
     }
 }
     /*
