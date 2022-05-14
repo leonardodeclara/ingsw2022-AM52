@@ -27,8 +27,7 @@ public class CLI implements Runnable{
 
     /*
     TODO:
-    controllare se mandare più messaggi di fila funziona. Se funziona potrebbero essere usati per arricchire un po' alcune fasi di gioco preliminari
-    (messaggi dal server ad esempio o informazioni utili come il nome degli altri giocatori )
+    i metodi che visualizzano i messaggi a schermo van sistemati. Si potrebbe creare un unico metodo e un hashmap (key:state,value:message)
      */
     public CLI() throws IOException {
         inputStream = new Scanner(System.in);
@@ -58,45 +57,36 @@ public class CLI implements Runnable{
         active = true;
         setNextState(ClientState.CONNECT_STATE); //stato iniziale
 
-        while(active){
-            playerInput = inputParser.parse(inputStream.nextLine(),currentState);
-            if(playerInput.size() > 0){
-                Message messageToSend = client.buildMessageFromPlayerInput(playerInput,currentState);
-                try {
-                    clientSocket.send(messageToSend);
-                    waitForResponse(); //si blocca qui in teoria
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+
+        while(active) {
+            if (inputStream.hasNext()) {
+                playerInput = inputParser.parse(inputStream.nextLine(), currentState);
+                if (playerInput.size() > 0) { //se il messaggio è valido
+                    Message messageToSend = client.buildMessageFromPlayerInput(playerInput, currentState);
+                    try {
+                        clientSocket.send(messageToSend);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-                System.out.println("Ho ricevuto "+ ((ClientStateMessage) receivedMessage).getNewState());
-                handleMessageFromServer(receivedMessage); //qui si aggiorna lo stato del client, al ciclo successivo si legge l'input relativo a questo nuovo stato
+                else{
+                    visualizeInputErrorMessage(); //l'input inserito non è valido, quindi visualizza l'errore
+                }
             }
-            else{
-                visualizeErrorMessage();
-            }
-            resetReceivedMessage();
-            //resetto la variabile received Message, sennò il ciclo si ripeterebbe
-            // stampando due volte il messaggio relativo ad uno stesso stato (ad es succedeva con insertGameParameters)
+        }
+    }
+    public void handleMessageFromServer(Message receivedMessage){
+        if(receivedMessage instanceof ClientStateMessage){
+            setNextState(((ClientStateMessage) receivedMessage).getNewState()); //Se è uno stato aggiorna quello corrente
+        }else if(receivedMessage instanceof ErrorMessage) {
+            visualizeServerErrorMessage(); //se è un errore visualizzalo
+        }else{ //messaggio di view (a esclusione)
+            updateView(receivedMessage); //se è un update della view aggiorna la view
         }
 
     }
 
-
-
-    private void waitForResponse(){ //come wait() ma più semplice da gestire e comprendere
-        while (receivedMessage == null) {
-        }
-
-    }
-
-    public void setReceivedMessage(Message message){ //usato da clientSocket per passare la risposta asincrona del server alla CLI
-        receivedMessage = message;
-        System.out.println("Messaggio ricevuto dalla CLI " + (message.getClass().toString()) + "del tipo " + ((ClientStateMessage) message).getNewState());
-    }
-
-    public void resetReceivedMessage(){
-        receivedMessage=null;
-    }
 
     public void instantiateSocket() throws IOException {
         boolean connectionAccepted = false;
@@ -116,27 +106,6 @@ public class CLI implements Runnable{
 
 
 
-    }
-
-
-
-    private void handleMessageFromServer(Message receivedMessage){
-        if(receivedMessage instanceof ClientStateMessage){
-            setNextState(((ClientStateMessage) receivedMessage).getNewState());
-        }
-        if(receivedMessage instanceof ErrorMessage){
-            visualizeErrorMessage();
-        }
-
-        //if(message instanceof updateViewMessage){
-            //gameBoard.update(); //aggiorna la view
-            //gameBoard.print(); //la ristampa a schermo
-        //}
-
-    }
-
-    public void print(){
-        //GB.print()
     }
 
     public void prepareView(ArrayList<Object> data){
@@ -179,21 +148,55 @@ public class CLI implements Runnable{
                 outputStream.println("Deck disponibili:"+GB.getAvailableWizards()); //prendiamo dalla view le informazioni da stampare a schermo
                 break;
             case SET_UP_TOWER_PHASE:
-                outputStream.println("Inserisci il deck che vuoi utilizzare");
+                outputStream.println("Scegli il colore della tua squadra!");
                 outputStream.println("Torri disponibili:"+GB.getAvailableTowers()); //prendiamo dalla view le informazioni da stampare a schermo
                 break;
+            case PLAY_ASSISTANT_CARD:
+                //GB.print(); //questo è il momento in cui printiamo l'attuale stato della partita.
+                outputStream.println("Scegli una carta da giocare!");
+                break;
+
 
         }
 
     }
-    private void visualizeErrorMessage(){
+    private void visualizeServerErrorMessage(){ //messaggi di errore se qualcosa va storto lato server (sarebbe il caso di riscrivere decentemente il metodo)
         switch (currentState){
             case CONNECT_STATE:
-                outputStream.println("Il nickname scelto non è disponibile! Scegline un altro");
+                outputStream.println("Il nickname scelto è già stato scelto! Scegline un altro");
             case SET_UP_WIZARD_PHASE:
-                outputStream.println("Il wizard scelto non è disponibile! Scegline un altro");
+                outputStream.println("Il wizard scelto appartiene già ad un altro giocatore! Scegline un altro");
             case SET_UP_TOWER_PHASE:
-                outputStream.println("La torre scelta non è disponibile! Scegline un'altra");
+                outputStream.println("La torre scelta appartiene già ad un altro giocatore! Scegline un'altra");
+            case PLAY_ASSISTANT_CARD:
+                outputStream.println("La carta scelta non è disponibile! Scegline un altro");
+        }
+    }
+
+    private void visualizeInputErrorMessage(){ //messaggi visualizzati quando il giocatore scrive qualcosa che non deve
+        switch (currentState){
+            case CONNECT_STATE:
+                outputStream.println("Il nickname scelto non è valido!");
+                break;
+            case INSERT_NEW_GAME_PARAMETERS:
+                outputStream.println("I parametri inseriti non sono validi!");
+                break;
+            case WAIT_IN_LOBBY:
+                outputStream.println("Non sei ancora in partita! Attendi altri giocatori per iniziare");
+                break;
+            case WAIT_TURN:
+                outputStream.println("Non è il tuo turno!");
+                break;
+            case SET_UP_WIZARD_PHASE:
+                outputStream.println("Non hai inserito un numero da 0 a 4");
+                break;
+            case SET_UP_TOWER_PHASE:
+                outputStream.println("Non hai inserito uno dei 3 colori disponibili");
+                break;
+            case PLAY_ASSISTANT_CARD:
+                outputStream.println("Le carte sono numerate da 1 a 10!");
+                break;
+
         }
     }
 

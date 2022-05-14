@@ -45,6 +45,7 @@ public class GameController implements PropertyChangeListener {
 
     //creo l'associazione giocatore-wizard, mi servirà dopo per fare game.giveAssistantDeck()
     public Message updateWizardSelection(String player, Integer wizard){
+        System.out.println("Maghi disponibili lato server:"+availableWizards);
         if (availableWizards.contains(wizard)){
             playerToWizardMap.put(player, wizard);
             availableWizards.remove(wizard);
@@ -61,6 +62,7 @@ public class GameController implements PropertyChangeListener {
     //creo l'assocazione giocatore-torre, mi serve per poter aggiungere i giocatori alla partita
     //potrei mettere qui dentro l'assegnamento del deck, ma posso anche farlo a parte
     public Message updateTowerSelection(String player, Tower tower){
+        System.out.println("Torri disponibili lato server:"+availableTowers);
         if (availableTowers.contains(tower)){
             game.addPlayer(new Player(game.getPlayers().size(),player, tower)); //rivedere l'assegnamento dell'indice
             availableTowers.remove(tower);
@@ -70,6 +72,15 @@ public class GameController implements PropertyChangeListener {
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
+
+    public Message updateAssistantCards(String player, int cardID){
+        if(game.playAssistantCard(player,cardID)==-1){ //se returna -1 la carta non può essere giocata
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
+        }else{ //altrimenti
+            return new ClientStateMessage(ClientState.WAIT_TURN);
+        }
+    }
+
 
     public void assignAssistantDeck(){
 

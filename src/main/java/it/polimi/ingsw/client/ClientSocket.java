@@ -55,13 +55,8 @@ public class ClientSocket implements Runnable{
             while(active){
                 Message receivedMessage = (Message) in.readObject();
                 //System.out.println("Ho ricevuto un messaggio! "+ receivedMessage);
-                //SE IL MESSAGGIO è DI TIPO ERROR/CLIENTSTATE/ALTRO
-                if (receivedMessage instanceof ClientStateMessage)
-                    cli.setReceivedMessage(receivedMessage); //gli passi il messaggio (Risvegliandolo in automatico)
-                else {
-                    //SE IL MESSAGGIO è DI TIPO UPDATEVIEW
-                    cli.updateView(receivedMessage); //aggiorna la view senza risvegliare il run() di CLI
-                }
+                cli.handleMessageFromServer(receivedMessage);
+
             }
         }
         catch (IOException | ClassNotFoundException ioException){

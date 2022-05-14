@@ -35,6 +35,8 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
                 return buildWizardSelectionMessage(data);
             case SET_UP_TOWER_PHASE:
                 return buildTowerSelectionMessage(data);
+            case PLAY_ASSISTANT_CARD:
+                return buildPlayAssistantCardMessage(data);
         }
         return null;
     }
@@ -53,6 +55,10 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
 
     private Message buildTowerSelectionMessage(ArrayList<Object> data){
         return new TowerSelectionMessage((Tower) data.get(0));
+    }
+
+    private Message buildPlayAssistantCardMessage(ArrayList<Object> data){
+        return new PlayAssistantCardMessage((Integer)data.get(0));
     }
 }
     /*

@@ -10,7 +10,12 @@ import java.beans.PropertyChangeListener;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.stream.Collectors;
+
+
+//PROBLEMI
+//il server vede 2 giocatori anche se ne ho messi 3
 
 public class GameHandler implements PropertyChangeListener{
     GameController gameController;
@@ -19,6 +24,8 @@ public class GameHandler implements PropertyChangeListener{
     ArrayList<String> players;
     HashMap<String, ClientHandler> nameToHandlerMap;
     boolean expertGame;
+    ArrayList<String> playersOrder; //ora superfluo ma poi nelle fasi di gioco effettivo è  indispensabile
+    Iterator<String> playersOrderIterator; //si fa .next() e si vede a chi tocca dopo
 
     public GameHandler(Server server,HashMap<String, ClientHandler> nameToHandlerMap, boolean expertGame){
         this.server = server;
@@ -26,6 +33,8 @@ public class GameHandler implements PropertyChangeListener{
         this.expertGame=expertGame;
         players = new ArrayList<>();
         players.addAll(nameToHandlerMap.keySet());
+        playersOrder = new ArrayList<>();
+        playersOrderIterator = playersOrder.iterator();
     }
 
     public void handleMessage(Message message,ClientHandler clientHandler){
@@ -33,6 +42,8 @@ public class GameHandler implements PropertyChangeListener{
             handleWizardSelectionMessage((WizardSelectionMessage) message, clientHandler);
         else if (message instanceof TowerSelectionMessage)
             handleTowerSelectionMessage((TowerSelectionMessage)message, clientHandler);
+        else if(message instanceof PlayAssistantCardMessage)
+            handlePlayAssistantCardMessage((PlayAssistantCardMessage) message,clientHandler);
     }
 
 
@@ -53,55 +64,104 @@ public class GameHandler implements PropertyChangeListener{
         gameController= new GameController(expertGame);
         gameController.setUpdateListener(this);
         ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
+
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         Message setUpPhaseStateMessage = new ClientStateMessage(ClientState.SET_UP_WIZARD_PHASE);
+
         sendAllExcept(clientHandlers,nameToHandlerMap.get(players.get(0)),waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
         sendTo(players.get(0), new AvailableWizardMessage(gameController.getAvailableWizards())); //al primo giocatore viene aggiornata la lista di wizard disponibili
         sendTo(players.get(0),setUpPhaseStateMessage);  //viene aggiornato lo stato del primo giocatore
+
+        updatePlayersOrder(players);
     }
 
+    private void startPlanningPhase(){ //conviene avere un metodo in cui racchiudiamo il set up di una specifica fase, dato che handleTower è già enorme
+        ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
 
+        Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
+        Message setUpPhaseStateMessage = new ClientStateMessage(ClientState.PLAY_ASSISTANT_CARD);
+
+        //qui usiamo ancora players.get(0), non è previsto un ordine specifico
+        sendAllExcept(clientHandlers,nameToHandlerMap.get(players.get(0)),waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
+        sendTo(players.get(0), new AvailableWizardMessage(gameController.getAvailableWizards())); //al primo giocatore viene aggiornata la lista di wizard disponibili
+        sendTo(players.get(0),setUpPhaseStateMessage);  //viene aggiornato lo stato del primo giocatore
+
+        updatePlayersOrder(players);
+    }
+
+    private void startActionPhase(){
+
+    }
+
+    private void updatePlayersOrder(ArrayList<String> players){
+        playersOrder = new ArrayList<String>(players);
+        playersOrderIterator = playersOrder.iterator();
+        System.out.println("Ordine previsto dei giocatori:"+playersOrderIterator);
+        playersOrderIterator.next();
+    }
     private void handleWizardSelectionMessage(WizardSelectionMessage message, ClientHandler client){
         int chosenWizard = message.getWizard();
-        String clientName = server.getIdToNicknameMap().get(client.getID()); //è orribile, vedere come risolvere
+        String clientName = getNicknameFromClientID(client.getID());
         System.out.println("GameHandler:è arrivato un messaggio di wizardSelection da " + clientName);
         Message response = gameController.updateWizardSelection(clientName, chosenWizard);
         sendTo(clientName, response);
         if (!(response instanceof ErrorMessage)){
             System.out.println(clientName+ " ha scelto il suo wizard, ora gi chiederò che torre vuole");
-            //potrei mandargli la lista di wizard residui, ma cosa se ne farebbe?
             sendTo(clientName, new ClientStateMessage(ClientState.SET_UP_TOWER_PHASE));
             sendTo(clientName, new AvailableTowerMessage(gameController.getAvailableTowers()));
         }
     }
 
+    private String getNicknameFromClientID(int clientID){
+        return server.getIdToNicknameMap().get(clientID);
+    }
     private void handleTowerSelectionMessage(TowerSelectionMessage message, ClientHandler client){
         Tower chosenTower = message.getTower();
-        String clientName = server.getIdToNicknameMap().get(client.getID()); //è orribile, vedere come risolvere
+        String clientName = getNicknameFromClientID(client.getID());
         System.out.println("GameHandler:è arrivato un messaggio di towerSelection da " + clientName);
         Message response = gameController.updateTowerSelection(clientName, chosenTower);
         sendTo(clientName, response);
         if (!(response instanceof ErrorMessage)){
             System.out.println(clientName+ " ha scelto la sua torre, ora lo sto mandando in WAIT_TURN");
-            //potrei mandargli la lista di torri residue, ma cosa se ne farebbe?
         }
-        //qui devo far partire il messaggio per i successivi client in modo che scelgano anche loro wizard e torri con i metodi già scritti
-        //sarà un if (tutti i giocatori hanno scelto)
-            //faccio partire il gioco (partono metodi di game chiamati da controller ecc)
-                //else
-                        //manda al giocatore successsivo il messaggio di wizard phase ecc (ultime due/tre righe di start game con l'indice giusto)
-        //SOLUZIONE TEMPORANEA PER GESTIONE DUE PLAYER, DEVO TROVARE IL GIUSTO AVANZAMENTO DI PLAYER
-        if (clientName.equals(players.get(0))){
+
+        if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
+            String nextPlayer = playersOrderIterator.next();
             Message setUpPhaseStateMessage = new ClientStateMessage(ClientState.SET_UP_WIZARD_PHASE);
-            System.out.println("Siccome " + clientName + " ha finito la sua selezione ora è il turno di " + players.get(1));
-            sendTo(players.get(1), new AvailableWizardMessage(gameController.getAvailableWizards())); //al primo giocatore viene aggiornata la lista di wizard disponibili
-            sendTo(players.get(1), setUpPhaseStateMessage);  //viene aggiornato lo stato del primo giocatore
+            System.out.println("Siccome " + clientName + " ha finito la sua selezione ora è il turno di " + nextPlayer);
+            sendTo(nextPlayer, new AvailableWizardMessage(gameController.getAvailableWizards())); //al prossimo giocatore viene aggiornata la lista di wizard disponibili
+            sendTo(nextPlayer, setUpPhaseStateMessage);  //viene aggiornato lo stato del primo giocatore
         }
-        else if (clientName.equals(players.get(1))){
+        else{
+            startPlanningPhase();
             System.out.println("Adesso faccio partire la partita con la scelta delle carte assistente (credo). comunque la fase dopo");
         }
 
     }
+
+    private void handlePlayAssistantCardMessage(PlayAssistantCardMessage message, ClientHandler client){
+        int chosenCard = message.getPriority();
+        String clientName = getNicknameFromClientID(client.getID());
+        System.out.println("GameHandler:è arrivato un messaggio di playAssistantCard da " + clientName);
+        Message response = gameController.updateAssistantCards(clientName, chosenCard); //se il messaggio andava bene il model si è aggiornato dopo questa riga
+        sendTo(clientName, response);
+        if (!(response instanceof ErrorMessage)){
+            System.out.println(clientName+ " ha scelto la sua carta, ora lo sto mandando in WAIT_TURN");
+        }
+
+        if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
+            String nextPlayer = playersOrderIterator.next();
+            Message playAssistantCardMessage = new ClientStateMessage(ClientState.PLAY_ASSISTANT_CARD);
+            System.out.println("Siccome " + clientName + " ha finito la sua selezione ora è il turno di " + nextPlayer);
+
+            //in teoria la view si dovrebbe aggiornare da sola a questo punto, senza dover mandare messaggi espliciti come per wizard e towers
+        }
+        else{
+            startActionPhase();
+        }
+
+    }
+
 
     private void sendTo(String nickname,Message message){
         ClientHandler clientHandler = nameToHandlerMap.get(nickname);

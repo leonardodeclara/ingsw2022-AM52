@@ -23,10 +23,16 @@ public class InputParser {
                 parseConnectString(input);
             case INSERT_NEW_GAME_PARAMETERS:
                 parseNewGameParametersString(input);
+            case WAIT_IN_LOBBY:
+                return data;
+            case WAIT_TURN:
+                return data;
             case SET_UP_WIZARD_PHASE:
                 parseSetUpWizardPhaseString(input);
             case SET_UP_TOWER_PHASE:
                 parseSetUpTowerPhaseString(input);
+            case PLAY_ASSISTANT_CARD:
+                parseAssistantCardString(input);
         }
         return data;
     }
@@ -34,7 +40,8 @@ public class InputParser {
 
     private void parseConnectString(String input){
         if(input.length() <= 16 && !input.equals("") && !input.equals(" "))
-            data.add(input);}
+            data.add(input);
+    }
 
     private void parseNewGameParametersString(String input){ //gestiamo base/expert case insensitive e consideriamo separatore spazio
         int numberOfPlayers = 0;
@@ -77,14 +84,23 @@ public class InputParser {
             else if (input.equalsIgnoreCase("black"))
                 data.add(Tower.BLACK);
             else if (input.equalsIgnoreCase("white"))
-                data.add(Tower.BLACK);
-            else{}                //inserire la gestione input errato;
+                data.add(Tower.WHITE);
         }catch(NumberFormatException e){
-            /*
-            TO DO
-             */
         }
 
     }
 
+    private void parseAssistantCardString(String input){ //il comando è play card x
+        int cardID = 0; //priority
+        String[] words = input.split(" ");
+
+        if(words.length == 3){
+            if(words[0].equals("play")&& words[1].equalsIgnoreCase("card")){
+                cardID = Integer.parseInt(words[2]);
+                if(cardID >= 1 && cardID <= 10){
+                    data.add(cardID);
+                }
+            }
+        }
+    }
 }

@@ -16,7 +16,7 @@ public class GameBoard {
     //nuvole
     ArrayList<ClientCloud> clouds;
     ArrayList<ClientBoard> clientBoards;
-    //carte personaggio
+    ArrayList<ClientAssistant> deck;
     //monete
 
     public GameBoard(){
@@ -25,16 +25,27 @@ public class GameBoard {
         islands = new ArrayList<>();
         clouds = new ArrayList<>();
         clientBoards = new ArrayList<>();
-        /*
-        availableWizards.add(1);
-        availableWizards.add(2);
-        availableWizards.add(3);
-        availableWizards.add(4);
-        */
+        deck = new ArrayList<>();
     }
 
     void print(){
 
+    }
+
+    public ArrayList<ClientCloud> getClouds() {
+        return clouds;
+    }
+
+    public void setClouds(ArrayList<ClientCloud> clouds) {
+        this.clouds = clouds;
+    }
+
+    public ArrayList<ClientAssistant> getDeck() {
+        return deck;
+    }
+
+    public void setDeck(ArrayList<ClientAssistant> deck) {
+        this.deck = deck;
     }
 
     public int getNumberOfPlayers() {
