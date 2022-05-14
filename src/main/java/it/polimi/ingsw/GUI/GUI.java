@@ -20,6 +20,8 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /*
 JavaFX defines a scene graph which is a tree data structure that has a single root node.
@@ -30,11 +32,14 @@ public class GUI extends Application {
     ClientState currentState;
     boolean active;
     Stage stage;
-    Scene MainMenu;
+    ArrayList<Scene> scenes;
+    String[] fxmlPaths;
 
     public GUI(){
         currentState = ClientState.CONNECT_STATE;
         active = true;
+        fxmlPaths = Arrays.copyOf(Constants.fxmlPaths,Constants.fxmlPaths.length);
+        scenes = new ArrayList<>();
     }
 
     private void renderScene(){
@@ -47,12 +52,18 @@ public class GUI extends Application {
 
 
     public void setupScenes() throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource(Constants.MainMenuFxmlPath));
-        MainMenu = new Scene(root);
+        for(String path : fxmlPaths){
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(path));
+            Scene scene = new Scene(fxmlLoader.load());
+            scenes.add(scene);
+            GUIController controller = fxmlLoader.getController();
+            controller.setGUI(this);
+        }
     }
 
-    public void setScene(Scene scene){
-        stage.setScene(scene);
+
+    public void setScene(int index){
+        stage.setScene(scenes.get(index));
         stage.show();
     }
     @Override
@@ -66,9 +77,10 @@ public class GUI extends Application {
 
         setupScenes();
 
-        setScene(MainMenu);
+        setScene(0);
 
     }
+
 
     public static void main(String[] args) {
         launch(args);

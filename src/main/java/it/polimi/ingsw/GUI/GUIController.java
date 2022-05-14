@@ -1,23 +1,10 @@
 package it.polimi.ingsw.GUI;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.input.MouseEvent;
+public class GUIController implements GUIControllerInterface{
+    GUI gui;
 
-public class GUIController {
-
-    @FXML
-    private Button closeButton;
-
-    @FXML
-    void connect(ActionEvent event) {
-
+    @Override
+    public void setGUI(GUI gui) {
+        this.gui = gui;
     }
-
-    @FXML
-    void quit(ActionEvent event) {
-        System.exit(0);
-    }
-
 }

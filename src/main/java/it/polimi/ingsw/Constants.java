@@ -8,5 +8,5 @@ public class Constants {
     public static final int ISLAND_ID_NOT_RECEIVED = -1;
     public static final int ISLAND_THRESHOLD_FOR_GAME_OVER = 3;
     public static final int MAX_TOWER_NUMBER = 10;
-    public static final String MainMenuFxmlPath = "/fxml/MainMenu.fxml";
+    public static final String[] fxmlPaths = new String[]{"/fxml/MainMenu.fxml","/fxml/ConnectMenu.fxml"};
 }
