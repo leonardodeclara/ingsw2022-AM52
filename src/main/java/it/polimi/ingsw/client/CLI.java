@@ -58,22 +58,25 @@ public class CLI implements Runnable{
         setNextState(ClientState.CONNECT_STATE); //stato iniziale
 
         while(active){
-            playerInput = inputParser.parse(inputStream.nextLine(),currentState);
-            if(playerInput.size() > 0){
-                Message messageToSend = client.buildMessageFromPlayerInput(playerInput,currentState);
-                try {
-                    clientSocket.send(messageToSend);
-                    waitForResponse();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            if(inputStream.hasNext()){
+                playerInput = inputParser.parse(inputStream.nextLine(),currentState);
+                if(playerInput.size() > 0){
+                    Message messageToSend = client.buildMessageFromPlayerInput(playerInput,currentState);
+                    try {
+                        clientSocket.send(messageToSend);
+                        waitForResponse();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("Ho ricevuto "+receivedMessage);
+                    handleMessageFromServer(receivedMessage);
                 }
-                System.out.println("Ho ricevuto "+receivedMessage);
-                handleMessageFromServer(receivedMessage);
+                else{
+                    visualizeErrorMessage();
+                }
             }
-            else{
-                visualizeErrorMessage();
             }
-        }
+
 
     }
 
