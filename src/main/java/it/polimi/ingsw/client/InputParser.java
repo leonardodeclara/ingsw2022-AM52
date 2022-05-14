@@ -21,18 +21,23 @@ public class InputParser {
         switch(state){
             case CONNECT_STATE:
                 parseConnectString(input);
+                break;
             case INSERT_NEW_GAME_PARAMETERS:
                 parseNewGameParametersString(input);
+                break;
             case WAIT_IN_LOBBY:
                 return data;
             case WAIT_TURN:
                 return data;
             case SET_UP_WIZARD_PHASE:
                 parseSetUpWizardPhaseString(input);
+                break;
             case SET_UP_TOWER_PHASE:
                 parseSetUpTowerPhaseString(input);
+                break;
             case PLAY_ASSISTANT_CARD:
                 parseAssistantCardString(input);
+                break;
         }
         return data;
     }

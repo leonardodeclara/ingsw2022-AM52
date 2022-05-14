@@ -37,6 +37,7 @@ public class CLI implements Runnable{
         executorService = Executors.newSingleThreadScheduledExecutor();
         GB = new GameBoard();
         inputParser = new InputParser(GB);
+        inputStream.useDelimiter("\n");
     }
 
     public void setClientSocket(ClientSocket clientSocket) {
@@ -59,7 +60,7 @@ public class CLI implements Runnable{
 
 
 
-        while(active) {
+        while(active) { //bisogna trovare il modo di impedire al giocatore di spammare invio (invio dovrebbe forzare l'
             if (inputStream.hasNext()) {
                 playerInput = inputParser.parse(inputStream.nextLine(), currentState);
                 if (playerInput.size() > 0) { //se il messaggio è valido
@@ -72,10 +73,12 @@ public class CLI implements Runnable{
                 }
                 else{
                     visualizeInputErrorMessage(); //l'input inserito non è valido, quindi visualizza l'errore
+                    visualizeContextMessage();
                 }
             }
         }
     }
+
     public void handleMessageFromServer(Message receivedMessage){
         if(receivedMessage instanceof ClientStateMessage){
             setNextState(((ClientStateMessage) receivedMessage).getNewState()); //Se è uno stato aggiorna quello corrente
@@ -129,7 +132,7 @@ public class CLI implements Runnable{
     }
 
     private void visualizeContextMessage(){
-        System.out.println("Vediamo che messaggio ho ricevuto");
+        //System.out.println("Vediamo che messaggio ho ricevuto");
         switch(currentState){
             case CONNECT_STATE:
                 outputStream.println("Inserisci il tuo nickname:");
@@ -164,12 +167,16 @@ public class CLI implements Runnable{
         switch (currentState){
             case CONNECT_STATE:
                 outputStream.println("Il nickname scelto è già stato scelto! Scegline un altro");
+                break;
             case SET_UP_WIZARD_PHASE:
                 outputStream.println("Il wizard scelto appartiene già ad un altro giocatore! Scegline un altro");
+                break;
             case SET_UP_TOWER_PHASE:
                 outputStream.println("La torre scelta appartiene già ad un altro giocatore! Scegline un'altra");
+                break;
             case PLAY_ASSISTANT_CARD:
                 outputStream.println("La carta scelta non è disponibile! Scegline un altro");
+                break;
         }
     }
 

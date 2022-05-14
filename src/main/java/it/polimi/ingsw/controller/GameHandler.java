@@ -72,6 +72,8 @@ public class GameHandler implements PropertyChangeListener{
         sendTo(players.get(0), new AvailableWizardMessage(gameController.getAvailableWizards())); //al primo giocatore viene aggiornata la lista di wizard disponibili
         sendTo(players.get(0),setUpPhaseStateMessage);  //viene aggiornato lo stato del primo giocatore
 
+        //in teoria qui manualmente vanno mandate a tutti i client le informazioni necessarie per far inizializzare le view
+        //o qui oppure in  startPlanningPhase() ma dato che viene printata la board lato client in planning phase, si rischia di printare quella vecchia
         updatePlayersOrder(players);
     }
 
