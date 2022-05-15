@@ -52,4 +52,7 @@ public class ClientBoard {
         this.towers = towers;
     }
 
+    public String getOwner() {
+        return owner;
+    }
 }
