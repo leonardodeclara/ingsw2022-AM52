@@ -2,6 +2,7 @@ package it.polimi.ingsw.CLI;
 
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.model.Color;
+import it.polimi.ingsw.model.Personality;
 import it.polimi.ingsw.model.Tower;
 
 import java.util.ArrayList;
@@ -122,134 +123,156 @@ public class GameBoard {
 
     //Mari occhio che se non ci sono studenti ti lancia una nullPointerException
     //gestiscilo con un try-catch
-    private void printIslands(){
-        for(ClientIsland island : islands){
+    private void printIslands() {
+        for (ClientIsland island : islands) {
             System.out.println("ISOLA" + island.getIslandIndex() + ":");
             System.out.print("STUDENTS ON THE ISLAND: ");
-            for(Color color : Color.values()){
+            for (Color color : Color.values()) {
                 int numberOfStudentsPerColor = (int) island.getStudents().stream().filter(c -> c == color).count();
-                for(int i = 0; i < numberOfStudentsPerColor; i++){
+                for (int i = 0; i < numberOfStudentsPerColor; i++) {
                     System.out.print(Constants.getStudentsColor(color) + "■ ");
                 }
             }
             System.out.println();
             System.out.print("TOWERS ON THE ISLAND: ");
-            for(int i = 0; i < island.getTowers().size(); i++){
-
-
+            for (int i = 0; i < island.getTowers().size(); i++) {
+                Tower towerOnIsland = island.getTowers().get(i);
+                if (towerOnIsland.equals(Tower.WHITE))
+                    System.out.print("♦ ");
+                else if (towerOnIsland.equals(Tower.BLACK))
+                    System.out.print("♢ ");
+                else if (towerOnIsland.equals(Tower.GREY))
+                    System.out.print(Constants.GREY + "♦ ");
             }
+            System.out.println();
+
+            System.out.print("NUMBER OF MERGED ISLANDS: " + island.getNumMergedIslands());
+
+            if (island.isMotherNature())
+                System.out.println("MOTHER NATURE IS HERE!");
+            else System.out.println();
 
 
         }
 
     }
 
-    private void printClouds(){
-        for (ClientCloud cloud : clouds){
+
+
+    private void printClouds() {
+        for (ClientCloud cloud : clouds) {
             System.out.println("NUVOLA: " + cloud.getCloudIndex());
-            try{
+            try {
+                for(Color color : Color.values()) {
+                    int numberOfStudentPerColor = (int) cloud.getStudents().stream().filter(c -> c == color).count();
+                    for (int i = 0; i < numberOfStudentPerColor; i++) {
+                        System.out.print(Constants.getStudentsColor(color) + "■");
+                    }
 
-                /**
-                 * TO DO: print degli studenti
-                 */
+                }
 
-            }
-            catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 System.out.println("no studenti");
             }
         }
     }
+   private void printPersonalityCards(){
+        System.out.println("AVAILABLE PERSONALITY CARDS:");
+        for(ClientPersonality personality : personalities){
+            if(personality.getHasBeenUsed().equals(false))
+                System.out.print(personality);
 
-
-
-
-    public void addClientBoard(String playerName){
-        int towerNumber = numberOfPlayers == 2? 8 : 6;
-        clientBoards.add(new ClientBoard(towerNumber, playerName));
-        if (isExpertGame())
-            for (ClientBoard board: clientBoards)
-                board.setCoins(1);
+        }
     }
 
-    public int getNumberOfPlayers() {
-        return numberOfPlayers;
-    }
 
-    public boolean isExpertGame() {
-        return expertGame;
-    }
+        public void addClientBoard(String playerName){
+            int towerNumber = numberOfPlayers == 2 ? 8 : 6;
+            clientBoards.add(new ClientBoard(towerNumber, playerName));
+            if (isExpertGame())
+                for (ClientBoard board : clientBoards)
+                    board.setCoins(1);
+        }
 
-    public ArrayList<Integer> getAvailableWizards() {
-        return availableWizards;
-    }
+        public int getNumberOfPlayers() {
+            return numberOfPlayers;
+        }
 
-    public ArrayList<Tower> getAvailableTowers() {
-        return availableTowers;
-    }
+        public boolean isExpertGame () {
+            return expertGame;
+        }
 
-    public ArrayList<ClientIsland> getIslands() {
-        return islands;
-    }
+        public ArrayList<Integer> getAvailableWizards () {
+            return availableWizards;
+        }
 
-    public ArrayList<String> getPlayersNickname() {
-        return PlayersNickname;
-    }
+        public ArrayList<Tower> getAvailableTowers () {
+            return availableTowers;
+        }
 
-    public ArrayList<ClientCloud> getClouds() {
-        return clouds;
-    }
+        public ArrayList<ClientIsland> getIslands () {
+            return islands;
+        }
 
-    public ArrayList<ClientBoard> getClientBoards() {
-        return clientBoards;
-    }
+        public ArrayList<String> getPlayersNickname () {
+            return PlayersNickname;
+        }
 
-    public ArrayList<ClientPersonality> getPersonalities() {
-        return personalities;
-    }
+        public ArrayList<ClientCloud> getClouds () {
+            return clouds;
+        }
 
-    public int getCoins() {
-        return coins;
-    }
+        public ArrayList<ClientBoard> getClientBoards () {
+            return clientBoards;
+        }
 
-    public void setNumberOfPlayers(int numberOfPlayers) {
-        this.numberOfPlayers = numberOfPlayers;
-    }
+        public ArrayList<ClientPersonality> getPersonalities () {
+            return personalities;
+        }
 
-    public void setExpertGame(boolean expertGame) {
-        this.expertGame = expertGame;
-    }
+        public int getCoins () {
+            return coins;
+        }
 
-    public void setAvailableWizards(ArrayList<Integer> availableWizards) {
-        this.availableWizards = availableWizards;
-    }
+        public void setNumberOfPlayers(int numberOfPlayers){
+            this.numberOfPlayers = numberOfPlayers;
+        }
 
-    public void setAvailableTowers(ArrayList<Tower> availableTowers) {
-        this.availableTowers = availableTowers;
-    }
+        public void setExpertGame(boolean expertGame){
+            this.expertGame = expertGame;
+        }
 
-    public void setIslands(ArrayList<ClientIsland> islands) {
-        this.islands = islands;
-    }
+        public void setAvailableWizards (ArrayList < Integer > availableWizards) {
+            this.availableWizards = availableWizards;
+        }
 
-    public void setPlayersNickname(ArrayList<String> playersNickname) {
-        PlayersNickname = playersNickname;
-    }
+        public void setAvailableTowers (ArrayList < Tower > availableTowers) {
+            this.availableTowers = availableTowers;
+        }
 
-    public void setClouds(ArrayList<ClientCloud> clouds) {
-        this.clouds = clouds;
-    }
+        public void setIslands (ArrayList < ClientIsland > islands) {
+            this.islands = islands;
+        }
 
-    public void setClientBoards(ArrayList<ClientBoard> clientBoards) {
-        this.clientBoards = clientBoards;
-    }
+        public void setPlayersNickname (ArrayList < String > playersNickname) {
+            PlayersNickname = playersNickname;
+        }
 
-    public void setPersonalities(ArrayList<ClientPersonality> personalities) {
-        this.personalities = personalities;
-    }
+        public void setClouds (ArrayList < ClientCloud > clouds) {
+            this.clouds = clouds;
+        }
 
-    public void setCoins(int coins) {
-        this.coins = coins;
+        public void setClientBoards (ArrayList < ClientBoard > clientBoards) {
+            this.clientBoards = clientBoards;
+        }
+
+        public void setPersonalities (ArrayList < ClientPersonality > personalities) {
+            this.personalities = personalities;
+        }
+
+        public void setCoins ( int coins){
+            this.coins = coins;
+        }
     }
-}
 
 
