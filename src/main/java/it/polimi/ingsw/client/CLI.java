@@ -154,10 +154,12 @@ public class CLI implements Runnable{
             GB.addClientBoard(player);
             GB.setClientTeam(player, associations.get(player));
         }
+        GB.print();
     }
 
     public void updateCurrentTurnAssistantCards(CurrentTurnAssistantCardsUpdateMessage message){
         GB.setTurnCard( message.getCurrentTurnAssistantCards());
+        GB.print();
     }
 
     public void updatePlayerDeck(AssistantDeckUpdateMessage message){
@@ -166,14 +168,17 @@ public class CLI implements Runnable{
 
     public void updateIslandStudents(IslandStudentsUpdateMessage message){
         GB.setIslandStudents(message.getIslandIndex(), message.getStudents());
+        GB.print();
     }
 
     public void updateIslandTowers(IslandTowersUpdateMessage message){
         GB.setIslandTowers(message.getIslandIndex(), message.getTowers());
+        GB.print();
     }
 
     public void updateCloud(CloudUpdateMessage message){
         GB.emptyCloud(message.getCloudIndex());
+        GB.print();
     }
 
     private void visualizeContextMessage(){
@@ -200,7 +205,7 @@ public class CLI implements Runnable{
                 outputStream.println("Torri disponibili:"+GB.getAvailableTowers()); //prendiamo dalla view le informazioni da stampare a schermo
                 break;
             case PLAY_ASSISTANT_CARD:
-                GB.print(); //questo è il momento in cui printiamo l'attuale stato della partita.
+                //GB.print(); //questo è il momento in cui printiamo l'attuale stato della partita.
                 outputStream.println("Scegli una carta da giocare!");
                 break;
 

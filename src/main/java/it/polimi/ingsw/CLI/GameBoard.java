@@ -64,7 +64,8 @@ public class GameBoard {
         printClientBoards();
         printClouds();
         printIslands();
-        printPersonalityCards();
+        if (isExpertGame())
+            printPersonalityCards(); //sistemare, deve stampare solo le carte estratte, non tutte
     }
 
     private void printClientBoards(){
@@ -126,6 +127,9 @@ public class GameBoard {
             }catch (NullPointerException e){
                 System.out.println("No towers");
             }
+            System.out.println();
+
+            //mancano da stampare: monete (se in expert game), carta assistente corrente,
 
         }
     }
