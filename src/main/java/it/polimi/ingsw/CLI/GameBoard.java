@@ -2,11 +2,9 @@ package it.polimi.ingsw.CLI;
 
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.model.Color;
-import it.polimi.ingsw.model.Personality;
 import it.polimi.ingsw.model.Tower;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 
 public class GameBoard {
     int numberOfPlayers;
@@ -182,6 +180,13 @@ public class GameBoard {
             if(personality.getHasBeenUsed().equals(false))
                 System.out.print(personality);
 
+        }
+    }
+
+    public void setClientTeam(String playerNickname, Tower tower){
+        for(ClientBoard clientBoard : clientBoards){
+            if(playerNickname.equals(clientBoard.getOwner()))
+                clientBoard.setTeam(tower);
         }
     }
 
