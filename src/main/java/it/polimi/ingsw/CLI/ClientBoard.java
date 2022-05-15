@@ -1,6 +1,7 @@
 package it.polimi.ingsw.CLI;
 
 import it.polimi.ingsw.model.Color;
+import it.polimi.ingsw.model.Tower;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ public class ClientBoard {
     private int towers;
     private int coins;
     private String owner;
+    private Tower team;
 
 
     public ClientBoard(int towers, String owner) {
@@ -20,6 +22,7 @@ public class ClientBoard {
         this.lobby = new ArrayList<>();
         this.towers = towers;
         this.owner = owner;
+        this.team = team;
     }
 
     public HashMap<Color, Integer> getStudentsTable() {
@@ -65,5 +68,18 @@ public class ClientBoard {
 
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    public int getCoins() {
+        return coins;
+    }
+
+
+    public Tower getTeam() {
+        return team;
+    }
+
+    public void setTeam(Tower team) {
+        this.team = team;
     }
 }

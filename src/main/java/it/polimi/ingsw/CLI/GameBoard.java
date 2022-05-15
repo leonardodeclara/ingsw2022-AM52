@@ -124,45 +124,74 @@ public class GameBoard {
 
     //Mari occhio che se non ci sono studenti ti lancia una nullPointerException
     //gestiscilo con un try-catch
-    private void printIslands(){
-        for(ClientIsland island : islands){
+    private void printIslands() {
+        for (ClientIsland island : islands) {
             System.out.println("ISOLA" + island.getIslandIndex() + ":");
             System.out.print("STUDENTS ON THE ISLAND: ");
-            for(Color color : Color.values()){
+            for (Color color : Color.values()) {
                 int numberOfStudentsPerColor = (int) island.getStudents().stream().filter(c -> c == color).count();
-                for(int i = 0; i < numberOfStudentsPerColor; i++){
+                for (int i = 0; i < numberOfStudentsPerColor; i++) {
                     System.out.print(Constants.getStudentsColor(color) + "■ ");
                 }
             }
             System.out.println();
             System.out.print("TOWERS ON THE ISLAND: ");
-            for(int i = 0; i < island.getTowers().size(); i++){
-
-
+            for (int i = 0; i < island.getTowers().size(); i++) {
+                Tower towerOnIsland = island.getTowers().get(i);
+                if (towerOnIsland.equals(Tower.WHITE))
+                    System.out.print("♦ ");
+                else if (towerOnIsland.equals(Tower.BLACK))
+                    System.out.print("♢ ");
+                else if (towerOnIsland.equals(Tower.GREY))
+                    System.out.print(Constants.GREY + "♦ ");
             }
+            System.out.println();
+
+            System.out.print("NUMBER OF MERGED ISLANDS: " + island.getNumMergedIslands());
+
+            if (island.isMotherNature())
+                System.out.println("MOTHER NATURE IS HERE!");
+            else System.out.println();
 
 
         }
 
     }
+
+
 
     private void printClouds(){
         for (ClientCloud cloud : clouds){
             System.out.println("NUVOLA: " + cloud.getCloudIndex());
-            try{
+            try {
+                for(Color color : Color.values()) {
+                    int numberOfStudentPerColor = (int) cloud.getStudents().stream().filter(c -> c == color).count();
+                    for (int i = 0; i < numberOfStudentPerColor; i++) {
+                        System.out.print(Constants.getStudentsColor(color) + "■");
+                    }
 
-                /**
-                 * TO DO: print degli studenti
-                 */
+                }
 
-            }
-            catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 System.out.println("no studenti");
             }
         }
     }
+   private void printPersonalityCards(){
+        System.out.println("AVAILABLE PERSONALITY CARDS:");
+        for(ClientPersonality personality : personalities){
+            if(personality.getHasBeenUsed().equals(false))
+                System.out.print(personality);
 
+        }
+    }
 
+    public void setClientTeam(String playerNickname, Tower tower){
+        for(ClientBoard clientBoard : clientBoards){
+            if(playerNickname.equals(clientBoard.getOwner()))
+                clientBoard.setTeam(tower);
+        }
+    }
 
 
     public void addClientBoard(String playerName){
