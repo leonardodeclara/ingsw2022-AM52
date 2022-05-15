@@ -43,7 +43,7 @@ public class GameBoard {
             clouds.add(new ClientCloud(i, null));
         }
 
-        for(int i = 0; i <= getNumberOfPlayers(); i++){
+        for(int i = 0; i < getNumberOfPlayers(); i++){
             clientBoards.add(new ClientBoard(null, null, null, 0, PlayersNickname.get(i)));
         }
 
@@ -63,10 +63,11 @@ public class GameBoard {
     }
 
     public void print(){
-        printClienBoards();
+        printClientBoards();
+        printIslands();
     }
 
-    private void printClienBoards(){
+    private void printClientBoards(){
         for(ClientBoard clientBoard : clientBoards){
             //stampo il nickname
             System.out.println(clientBoard.getOwner().toUpperCase() + "'S SCHOOL");
@@ -75,7 +76,7 @@ public class GameBoard {
             for(Color color : Color.values()) {
                 int numberOfStudentPerColor = (int) clientBoard.getLobby().stream().filter(c -> c == color).count();
                 for (int i = 0; i < numberOfStudentPerColor; i++) {
-                    System.out.print(Constants.getStudentsColor(color) + "○");
+                    System.out.print(Constants.getStudentsColor(color) + "■");
                 }
 
             }
@@ -93,14 +94,48 @@ public class GameBoard {
             //stampo la TeachersTable
             System.out.println("TEACHERS TABLE:");
             for(Color color : Color.values()){
-                System.out.println(Constants.getStudentsColor(color) + (clientBoard.getTeacherTable().contains(color) ? "■" : "○"));
+                System.out.print(Constants.getStudentsColor(color) + (clientBoard.getTeacherTable().contains(color) ? "■ " : "○ "));
             }
             System.out.println();
 
             //stampo le torri
+            /*System.out.println("TOWERS:");
+                for(int i = 0; i<clientBoard.getTowers(); i++){
+                if(tower.equals(Tower.GREY))
+                    System.out.print(Constants.GREY + "♦ ");
+                else if(tower.equals(Tower.BLACK))
+                    System.out.print("♢ ");
+                else if(tower.equals(Tower.WHITE))
+                    System.out.print("♦ ");}
+
+                System.out.println();*/
+            }
+
 
 
         }
+
+
+    private void printIslands(){
+        for(ClientIsland island : islands){
+            System.out.println("ISOLA" + island.getIslandIndex() + ":");
+            System.out.print("STUDENTS ON THE ISLAND: ");
+            for(Color color : Color.values()){
+                int numberOfStudentsPerColor = (int) island.getStudents().stream().filter(c -> c == color).count();
+                for(int i = 0; i < numberOfStudentsPerColor; i++){
+                    System.out.print(Constants.getStudentsColor(color) + "■ ");
+                }
+            }
+            System.out.println();
+            System.out.print("TOWERS ON THE ISLAND: ");
+            for(int i = 0; i < island.getTowers().size(); i++){
+
+
+            }
+
+
+        }
+
     }
 
 

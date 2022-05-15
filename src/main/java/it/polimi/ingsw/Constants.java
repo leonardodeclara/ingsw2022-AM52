@@ -22,6 +22,7 @@ public class Constants {
     public static final String YELLOW = "\033[0;33m";
     public static final String BLUE = "\033[0;34m";
     public static final String PURPLE = "\033[0;35m";
+    public static final String GREY = "\033[0;90m";
 
     private static final HashMap<Color, String> colorPerStudent;
         static{
@@ -31,6 +32,7 @@ public class Constants {
             colorPerStudent.put(Color.YELLOW, Constants.YELLOW);
             colorPerStudent.put(Color.BLUE, Constants.BLUE);
             colorPerStudent.put(Color.PINK, Constants.PURPLE);
+
         }
 
     public static String getStudentsColor(Color c){
