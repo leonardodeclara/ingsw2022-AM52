@@ -150,8 +150,10 @@ public class CLI implements Runnable{
 
     public void updatePlayerTowerAssociation(GameStartMessage message){
         HashMap<String, Tower> associations = message.getChosenTeam();
-        //for (String player: associations.keySet())
-            //GB.setClientTeam(player, associations.get(player));
+        for (String player: associations.keySet()){
+            GB.addClientBoard(player);
+            GB.setClientTeam(player, associations.get(player));
+        }
     }
 
     public void updateCurrentTurnAssistantCards(CurrentTurnAssistantCardsUpdateMessage message){

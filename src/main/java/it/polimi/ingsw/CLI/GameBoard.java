@@ -4,10 +4,7 @@ import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
-import java.util.HashMap;
+import java.util.*;
 
 public class GameBoard {
     int numberOfPlayers;
@@ -17,7 +14,7 @@ public class GameBoard {
     ArrayList<ClientIsland> islands;
     ArrayList<String> PlayersNickname;
     ArrayList<ClientCloud> clouds;
-    ArrayList<ClientBoard> clientBoards; //deve diventare una mappa
+    HashMap<String,ClientBoard> clientBoards; //deve diventare una mappa
     ArrayList<ClientPersonality> personalities;
     int coins;
 
@@ -27,7 +24,7 @@ public class GameBoard {
         islands = new ArrayList<>();
         clouds = new ArrayList<>();
         PlayersNickname = new ArrayList<>();
-        clientBoards = new ArrayList<>();
+        clientBoards = new HashMap<>();
         personalities = new ArrayList<>();
         availableWizards.add(1);
         availableWizards.add(2);
@@ -40,18 +37,12 @@ public class GameBoard {
     // quindi numero di giocatori e modalità
     public void instantiateGameElements(){
         for(int i = 0; i < Constants.MAX_NUM_ISLANDS; i++){
-            islands.add(new ClientIsland(i, null, null, false, 0, null));
+            islands.add(new ClientIsland(i));
         }
 
         for(int i = 0; i < getNumberOfPlayers(); i++){
-            clouds.add(new ClientCloud(i, null));
+            clouds.add(new ClientCloud(i));
         }
-
-        //messa a parte
-        /*
-        for(int i = 0; i < getNumberOfPlayers(); i++){
-            clientBoards.add(new ClientBoard(null, null, null, 0, PlayersNickname.get(i)));
-        }*/
 
         //rivedere se ha senso aggiungere tutte le carte qui, tanto ne vengono estratte casualmente solo tre
         personalities.add(new ClientPersonality(1, false, 1));
@@ -76,7 +67,7 @@ public class GameBoard {
     }
 
     private void printClientBoards(){
-        for(ClientBoard clientBoard : clientBoards){
+        for(ClientBoard clientBoard : clientBoards.values()){
             //stampo il nickname
             System.out.println(clientBoard.getOwner().toUpperCase() + "'S SCHOOL");
             //stampo la lobby
@@ -93,30 +84,44 @@ public class GameBoard {
             //stampo la StudentsTable
             System.out.println("STUDENTS TABLE:");
             for(Color color : Color.values()){
-                int numberOfStudentPerColor1 = clientBoard.getStudentsTable().get(color);
-                for (int i = 0; i < Constants.MAX_LOBBY_SIZE; i++)
-                    System.out.print(Constants.getStudentsColor(color) + (i < numberOfStudentPerColor1 ? "○ " : "■ "));
+                try{
+                    int numberOfStudentPerColor1 = clientBoard.getStudentsTable().get(color);
+                    for (int i = 0; i < Constants.MAX_LOBBY_SIZE; i++)
+                        System.out.print(Constants.getStudentsColor(color) + (i < numberOfStudentPerColor1 ? "○ " : "■ "));
+                }
+                catch (NullPointerException e){
+                    /**
+                     * TODO
+                     */
+                }
                 System.out.println();
             }
 
             //stampo la TeachersTable
             System.out.println("TEACHERS TABLE:");
-            for(Color color : Color.values()){
-                System.out.println(Constants.getStudentsColor(color) + (clientBoard.getTeacherTable().contains(color) ? "■ " : "○ "));
+            try{
+                for(Color color : Color.values()){
+                    System.out.println(Constants.getStudentsColor(color) + (clientBoard.getTeacherTable().contains(color) ? "■ " : "○ "));
+                }
+            } catch (NullPointerException e){
+                /**
+                 * TODO
+                 */
             }
             System.out.println();
 
             //stampo le torri
-            /*System.out.println("TOWERS:");
-                for(int i = 0; i<clientBoard.getTowers(); i++){
-                if(tower.equals(Tower.GREY))
+            System.out.println("TOWERS: ");
+            for(int i = 0; i<clientBoard.getTowers(); i++){
+                if(clientBoard.getTeam().equals(Tower.GREY))
                     System.out.print(Constants.GREY + "♦ ");
-                else if(tower.equals(Tower.BLACK))
+                else if(clientBoard.getTeam().equals(Tower.BLACK))
                     System.out.print("♢ ");
-                else if(tower.equals(Tower.WHITE))
-                    System.out.print("♦ ");}
+                else if(clientBoard.getTeam().equals(Tower.WHITE))
+                    System.out.print("♦ ");
+            }
 
-                System.out.println();*/
+            System.out.println();
 
 
         }
@@ -129,10 +134,16 @@ public class GameBoard {
             System.out.println("ISOLA" + island.getIslandIndex() + ":");
             System.out.print("STUDENTS ON THE ISLAND: ");
             for (Color color : Color.values()) {
-                int numberOfStudentsPerColor = (int) island.getStudents().stream().filter(c -> c == color).count();
-                for (int i = 0; i < numberOfStudentsPerColor; i++) {
-                    System.out.print(Constants.getStudentsColor(color) + "■ ");
+                try{
+                    int numberOfStudentsPerColor = (int) island.getStudents().stream().filter(c -> c == color).count();
+                    for (int i = 0; i < numberOfStudentsPerColor; i++) {
+                        System.out.print(Constants.getStudentsColor(color) + "■ ");
+                    }
                 }
+                catch (NullPointerException e){
+                    System.out.println("No studenti del colore " + color.toString());
+                }
+
             }
             System.out.println();
             System.out.print("TOWERS ON THE ISLAND: ");
@@ -187,24 +198,22 @@ public class GameBoard {
     }
 
     public void setClientTeam(String playerNickname, Tower tower){
-        for(ClientBoard clientBoard : clientBoards){
-            if(playerNickname.equals(clientBoard.getOwner()))
-                clientBoard.setTeam(tower);
-        }
+        clientBoards.get(playerNickname).setTeam(tower);
     }
 
 
     public void addClientBoard(String playerName){
         int towerNumber = numberOfPlayers == 2? 8 : 6;
-        clientBoards.add(new ClientBoard(towerNumber, playerName));
+        ClientBoard newBoard = new ClientBoard(towerNumber, playerName);
         if (isExpertGame())
-            for (ClientBoard board: clientBoards)
-                board.setCoins(1);
+            newBoard.setCoins(1);
+        clientBoards.put(playerName,newBoard);
     }
 
     public void setTurnCard(HashMap<String,Integer> playersCards){
-        //aggiungiamo un attributo currentCard ad ogni clientBoard
-        //prendo la mappa e per ogni clientBoard (che trovo attraverso il nome) aggiorno la currentCard
+        for (Map.Entry<String,Integer> card: playersCards.entrySet()){
+            clientBoards.get(card.getKey()).setCurrentCard(card.getValue());
+        }
     }
 
     public void setPlayerDeck(String player, HashMap<Integer, Integer> cards){
@@ -268,7 +277,7 @@ public class GameBoard {
         return clouds;
     }
 
-    public ArrayList<ClientBoard> getClientBoards() {
+    public HashMap<String,ClientBoard> getClientBoards() {
         return clientBoards;
     }
 
@@ -308,7 +317,7 @@ public class GameBoard {
         this.clouds = clouds;
     }
 
-    public void setClientBoards(ArrayList<ClientBoard> clientBoards) {
+    public void setClientBoards(HashMap<String,ClientBoard> clientBoards) {
         this.clientBoards = clientBoards;
     }
 

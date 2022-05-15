@@ -8,9 +8,9 @@ public class ClientCloud {
     private int cloudIndex;
     private ArrayList<Color> students;
 
-    public ClientCloud(int cloudIndex, ArrayList<Color> students) {
+    public ClientCloud(int cloudIndex) {
         this.cloudIndex = cloudIndex;
-        this.students = students;
+        this.students = new ArrayList<>();
     }
 
     public int getCloudIndex() {

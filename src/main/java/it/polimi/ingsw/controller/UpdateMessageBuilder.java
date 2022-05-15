@@ -49,7 +49,10 @@ public class UpdateMessageBuilder {
         ArrayList<ClientCloud> clientClouds = new ArrayList<>();
         int numClouds = modelClouds.size();
         for (Cloud modelCloud : modelClouds) {
-            clientClouds.add(new ClientCloud(modelCloud.getCloudIndex(), modelCloud.getStudents()));
+            ArrayList<Color> modelCloudStudents = modelCloud.getStudents();
+            ClientCloud cloud = new ClientCloud(modelCloud.getCloudIndex());
+            cloud.setStudents(modelCloudStudents);
+            clientClouds.add(cloud);
         }
         return new CloudsRefillMessage(clientClouds);
     }

@@ -14,6 +14,7 @@ public class ClientBoard {
     private int coins;
     private String owner;
     private Tower team;
+    private int currentCard;
 
 
     public ClientBoard(int towers, String owner) {
@@ -22,7 +23,10 @@ public class ClientBoard {
         this.lobby = new ArrayList<>();
         this.towers = towers;
         this.owner = owner;
-        this.team = team;
+    }
+
+    public void setCurrentCard(int currentCard) {
+        this.currentCard = currentCard;
     }
 
     public HashMap<Color, Integer> getStudentsTable() {

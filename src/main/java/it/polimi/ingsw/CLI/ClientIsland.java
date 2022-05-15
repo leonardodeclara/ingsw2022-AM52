@@ -14,13 +14,13 @@ public class ClientIsland {
     private int numMergedIslands;
     private String owner;
 
-    public ClientIsland(int islandIndex, ArrayList<Tower> towers, ArrayList<Color> students, boolean motherNature, int numMergedIslands, String owner) {
+    public ClientIsland(int islandIndex ) {
         this.islandIndex = islandIndex;
-        this.towers = towers;
-        this.students = students;
-        this.motherNature = motherNature;
-        this.numMergedIslands = numMergedIslands;
-        this.owner = owner;
+        this.towers = new ArrayList<>();
+        this.students = new ArrayList<>();
+        this.motherNature = false;
+        this.numMergedIslands = 0;
+        this.owner = null;
     }
 
     public int getIslandIndex() {
