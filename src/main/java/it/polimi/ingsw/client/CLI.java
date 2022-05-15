@@ -2,12 +2,15 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.messages.*;
+import it.polimi.ingsw.model.Island;
+import it.polimi.ingsw.model.Tower;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -123,6 +126,18 @@ public class CLI implements Runnable{
             updateAvailableWizard((AvailableWizardMessage) updateMessage);
         if (updateMessage instanceof AvailableTowerMessage)
             updateAvailableTower((AvailableTowerMessage) updateMessage);
+        if (updateMessage instanceof GameStartMessage)
+            updatePlayerTowerAssociation((GameStartMessage) updateMessage);
+        if (updateMessage instanceof CurrentTurnAssistantCardsUpdateMessage)
+            updateCurrentTurnAssistantCards((CurrentTurnAssistantCardsUpdateMessage) updateMessage);
+        if (updateMessage instanceof AssistantDeckUpdateMessage)
+            updatePlayerDeck((AssistantDeckUpdateMessage) updateMessage);
+        if (updateMessage instanceof IslandStudentsUpdateMessage)
+            updateIslandStudents((IslandStudentsUpdateMessage) updateMessage);
+        if (updateMessage instanceof IslandTowersUpdateMessage)
+            updateIslandTowers((IslandTowersUpdateMessage) updateMessage);
+        if (updateMessage instanceof CloudUpdateMessage)
+            updateCloud((CloudUpdateMessage) updateMessage);
     }
 
     public void updateAvailableWizard(AvailableWizardMessage message){
@@ -131,6 +146,32 @@ public class CLI implements Runnable{
 
     public void updateAvailableTower(AvailableTowerMessage message){
         GB.setAvailableTowers(message.getRemainingTowers());
+    }
+
+    public void updatePlayerTowerAssociation(GameStartMessage message){
+        HashMap<String, Tower> associations = message.getChosenTeam();
+        //for (String player: associations.keySet())
+            //GB.setClientTeam(player, associations.get(player));
+    }
+
+    public void updateCurrentTurnAssistantCards(CurrentTurnAssistantCardsUpdateMessage message){
+        GB.setTurnCard( message.getCurrentTurnAssistantCards());
+    }
+
+    public void updatePlayerDeck(AssistantDeckUpdateMessage message){
+        GB.setPlayerDeck(message.getOwner(), message.getCards());
+    }
+
+    public void updateIslandStudents(IslandStudentsUpdateMessage message){
+        GB.setIslandStudents(message.getIslandIndex(), message.getStudents());
+    }
+
+    public void updateIslandTowers(IslandTowersUpdateMessage message){
+        GB.setIslandTowers(message.getIslandIndex(), message.getTowers());
+    }
+
+    public void updateCloud(CloudUpdateMessage message){
+        GB.emptyCloud(message.getCloudIndex());
     }
 
     private void visualizeContextMessage(){

@@ -108,7 +108,7 @@ public class UpdateMessageBuilder {
     }
 
     //poi vedere se effettivamente è utile o no o se posso inglobare in messaggi di fine round
-    public Message builNoLongerActivePersonalityMessage(PropertyChangeEvent event){
+    public Message buildNoLongerActivePersonalityMessage(PropertyChangeEvent event){
         int inactiveCardId = (int) event.getNewValue();
         return new InactiveCharacterCardMessage(inactiveCardId);
     }

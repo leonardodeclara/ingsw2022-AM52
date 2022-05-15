@@ -17,7 +17,7 @@ public class IslandTowersUpdateMessage implements Message{
         return islandIndex;
     }
 
-    public ArrayList<Tower> getTower() {
+    public ArrayList<Tower> getTowers() {
         return new ArrayList<>(towers);
     }
 }

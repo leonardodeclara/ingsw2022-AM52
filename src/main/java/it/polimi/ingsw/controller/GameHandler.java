@@ -63,12 +63,11 @@ public class GameHandler implements PropertyChangeListener{
     public void startGame(){
         gameController= new GameController(expertGame);
         gameController.setUpdateListener(this);
-        ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
 
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         Message setUpPhaseStateMessage = new ClientStateMessage(ClientState.SET_UP_WIZARD_PHASE);
 
-        sendAllExcept(clientHandlers,nameToHandlerMap.get(players.get(0)),waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
+        sendAllExcept(nameToHandlerMap.get(players.get(0)),waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
         sendTo(players.get(0), new AvailableWizardMessage(gameController.getAvailableWizards())); //al primo giocatore viene aggiornata la lista di wizard disponibili
         sendTo(players.get(0),setUpPhaseStateMessage);  //viene aggiornato lo stato del primo giocatore
 
@@ -77,21 +76,26 @@ public class GameHandler implements PropertyChangeListener{
         updatePlayersOrder(players);
     }
 
-    private void startPlanningPhase(){ //conviene avere un metodo in cui racchiudiamo il set up di una specifica fase, dato che handleTower è già enorme
-        ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
+    private void startPlanningPhase(){
+
+        Message gameStart = gameController.buildPlayerTowerAssociation();
+        sendAll(gameStart);
 
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         Message setUpPhaseStateMessage = new ClientStateMessage(ClientState.PLAY_ASSISTANT_CARD);
 
         //qui usiamo ancora players.get(0), non è previsto un ordine specifico
-        sendAllExcept(clientHandlers,nameToHandlerMap.get(players.get(0)),waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
+        sendAllExcept(nameToHandlerMap.get(players.get(0)),waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
         sendTo(players.get(0), new AvailableWizardMessage(gameController.getAvailableWizards())); //al primo giocatore viene aggiornata la lista di wizard disponibili
+        //perché mandi i wizard residui? dovresti mandare le carte disponibili
+        //ah no okay hai fatto copia incolla da startGame, comunque va cambiata
         sendTo(players.get(0),setUpPhaseStateMessage);  //viene aggiornato lo stato del primo giocatore
 
         updatePlayersOrder(players);
     }
 
     private void startActionPhase(){
+
 
     }
 
@@ -165,18 +169,21 @@ public class GameHandler implements PropertyChangeListener{
     }
 
 
+
     private void sendTo(String nickname,Message message){
         ClientHandler clientHandler = nameToHandlerMap.get(nickname);
         System.out.println("Mando a "+nickname+" su client handler " +clientHandler.getID() + " un messaggio di tipo " + (message.getClass().toString()) );
         clientHandler.sendMessage(message);
     }
-    //non si può cambiare e tenere in input solo il messaggio ? tanto il metodo ricava la lista di clientHandlers da solo. stessa cosa per il metodo sotto
-    private void sendAll(ArrayList<ClientHandler> clientHandlers,Message message){
+
+    private void sendAll(Message message){
+        ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
         for( ClientHandler clientHandler : clientHandlers){
             clientHandler.sendMessage(message);
         }
     }
-    private void sendAllExcept(ArrayList<ClientHandler> clientHandlers,ClientHandler except, Message message){
+    private void sendAllExcept(ClientHandler except, Message message){
+        ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
         for( ClientHandler clientHandler : clientHandlers){
             if(!clientHandler.equals(except))
                 clientHandler.sendMessage(message);
@@ -192,8 +199,7 @@ public class GameHandler implements PropertyChangeListener{
         String eventName = evt.getPropertyName();
         if (eventName.equals("UpdateMessage") && evt.getNewValue()!=null){
             Message outwardsMessage = (Message) evt.getNewValue();
-            ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
-            sendAll(clientHandlers, outwardsMessage);
+            sendAll(outwardsMessage);
         }
     }
 }

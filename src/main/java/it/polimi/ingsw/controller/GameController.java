@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.prefs.PreferenceChangeListener;
+
 
 //aggiorna model
 public class GameController implements PropertyChangeListener {
@@ -110,6 +110,15 @@ public class GameController implements PropertyChangeListener {
         // o magari quello lo gestisco in maniera diversa. rivedere
     }
 
+
+    public Message buildPlayerTowerAssociation(){
+        HashMap<String,Tower> associations = new HashMap<>();
+        for (Player player: game.getPlayers()){
+            associations.put(player.getNickname(), player.getTeam());
+        }
+        return new GameStartMessage(associations);
+    }
+
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         String eventName = event.getPropertyName();
@@ -140,7 +149,7 @@ public class GameController implements PropertyChangeListener {
             case "ActivePersonality":
                 toSend = updateMessageBuilder.buildActivePersonalityMessage(event);
             case "NoLongerActivePersonality":
-                toSend = updateMessageBuilder.builNoLongerActivePersonalityMessage(event);
+                toSend = updateMessageBuilder.buildNoLongerActivePersonalityMessage(event);
             case "NotOwnedCoins": //vedere se effettivamente è utile
             case "Bans": //vedere se effettivamente è utile
             case "SelectedPersonality":

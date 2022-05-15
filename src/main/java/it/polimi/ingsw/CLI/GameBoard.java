@@ -5,7 +5,9 @@ import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 
 public class GameBoard {
     int numberOfPlayers;
@@ -15,7 +17,7 @@ public class GameBoard {
     ArrayList<ClientIsland> islands;
     ArrayList<String> PlayersNickname;
     ArrayList<ClientCloud> clouds;
-    ArrayList<ClientBoard> clientBoards;
+    ArrayList<ClientBoard> clientBoards; //deve diventare una mappa
     ArrayList<ClientPersonality> personalities;
     int coins;
 
@@ -171,6 +173,28 @@ public class GameBoard {
                 board.setCoins(1);
     }
 
+    public void setTurnCard(HashMap<String,Integer> playersCards){
+        //aggiungiamo un attributo currentCard ad ogni clientBoard
+        //prendo la mappa e per ogni clientBoard (che trovo attraverso il nome) aggiorno la currentCard
+    }
+
+    public void setPlayerDeck(String player, HashMap<Integer, Integer> cards){
+        //aggiorno il deck di quel player
+    }
+
+    public void setIslandStudents(int islandIndex, ArrayList<Color> students){
+        getIslandByIndex(islandIndex).setStudents(students);
+    }
+
+    public void setIslandTowers(int islandIndex, ArrayList<Tower> towers){
+        getIslandByIndex(islandIndex).setTowers(towers);
+    }
+
+    public void emptyCloud(int cloudIndex){
+        getCloudByIndex(cloudIndex).getStudents().clear();
+
+    }
+
     public int getNumberOfPlayers() {
         return numberOfPlayers;
     }
@@ -185,6 +209,22 @@ public class GameBoard {
 
     public ArrayList<Tower> getAvailableTowers() {
         return availableTowers;
+    }
+
+    public ClientIsland getIslandByIndex(int index){
+        for (ClientIsland island : islands){
+            if (island.getIslandIndex()==index)
+                return island;
+        }
+        return null;
+    }
+
+    public ClientCloud getCloudByIndex(int index){
+        for (ClientCloud cloud: clouds){
+            if (cloud.getCloudIndex()==index)
+                return cloud;
+        }
+        return null;
     }
 
     public ArrayList<ClientIsland> getIslands() {
