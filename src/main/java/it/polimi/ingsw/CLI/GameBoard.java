@@ -73,20 +73,15 @@ public class GameBoard {
             System.out.println(clientBoard.getOwner().toUpperCase() + "'S SCHOOL");
             //stampo la lobby
             System.out.println("LOBBY:");
-            try {
                 for (Color color : Color.values()) {
                     int numberOfStudentPerColor = (int) clientBoard.getLobby().stream().filter(c -> c == color).count();
                     for (int i = 0; i < numberOfStudentPerColor; i++) {
                         System.out.print(Constants.getStudentsColor(color) + "■");
                         System.out.println(Constants.RESET);
                     }
-
-
                 }
                 System.out.println("\n");
-            } catch (NullPointerException e){
-                System.out.println("No students in Lobby");
-            }
+
 
             //stampo la StudentsTable
             System.out.println("STUDENTS TABLE:");
@@ -132,7 +127,6 @@ public class GameBoard {
                 System.out.println("No towers");
             }
 
-
         }
     }
 
@@ -175,7 +169,6 @@ public class GameBoard {
                 System.out.println("MOTHER NATURE IS HERE!");
             else System.out.println();
 
-
         }
 
     }
@@ -199,13 +192,15 @@ public class GameBoard {
             }
         }
     }
+
    private void printPersonalityCards(){
         System.out.println("AVAILABLE PERSONALITY CARDS:");
         for(ClientPersonality personality : personalities){
             if(personality.getHasBeenUsed().equals(false))
-                System.out.print(personality);
+                System.out.print(personality.getCardID() + " ");
 
         }
+        System.out.println();
     }
 
     public void setClientTeam(String playerNickname, Tower tower){
