@@ -21,7 +21,8 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
     CLI cli;
     boolean active;
 
-    public Client() {
+    public Client(CLI cli) {
+        this.cli=cli;
         active = true;
     }
 
@@ -46,6 +47,7 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
     }
 
     private Message buildNewGameParametersMessage(ArrayList<Object> data){
+        cli.prepareView(data);
         return new GameParametersMessage((Integer)data.get(0),(Boolean)data.get(1));
     }
 

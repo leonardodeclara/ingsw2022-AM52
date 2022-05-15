@@ -98,7 +98,7 @@ public class GameHandler implements PropertyChangeListener{
     private void updatePlayersOrder(ArrayList<String> players){
         playersOrder = new ArrayList<String>(players);
         playersOrderIterator = playersOrder.iterator();
-        System.out.println("Ordine previsto dei giocatori:"+playersOrderIterator);
+        System.out.println("Ordine previsto dei giocatori:"+ playersOrderIterator.toString());
         playersOrderIterator.next();
     }
     private void handleWizardSelectionMessage(WizardSelectionMessage message, ClientHandler client){

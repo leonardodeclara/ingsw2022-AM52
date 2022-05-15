@@ -32,7 +32,7 @@ public class CLI implements Runnable{
     public CLI() throws IOException {
         inputStream = new Scanner(System.in);
         outputStream = new PrintStream(System.out);
-        client = new Client();
+        client = new Client(this);
         receivedMessage = null;
         executorService = Executors.newSingleThreadScheduledExecutor();
         GB = new GameBoard();
@@ -111,9 +111,11 @@ public class CLI implements Runnable{
 
     }
 
+    //stampo solo gli elementi di gioco che dipendono dal numero di giocatori e dalla modalità
     public void prepareView(ArrayList<Object> data){
         GB.setNumberOfPlayers((Integer)data.get(0));
         GB.setExpertGame((Boolean)data.get(1));
+        GB.instantiateGameElements();
     }
 
     public void updateView(Message updateMessage) {
@@ -155,7 +157,7 @@ public class CLI implements Runnable{
                 outputStream.println("Torri disponibili:"+GB.getAvailableTowers()); //prendiamo dalla view le informazioni da stampare a schermo
                 break;
             case PLAY_ASSISTANT_CARD:
-                //GB.print(); //questo è il momento in cui printiamo l'attuale stato della partita.
+                GB.print(); //questo è il momento in cui printiamo l'attuale stato della partita.
                 outputStream.println("Scegli una carta da giocare!");
                 break;
 

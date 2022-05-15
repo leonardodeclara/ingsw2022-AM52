@@ -31,9 +31,11 @@ public class GameBoard {
         availableWizards.add(2);
         availableWizards.add(3);
         availableWizards.add(4);
-        coins = 0;
+        coins = 20; //intanto lo settiamo al massimo, ma in teoria all'inizio ogni giocatore ha una moneta
     }
 
+    //usiamo questo metodo solo per inizializzare le cose che non dipendono dai giocatori in sé ma solo dai parametri di gioco,
+    // quindi numero di giocatori e modalità
     public void instantiateGameElements(){
         for(int i = 0; i < Constants.MAX_NUM_ISLANDS; i++){
             islands.add(new ClientIsland(i, null, null, false, 0, null));
@@ -43,10 +45,13 @@ public class GameBoard {
             clouds.add(new ClientCloud(i, null));
         }
 
+        //messa a parte
+        /*
         for(int i = 0; i < getNumberOfPlayers(); i++){
             clientBoards.add(new ClientBoard(null, null, null, 0, PlayersNickname.get(i)));
-        }
+        }*/
 
+        //rivedere se ha senso aggiungere tutte le carte qui, tanto ne vengono estratte casualmente solo tre
         personalities.add(new ClientPersonality(1, false, 1));
         personalities.add(new ClientPersonality(2, false, 2));
         personalities.add(new ClientPersonality(3, false, 3));
@@ -64,6 +69,7 @@ public class GameBoard {
 
     public void print(){
         printClientBoards();
+        printClouds();
         printIslands();
     }
 
@@ -94,7 +100,7 @@ public class GameBoard {
             //stampo la TeachersTable
             System.out.println("TEACHERS TABLE:");
             for(Color color : Color.values()){
-                System.out.print(Constants.getStudentsColor(color) + (clientBoard.getTeacherTable().contains(color) ? "■ " : "○ "));
+                System.out.println(Constants.getStudentsColor(color) + (clientBoard.getTeacherTable().contains(color) ? "■ " : "○ "));
             }
             System.out.println();
 
@@ -109,13 +115,13 @@ public class GameBoard {
                     System.out.print("♦ ");}
 
                 System.out.println();*/
-            }
-
 
 
         }
+    }
 
-
+    //Mari occhio che se non ci sono studenti ti lancia una nullPointerException
+    //gestiscilo con un try-catch
     private void printIslands(){
         for(ClientIsland island : islands){
             System.out.println("ISOLA" + island.getIslandIndex() + ":");
@@ -138,8 +144,32 @@ public class GameBoard {
 
     }
 
+    private void printClouds(){
+        for (ClientCloud cloud : clouds){
+            System.out.println("NUVOLA: " + cloud.getCloudIndex());
+            try{
+
+                /**
+                 * TO DO: print degli studenti
+                 */
+
+            }
+            catch (NullPointerException e){
+                System.out.println("no studenti");
+            }
+        }
+    }
 
 
+
+
+    public void addClientBoard(String playerName){
+        int towerNumber = numberOfPlayers == 2? 8 : 6;
+        clientBoards.add(new ClientBoard(towerNumber, playerName));
+        if (isExpertGame())
+            for (ClientBoard board: clientBoards)
+                board.setCoins(1);
+    }
 
     public int getNumberOfPlayers() {
         return numberOfPlayers;
