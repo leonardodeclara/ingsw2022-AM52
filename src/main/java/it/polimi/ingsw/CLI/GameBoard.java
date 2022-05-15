@@ -64,6 +64,7 @@ public class GameBoard {
         printClientBoards();
         printClouds();
         printIslands();
+        printPersonalityCards();
     }
 
     private void printClientBoards(){
@@ -72,56 +73,64 @@ public class GameBoard {
             System.out.println(clientBoard.getOwner().toUpperCase() + "'S SCHOOL");
             //stampo la lobby
             System.out.println("LOBBY:");
-            for(Color color : Color.values()) {
-                int numberOfStudentPerColor = (int) clientBoard.getLobby().stream().filter(c -> c == color).count();
-                for (int i = 0; i < numberOfStudentPerColor; i++) {
-                    System.out.print(Constants.getStudentsColor(color) + "■");
-                }
+            try {
+                for (Color color : Color.values()) {
+                    int numberOfStudentPerColor = (int) clientBoard.getLobby().stream().filter(c -> c == color).count();
+                    for (int i = 0; i < numberOfStudentPerColor; i++) {
+                        System.out.print(Constants.getStudentsColor(color) + "■");
+                        System.out.println(Constants.RESET);
+                    }
 
+
+                }
+                System.out.println("\n");
+            } catch (NullPointerException e){
+                System.out.println("No students in Lobby");
             }
-            System.out.println("\n");
 
             //stampo la StudentsTable
             System.out.println("STUDENTS TABLE:");
-            for(Color color : Color.values()){
-                try{
+            try {
+                for (Color color : Color.values()) {
                     int numberOfStudentPerColor1 = clientBoard.getStudentsTable().get(color);
                     for (int i = 0; i < Constants.MAX_LOBBY_SIZE; i++)
                         System.out.print(Constants.getStudentsColor(color) + (i < numberOfStudentPerColor1 ? "○ " : "■ "));
+                    System.out.println();
+                    System.out.println(Constants.RESET);
                 }
-                catch (NullPointerException e){
-                    /**
-                     * TODO
-                     */
-                }
-                System.out.println();
+            } catch (NullPointerException e){
+                System.out.println("No students in the Table");
             }
+
 
             //stampo la TeachersTable
             System.out.println("TEACHERS TABLE:");
-            try{
-                for(Color color : Color.values()){
+            try {
+                for (Color color : Color.values()) {
                     System.out.println(Constants.getStudentsColor(color) + (clientBoard.getTeacherTable().contains(color) ? "■ " : "○ "));
+                    System.out.println(Constants.RESET);
                 }
-            } catch (NullPointerException e){
-                /**
-                 * TODO
-                 */
+                System.out.println();
+            } catch(NullPointerException e){
+                System.out.println("No teachers in the Table");
             }
-            System.out.println();
 
             //stampo le torri
-            System.out.println("TOWERS: ");
-            for(int i = 0; i<clientBoard.getTowers(); i++){
-                if(clientBoard.getTeam().equals(Tower.GREY))
-                    System.out.print(Constants.GREY + "♦ ");
-                else if(clientBoard.getTeam().equals(Tower.BLACK))
-                    System.out.print("♢ ");
-                else if(clientBoard.getTeam().equals(Tower.WHITE))
-                    System.out.print("♦ ");
-            }
+            System.out.println("TOWERS:");
+            try {
+                for (int i = 0; i < clientBoard.getTowers(); i++) {
+                    if (clientBoard.getTeam().equals(Tower.BLACK))
+                        System.out.print("♢ ");
+                    else if (clientBoard.getTeam().equals(Tower.WHITE))
+                        System.out.print("♦ ");
+                    else if (clientBoard.getTeam().equals(Tower.GREY))
+                        System.out.print(Constants.GREY + "♦ ");
 
-            System.out.println();
+                }
+                System.out.println(Constants.RESET);
+            }catch (NullPointerException e){
+                System.out.println("No towers");
+            }
 
 
         }
@@ -144,6 +153,7 @@ public class GameBoard {
                     System.out.println("No studenti del colore " + color.toString());
                 }
 
+                System.out.println(Constants.RESET);
             }
             System.out.println();
             System.out.print("TOWERS ON THE ISLAND: ");
@@ -156,9 +166,10 @@ public class GameBoard {
                 else if (towerOnIsland.equals(Tower.GREY))
                     System.out.print(Constants.GREY + "♦ ");
             }
+            System.out.println(Constants.RESET);
             System.out.println();
 
-            System.out.print("NUMBER OF MERGED ISLANDS: " + island.getNumMergedIslands());
+            System.out.println("NUMBER OF MERGED ISLANDS:" + island.getNumMergedIslands());
 
             if (island.isMotherNature())
                 System.out.println("MOTHER NATURE IS HERE!");
@@ -180,7 +191,7 @@ public class GameBoard {
                     for (int i = 0; i < numberOfStudentPerColor; i++) {
                         System.out.print(Constants.getStudentsColor(color) + "■");
                     }
-
+                    System.out.println(Constants.RESET);
                 }
 
             } catch (NullPointerException e) {
