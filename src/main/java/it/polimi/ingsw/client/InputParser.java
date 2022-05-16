@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.CLI.GameBoard;
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.messages.ClientState;
 import it.polimi.ingsw.messages.GameParametersMessage;
 import it.polimi.ingsw.messages.Message;
@@ -11,11 +12,12 @@ import java.util.ArrayList;
 
 public class InputParser {
     ArrayList<Object> data;
-    GameBoard GB;
+    String nickname;
 
-    public InputParser(GameBoard GB){
-        this.GB = GB;
+
+    public InputParser(){
     }
+
     public ArrayList<Object> parse(String input, ClientState state) throws NumberFormatException{
         data = new ArrayList<>();
         switch(state){
@@ -43,8 +45,11 @@ public class InputParser {
 
 
     private void parseConnectString(String input){
-        if(input.length() <= 16 && !input.equals("") && !input.equals(" "))
+        if(input.length() <= 16 && !input.equals("") && !input.equals(" ")){
             data.add(input);
+            nickname = input; //salva il nickname così poi lo passiamo alla CLI quando ci arriva conferma dal server che va bene
+        }
+
     }
 
     private void parseNewGameParametersString(String input){ //gestiamo base/expert case insensitive e consideriamo separatore spazio
@@ -108,27 +113,12 @@ public class InputParser {
         }
     }
 
-    private void moveStudentFromLobby(String input){ //il comando è move studentID to table/ move studentID to islandID
-        int studentID = 0;
-        int islandID = 0;
-        String[] words = input.split("");
-
-        if(words.length == 4){
-            if(words[0].equalsIgnoreCase("move"))
-                studentID = Integer.parseInt(words[1]);
-                if(studentID >= 1 && studentID <= 9)
-                    if(words[2].equalsIgnoreCase("to"))
-                        if(words[3].equalsIgnoreCase("table")){
-                            data.add(studentID);
-                            data.add(-1); // -1 = table
-                        }else{
-                            islandID = Integer.parseInt(words[3]);
-                            if(islandID >= 1 && islandID <= 12){
-                                data.add(studentID);
-                                data.add(islandID);
-                            }
-                        }
-
-        }
+    private void moveStudentFromLobby(String input){ //move studentID1,studentID2,studentID3 in table,2,3
+        //TO-DO
     }
+
+    public String getNickname() {
+        return nickname;
+    }
+
 }

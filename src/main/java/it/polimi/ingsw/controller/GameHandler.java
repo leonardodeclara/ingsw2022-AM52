@@ -42,8 +42,8 @@ public class GameHandler implements PropertyChangeListener{
             handleTowerSelectionMessage((TowerSelectionMessage)message, clientHandler);
         else if(message instanceof PlayAssistantCardMessage)
             handlePlayAssistantCardMessage((PlayAssistantCardMessage) message,clientHandler);
-        else if (message instanceof MoveStudentMessage)
-            handleMoveStudentMessage((MoveStudentMessage) message, clientHandler);
+        else if (message instanceof MoveStudentsFromLobbyMessage)
+            handleMoveStudentMessage((MoveStudentsFromLobbyMessage) message, clientHandler);
     }
 
 
@@ -183,7 +183,26 @@ public class GameHandler implements PropertyChangeListener{
         }
     }
 
-    private void handleMoveStudentMessage(MoveStudentMessage message, ClientHandler client){
+    private void handleMoveStudentMessage(MoveStudentsFromLobbyMessage message, ClientHandler client){
+        ArrayList<Integer> studentIDs = message.getStudentIndex();
+        ArrayList<Integer> destIDs = message.getDestinationIndex();
+        String clientName = getNicknameFromClientID(client.getID());
+        System.out.println("GameHandler:è arrivato un messaggio di moveStudentFromLobby da " + clientName);
+        Message response = gameController.moveStudentsFromLobby(clientName, studentIDs,destIDs); //se il messaggio andava bene il model si è aggiornato dopo questa riga
+        sendTo(clientName, response);
+        if (!(response instanceof ErrorMessage)){
+            System.out.println(clientName+ " ha spostato gli studenti, ora lo sto mandando in WAIT_TURN"); //da sostituire con l'eventualità di giocare una carta
+        }
+
+        if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
+            String nextPlayer = playersOrderIterator.next();
+            Message playAssistantCardMessage = new ClientStateMessage(ClientState.PLAY_ASSISTANT_CARD);
+            System.out.println("Siccome " + clientName + " ha finito la sua selezione ora è il turno di " + nextPlayer);
+            sendTo(nextPlayer,playAssistantCardMessage);
+        }
+        else{
+            startActionPhase();
+        }
 
     }
 

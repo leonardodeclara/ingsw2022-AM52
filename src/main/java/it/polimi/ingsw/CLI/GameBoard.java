@@ -4,11 +4,13 @@ import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class GameBoard {
     private int numberOfPlayers;
     private boolean expertGame;
+    private String nickname;
     private ArrayList<Integer> availableWizards; //sono 4 e a ogni propagazione diminuiscono
     private ArrayList<Tower> availableTowers;
     private ArrayList<ClientIsland> islands;
@@ -17,7 +19,9 @@ public class GameBoard {
     private HashMap<String,ClientBoard> clientBoards; //deve diventare una mappa
     private ArrayList<ClientPersonality> personalities;
     private ClientPersonality activePersonality;
+    private HashMap<String, ArrayList<ClientAssistant>> nameToDeckMap;
     int coins;
+
 
     public GameBoard(){
         availableWizards = new ArrayList<>();
@@ -132,13 +136,14 @@ public class GameBoard {
             }
             System.out.println();
 
-            if (clientBoard.getCurrentCard()!= -1)
+            if (clientBoard.getCurrentCard()!= 0)
                 System.out.println("CURRENT ASSISTANT CARD: " + clientBoard.getCurrentCard());
 
             //mancano da stampare: monete (se in expert game), carte assistenti disponibili ma solo del client singolo
 
         }
     }
+
 
     //Mari occhio che se non ci sono studenti ti lancia una nullPointerException
     //gestiscilo con un try-catch
@@ -316,6 +321,15 @@ public class GameBoard {
 
     public int getCoins() {
         return coins;
+    }
+
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public void setActivePersonality(int activePersonality) {

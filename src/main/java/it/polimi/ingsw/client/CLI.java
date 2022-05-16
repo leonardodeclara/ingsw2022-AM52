@@ -39,7 +39,7 @@ public class CLI implements Runnable{
         receivedMessage = null;
         executorService = Executors.newSingleThreadScheduledExecutor();
         GB = new GameBoard();
-        inputParser = new InputParser(GB);
+        inputParser = new InputParser();
         inputStream.useDelimiter("\n");
     }
 
@@ -85,6 +85,9 @@ public class CLI implements Runnable{
     public void handleMessageFromServer(Message receivedMessage){
         //System.out.println("Ho ricevuto dal server un messaggio di " + (receivedMessage.getClass().toString()));
         if(receivedMessage instanceof ClientStateMessage){
+            if(currentState.equals(ClientState.CONNECT_STATE)){ //significa che è il nome è stato approvato, quindi lo salviamo in GameBoard
+                GB.setNickname(inputParser.getNickname());
+            }
             setNextState(((ClientStateMessage) receivedMessage).getNewState()); //Se è uno stato aggiorna quello corrente
         }else if(receivedMessage instanceof ErrorMessage) {
             visualizeServerErrorMessage(); //se è un errore visualizzalo
@@ -279,9 +282,8 @@ public class CLI implements Runnable{
                 outputStream.println("Scegli una carta da giocare!");
                 break;
             case MOVE_FROM_LOBBY:
-                outputStream.println("Scegli uno studente da spostare e la sua destinazione.");
-                outputStream.println("Scrivi move studentID in table per muovere lo studente selezionato nella tavola");
-                outputStream.println("Scrivi move studentID in islandID per muovere lo studente selezionato nell'isola scelta");
+                outputStream.println("Scegli tre studenti da spostare nella table o su un'isola");
+                outputStream.println("Per esempio digita move studentID1,studentID2,studentID3 in table,2,3 per muovere il primo studente nella table,il secondo sull'isola 2, il terzo sull'isola 3");
                 break;
 
 

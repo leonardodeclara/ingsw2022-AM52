@@ -38,6 +38,8 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
                 return buildTowerSelectionMessage(data);
             case PLAY_ASSISTANT_CARD:
                 return buildPlayAssistantCardMessage(data);
+            case MOVE_FROM_LOBBY:
+                return buildMoveFromLobbyMessage(data);
         }
         return null;
     }
@@ -61,6 +63,10 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
 
     private Message buildPlayAssistantCardMessage(ArrayList<Object> data){
         return new PlayAssistantCardMessage((Integer)data.get(0));
+    }
+
+    private Message buildMoveFromLobbyMessage(ArrayList<Object> data){
+        return new MoveStudentsFromLobbyMessage((ArrayList<Integer>) data.get(0),(ArrayList<Integer>) data.get(1));
     }
 }
     /*

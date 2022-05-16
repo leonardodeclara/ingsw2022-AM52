@@ -86,6 +86,16 @@ public class GameController implements PropertyChangeListener {
         }
     }
 
+    /*
+    public Message moveStudentsFromLobby(String player, ArrayList<Integer> studentIDs, ArrayList<Integer> destIDs){
+        for(Integer studentID : studentIDs){
+            if(game.moveStudentFromLobby()) //problema: se chiamiamo sto metodo con valori "accettabili" applicherà già la modifica sul singolo studente ma noi vogliamo applicarla solo se sono validi tutti e 3 gli input dati
+
+        }
+        //foreach student chiama game.moveStudentFromLobby (studentIDs.get(i) e destIDs.get(i))
+        //se anche solo uno returna error allora rimandiamo indietro error altrimenti proseguiamo
+    }
+*/
     public ArrayList<String> getActionPhaseTurnOrder(){
         return game.getActionPhasePlayerOrder();
     }
