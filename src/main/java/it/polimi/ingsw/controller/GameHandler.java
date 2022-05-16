@@ -65,9 +65,10 @@ public class GameHandler implements PropertyChangeListener{
         gameController= new GameController(expertGame, new ArrayList<>(players));
         gameController.setUpdateListener(this); //gameHandler inizia ad ascoltare il controller
         //System.out.println("GameHandler: ora faccio ascoltare game da GC");
-        gameController.getGame().setPropertyChangeListeners(gameController);
-        //System.out.println("GameHandler: ora faccio istanziare i gameElements da GC");
-        gameController.getGame().instantiateGameElements(); //va inizializzato il model, ma non so se questa chiamata va qui
+        //mando a tutti le isole istanziate
+        Message gameInstantiationMessage = gameController.handleGameInstantiation();
+        sendAll(gameInstantiationMessage);
+
 
         //System.out.println("GameHandler: ho istanziato Controller che ha istanziato game con i listener");
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
@@ -76,6 +77,7 @@ public class GameHandler implements PropertyChangeListener{
         sendAllExcept(nameToHandlerMap.get(players.get(0)),waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
         sendTo(players.get(0), new AvailableWizardMessage(gameController.getAvailableWizards())); //al primo giocatore viene aggiornata la lista di wizard disponibili
         sendTo(players.get(0),setUpPhaseStateMessage);  //viene aggiornato lo stato del primo giocatore
+
 
         //in teoria qui manualmente vanno mandate a tutti i client le informazioni necessarie per far inizializzare le view
         //o qui oppure in  startPlanningPhase() ma dato che viene printata la board lato client in planning phase, si rischia di printare quella vecchia
@@ -184,6 +186,7 @@ public class GameHandler implements PropertyChangeListener{
     }
 
     private void sendAll(Message message){
+        System.out.println("Mando in broadcast messaggio di " + (message.getClass().toString()));
         ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
         for( ClientHandler clientHandler : clientHandlers){
             clientHandler.sendMessage(message);

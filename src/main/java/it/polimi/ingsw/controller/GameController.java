@@ -49,7 +49,12 @@ public class GameController implements PropertyChangeListener {
         System.out.println("GameController: mi sono istanziato");
     }
 
-    public void handleGameInstantiation(){}
+    public Message handleGameInstantiation(){
+        game.instantiateGameElements(); //va inizializzato il model, ma non so se questa chiamata va qui
+        game.setPropertyChangeListeners(this);
+        System.out.println("GC: ho impostato correttamente i primi gameElements e ho settato i PropertyChange");
+        return updateMessageBuilder.buildGameInstantiationMessage(game);
+    }
 
 
     //creo l'associazione giocatore-wizard, mi servirà dopo per fare game.giveAssistantDeck()
@@ -181,8 +186,11 @@ public class GameController implements PropertyChangeListener {
             //dovrebbero mancare listener per gli effetti "istant" delle carte personaggio, vedere quelle a parte
             //si potrebbe mettere come listener in quel caso cardController
         }
-        //System.out.println("GC: ho generato un messaggio di update: ora lo passo a GH");
-        listener.firePropertyChange("UpdateMessage", null, toSend);
+        if (toSend!=null){
+            System.out.println("GC: ho generato un messaggio di update valido: ora lo passo a GH");
+            listener.firePropertyChange("UpdateMessage", null, toSend);
+        }
+
         //in propertyChange di GameHandler bisogna fare il controllo oldValue-newValue perché se
         // la generazione dei messaggi restituisce null non devo inviare nulla (tipo nel caso LastRound)
 

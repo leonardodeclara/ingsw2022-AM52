@@ -35,10 +35,8 @@ public class GameBoard {
 
     //usiamo questo metodo solo per inizializzare le cose che non dipendono dai giocatori in sé ma solo dai parametri di gioco,
     // quindi numero di giocatori e modalità
-    public void instantiateGameElements(){
-        for(int i = 0; i < Constants.MAX_NUM_ISLANDS; i++){
-            islands.add(new ClientIsland(i));
-        }
+    public void instantiateGameElements(ArrayList<ClientIsland> newIslands){
+        islands.addAll(newIslands);
 
         for(int i = 0; i < numberOfPlayers; i++){
             clouds.add(new ClientCloud(i));

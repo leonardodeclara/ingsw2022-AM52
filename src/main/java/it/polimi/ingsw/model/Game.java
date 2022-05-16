@@ -117,7 +117,7 @@ public class Game {
         islands.get(initialMotherNature).setMotherNature(true);
 
         currentMotherNatureIsland=islands.get(initialMotherNature);
-        listeners.firePropertyChange("MotherNature", null, currentMotherNatureIsland.getIslandIndex());
+        //listeners.firePropertyChange("MotherNature", null, currentMotherNatureIsland.getIslandIndex());
         //vedere se ci va
 
         //System.out.println("Game: ho finito di settare la posizione iniziale di MN");

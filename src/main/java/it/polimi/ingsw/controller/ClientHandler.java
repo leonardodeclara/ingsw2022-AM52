@@ -79,6 +79,7 @@ public class ClientHandler implements Runnable {
 
     public void sendMessage(Message message){
         try{
+            System.out.println("Sono CH " + ID + " e sto mandando un messaggio " + (message.getClass().toString()));
             out.reset();
             out.writeObject(message);
             out.flush();

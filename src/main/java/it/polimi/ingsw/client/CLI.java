@@ -83,6 +83,7 @@ public class CLI implements Runnable{
     }
 
     public void handleMessageFromServer(Message receivedMessage){
+        System.out.println("Ho ricevuto dal server un messaggio di " + (receivedMessage.getClass().toString()));
         if(receivedMessage instanceof ClientStateMessage){
             setNextState(((ClientStateMessage) receivedMessage).getNewState()); //Se è uno stato aggiorna quello corrente
         }else if(receivedMessage instanceof ErrorMessage) {
@@ -118,27 +119,31 @@ public class CLI implements Runnable{
     public void prepareView(ArrayList<Object> data){
         GB.setNumberOfPlayers((Integer)data.get(0));
         GB.setExpertGame((Boolean)data.get(1));
-        GB.instantiateGameElements();
+        //GB.instantiateGameElements();
+        // spostato dopo che vengono estratti i primi studenti per le isole e viene posizionata MN
+        //vedi metodo setInitialGameBoard
     }
 
     public void updateView(Message updateMessage) {
         if (updateMessage instanceof AvailableWizardMessage)
             updateAvailableWizard((AvailableWizardMessage) updateMessage);
-        if (updateMessage instanceof AvailableTowerMessage)
+        else if (updateMessage instanceof AvailableTowerMessage)
             updateAvailableTower((AvailableTowerMessage) updateMessage);
-        if (updateMessage instanceof GameStartMessage)
+        else if (updateMessage instanceof GameInstantiationMessage)
+            setInitialGameBoard((GameInstantiationMessage) updateMessage);
+        else if (updateMessage instanceof GameStartMessage)
             updatePlayerTowerAssociation((GameStartMessage) updateMessage);
-        if (updateMessage instanceof CurrentTurnAssistantCardsUpdateMessage)
+        else if (updateMessage instanceof CurrentTurnAssistantCardsUpdateMessage)
             updateCurrentTurnAssistantCards((CurrentTurnAssistantCardsUpdateMessage) updateMessage);
-        if (updateMessage instanceof AssistantDeckUpdateMessage)
+        else if (updateMessage instanceof AssistantDeckUpdateMessage)
             updatePlayerDeck((AssistantDeckUpdateMessage) updateMessage);
-        if (updateMessage instanceof IslandStudentsUpdateMessage)
+        else if (updateMessage instanceof IslandStudentsUpdateMessage)
             updateIslandStudents((IslandStudentsUpdateMessage) updateMessage);
-        if (updateMessage instanceof IslandTowersUpdateMessage)
+        else if (updateMessage instanceof IslandTowersUpdateMessage)
             updateIslandTowers((IslandTowersUpdateMessage) updateMessage);
-        if (updateMessage instanceof CloudUpdateMessage)
+        else if (updateMessage instanceof CloudUpdateMessage)
             updateCloud((CloudUpdateMessage) updateMessage);
-        if (updateMessage instanceof MotherNatureMovementUpdateMessage)
+        else if (updateMessage instanceof MotherNatureMovementUpdateMessage)
             updateMotherNaturePosition((MotherNatureMovementUpdateMessage) updateMessage);
     }
 
@@ -148,6 +153,12 @@ public class CLI implements Runnable{
 
     public void updateAvailableTower(AvailableTowerMessage message){
         GB.setAvailableTowers(message.getRemainingTowers());
+    }
+
+    public void setInitialGameBoard(GameInstantiationMessage message){
+        GB.instantiateGameElements(message.getIslands());
+        System.out.println("PRIMA PRINT DELLA BOARD");
+        GB.print();
     }
 
     public void updatePlayerTowerAssociation(GameStartMessage message){

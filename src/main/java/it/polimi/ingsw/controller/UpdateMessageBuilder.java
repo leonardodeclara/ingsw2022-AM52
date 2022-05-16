@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.CLI.ClientCloud;
+import it.polimi.ingsw.CLI.ClientIsland;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.*;
 
@@ -14,6 +15,19 @@ import java.util.HashMap;
 public class UpdateMessageBuilder {
 
     public UpdateMessageBuilder(){
+    }
+
+    public Message buildGameInstantiationMessage(Game game){
+        ArrayList<ClientIsland> clientIslands = new ArrayList<>();
+        for (Island modelIsland: game.getIslands()){
+            ClientIsland newIsland = new ClientIsland(modelIsland.getIslandIndex());
+            newIsland.setMotherNature(modelIsland.isMotherNature());
+            newIsland.setStudents(modelIsland.getStudents());
+            clientIslands.add(newIsland);
+        }
+        System.out.println("MessageBuilder: ho preparato messaggio di GameInstantiation");
+        return new GameInstantiationMessage(clientIslands);
+
     }
 
     public Message buildMotherNatureMessage(PropertyChangeEvent event){
