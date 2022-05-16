@@ -61,9 +61,15 @@ public class GameHandler implements PropertyChangeListener{
     si manda in broadcast a tutti i client il numero di giocatori e il tipo di partita così che possano inizializzare la view
      */
     public void startGame(){
-        gameController= new GameController(expertGame);
-        gameController.setUpdateListener(this);
+        //System.out.println("GameHandler: ora istanzio GameController");
+        gameController= new GameController(expertGame, new ArrayList<>(players));
+        gameController.setUpdateListener(this); //gameHandler inizia ad ascoltare il controller
+        //System.out.println("GameHandler: ora faccio ascoltare game da GC");
+        gameController.getGame().setPropertyChangeListeners(gameController);
+        //System.out.println("GameHandler: ora faccio istanziare i gameElements da GC");
+        gameController.getGame().instantiateGameElements(); //va inizializzato il model, ma non so se questa chiamata va qui
 
+        //System.out.println("GameHandler: ho istanziato Controller che ha istanziato game con i listener");
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         Message setUpPhaseStateMessage = new ClientStateMessage(ClientState.SET_UP_WIZARD_PHASE);
 
@@ -77,9 +83,6 @@ public class GameHandler implements PropertyChangeListener{
     }
 
     private void startPlanningPhase(){
-
-        Message gameStart = gameController.buildPlayerTowerAssociation();
-        sendAll(gameStart);
 
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         Message setUpPhaseStateMessage = new ClientStateMessage(ClientState.PLAY_ASSISTANT_CARD);
@@ -139,6 +142,10 @@ public class GameHandler implements PropertyChangeListener{
             sendTo(nextPlayer, setUpPhaseStateMessage);  //viene aggiornato lo stato del primo giocatore
         }
         else{
+            //mando in broadcast la scelta di torri di ogni player, in modo che tutti possano visualizzarle
+            //in teoria qui per la prima volta i client visualizzano la view
+            Message gameStart = gameController.buildPlayerTowerAssociation();
+            sendAll(gameStart);
             startPlanningPhase();
             System.out.println("Adesso faccio partire la partita con la scelta delle carte assistente (credo). comunque la fase dopo");
         }
@@ -196,10 +203,12 @@ public class GameHandler implements PropertyChangeListener{
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        System.out.println("GH: ho ricevuto un messaggio di update, ora lo mando in broadcast");
         String eventName = evt.getPropertyName();
         if (eventName.equals("UpdateMessage") && evt.getNewValue()!=null){
             Message outwardsMessage = (Message) evt.getNewValue();
             sendAll(outwardsMessage);
         }
+        System.out.println("GH: mandato il messaggio in broadcast");
     }
 }

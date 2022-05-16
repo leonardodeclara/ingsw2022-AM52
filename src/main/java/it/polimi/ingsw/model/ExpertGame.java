@@ -24,8 +24,8 @@ public class ExpertGame extends Game {
     /**
      * Constructor creates an ExpertGame instance
      */
-    public ExpertGame(){
-        super();
+    public ExpertGame(int playersNumber){
+        super(playersNumber);
         personalities = new ArrayList<>();
         coins=20;
         bans=4;

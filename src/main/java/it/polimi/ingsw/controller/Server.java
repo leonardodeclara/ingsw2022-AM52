@@ -29,7 +29,6 @@ public class Server {
         playerToGameMap = new HashMap<>();
         gameHandlers = new ArrayList<>();
         clientHandlerCounter=0;
-
     }
 
 

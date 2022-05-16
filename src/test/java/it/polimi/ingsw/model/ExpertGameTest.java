@@ -11,7 +11,7 @@ class ExpertGameTest {
 
     @Test
     void instantiateGameElementsTest() {
-        ExpertGame game = new ExpertGame();
+        ExpertGame game = new ExpertGame(2);
         game.addPlayer(new Player(0,"mari",Tower.BLACK));
         game.addPlayer(new Player(1,"frizio",Tower.WHITE));
         game.instantiateGameElements();
@@ -21,7 +21,7 @@ class ExpertGameTest {
 
     @Test
     void personalityExtractionTest(){
-        ExpertGame game = new ExpertGame();
+        ExpertGame game = new ExpertGame(2);
         game.addPlayer(new Player(0,"mari",Tower.BLACK));
         game.addPlayer(new Player(1,"frizio",Tower.WHITE));
         game.instantiateGameElements();
@@ -40,7 +40,7 @@ class ExpertGameTest {
 
     @Test
     void moveStudentFromLobbyForCard2() {
-        ExpertGame game = new ExpertGame();
+        ExpertGame game = new ExpertGame(2);
         game.addPlayer(new Player(0,"leo",Tower.WHITE));
         game.addPlayer(new Player(1,"frizio",Tower.BLACK));
         game.instantiateGameElements();
@@ -62,7 +62,7 @@ class ExpertGameTest {
 
     @Test
     void modifiedTeacherMovementTest() {
-        ExpertGame game = new ExpertGame();
+        ExpertGame game = new ExpertGame(2);
         game.addPlayer(new Player(0, "leo", Tower.BLACK));
         game.addPlayer(new Player(1, "mari", Tower.WHITE));
         game.instantiateGameElements();
@@ -102,7 +102,7 @@ class ExpertGameTest {
 
     @Test
     void moveMotherNatureForCard4() {
-        ExpertGame game = new ExpertGame();
+        ExpertGame game = new ExpertGame(2);
         game.addPlayer(new Player(0,"mari",Tower.GREY));
         game.addPlayer(new Player(1,"leo",Tower.WHITE));
         game.instantiateGameElements();
@@ -121,7 +121,7 @@ class ExpertGameTest {
 
     @Test
     void calculateInfluenceForCard6() {
-        ExpertGame game = new ExpertGame();
+        ExpertGame game = new ExpertGame(2);
         game.addPlayer(new Player(0,"mari",Tower.GREY));
         game.addPlayer(new Player(1,"frizio",Tower.WHITE));
         game.instantiateGameElements();
@@ -155,7 +155,7 @@ class ExpertGameTest {
 
     @Test
     void card8EffectTest() {
-        ExpertGame game = new ExpertGame();
+        ExpertGame game = new ExpertGame(2);
         game.addPlayer(new Player(0,"leo",Tower.GREY));
         game.addPlayer(new Player(1,"mari",Tower.BLACK));
         game.instantiateGameElements();
@@ -194,7 +194,7 @@ class ExpertGameTest {
 
     @Test
     void card8EffectWithTowersTest() {
-        ExpertGame game = new ExpertGame();
+        ExpertGame game = new ExpertGame(2);
         game.addPlayer(new Player(0,"mari",Tower.GREY));
         game.addPlayer(new Player(1,"frizio",Tower.WHITE));
         game.instantiateGameElements();
@@ -228,7 +228,7 @@ class ExpertGameTest {
     //
     @Test
     void card9EffectTest() {
-        ExpertGame game = new ExpertGame();
+        ExpertGame game = new ExpertGame(2);
         game.addPlayer(new Player(0,"mari",Tower.BLACK));
         game.addPlayer(new Player(1,"frizio",Tower.WHITE));
         game.instantiateGameElements();
@@ -265,7 +265,7 @@ class ExpertGameTest {
 
     @Test
     void card9EffectWithTowersTest() {
-        ExpertGame game = new ExpertGame();
+        ExpertGame game = new ExpertGame(2);
         game.addPlayer(new Player(0,"leo",Tower.WHITE));
         game.addPlayer(new Player(1,"mari",Tower.GREY));
         game.instantiateGameElements();
@@ -296,7 +296,7 @@ class ExpertGameTest {
 
     @Test
     void personalityCardManagementTest(){
-        ExpertGame game = new ExpertGame();
+        ExpertGame game = new ExpertGame(3);
         game.addPlayer(new Player(0,"leo",Tower.WHITE));
         game.addPlayer(new Player(1,"mari",Tower.GREY));
         game.addPlayer(new Player(2,"frizio",Tower.BLACK));
@@ -311,7 +311,7 @@ class ExpertGameTest {
 
     @Test
     void invalidPersonalitySelectionTest(){
-        ExpertGame game = new ExpertGame();
+        ExpertGame game = new ExpertGame(3);
         game.addPlayer(new Player(0,"leo",Tower.WHITE));
         game.addPlayer(new Player(1,"mari",Tower.GREY));
         game.addPlayer(new Player(2,"frizio",Tower.BLACK));
@@ -324,7 +324,7 @@ class ExpertGameTest {
 
     @Test
     void personalityResetTest(){
-        ExpertGame game = new ExpertGame();
+        ExpertGame game = new ExpertGame(3);
         game.addPlayer(new Player(0,"mari",Tower.BLACK));
         game.addPlayer(new Player(1,"frizio",Tower.WHITE));
         game.addPlayer(new Player(2,"leo",Tower.GREY));

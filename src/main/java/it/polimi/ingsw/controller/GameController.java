@@ -17,21 +17,27 @@ import java.util.Random;
 
 //aggiorna model
 public class GameController implements PropertyChangeListener {
-    Game game;
-    String currentPlayer;
-    ArrayList<String> players;
-    PropertyChangeSupport listener;
-    UpdateMessageBuilder updateMessageBuilder;
+    private Game game;
+    private String currentPlayer;
+    private ArrayList<String> players;
+    private PropertyChangeSupport listener;
+    private UpdateMessageBuilder updateMessageBuilder;
     private ArrayList<Tower> availableTowers;
     private ArrayList<Integer> availableWizards; //poi sta cosa va tolta da game
     private HashMap<String, Integer> playerToWizardMap;
 
     //risoluzione stupida al problema del tipo statico di Game GM: cast esplicito in base al boolean isExpert
-    public GameController(boolean isExpert) {
+    public GameController(boolean isExpert, ArrayList<String> players) {
         updateMessageBuilder = new UpdateMessageBuilder();
         listener = new PropertyChangeSupport(this);
-        game = (isExpert) ? new ExpertGame() : new Game();
-        //game.instantiateGameElements(); //va inizializzato il model, ma non so se questa chiamata va qui
+        game = (isExpert) ? new ExpertGame(players.size()) : new Game(players.size());
+        /*
+        game.setPropertyChangeListeners(this);
+        game.instantiateGameElements(); //va inizializzato il model, ma non so se questa chiamata va qui
+
+         */
+        this.players = new ArrayList<>();
+        this.players.addAll(players);
         availableWizards = new ArrayList<>();
         for (int i = 0; i< 4; i++){
             availableWizards.add(i);
@@ -40,7 +46,10 @@ public class GameController implements PropertyChangeListener {
         availableTowers.addAll(Arrays.asList(Tower.values()));
         playerToWizardMap = new HashMap<>();
 
+        System.out.println("GameController: mi sono istanziato");
     }
+
+    public void handleGameInstantiation(){}
 
 
     //creo l'associazione giocatore-wizard, mi servirà dopo per fare game.giveAssistantDeck()
@@ -65,6 +74,7 @@ public class GameController implements PropertyChangeListener {
         System.out.println("Torri disponibili lato server:"+availableTowers);
         if (availableTowers.contains(tower)){
             game.addPlayer(new Player(game.getPlayers().size(),player, tower)); //rivedere l'assegnamento dell'indice
+            game.setPlayerPropertyChangeListener(player, this); //setto il listener per questo player
             availableTowers.remove(tower);
             System.out.println("GameController: ho aggiornato le torri disponibili togliendo " + tower.toString());
             return new ClientStateMessage(ClientState.WAIT_TURN);
@@ -121,44 +131,64 @@ public class GameController implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent event) {
+        System.out.println("GC: è stato invocato il mio propertyChange");
         String eventName = event.getPropertyName();
         Message toSend = null;
         switch (eventName) {
             case "MotherNature":
                 toSend = updateMessageBuilder.buildMotherNatureMessage(event);
+                break;
             case "Merge":
                 toSend = updateMessageBuilder.buildMergeMessage(event);
+                break;
             case "LastRound":
                 toSend = updateMessageBuilder.buildLastRoundMessage(event);
+                break;
             case "Gameover":
                 toSend = updateMessageBuilder.buildGameOverMessage(event);
+                break;
             case "CloudsRefill":
                 toSend = updateMessageBuilder.buildCloudsRefillMessage(event);
+                break;
             case "CurrentAssistantCards": //vedere cosa mandare effettivamente nel messaggio
                 toSend = updateMessageBuilder.buildCurrentTurnAssistantCardsMessage(event);
+                break;
             case "Deck": //non se è messaggio broadcast, forse in gameHandler va gestito in maniera diversa
                 toSend = updateMessageBuilder.buildDeckUpdateMessage(event);
+                break;
             case "IslandTowers":
                 toSend = updateMessageBuilder.buildIslandTowersMessage(event);
+                break;
             case "IslandStudents":
                 toSend = updateMessageBuilder.buildIslandStudentsMessage(event);
+                //System.out.println("GC: il messaggio di update degli studenti dell'isola è pronto");
+                break;
             case "PickedCloud":
                 toSend = updateMessageBuilder.buildPickedCloudMessage(event);
+                break;
             case "Board":
                 toSend = updateMessageBuilder.buildBoardUpdateMessage(event);
+                break;
             case "ActivePersonality":
                 toSend = updateMessageBuilder.buildActivePersonalityMessage(event);
+                break;
             case "NoLongerActivePersonality":
                 toSend = updateMessageBuilder.buildNoLongerActivePersonalityMessage(event);
+                break;
             case "NotOwnedCoins": //vedere se effettivamente è utile
             case "Bans": //vedere se effettivamente è utile
             case "SelectedPersonality":
             //dovrebbero mancare listener per gli effetti "istant" delle carte personaggio, vedere quelle a parte
             //si potrebbe mettere come listener in quel caso cardController
         }
+        //System.out.println("GC: ho generato un messaggio di update: ora lo passo a GH");
         listener.firePropertyChange("UpdateMessage", null, toSend);
         //in propertyChange di GameHandler bisogna fare il controllo oldValue-newValue perché se
         // la generazione dei messaggi restituisce null non devo inviare nulla (tipo nel caso LastRound)
 
+    }
+
+    public Game getGame() {
+        return game;
     }
 }

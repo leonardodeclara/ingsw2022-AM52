@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class Game {
     protected Basket basket;
     protected ArrayList<Player> players;
+    protected int numOfPlayers;
     protected Player currentPlayer;
     private Player winner;
     protected ArrayList<Island> islands;
@@ -36,7 +37,8 @@ public class Game {
     //AGGIUNGERE TRY CATCH PER refillClouds()che setta lastRound = true
     //AGGIUNGERE TRY CATCH PER playAssistantCard() quando viene giocata l'ultima, che setta lastRound = true
     //AGGIUNGERE TRY CATCH per refillClouds() per quando non ci sono abbastanza studenti per le nuvole => si salta la fase letPlayerPickStudent
-    public Game() {
+    public Game(int playersNumber) {
+        numOfPlayers=playersNumber;
         players = new ArrayList<>(); //firePropertyChange
         islands = new ArrayList<>(); //firePropertyChange
         clouds = new ArrayList<>(); //firePropertyChange
@@ -52,6 +54,13 @@ public class Game {
         winner = null; //firePropertyChange
         teachersOwners = new HashMap<>();
         listeners = new PropertyChangeSupport(this);
+
+        for (int i = 0; i < numOfPlayers; i++){
+            clouds.add(new Cloud(i));
+        }
+        for (int i = 0; i< Constants.MAX_NUM_ISLANDS; i++){
+            islands.add(new Island(i));
+        }
     }
 
     /**
@@ -60,12 +69,17 @@ public class Game {
      */
     //bisogna gestire il lancio di questa eccezione (creare una ad hoc)
     public void addPlayer(Player player){
-        if (players.size()<3)
+        if (players.size()<3){
+            player.getBoard().setTowers(numOfPlayers==2? 8:6);
             players.add(player);
+        }
         else
             throw new RuntimeException("Superato limite di giocatori");
     }
 
+    /**
+     * TODO: modificare i test di instantiateGameElements perché sono stati spostati degli assegnamenti, vedere sotto
+     */
     /**
      * This method instantiates all the game elements (clouds,teachers,basket,islands and boards).
      *
@@ -76,6 +90,7 @@ public class Game {
         for(int i =0; i< Color.values().length;i++){
             teachersOwners.put(Color.values()[i], null);
         }
+        //System.out.println("Game: ho finito di istanziare i professori");
 
         //aggiunte tutte le carte di tutti i maghi
         for(int numWizard = 0; numWizard < 4; numWizard++){
@@ -85,38 +100,53 @@ public class Game {
                 assistantDecks.add(new Assistant(numMoves,priority, numWizard));
             }
         }
+        //System.out.println("Game: ho finito di istanziare i deck assistenti");
 
-        //istanziate le isole
+        //istanziate le isole -> spostato nel costruttore, altrimenti non veniva ascoltato il primo fill delle Island
+        /*
         for (int i = 0; i< Constants.MAX_NUM_ISLANDS; i++){
             islands.add(new Island(i));
         }
+
+        */
         //posizionata in maniera randomica madre natura
         Random indexGenerator = new Random();
         int initialMotherNature = indexGenerator.nextInt(Constants.MAX_NUM_ISLANDS);
 
         //non creo un metodo placeMotherNature solo per fare questa azione
         islands.get(initialMotherNature).setMotherNature(true);
-        currentMotherNatureIsland=islands.get(initialMotherNature);
 
+        currentMotherNatureIsland=islands.get(initialMotherNature);
+        listeners.firePropertyChange("MotherNature", null, currentMotherNatureIsland.getIslandIndex());
+        //vedere se ci va
+
+        //System.out.println("Game: ho finito di settare la posizione iniziale di MN");
         //istanzio il sacchetto preparatorio
         basket = new Basket(new int[]{2, 2, 2, 2, 2});
 
         //riempio le isole con le pedine
         fillIslands();
+        //System.out.println("Game: ho finito di fare fill alle isole ");
 
         //riempio il sacchetto definitivo
         basket = new Basket(new int[]{24,24,24,24,24});
 
-        //creo le nuvole
-        for (int i = 0; i < players.size(); i++){
+
+        //creo le nuvole -> spostato nel costruttore,
+        /*
+        for (int i = 0; i < numOfPlayers; i++){
             clouds.add(new Cloud(i));
         }
+        */
 
+
+        /* spostato in addPlayer
         //setto il numero di torri nella board
         for (Player player: players)
             player.getBoard().setTowers(players.size()==2? 8:6);
+        */
 
-
+        //System.out.println("Game: ho finito di istanziare i gameElements");
     }
 
     /**
@@ -125,7 +155,7 @@ public class Game {
      * @param playerId : id given to the player, used as the index for the players arrayList
      */
     public void initiatePlayerLobby(int playerId){
-        int studentLimit = players.size()==2? 7: 9;
+        int studentLimit = numOfPlayers==2? 7: 9;
         for(int k = 0; k < studentLimit; k++)
             players.get(playerId).addToBoardLobby(basket.pickStudent());
     }
@@ -721,16 +751,14 @@ public class Game {
         for (Island island: islands){
             island.setPropertyChangeListener(controller); //fire fatto, in teoria (vedere per students)
         }
+        /* SPOSTATA FUORI IN METODO A PARTE PERCHè i player non vengono aggiunti quando viene istanziato game
         for (Player player: players){
             player.setPropertyChangeListener(controller); //fire fatto
-        }
-        //per le board è un po' un problema perché non hanno un identificativo
-        //si potrebbe creando un attributo String owner
-        //oppure (meglio imho) creare in player dei metodi che chiamano i metodi di modifica delle board, in questo modo
-        // posso fare firePropertyChange in quei metodi passando player
-        //in quanto sono i player che sono stati modificati
-        //poi è comodo visto che lato client le board sono identificate dal nome del player
-        //poi si può fare un solo listener per board oppure più listener specifici per table, lobby, teachers ecc
+        }*/
+    }
+
+    public void setPlayerPropertyChangeListener(String nickname, GameController controller){
+        getPlayerByName(nickname).setPropertyChangeListener(controller);
     }
 
     //in teoria

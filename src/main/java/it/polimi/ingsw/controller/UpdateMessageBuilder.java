@@ -87,6 +87,7 @@ public class UpdateMessageBuilder {
     }
 
     public Message buildIslandStudentsMessage(PropertyChangeEvent event){
+        //System.out.println("MessageBuilder: ora costruisco un messaggio di update degli studenti dell'isola");
         Island updatedModelIsland = (Island) event.getNewValue();
         ArrayList<Color> students = updatedModelIsland.getStudents();
         int index = updatedModelIsland.getIslandIndex();

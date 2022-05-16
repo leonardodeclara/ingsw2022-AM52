@@ -104,7 +104,9 @@ public class Island {
      */
     public void addStudent(Color student){
         students.add(student);
+        System.out.println("Island: ora scatta un propertyChange per la modifica degli students");
         listeners.firePropertyChange("IslandStudents", null, this);
+        System.out.println("Island: è scattato il propertyChange");
     }
 
     /**

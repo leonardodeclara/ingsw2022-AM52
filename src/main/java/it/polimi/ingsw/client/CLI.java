@@ -138,6 +138,8 @@ public class CLI implements Runnable{
             updateIslandTowers((IslandTowersUpdateMessage) updateMessage);
         if (updateMessage instanceof CloudUpdateMessage)
             updateCloud((CloudUpdateMessage) updateMessage);
+        if (updateMessage instanceof MotherNatureMovementUpdateMessage)
+            updateMotherNaturePosition((MotherNatureMovementUpdateMessage) updateMessage);
     }
 
     public void updateAvailableWizard(AvailableWizardMessage message){
@@ -154,11 +156,14 @@ public class CLI implements Runnable{
             GB.addClientBoard(player);
             GB.setClientTeam(player, associations.get(player));
         }
+
         GB.print();
     }
 
     public void updateCurrentTurnAssistantCards(CurrentTurnAssistantCardsUpdateMessage message){
         GB.setTurnCard( message.getCurrentTurnAssistantCards());
+        System.out.println("Modifica delle currentAssistantCards (TODO, non sono ancora visibili)");
+        System.out.println();
         GB.print();
     }
 
@@ -168,16 +173,29 @@ public class CLI implements Runnable{
 
     public void updateIslandStudents(IslandStudentsUpdateMessage message){
         GB.setIslandStudents(message.getIslandIndex(), message.getStudents());
+        System.out.println("Modifica degli studenti nelle isole");
+        System.out.println();
         GB.print();
     }
 
     public void updateIslandTowers(IslandTowersUpdateMessage message){
         GB.setIslandTowers(message.getIslandIndex(), message.getTowers());
+        System.out.println("Modifica delle torri nelle isole");
+        System.out.println();
         GB.print();
     }
 
     public void updateCloud(CloudUpdateMessage message){
         GB.emptyCloud(message.getCloudIndex());
+        System.out.println("Svuotamento di una nuvola");
+        System.out.println();
+        GB.print();
+    }
+
+    public void updateMotherNaturePosition(MotherNatureMovementUpdateMessage message){
+        GB.changeMNPosition(message.getIslandIndex());
+        System.out.println("Spostamento di MN");
+        System.out.println();
         GB.print();
     }
 

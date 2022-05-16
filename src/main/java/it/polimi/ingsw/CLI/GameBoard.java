@@ -40,24 +40,25 @@ public class GameBoard {
             islands.add(new ClientIsland(i));
         }
 
-        for(int i = 0; i < getNumberOfPlayers(); i++){
+        for(int i = 0; i < numberOfPlayers; i++){
             clouds.add(new ClientCloud(i));
         }
 
         //rivedere se ha senso aggiungere tutte le carte qui, tanto ne vengono estratte casualmente solo tre
-        personalities.add(new ClientPersonality(1, false, 1));
-        personalities.add(new ClientPersonality(2, false, 2));
-        personalities.add(new ClientPersonality(3, false, 3));
-        personalities.add(new ClientPersonality(4, false, 1));
-        personalities.add(new ClientPersonality(5, false, 2));
-        personalities.add(new ClientPersonality(6, false, 3));
-        personalities.add(new ClientPersonality(7, false, 1));
-        personalities.add(new ClientPersonality(8, false, 2));
-        personalities.add(new ClientPersonality(9, false, 3));
-        personalities.add(new ClientPersonality(10, false, 1));
-        personalities.add(new ClientPersonality(11, false, 2));
-        personalities.add(new ClientPersonality(12, false, 3));
-
+        if (expertGame) {
+            personalities.add(new ClientPersonality(1, false, 1));
+            personalities.add(new ClientPersonality(2, false, 2));
+            personalities.add(new ClientPersonality(3, false, 3));
+            personalities.add(new ClientPersonality(4, false, 1));
+            personalities.add(new ClientPersonality(5, false, 2));
+            personalities.add(new ClientPersonality(6, false, 3));
+            personalities.add(new ClientPersonality(7, false, 1));
+            personalities.add(new ClientPersonality(8, false, 2));
+            personalities.add(new ClientPersonality(9, false, 3));
+            personalities.add(new ClientPersonality(10, false, 1));
+            personalities.add(new ClientPersonality(11, false, 2));
+            personalities.add(new ClientPersonality(12, false, 3));
+        }
     }
 
     public void print(){
@@ -138,7 +139,7 @@ public class GameBoard {
     //gestiscilo con un try-catch
     private void printIslands() {
         for (ClientIsland island : islands) {
-            System.out.println("ISOLA" + island.getIslandIndex() + ":");
+            System.out.println("ISOLA " + island.getIslandIndex() + ":");
             System.out.print("STUDENTS ON THE ISLAND: ");
             for (Color color : Color.values()) {
                 try{
@@ -167,7 +168,7 @@ public class GameBoard {
             System.out.println(Constants.RESET);
             System.out.println();
 
-            System.out.println("NUMBER OF MERGED ISLANDS:" + island.getNumMergedIslands());
+            System.out.println("NUMBER OF MERGED ISLANDS: " + island.getNumMergedIslands());
 
             if (island.isMotherNature())
                 System.out.println("MOTHER NATURE IS HERE!");
@@ -241,6 +242,13 @@ public class GameBoard {
     public void emptyCloud(int cloudIndex){
         getCloudByIndex(cloudIndex).getStudents().clear();
 
+    }
+    public void changeMNPosition(int islandIndex){
+        ClientIsland oldMNIsland = islands.stream().filter(ClientIsland::isMotherNature).findFirst().orElse(null);
+        if (oldMNIsland !=null){
+            oldMNIsland.setMotherNature(false);
+        }
+        getIslandByIndex(islandIndex).setMotherNature(true);
     }
 
     public int getNumberOfPlayers() {
