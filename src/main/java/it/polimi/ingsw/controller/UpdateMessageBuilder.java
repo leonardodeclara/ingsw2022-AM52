@@ -35,9 +35,20 @@ public class UpdateMessageBuilder {
         return new MotherNatureMovementUpdateMessage(motherNaturePosition);
     }
 
+    //quando viene fatto un merge viene mandata l'intera lista con le isole aggiornate
     public Message buildMergeMessage(PropertyChangeEvent event){
-        int[] islandIndexes = (int[]) event.getNewValue();
-        return new IslandMergeUpdateMessage(islandIndexes[0], islandIndexes[1]);
+        ArrayList<Island> modelIslands = (ArrayList<Island>) event.getNewValue();
+        ArrayList<ClientIsland> clientIslands = new ArrayList<>();
+        for (Island modelIsland: modelIslands){
+            ClientIsland newIsland = new ClientIsland(modelIsland.getIslandIndex());
+            newIsland.setTowers(modelIsland.getTowers());
+            newIsland.setStudents(modelIsland.getStudents());
+            newIsland.setMotherNature(modelIsland.isMotherNature());
+            newIsland.setNumMergedIslands(modelIsland.getNumMergedIslands());
+            clientIslands.add(newIsland);
+        }
+
+        return new IslandMergeUpdateMessage(clientIslands);
     }
 
     public Message buildLastRoundMessage(PropertyChangeEvent event){
@@ -122,13 +133,13 @@ public class UpdateMessageBuilder {
 
     public Message buildActivePersonalityMessage(PropertyChangeEvent event){
         int activeCardId = (int) event.getNewValue();
-        return new ActiveCharacterCardMessage(activeCardId);
+        return new ActivePersonalityMessage(activeCardId);
     }
 
     //poi vedere se effettivamente è utile o no o se posso inglobare in messaggi di fine round
     public Message buildNoLongerActivePersonalityMessage(PropertyChangeEvent event){
         int inactiveCardId = (int) event.getNewValue();
-        return new InactiveCharacterCardMessage(inactiveCardId);
+        return new InactivePersonalityMessage(inactiveCardId);
     }
 
 

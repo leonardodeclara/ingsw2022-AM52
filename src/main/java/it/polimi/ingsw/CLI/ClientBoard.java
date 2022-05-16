@@ -10,6 +10,7 @@ public class ClientBoard {
     private HashMap<Color,Integer> studentsTable;
     private ArrayList<Color> teacherTable;
     private ArrayList<Color> lobby;
+    private HashMap<Integer, Integer> deck;
     private int towers;
     private int coins;
     private String owner;
@@ -21,12 +22,17 @@ public class ClientBoard {
         this.studentsTable = new HashMap<>();
         this.teacherTable = new ArrayList<>();
         this.lobby = new ArrayList<>();
+        this.deck = new HashMap<>();
         this.towers = towers;
         this.owner = owner;
     }
 
     public void setCurrentCard(int currentCard) {
         this.currentCard = currentCard;
+    }
+
+    public int getCurrentCard() {
+        return currentCard;
     }
 
     public HashMap<Color, Integer> getStudentsTable() {
@@ -85,5 +91,9 @@ public class ClientBoard {
 
     public void setTeam(Tower team) {
         this.team = team;
+    }
+
+    public void setDeck(HashMap<Integer, Integer> deck) {
+        this.deck = deck;
     }
 }

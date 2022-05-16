@@ -453,7 +453,7 @@ public class Game {
                     islands.remove(leftIsland);
                 }
 
-                listeners.firePropertyChange("Merge", null, new int[]{mergerId, leftIsland.getIslandIndex()});
+                listeners.firePropertyChange("Merge", null, new ArrayList<>(islands));
             }
         }
 
@@ -468,7 +468,7 @@ public class Game {
                     island.merge(rightIsland);
                     islands.remove(rightIsland);
                 }
-                listeners.firePropertyChange("Merge", null, new int[]{mergerId, rightIsland.getIslandIndex()});
+                listeners.firePropertyChange("Merge", null, new ArrayList<>(islands));
             }
         }
     }

@@ -1,9 +1,9 @@
 package it.polimi.ingsw.messages;
 
-public class InactiveCharacterCardMessage implements Message{
+public class InactivePersonalityMessage implements Message{
     private int inactiveCardId;
 
-    public InactiveCharacterCardMessage(int inactiveCardId){
+    public InactivePersonalityMessage(int inactiveCardId){
         this.inactiveCardId=inactiveCardId;
     }
 

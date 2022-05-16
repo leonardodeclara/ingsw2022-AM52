@@ -7,15 +7,16 @@ import it.polimi.ingsw.model.Tower;
 import java.util.*;
 
 public class GameBoard {
-    int numberOfPlayers;
-    boolean expertGame;
-    ArrayList<Integer> availableWizards; //sono 4 e a ogni propagazione diminuiscono
-    ArrayList<Tower> availableTowers;
-    ArrayList<ClientIsland> islands;
-    ArrayList<String> PlayersNickname;
-    ArrayList<ClientCloud> clouds;
-    HashMap<String,ClientBoard> clientBoards; //deve diventare una mappa
-    ArrayList<ClientPersonality> personalities;
+    private int numberOfPlayers;
+    private boolean expertGame;
+    private ArrayList<Integer> availableWizards; //sono 4 e a ogni propagazione diminuiscono
+    private ArrayList<Tower> availableTowers;
+    private ArrayList<ClientIsland> islands;
+    private ArrayList<String> PlayersNickname;
+    private ArrayList<ClientCloud> clouds;
+    private HashMap<String,ClientBoard> clientBoards; //deve diventare una mappa
+    private ArrayList<ClientPersonality> personalities;
+    private ClientPersonality activePersonality;
     int coins;
 
     public GameBoard(){
@@ -43,6 +44,7 @@ public class GameBoard {
         }
 
         //rivedere se ha senso aggiungere tutte le carte qui, tanto ne vengono estratte casualmente solo tre
+        /*
         if (expertGame) {
             personalities.add(new ClientPersonality(1, false, 1));
             personalities.add(new ClientPersonality(2, false, 2));
@@ -56,7 +58,9 @@ public class GameBoard {
             personalities.add(new ClientPersonality(10, false, 1));
             personalities.add(new ClientPersonality(11, false, 2));
             personalities.add(new ClientPersonality(12, false, 3));
+
         }
+           */
     }
 
     public void print(){
@@ -128,7 +132,10 @@ public class GameBoard {
             }
             System.out.println();
 
-            //mancano da stampare: monete (se in expert game), carta assistente corrente,
+            if (clientBoard.getCurrentCard()!= -1)
+                System.out.println("CURRENT ASSISTANT CARD: " + clientBoard.getCurrentCard());
+
+            //mancano da stampare: monete (se in expert game), carte assistenti disponibili ma solo del client singolo
 
         }
     }
@@ -199,8 +206,7 @@ public class GameBoard {
    private void printPersonalityCards(){
         System.out.println("AVAILABLE PERSONALITY CARDS:");
         for(ClientPersonality personality : personalities){
-            if(personality.getHasBeenUsed().equals(false))
-                System.out.print(personality.getCardID() + " ");
+            System.out.print(personality.getCardID() + " ");
 
         }
         System.out.println();
@@ -226,7 +232,7 @@ public class GameBoard {
     }
 
     public void setPlayerDeck(String player, HashMap<Integer, Integer> cards){
-        //aggiorno il deck di quel player
+        clientBoards.get(player).setDeck(cards);
     }
 
     public void setIslandStudents(int islandIndex, ArrayList<Color> students){
@@ -247,6 +253,13 @@ public class GameBoard {
             oldMNIsland.setMotherNature(false);
         }
         getIslandByIndex(islandIndex).setMotherNature(true);
+    }
+
+    public void setUpdatedClientBoard(String player, HashMap<Color, Integer> updatedStudentTable, ArrayList<Color> updatedLobbyTable, ArrayList<Color> updatedTeacherTable){
+        ClientBoard board = clientBoards.get(player);
+        board.setStudentsTable(updatedStudentTable);
+        board.setLobby(updatedLobbyTable);
+        board.setTeacherTable(updatedTeacherTable);
     }
 
     public int getNumberOfPlayers() {
@@ -303,6 +316,18 @@ public class GameBoard {
 
     public int getCoins() {
         return coins;
+    }
+
+    public void setActivePersonality(int activePersonality) {
+        /**
+         * TODO: set dell'active card
+         */
+    }
+
+    public void resetActivePersonality(int inactivePersonality){
+        /**
+         * TODO: reset dell'active card
+         */
     }
 
     public void setNumberOfPlayers(int numberOfPlayers) {

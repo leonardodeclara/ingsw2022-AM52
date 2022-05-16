@@ -44,6 +44,8 @@ public class GameHandler implements PropertyChangeListener{
             handleTowerSelectionMessage((TowerSelectionMessage)message, clientHandler);
         else if(message instanceof PlayAssistantCardMessage)
             handlePlayAssistantCardMessage((PlayAssistantCardMessage) message,clientHandler);
+        //else if (message instanceof MoveStudentMessage)
+            //
     }
 
 
@@ -87,14 +89,15 @@ public class GameHandler implements PropertyChangeListener{
     private void startPlanningPhase(){
 
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
-        Message setUpPhaseStateMessage = new ClientStateMessage(ClientState.PLAY_ASSISTANT_CARD);
+        Message playAssistantCardMessage = new ClientStateMessage(ClientState.PLAY_ASSISTANT_CARD);
 
         //qui usiamo ancora players.get(0), non è previsto un ordine specifico
-        sendAllExcept(nameToHandlerMap.get(players.get(0)),waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
-        sendTo(players.get(0), new AvailableWizardMessage(gameController.getAvailableWizards())); //al primo giocatore viene aggiornata la lista di wizard disponibili
-        //perché mandi i wizard residui? dovresti mandare le carte disponibili
-        //ah no okay hai fatto copia incolla da startGame, comunque va cambiata
-        sendTo(players.get(0),setUpPhaseStateMessage);  //viene aggiornato lo stato del primo giocatore
+        //alla prima planning phase in assoluto scegliamo random il primo giocatore (direi stesso ordine della setupPhase)
+        // ma in teoria dal secondo round l'ordine è quello stabilito dalle carte assistente del round prima
+        String startingPlayer = players.get(0);
+        sendAllExcept(nameToHandlerMap.get(startingPlayer), waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
+
+        sendTo(startingPlayer, playAssistantCardMessage);  //viene aggiornato lo stato del primo giocatore
 
         updatePlayersOrder(players);
     }
@@ -126,6 +129,7 @@ public class GameHandler implements PropertyChangeListener{
     private String getNicknameFromClientID(int clientID){
         return server.getIdToNicknameMap().get(clientID);
     }
+
     private void handleTowerSelectionMessage(TowerSelectionMessage message, ClientHandler client){
         Tower chosenTower = message.getTower();
         String clientName = getNicknameFromClientID(client.getID());
@@ -174,10 +178,7 @@ public class GameHandler implements PropertyChangeListener{
         else{
             startActionPhase();
         }
-
     }
-
-
 
     private void sendTo(String nickname,Message message){
         ClientHandler clientHandler = nameToHandlerMap.get(nickname);

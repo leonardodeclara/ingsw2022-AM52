@@ -1,9 +1,9 @@
 package it.polimi.ingsw.messages;
 
-public class ActiveCharacterCardMessage implements Message{
+public class ActivePersonalityMessage implements Message{
     private int activeCardId;
 
-    public ActiveCharacterCardMessage(int activeCardId){
+    public ActivePersonalityMessage(int activeCardId){
         this.activeCardId=activeCardId;
     }
 

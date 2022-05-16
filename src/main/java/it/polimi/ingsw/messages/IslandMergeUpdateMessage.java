@@ -1,19 +1,16 @@
 package it.polimi.ingsw.messages;
 
+import it.polimi.ingsw.CLI.ClientIsland;
+import java.util.ArrayList;
+
 public class IslandMergeUpdateMessage implements Message{
-    int mergerIsland;
-    int mergedIsland;
+    ArrayList<ClientIsland> updatedClientIslands;
 
-    public IslandMergeUpdateMessage(int mergerIsland, int mergedIsland) {
-        this.mergerIsland = mergerIsland;
-        this.mergedIsland = mergedIsland;
+    public IslandMergeUpdateMessage(ArrayList<ClientIsland> updatedClientIslands) {
+        this.updatedClientIslands=updatedClientIslands;
     }
 
-    public int getMergerIsland() {
-        return mergerIsland;
-    }
-
-    public int getMergedIsland() {
-        return mergedIsland;
+    public ArrayList<ClientIsland> getUpdatedClientIslands() {
+        return updatedClientIslands;
     }
 }

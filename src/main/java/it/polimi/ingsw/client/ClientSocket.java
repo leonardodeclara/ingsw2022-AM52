@@ -54,7 +54,7 @@ public class ClientSocket implements Runnable{
         try{
             while(active){
                 Message receivedMessage = (Message) in.readObject();
-                System.out.println("Ho ricevuto un messaggio! "+ receivedMessage.getClass().toString());
+                //System.out.println("Ho ricevuto un messaggio! "+ receivedMessage.getClass().toString());
                 cli.handleMessageFromServer(receivedMessage);
 
             }

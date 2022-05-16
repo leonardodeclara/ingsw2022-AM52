@@ -19,14 +19,14 @@ public class CLI implements Runnable{
     private final Scanner inputStream;
     private final PrintStream outputStream;
     private boolean active;
-    Client client;
-    ClientSocket clientSocket;
-    ClientState currentState;
-    InputParser inputParser;
-    ArrayList<Object> playerInput;
+    private Client client;
+    private ClientSocket clientSocket;
+    private ClientState currentState;
+    private InputParser inputParser;
+    private ArrayList<Object> playerInput;
     private volatile Message receivedMessage;
-    final ScheduledExecutorService executorService;
-    GameBoard GB;
+    private final ScheduledExecutorService executorService;
+    private GameBoard GB;
 
     /*
     TODO:
@@ -83,7 +83,7 @@ public class CLI implements Runnable{
     }
 
     public void handleMessageFromServer(Message receivedMessage){
-        System.out.println("Ho ricevuto dal server un messaggio di " + (receivedMessage.getClass().toString()));
+        //System.out.println("Ho ricevuto dal server un messaggio di " + (receivedMessage.getClass().toString()));
         if(receivedMessage instanceof ClientStateMessage){
             setNextState(((ClientStateMessage) receivedMessage).getNewState()); //Se è uno stato aggiorna quello corrente
         }else if(receivedMessage instanceof ErrorMessage) {
@@ -110,9 +110,6 @@ public class CLI implements Runnable{
                 connectionAccepted = false;
             }
         }
-
-
-
     }
 
     //stampo solo gli elementi di gioco che dipendono dal numero di giocatori e dalla modalità
@@ -121,7 +118,6 @@ public class CLI implements Runnable{
         GB.setExpertGame((Boolean)data.get(1));
         //GB.instantiateGameElements();
         // spostato dopo che vengono estratti i primi studenti per le isole e viene posizionata MN
-        //vedi metodo setInitialGameBoard
     }
 
     public void updateView(Message updateMessage) {
@@ -145,6 +141,16 @@ public class CLI implements Runnable{
             updateCloud((CloudUpdateMessage) updateMessage);
         else if (updateMessage instanceof MotherNatureMovementUpdateMessage)
             updateMotherNaturePosition((MotherNatureMovementUpdateMessage) updateMessage);
+        else if (updateMessage instanceof IslandMergeUpdateMessage)
+            updateIslandsMerge((IslandMergeUpdateMessage) updateMessage);
+        else if (updateMessage instanceof BoardUpdateMessage)
+            updatePlayerBoard((BoardUpdateMessage) updateMessage);
+        else if (updateMessage instanceof CloudsRefillMessage)
+            updateRefilledClouds((CloudsRefillMessage) updateMessage);
+        else if (updateMessage instanceof ActivePersonalityMessage)
+            updateActivePersonality((ActivePersonalityMessage) updateMessage);
+        else if (updateMessage instanceof InactivePersonalityMessage)
+            updateInactivePersonality((InactivePersonalityMessage) updateMessage);
     }
 
     public void updateAvailableWizard(AvailableWizardMessage message){
@@ -167,7 +173,6 @@ public class CLI implements Runnable{
             GB.addClientBoard(player);
             GB.setClientTeam(player, associations.get(player));
         }
-
         GB.print();
     }
 
@@ -178,6 +183,7 @@ public class CLI implements Runnable{
         GB.print();
     }
 
+    //in teoria ogni client vede solo il proprio mazzo
     public void updatePlayerDeck(AssistantDeckUpdateMessage message){
         GB.setPlayerDeck(message.getOwner(), message.getCards());
     }
@@ -210,6 +216,41 @@ public class CLI implements Runnable{
         GB.print();
     }
 
+    public void updateIslandsMerge(IslandMergeUpdateMessage message){
+        GB.setIslands(message.getUpdatedClientIslands());
+        System.out.println("Merge di isole");
+        System.out.println();
+        GB.print();
+    }
+
+    public void updatePlayerBoard(BoardUpdateMessage message){
+        String boardOwner = message.getOwner();
+        GB.setUpdatedClientBoard(boardOwner, message.getUpdatedBoardTable(), message.getUpdatedLobbyTable(), message.getUpdatedTeacherTable());
+        System.out.println("Aggiornata la board di" + boardOwner);
+        System.out.println();
+        GB.print();
+    }
+
+    public void updateRefilledClouds(CloudsRefillMessage message){
+        GB.setClouds(message.getClouds());
+        System.out.println("Riempite le clouds");
+        System.out.println();
+        GB.print();
+    }
+
+    public void updateActivePersonality(ActivePersonalityMessage message){
+        GB.setActivePersonality(message.getActiveCardId());
+        System.out.println("È stata attivata una carta personaggio");
+        System.out.println();
+        GB.print();
+    }
+
+    public void updateInactivePersonality(InactivePersonalityMessage message){
+        GB.resetActivePersonality(message.getInactiveCardId());
+        //non so se serve stampare il fatto che una carta non è più attiva
+    }
+
+
     private void visualizeContextMessage(){
         //System.out.println("Vediamo che messaggio ho ricevuto");
         switch(currentState){
@@ -237,6 +278,9 @@ public class CLI implements Runnable{
                 //GB.print(); //questo è il momento in cui printiamo l'attuale stato della partita.
                 outputStream.println("Scegli una carta da giocare!");
                 break;
+            case MOVE_FROM_LOBBY:
+                outputStream.println("Scegli uno studente da spostare e la sua destinazione (formato: move x in y, y>=0 per spostare su isola y, y = -1 per spostare nella tavolta )");
+                break;
 
 
         }
@@ -255,6 +299,9 @@ public class CLI implements Runnable{
                 break;
             case PLAY_ASSISTANT_CARD:
                 outputStream.println("La carta scelta non è disponibile! Scegline un altro");
+                break;
+            case MOVE_FROM_LOBBY:
+                outputStream.println("Scelta non valida! Riprova");
                 break;
         }
     }
@@ -282,7 +329,8 @@ public class CLI implements Runnable{
             case PLAY_ASSISTANT_CARD:
                 outputStream.println("Le carte sono numerate da 1 a 10!");
                 break;
-
+            case MOVE_FROM_LOBBY:
+                outputStream.println("I parametri inseriti non sono validi!");
         }
     }
 
