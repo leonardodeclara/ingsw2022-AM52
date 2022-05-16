@@ -1,5 +1,6 @@
 package it.polimi.ingsw.CLI;
 
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.model.Color;
 
 import java.io.Serializable;
@@ -15,6 +16,21 @@ public class ClientCloud implements Serializable {
         this.students = new ArrayList<>();
     }
 
+    public void print(){
+        System.out.println("NUVOLA: " + getCloudIndex());
+        try {
+            for(Color color : Color.values()) {
+                int numberOfStudentPerColor = (int) getStudents().stream().filter(c -> c == color).count();
+                for (int i = 0; i < numberOfStudentPerColor; i++) {
+                    System.out.print(Constants.getStudentsColor(color) + "■");
+                }
+                System.out.println(Constants.RESET);
+            }
+
+        } catch (NullPointerException e) {
+            System.out.println("no studenti");
+        }
+    }
     public int getCloudIndex() {
         return cloudIndex;
     }

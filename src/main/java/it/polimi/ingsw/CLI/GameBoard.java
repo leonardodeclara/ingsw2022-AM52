@@ -22,6 +22,7 @@ public class GameBoard {
     private HashMap<String, ArrayList<ClientAssistant>> nameToDeckMap;
     int coins;
 
+//TODO sostituire con ascii art intestazioni "board","islands","clouds"
 
     public GameBoard(){
         availableWizards = new ArrayList<>();
@@ -76,7 +77,7 @@ public class GameBoard {
     }
 
     private void printClientBoards(){ //sarebbe meglio se ogni componente avesse un metodo print e qui venisse chiamato solo quello
-        System.out.println("*****************************************BOARDS DEI GIOCATORI*****************************************");
+        System.out.println("*****************************************BOARDS DEI GIOCATORI*****************************************************");
         for(ClientBoard clientBoard : clientBoards.values()){
             clientBoard.print();
         }
@@ -86,41 +87,7 @@ public class GameBoard {
     private void printIslands() {
         System.out.println("*****************************************ISOLE*****************************************");
         for (ClientIsland island : islands) {
-            System.out.println("ISOLA " + island.getIslandIndex() + ":");
-            System.out.print("STUDENTS ON THE ISLAND: ");
-            for (Color color : Color.values()) {
-                try{
-                    int numberOfStudentsPerColor = (int) island.getStudents().stream().filter(c -> c == color).count();
-                    for (int i = 0; i < numberOfStudentsPerColor; i++) {
-                        System.out.print(Constants.getStudentsColor(color) + "■ ");
-                    }
-                }
-                catch (NullPointerException e){
-                    System.out.println("No studenti del colore " + color.toString());
-                }
-
-                System.out.println(Constants.RESET);
-            }
-            System.out.println();
-            System.out.print("TOWERS ON THE ISLAND: ");
-            for (int i = 0; i < island.getTowers().size(); i++) {
-                Tower towerOnIsland = island.getTowers().get(i);
-                if (towerOnIsland.equals(Tower.WHITE))
-                    System.out.print("♦ ");
-                else if (towerOnIsland.equals(Tower.BLACK))
-                    System.out.print("♢ ");
-                else if (towerOnIsland.equals(Tower.GREY))
-                    System.out.print(Constants.GREY + "♦ ");
-            }
-            System.out.println(Constants.RESET);
-            System.out.println();
-
-            System.out.println("NUMBER OF MERGED ISLANDS: " + island.getNumMergedIslands());
-
-            if (island.isMotherNature())
-                System.out.println("MOTHER NATURE IS HERE!");
-            else System.out.println();
-
+            island.print();
         }
         System.out.println("\n");
     }
@@ -130,19 +97,7 @@ public class GameBoard {
     private void printClouds(){
         System.out.println("*****************************************NUVOLE*****************************************");
         for (ClientCloud cloud : clouds){
-            System.out.println("NUVOLA: " + cloud.getCloudIndex());
-            try {
-                for(Color color : Color.values()) {
-                    int numberOfStudentPerColor = (int) cloud.getStudents().stream().filter(c -> c == color).count();
-                    for (int i = 0; i < numberOfStudentPerColor; i++) {
-                        System.out.print(Constants.getStudentsColor(color) + "■");
-                    }
-                    System.out.println(Constants.RESET);
-                }
-
-            } catch (NullPointerException e) {
-                System.out.println("no studenti");
-            }
+            cloud.print();
         }
         System.out.println("\n");
     }

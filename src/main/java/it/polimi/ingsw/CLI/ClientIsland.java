@@ -1,5 +1,6 @@
 package it.polimi.ingsw.CLI;
 
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Tower;
@@ -26,6 +27,43 @@ public class ClientIsland implements Serializable {
         this.owner = null;
     }
 
+    public void print(){
+        System.out.println("ISOLA " + getIslandIndex() + ":");
+        System.out.print("STUDENTS ON THE ISLAND: ");
+        for (Color color : Color.values()) {
+            try{
+                int numberOfStudentsPerColor = (int) getStudents().stream().filter(c -> c == color).count();
+                for (int i = 0; i < numberOfStudentsPerColor; i++) {
+                    System.out.print(Constants.getStudentsColor(color) + "■ ");
+                }
+            }
+            catch (NullPointerException e){
+                System.out.println("No studenti del colore " + color.toString());
+            }
+
+            System.out.println(Constants.RESET);
+        }
+        System.out.println();
+        System.out.print("TOWERS ON THE ISLAND: ");
+        for (int i = 0; i < getTowers().size(); i++) {
+            Tower towerOnIsland = getTowers().get(i);
+            if (towerOnIsland.equals(Tower.WHITE))
+                System.out.print("♦ ");
+            else if (towerOnIsland.equals(Tower.BLACK))
+                System.out.print("♢ ");
+            else if (towerOnIsland.equals(Tower.GREY))
+                System.out.print(Constants.GREY + "♦ ");
+        }
+        System.out.println(Constants.RESET);
+        System.out.println();
+
+        System.out.println("NUMBER OF MERGED ISLANDS: " + getNumMergedIslands());
+
+        if (isMotherNature())
+            System.out.println("MOTHER NATURE IS HERE!");
+        else System.out.println();
+
+    }
     public int getIslandIndex() {
         return islandIndex;
     }
