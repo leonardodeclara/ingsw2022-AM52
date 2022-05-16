@@ -75,79 +75,16 @@ public class GameBoard {
             printPersonalityCards(); //sistemare, deve stampare solo le carte estratte, non tutte
     }
 
-    private void printClientBoards(){
+    private void printClientBoards(){ //sarebbe meglio se ogni componente avesse un metodo print e qui venisse chiamato solo quello
+        System.out.println("*****************************************BOARDS DEI GIOCATORI*****************************************");
         for(ClientBoard clientBoard : clientBoards.values()){
-            //stampo il nickname
-            System.out.println(clientBoard.getOwner().toUpperCase() + "'S SCHOOL");
-            //stampo la lobby
-            System.out.println("LOBBY:");
-                for (Color color : Color.values()) {
-                    int numberOfStudentPerColor = (int) clientBoard.getLobby().stream().filter(c -> c == color).count();
-                    for (int i = 0; i < numberOfStudentPerColor; i++) {
-                        System.out.print(Constants.getStudentsColor(color) + "■");
-                        System.out.println(Constants.RESET);
-                    }
-                }
-                System.out.println("\n");
-
-
-            //stampo la StudentsTable
-            System.out.println("STUDENTS TABLE:");
-            try {
-                for (Color color : Color.values()) {
-                    int numberOfStudentPerColor1 = clientBoard.getStudentsTable().get(color);
-                    for (int i = 0; i < Constants.MAX_LOBBY_SIZE; i++)
-                        System.out.print(Constants.getStudentsColor(color) + (i < numberOfStudentPerColor1 ? "○ " : "■ "));
-                    System.out.println();
-                    System.out.println(Constants.RESET);
-                }
-            } catch (NullPointerException e){
-                System.out.println("No students in the Table");
-            }
-
-
-            //stampo la TeachersTable
-            System.out.println("TEACHERS TABLE:");
-            try {
-                for (Color color : Color.values()) {
-                    System.out.println(Constants.getStudentsColor(color) + (clientBoard.getTeacherTable().contains(color) ? "■ " : "○ "));
-                    System.out.println(Constants.RESET);
-                }
-                System.out.println();
-            } catch(NullPointerException e){
-                System.out.println("No teachers in the Table");
-            }
-
-            //stampo le torri
-            System.out.println("TOWERS:");
-            try {
-                for (int i = 0; i < clientBoard.getTowers(); i++) {
-                    if (clientBoard.getTeam().equals(Tower.BLACK))
-                        System.out.print("♢ ");
-                    else if (clientBoard.getTeam().equals(Tower.WHITE))
-                        System.out.print("♦ ");
-                    else if (clientBoard.getTeam().equals(Tower.GREY))
-                        System.out.print(Constants.GREY + "♦ ");
-
-                }
-                System.out.println(Constants.RESET);
-            }catch (NullPointerException e){
-                System.out.println("No towers");
-            }
-            System.out.println();
-
-            if (clientBoard.getCurrentCard()!= 0)
-                System.out.println("CURRENT ASSISTANT CARD: " + clientBoard.getCurrentCard());
-
-            //mancano da stampare: monete (se in expert game), carte assistenti disponibili ma solo del client singolo
-
+            clientBoard.print();
         }
+        System.out.println("\n");
     }
 
-
-    //Mari occhio che se non ci sono studenti ti lancia una nullPointerException
-    //gestiscilo con un try-catch
     private void printIslands() {
+        System.out.println("*****************************************ISOLE*****************************************");
         for (ClientIsland island : islands) {
             System.out.println("ISOLA " + island.getIslandIndex() + ":");
             System.out.print("STUDENTS ON THE ISLAND: ");
@@ -185,12 +122,13 @@ public class GameBoard {
             else System.out.println();
 
         }
-
+        System.out.println("\n");
     }
 
 
 
     private void printClouds(){
+        System.out.println("*****************************************NUVOLE*****************************************");
         for (ClientCloud cloud : clouds){
             System.out.println("NUVOLA: " + cloud.getCloudIndex());
             try {
@@ -206,6 +144,7 @@ public class GameBoard {
                 System.out.println("no studenti");
             }
         }
+        System.out.println("\n");
     }
 
    private void printPersonalityCards(){
@@ -224,9 +163,10 @@ public class GameBoard {
 
     public void addClientBoard(String playerName){
         int towerNumber = numberOfPlayers == 2? 8 : 6;
-        ClientBoard newBoard = new ClientBoard(towerNumber, playerName);
+        ClientBoard newBoard = new ClientBoard(towerNumber, playerName,this);
         if (isExpertGame())
             newBoard.setCoins(1);
+        newBoard.initializeDeck();
         clientBoards.put(playerName,newBoard);
     }
 

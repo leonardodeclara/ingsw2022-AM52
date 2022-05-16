@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.CLI.GameBoard;
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Island;
 import it.polimi.ingsw.model.Tower;
@@ -186,7 +187,6 @@ public class CLI implements Runnable{
         GB.print();
     }
 
-    //in teoria ogni client vede solo il proprio mazzo
     public void updatePlayerDeck(AssistantDeckUpdateMessage message){
         GB.setPlayerDeck(message.getOwner(), message.getCards());
     }
@@ -278,10 +278,11 @@ public class CLI implements Runnable{
                 outputStream.println("Torri disponibili:"+GB.getAvailableTowers()); //prendiamo dalla view le informazioni da stampare a schermo
                 break;
             case PLAY_ASSISTANT_CARD:
-                //GB.print(); //questo è il momento in cui printiamo l'attuale stato della partita.
+                GB.print(); //questo è il momento in cui printiamo l'attuale stato della partita.
                 outputStream.println("Scegli una carta da giocare!");
                 break;
             case MOVE_FROM_LOBBY:
+                GB.print();
                 outputStream.println("Scegli tre studenti da spostare nella table o su un'isola");
                 outputStream.println("Per esempio digita move studentID1,studentID2,studentID3 in table,2,3 per muovere il primo studente nella table,il secondo sull'isola 2, il terzo sull'isola 3");
                 break;
@@ -345,7 +346,8 @@ public class CLI implements Runnable{
 
 
     public String askIP(){
-        outputStream.println("Inserisci ip: ");
+        outputStream.println("Benvenuto!");
+        outputStream.println("Inserisci l'indirizzo ip del server: ");
         outputStream.println(">");
         return inputStream.nextLine();
     }
@@ -355,12 +357,12 @@ public class CLI implements Runnable{
         int port = 0;
         while(!validInput){
             try{
-                outputStream.println("Inserisci port: ");
+                outputStream.println("Inserisci la porta del server: ");
                 outputStream.println(">");
                 port = Integer.parseInt(inputStream.nextLine());
                 validInput = true;
             }catch(NumberFormatException e){
-                outputStream.println("Port dovrebbe essere un numero intero, riprova");
+                outputStream.println("La porta dovrebbe essere un numero intero, riprova");
                 validInput = false; //si può omettere, lo scrivo per chiarezza
             }
         }
@@ -371,7 +373,7 @@ public class CLI implements Runnable{
     public static void main(String[] args) throws IOException {
         CLI cli = new CLI();
 
-
+        System.out.println(Constants.Logo);
         cli.run();
 
     }

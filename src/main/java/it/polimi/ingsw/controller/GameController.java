@@ -26,7 +26,6 @@ public class GameController implements PropertyChangeListener {
     private ArrayList<Integer> availableWizards; //poi sta cosa va tolta da game
     private HashMap<String, Integer> playerToWizardMap;
 
-    //risoluzione stupida al problema del tipo statico di Game GM: cast esplicito in base al boolean isExpert
     public GameController(boolean isExpert, ArrayList<String> players) {
         updateMessageBuilder = new UpdateMessageBuilder();
         listener = new PropertyChangeSupport(this);

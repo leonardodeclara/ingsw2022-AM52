@@ -204,6 +204,7 @@ public class Game {
      */
     public int playAssistantCard(String nickname,int cardId){
         ArrayList<Assistant> newDeck = getPlayerByName(nickname).getDeck();
+        cardId--; //priority van da 1 a 10, ma ci serve l'index
         Assistant playedCard = newDeck.get(cardId);
         if(!isCardPlayable(playedCard, newDeck)) return -1;
         int cardScore = playedCard.getPriority();
