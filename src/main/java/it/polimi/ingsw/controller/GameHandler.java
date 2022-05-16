@@ -14,8 +14,6 @@ import java.util.Iterator;
 import java.util.stream.Collectors;
 
 
-//PROBLEMI
-//il server vede 2 giocatori anche se ne ho messi 3
 
 public class GameHandler implements PropertyChangeListener{
     GameController gameController;
@@ -44,8 +42,8 @@ public class GameHandler implements PropertyChangeListener{
             handleTowerSelectionMessage((TowerSelectionMessage)message, clientHandler);
         else if(message instanceof PlayAssistantCardMessage)
             handlePlayAssistantCardMessage((PlayAssistantCardMessage) message,clientHandler);
-        //else if (message instanceof MoveStudentMessage)
-            //
+        else if (message instanceof MoveStudentMessage)
+            handleMoveStudentMessage((MoveStudentMessage) message, clientHandler);
     }
 
 
@@ -103,8 +101,14 @@ public class GameHandler implements PropertyChangeListener{
     }
 
     private void startActionPhase(){
+        Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
+        Message moveFromLobbyMessage = new ClientStateMessage(ClientState.MOVE_FROM_LOBBY);
 
-
+        ArrayList<String> currentTurnOrder = gameController.getActionPhaseTurnOrder();
+        String startingPlayer = currentTurnOrder.get(0);
+        sendAllExcept(nameToHandlerMap.get(startingPlayer),waitStateMessage);
+        sendTo(startingPlayer,moveFromLobbyMessage);
+        updatePlayersOrder(currentTurnOrder);
     }
 
     private void updatePlayersOrder(ArrayList<String> players){
@@ -172,12 +176,15 @@ public class GameHandler implements PropertyChangeListener{
             String nextPlayer = playersOrderIterator.next();
             Message playAssistantCardMessage = new ClientStateMessage(ClientState.PLAY_ASSISTANT_CARD);
             System.out.println("Siccome " + clientName + " ha finito la sua selezione ora è il turno di " + nextPlayer);
-
-            //in teoria la view si dovrebbe aggiornare da sola a questo punto, senza dover mandare messaggi espliciti come per wizard e towers
+            sendTo(nextPlayer,playAssistantCardMessage);
         }
         else{
             startActionPhase();
         }
+    }
+
+    private void handleMoveStudentMessage(MoveStudentMessage message, ClientHandler client){
+
     }
 
     private void sendTo(String nickname,Message message){

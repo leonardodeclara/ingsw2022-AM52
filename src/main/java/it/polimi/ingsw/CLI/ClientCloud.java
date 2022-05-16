@@ -2,9 +2,11 @@ package it.polimi.ingsw.CLI;
 
 import it.polimi.ingsw.model.Color;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ClientCloud {
+public class ClientCloud implements Serializable {
+    static final long serialVersionUID = 42L;
     private int cloudIndex;
     private ArrayList<Color> students;
 

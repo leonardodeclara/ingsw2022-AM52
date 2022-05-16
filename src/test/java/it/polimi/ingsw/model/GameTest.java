@@ -9,7 +9,12 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
+
 @SuppressWarnings("ALL")
+
+
+
 class GameTest {
 
     /**
@@ -18,11 +23,11 @@ class GameTest {
     @Test
     void addPlayerTest(){
         Game game = new Game(3);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"frizio",Tower.WHITE));
-        game.addPlayer(new Player(2,"mari",Tower.GREY));
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),0);
+        game.addPlayer(new Player(1,"frizio",Tower.WHITE),1);
+        game.addPlayer(new Player(2,"mari",Tower.GREY),2);
         assertEquals(3, game.getPlayers().size());
-        assertThrows(Exception.class, ()->game.addPlayer(new Player(3,"leo",Tower.GREY)));
+        assertThrows(Exception.class, ()->game.addPlayer(new Player(3,"leo",Tower.GREY),2));
     }
 
     /**
@@ -35,9 +40,9 @@ class GameTest {
         game.instantiateGameElements();
         assertEquals(5, game.getTeachers().size());
         for(int i = 0; i< game.getTeachers().size()-1; i++){
-                for(int j=i+1;j<game.getTeachers().size();j++){
-                    assertTrue(game.getTeachers().get(i)!=game.getTeachers().get(j));
-                }
+            for(int j=i+1;j<game.getTeachers().size();j++){
+                assertTrue(game.getTeachers().get(i)!=game.getTeachers().get(j));
+            }
         }
         for (int i = 0; i< Color.values().length; i++)
             assertNull(game.getTeachersOwners().get(Color.values()[i]));
@@ -85,9 +90,9 @@ class GameTest {
     @Test
     void cloudInstantiationTest(){
         Game game = new Game(3);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"frizio",Tower.WHITE));
-        game.addPlayer(new Player(2,"mari",Tower.GREY));
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),0);
+        game.addPlayer(new Player(1,"frizio",Tower.WHITE),1);
+        game.addPlayer(new Player(2,"mari",Tower.GREY),2);
         game.instantiateGameElements();
         assertEquals(3, game.getClouds().size());
     }
@@ -147,8 +152,8 @@ class GameTest {
     @Test
     void initiatePlayerLobby(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"frizio",Tower.WHITE));
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),0);
+        game.addPlayer(new Player(1,"frizio",Tower.WHITE),1);
         game.instantiateGameElements();
         game.initiatePlayerLobby(0);
         assertEquals(7, game.getPlayers().get(0).getBoard().getLobby().size());
@@ -162,10 +167,9 @@ class GameTest {
     @Test
     void giveAssistantDeck() {
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"mari",Tower.WHITE));
         game.instantiateGameElements();
-        game.giveAssistantDeck(0, 1);
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),1);
+        game.addPlayer(new Player(1,"mari",Tower.WHITE),2);
         assertEquals(10, game.getPlayers().get(0).getDeck().size());
         for (int i = 0; i<9; i++){
             for (int j = i+1; j < 10; j++){
@@ -185,9 +189,9 @@ class GameTest {
     @Test
     void refillTwoCloudsTest(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"mari",Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),1);
+        game.addPlayer(new Player(1,"mari",Tower.WHITE),2);
         game.refillClouds();
         for (int i = 0; i< 2; i++){
             assertEquals(3,game.getClouds().get(i).getStudents().size());
@@ -203,9 +207,9 @@ class GameTest {
     @Test
     void playAssistantCard(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"mari",Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),1);
+        game.addPlayer(new Player(1,"mari",Tower.WHITE),2);
         Assistant a0 = new Assistant(3,4,1);
         Assistant a1 = new Assistant(5,8,2);
         Assistant a2 = new Assistant(7,15,1);
@@ -236,9 +240,9 @@ class GameTest {
     @Test
     void isMoveMNLegal(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"mari",Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),1);
+        game.addPlayer(new Player(1,"mari",Tower.WHITE),2);
         Assistant a0 = new Assistant(3,4,1);
         Assistant a1 = new Assistant(5,8,2);
         Assistant a2 = new Assistant(7,15,1);
@@ -266,9 +270,9 @@ class GameTest {
     @Test
     void isMoveStudentFromLobbyLegalTest(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"mari",Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),1);
+        game.addPlayer(new Player(1,"mari",Tower.WHITE),2);
         //game.initiatePlayerLobby(0);
         //game.initiatePlayerLobby(1);
         for(int i = 0;i<7;i++)
@@ -298,9 +302,9 @@ class GameTest {
     @Test
     void isMoveStudentsToLobbyLegal(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"mari",Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),1);
+        game.addPlayer(new Player(1,"mari",Tower.WHITE),2);
         game.initiatePlayerLobby(0);
         game.initiatePlayerLobby(1);
         game.refillClouds();
@@ -318,9 +322,9 @@ class GameTest {
     @Test
     void moveStudentFromLobbyToIslandTest(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"mari",Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),1);
+        game.addPlayer(new Player(1,"mari",Tower.WHITE),2);
         game.initiatePlayerLobby(0);
         game.initiatePlayerLobby(1);
 
@@ -348,9 +352,9 @@ class GameTest {
     @Test
     void moveStudentFromLobbyToTableTest(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"mari",Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),1);
+        game.addPlayer(new Player(1,"mari",Tower.WHITE),2);
         game.initiatePlayerLobby(0);
         game.initiatePlayerLobby(1);
 
@@ -375,11 +379,9 @@ class GameTest {
     @Test
     void moveMNTest(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"mari",Tower.WHITE));
         game.instantiateGameElements();
-        game.giveAssistantDeck(0,0);
-        game.giveAssistantDeck(1,2);
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),0);
+        game.addPlayer(new Player(1,"mari",Tower.WHITE),2);
         game.playAssistantCard("mari",9);
         Island oldMNIsland = game.currentMotherNatureIsland;
         Island newMNIsland = game.islands.get((game.islands.indexOf(oldMNIsland) + 5)%game.islands.size());
@@ -398,9 +400,9 @@ class GameTest {
     @Test
     void moveStudentsToLobby(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"mari",Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),0);
+        game.addPlayer(new Player(1,"mari",Tower.WHITE),1);
         game.initiatePlayerLobby(0);
         game.initiatePlayerLobby(1);
         int l1size = game.getPlayers().get(0).getBoard().getLobby().size();
@@ -423,9 +425,9 @@ class GameTest {
     @Test
     void getEmptyClouds(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"mari",Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),0);
+        game.addPlayer(new Player(1,"mari",Tower.WHITE),1);
         ArrayList<Integer> Id1 = new ArrayList<>();
         Id1.add(0);
         Id1.add(1);
@@ -442,10 +444,10 @@ class GameTest {
     @Test
     void studentsInfluenceTest(){
         Game game = new Game(3);
-        game.addPlayer(new Player(0,"leo",Tower.WHITE));
-        game.addPlayer(new Player(1,"mari",Tower.BLACK));
-        game.addPlayer(new Player(2,"frizio",Tower.GREY));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"leo",Tower.WHITE),0);
+        game.addPlayer(new Player(1,"mari",Tower.BLACK),1);
+        game.addPlayer(new Player(2,"frizio",Tower.GREY),2);
         int mnIndex = 0;
         for (int j = 0; j< 12;j++){
             if(game.getIslands().get(j).isMotherNature())
@@ -483,10 +485,10 @@ class GameTest {
     @Test
     void calculateIslandOwnerTest(){
         Game game = new Game(3);
-        game.addPlayer(new Player(0,"mari",Tower.WHITE));
-        game.addPlayer(new Player(1,"frizio",Tower.BLACK));
-        game.addPlayer(new Player(2,"leo",Tower.GREY));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"mari",Tower.WHITE),0);
+        game.addPlayer(new Player(1,"frizio",Tower.BLACK),1);
+        game.addPlayer(new Player(2,"leo",Tower.GREY),2);
         int mnIndex = 0;
         for (int j = 0; j< 12;j++){
             if(game.getIslands().get(j).isMotherNature())
@@ -521,9 +523,9 @@ class GameTest {
     @Test
     void CalculateInfluenceWithTowersTest(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.WHITE));
-        game.addPlayer(new Player(1,"mari",Tower.BLACK));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"leo",Tower.WHITE),0);
+        game.addPlayer(new Player(1,"mari",Tower.BLACK),1);
         int mnIndex = 0;
         for (int j = 0; j< 12;j++){
             if(game.getIslands().get(j).isMotherNature())
@@ -554,9 +556,9 @@ class GameTest {
     @Test
     void totalCalculateInfluenceTest(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.WHITE));
-        game.addPlayer(new Player(1,"mari",Tower.BLACK));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"leo",Tower.WHITE),0);
+        game.addPlayer(new Player(1,"mari",Tower.BLACK),1);
         game.getPlayerByName("leo").addTeacherToBoard(Color.BLUE);
         game.getPlayerByName("leo").addTeacherToBoard(Color.PINK);
         game.getPlayerByName("leo").addTeacherToBoard(Color.RED);
@@ -580,9 +582,9 @@ class GameTest {
     @Test
     void checkGameOverForIslandNumber(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0,"leo",Tower.BLACK));
-        game.addPlayer(new Player(1,"mari",Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"leo",Tower.BLACK),0);
+        game.addPlayer(new Player(1,"mari",Tower.WHITE),1);
         assertEquals(12,game.getIslands().size());
         game.getIslands().clear();
         assertTrue(game.checkGameOver());
@@ -600,9 +602,9 @@ class GameTest {
     @Test
     void checkGameOverForTowers() {
         Game game = new Game(2);
-        game.addPlayer(new Player(0, "leo", Tower.BLACK));
-        game.addPlayer(new Player(1, "mari", Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0, "leo", Tower.BLACK),0);
+        game.addPlayer(new Player(1, "mari", Tower.WHITE),1);
         assertFalse(game.checkGameOver());
         for (int i = 0; i < 2; i++)
             game.getPlayers().get(0).removeTowerFromBoard();
@@ -622,9 +624,9 @@ class GameTest {
     @Test
     void teacherMovementTest(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0, "leo", Tower.BLACK));
-        game.addPlayer(new Player(1, "mari", Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0, "leo", Tower.BLACK),0);
+        game.addPlayer(new Player(1, "mari", Tower.WHITE),1);
         for (int i = 0; i< 7;i++)
             game.getPlayerByName("leo").addToBoardTable(Color.BLUE);
         game.getPlayerByName("leo").addToBoardTable(Color.PINK);
@@ -662,9 +664,9 @@ class GameTest {
     @Test
     void lastRoundTest(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0, "mari", Tower.GREY));
-        game.addPlayer(new Player(1, "frizio", Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0, "mari", Tower.GREY),0);
+        game.addPlayer(new Player(1, "frizio", Tower.WHITE),1);
         game.setBasket(new Basket(new int[]{0,0,0,0,0}));
         game.refillClouds();
         assertTrue(game.isLastRound());
@@ -673,19 +675,20 @@ class GameTest {
     @Test
     void nullPlayerNameTest(){
         Game game = new Game(2);
-        game.addPlayer(new Player(0, "mari", Tower.GREY));
-        game.addPlayer(new Player(1, "frizio", Tower.WHITE));
+        game.instantiateGameElements();
+        game.addPlayer(new Player(0, "mari", Tower.GREY),0);
+        game.addPlayer(new Player(1, "frizio", Tower.WHITE),1);
         assertNull(game.getPlayerByName("leo"));
     }
 
     @Test
     void islandOwnerTest(){
         Game game = new Game(2);
+        game.instantiateGameElements();
         Player leo = new Player(0, "leo", Tower.BLACK);
         Player frizio = new Player(1, "frizio", Tower.WHITE);
-        game.addPlayer(leo);
-        game.addPlayer(frizio);
-        game.instantiateGameElements();
+        game.addPlayer(leo,0);
+        game.addPlayer(frizio,1);
         game.getIslands().get(0).setOwner(leo);
         assertEquals(-1, game.getTowersOwnerIndex(game.getIslands().get(0), game.getPlayers()));
         game.getIslands().get(0).addTower(Tower.BLACK);
@@ -695,12 +698,11 @@ class GameTest {
     @Test
     void getPlayableAssistantCardTest(){
         Game game = new Game(2);
+        game.instantiateGameElements();
         Player mari = new Player(0, "mari", Tower.BLACK);
         Player frizio = new Player(1, "frizio", Tower.WHITE);
-        game.addPlayer(mari);
-        game.addPlayer(frizio);
-        game.instantiateGameElements();
-        game.giveAssistantDeck(0, 0);
+        game.addPlayer(mari,0);
+        game.addPlayer(frizio,1);
         assertEquals(10,game.getPlayableAssistantCards("mari").size());
         game.playAssistantCard("mari",0);
         Assistant playedCard= new Assistant(1,1,0);
@@ -711,11 +713,11 @@ class GameTest {
     @Test
     void mergeTwoIslandsTest(){
         Game game = new Game(2);
+        game.instantiateGameElements();
         Player mari = new Player(0, "leoviatano", Tower.BLACK);
         Player frizio = new Player(1, "frizio", Tower.WHITE);
-        game.addPlayer(mari);
-        game.addPlayer(frizio);
-        game.instantiateGameElements();
+        game.addPlayer(mari,0);
+        game.addPlayer(frizio,1);
         Island island1 = game.islands.get(0);
         Island leftIsland = game.islands.get(11);
         Island rightIsland = game.islands.get(1);
@@ -743,21 +745,19 @@ class GameTest {
         assertEquals(oldNumbersOfStudent[0] + leftIsland.getStudentsOfColor(Color.RED).size(),island1.getStudentsOfColor(Color.RED).size());
         assertEquals(oldNumbersOfStudent[1] + leftIsland.getStudentsOfColor(Color.PINK).size(),island1.getStudentsOfColor(Color.PINK).size());
         assertEquals(oldNumbersOfStudent[2] + leftIsland.getStudentsOfColor(Color.BLUE).size(),island1.getStudentsOfColor(Color.BLUE).size()); //expected 3, actual 4
-    //aggiungere caso in cui mergia 3 isole invece di 2
+        //aggiungere caso in cui mergia 3 isole invece di 2
     }
+
     @Test
     void isCardPlayableTest(){
         Game game = new Game(3);
+        game.instantiateGameElements();
         Player mari = new Player(0, "mari", Tower.BLACK);
         Player frizio = new Player(1, "frizio", Tower.WHITE);
         Player leoviatano = new Player(2, "leoviatano", Tower.GREY);
-        game.addPlayer(mari);
-        game.addPlayer(frizio);
-        game.addPlayer(leoviatano);
-        game.instantiateGameElements();
-        game.giveAssistantDeck(0,0);
-        game.giveAssistantDeck(1,1);
-        game.giveAssistantDeck(2,2);
+        game.addPlayer(mari,0);
+        game.addPlayer(frizio,1);
+        game.addPlayer(leoviatano,2);
         ArrayList<Assistant> deck0 = mari.getDeck();
         ArrayList<Assistant> deck1 = frizio.getDeck();
         ArrayList<Assistant> deck2 = leoviatano.getDeck();
@@ -790,5 +790,4 @@ class GameTest {
 
     //mancano test su moveMN e getPlayableAssistantCard
 }
-
 

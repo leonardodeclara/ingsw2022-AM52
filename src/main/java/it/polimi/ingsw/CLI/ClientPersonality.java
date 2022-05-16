@@ -1,6 +1,9 @@
 package it.polimi.ingsw.CLI;
 
-public class ClientPersonality {
+import java.io.Serializable;
+
+public class ClientPersonality implements Serializable {
+    static final long serialVersionUID = 42L;
     private Integer CardID;
     private Boolean hasBeenUsed;
     private Integer cost;

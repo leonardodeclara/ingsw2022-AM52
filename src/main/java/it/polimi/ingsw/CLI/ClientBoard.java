@@ -3,10 +3,12 @@ package it.polimi.ingsw.CLI;
 import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ClientBoard {
+public class ClientBoard implements Serializable {
+    static final long serialVersionUID = 42L;
     private HashMap<Color,Integer> studentsTable;
     private ArrayList<Color> teacherTable;
     private ArrayList<Color> lobby;

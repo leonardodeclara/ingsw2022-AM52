@@ -1,8 +1,10 @@
 package it.polimi.ingsw.CLI;
 
 
+import java.io.Serializable;
 
-public class ClientAssistant {
+public class ClientAssistant implements Serializable {
+    static final long serialVersionUID = 42L;
     private final int numMoves;
     private final int priority;
     private final int wizard;

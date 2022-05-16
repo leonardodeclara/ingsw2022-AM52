@@ -39,17 +39,17 @@ public class Game {
     //AGGIUNGERE TRY CATCH per refillClouds() per quando non ci sono abbastanza studenti per le nuvole => si salta la fase letPlayerPickStudent
     public Game(int playersNumber) {
         numOfPlayers=playersNumber;
-        players = new ArrayList<>(); //firePropertyChange
-        islands = new ArrayList<>(); //firePropertyChange
-        clouds = new ArrayList<>(); //firePropertyChange
+        players = new ArrayList<>();
+        islands = new ArrayList<>();
+        clouds = new ArrayList<>();
         teachers = new ArrayList<>();
-        wizards = new ArrayList<>(); //firePropertyChange
+        wizards = new ArrayList<>();
         wizards.add(1);
         wizards.add(2);
         wizards.add(3);
         wizards.add(4);
-        assistantDecks = new ArrayList<>(); //bisogna implementare effettivamente le 40 carte con relative statistiche
-        currentTurnAssistantCards = new HashMap<String,Assistant>(); //firePropertyChange
+        assistantDecks = new ArrayList<>();
+        currentTurnAssistantCards = new HashMap<String,Assistant>();
         lastRound = false;
         winner = null; //firePropertyChange
         teachersOwners = new HashMap<>();
@@ -68,10 +68,11 @@ public class Game {
      * @param player: instance of the player which has been admitted to the game.
      */
     //bisogna gestire il lancio di questa eccezione (creare una ad hoc)
-    public void addPlayer(Player player){
+    public void addPlayer(Player player,int wizardID){
         if (players.size()<3){
             player.getBoard().setTowers(numOfPlayers==2? 8:6);
             players.add(player);
+            giveAssistantDeck(player.getNickname(),wizardID);
         }
         else
             throw new RuntimeException("Superato limite di giocatori");
@@ -168,7 +169,8 @@ public class Game {
     public void fillIslands(){
         //si potrebbe fare anche senza il bisogno di currentMotherNatureIsland
         for (Island island: islands){
-            if(island.getIslandIndex()!= currentMotherNatureIsland.getIslandIndex() && !(island.getIslandIndex()==(6+currentMotherNatureIsland.getIslandIndex())%12)){
+            if(island.getIslandIndex()!= currentMotherNatureIsland.getIslandIndex()
+                    && !(island.getIslandIndex()==(6+currentMotherNatureIsland.getIslandIndex())%12)){
                 island.addStudent(basket.pickStudent());
             }
         }
@@ -176,11 +178,11 @@ public class Game {
 
     /**
      * Method giveAssistantDeck assigns the deck of 10 assistant cards to the given player.
-     * @param playerId : id given to the player, used as the index for the players arrayList
+     * @param playerName : name of the player, used as the index for the players arrayList
      * @param deckId : id given to the deck, the player uses it communicate which deck he wants
      */
     //da cambiare, in input deve prendere il nickname. cambiare anche tutti i relativi test
-    public void giveAssistantDeck(int playerId, int deckId){
+    public void giveAssistantDeck(String playerName, int deckId){
         ArrayList<Assistant> assignedDeck = new ArrayList<>();
         wizards.remove((Integer)deckId); //firePropertyChange
         for (Assistant assistant: assistantDecks){
@@ -190,7 +192,8 @@ public class Game {
             }
         }
         assistantDecks.removeAll(assignedDeck);
-        players.get(playerId).setDeck(assignedDeck);
+        Player player = getPlayerByName(playerName);
+        player.setDeck(assignedDeck);
     }
 
     /**
@@ -208,6 +211,22 @@ public class Game {
         listeners.firePropertyChange("CurrentTurnAssistantCards", null, currentTurnAssistantCards);
         getPlayerByName(nickname).removeAssistantCard(cardId);
         return cardScore;
+    }
+
+    public ArrayList<String> getActionPhasePlayerOrder(){
+        ArrayList<Assistant> assistants = new ArrayList<>(currentTurnAssistantCards.values());
+        assistants.sort(Comparator.comparingInt(card -> card.getPriority()));
+
+        ArrayList<String> nicknames = new ArrayList<>();
+
+        for(Assistant assistant : assistants){
+            for (Map.Entry<String, Assistant> entry : currentTurnAssistantCards.entrySet()) {
+                if (Objects.equals(assistant, entry.getValue())) {
+                    nicknames.add(entry.getKey());
+                }
+            }
+        }
+        return nicknames;
     }
 
     /**
@@ -690,6 +709,7 @@ public class Game {
         }
         return null;
     }
+
 
     /**
      * Method that returns the instance of the winner

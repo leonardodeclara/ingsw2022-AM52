@@ -18,13 +18,15 @@ public class UpdateMessageBuilder {
     }
 
     public Message buildGameInstantiationMessage(Game game){
-        ArrayList<ClientIsland> clientIslands = new ArrayList<>();
+        ArrayList<ClientIsland> clientIslands = new ArrayList<ClientIsland>();
+
         for (Island modelIsland: game.getIslands()){
             ClientIsland newIsland = new ClientIsland(modelIsland.getIslandIndex());
             newIsland.setMotherNature(modelIsland.isMotherNature());
             newIsland.setStudents(modelIsland.getStudents());
             clientIslands.add(newIsland);
         }
+
         System.out.println("MessageBuilder: ho preparato messaggio di GameInstantiation");
         return new GameInstantiationMessage(clientIslands);
 

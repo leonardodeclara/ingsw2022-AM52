@@ -26,7 +26,6 @@ public class InputParser {
                 parseNewGameParametersString(input);
                 break;
             case WAIT_IN_LOBBY:
-                return data;
             case WAIT_TURN:
                 return data;
             case SET_UP_WIZARD_PHASE:
@@ -100,12 +99,36 @@ public class InputParser {
         String[] words = input.split(" ");
 
         if(words.length == 3){
-            if(words[0].equals("play")&& words[1].equalsIgnoreCase("card")){
+            if(words[0].equalsIgnoreCase("play")&& words[1].equalsIgnoreCase("card")){
                 cardID = Integer.parseInt(words[2]);
                 if(cardID >= 1 && cardID <= 10){
                     data.add(cardID);
                 }
             }
+        }
+    }
+
+    private void moveStudentFromLobby(String input){ //il comando è move studentID to table/ move studentID to islandID
+        int studentID = 0;
+        int islandID = 0;
+        String[] words = input.split("");
+
+        if(words.length == 4){
+            if(words[0].equalsIgnoreCase("move"))
+                studentID = Integer.parseInt(words[1]);
+                if(studentID >= 1 && studentID <= 9)
+                    if(words[2].equalsIgnoreCase("to"))
+                        if(words[3].equalsIgnoreCase("table")){
+                            data.add(studentID);
+                            data.add(-1); // -1 = table
+                        }else{
+                            islandID = Integer.parseInt(words[3]);
+                            if(islandID >= 1 && islandID <= 12){
+                                data.add(studentID);
+                                data.add(islandID);
+                            }
+                        }
+
         }
     }
 }

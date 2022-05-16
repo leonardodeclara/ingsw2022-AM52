@@ -279,7 +279,9 @@ public class CLI implements Runnable{
                 outputStream.println("Scegli una carta da giocare!");
                 break;
             case MOVE_FROM_LOBBY:
-                outputStream.println("Scegli uno studente da spostare e la sua destinazione (formato: move x in y, y>=0 per spostare su isola y, y = -1 per spostare nella tavolta )");
+                outputStream.println("Scegli uno studente da spostare e la sua destinazione.");
+                outputStream.println("Scrivi move studentID in table per muovere lo studente selezionato nella tavola");
+                outputStream.println("Scrivi move studentID in islandID per muovere lo studente selezionato nell'isola scelta");
                 break;
 
 
@@ -331,6 +333,7 @@ public class CLI implements Runnable{
                 break;
             case MOVE_FROM_LOBBY:
                 outputStream.println("I parametri inseriti non sono validi!");
+                break;
         }
     }
 

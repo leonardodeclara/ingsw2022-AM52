@@ -31,11 +31,6 @@ public class GameController implements PropertyChangeListener {
         updateMessageBuilder = new UpdateMessageBuilder();
         listener = new PropertyChangeSupport(this);
         game = (isExpert) ? new ExpertGame(players.size()) : new Game(players.size());
-        /*
-        game.setPropertyChangeListeners(this);
-        game.instantiateGameElements(); //va inizializzato il model, ma non so se questa chiamata va qui
-
-         */
         this.players = new ArrayList<>();
         this.players.addAll(players);
         availableWizards = new ArrayList<>();
@@ -50,14 +45,12 @@ public class GameController implements PropertyChangeListener {
     }
 
     public Message handleGameInstantiation(){
-        game.instantiateGameElements(); //va inizializzato il model, ma non so se questa chiamata va qui
+        game.instantiateGameElements();
         game.setPropertyChangeListeners(this);
         System.out.println("GC: ho impostato correttamente i primi gameElements e ho settato i PropertyChange");
         return updateMessageBuilder.buildGameInstantiationMessage(game);
     }
 
-
-    //creo l'associazione giocatore-wizard, mi servirà dopo per fare game.giveAssistantDeck()
     public Message updateWizardSelection(String player, Integer wizard){
         System.out.println("Maghi disponibili lato server:"+availableWizards);
         if (availableWizards.contains(wizard)){
@@ -68,9 +61,6 @@ public class GameController implements PropertyChangeListener {
         }
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
-
-        //game.giveAssistantDeck(); //assegna il deck
-        //questo lo posso fare solo dopo
     }
 
     //creo l'assocazione giocatore-torre, mi serve per poter aggiungere i giocatori alla partita
@@ -78,7 +68,7 @@ public class GameController implements PropertyChangeListener {
     public Message updateTowerSelection(String player, Tower tower){
         System.out.println("Torri disponibili lato server:"+availableTowers);
         if (availableTowers.contains(tower)){
-            game.addPlayer(new Player(game.getPlayers().size(),player, tower)); //rivedere l'assegnamento dell'indice
+            game.addPlayer(new Player(game.getPlayers().size(),player, tower),playerToWizardMap.get(player)); //rivedere l'assegnamento dell'indice
             game.setPlayerPropertyChangeListener(player, this); //setto il listener per questo player
             availableTowers.remove(tower);
             System.out.println("GameController: ho aggiornato le torri disponibili togliendo " + tower.toString());
@@ -96,14 +86,10 @@ public class GameController implements PropertyChangeListener {
         }
     }
 
-
-    public void assignAssistantDeck(){
-
+    public ArrayList<String> getActionPhaseTurnOrder(){
+        return game.getActionPhasePlayerOrder();
     }
 
-    public void assignInitialStudents(){
-
-    }
 
     private String getRandomPlayer(){
         Random rand = new Random();
@@ -166,7 +152,7 @@ public class GameController implements PropertyChangeListener {
                 break;
             case "IslandStudents":
                 toSend = updateMessageBuilder.buildIslandStudentsMessage(event);
-                //System.out.println("GC: il messaggio di update degli studenti dell'isola è pronto");
+                System.out.println("GC: il messaggio di update degli studenti dell'isola è pronto");
                 break;
             case "PickedCloud":
                 toSend = updateMessageBuilder.buildPickedCloudMessage(event);

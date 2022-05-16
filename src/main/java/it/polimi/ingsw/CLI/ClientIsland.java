@@ -4,9 +4,11 @@ import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Tower;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ClientIsland {
+public class ClientIsland implements Serializable {
+    static final long serialVersionUID = 42L;
     private int islandIndex;
     private ArrayList<Tower> towers;
     private ArrayList<Color> students;
@@ -15,6 +17,7 @@ public class ClientIsland {
     private String owner;
 
     public ClientIsland(int islandIndex ) {
+
         this.islandIndex = islandIndex;
         this.towers = new ArrayList<>();
         this.students = new ArrayList<>();

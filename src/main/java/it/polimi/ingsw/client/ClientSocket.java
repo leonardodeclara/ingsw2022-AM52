@@ -5,8 +5,7 @@ import it.polimi.ingsw.messages.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
+import it.polimi.ingsw.CLI.ClientIsland;
 
 public class ClientSocket implements Runnable{
     private static int PING_PERIOD = 5000;
@@ -54,7 +53,7 @@ public class ClientSocket implements Runnable{
         try{
             while(active){
                 Message receivedMessage = (Message) in.readObject();
-                //System.out.println("Ho ricevuto un messaggio! "+ receivedMessage.getClass().toString());
+                System.out.println("Ho ricevuto lato client "+receivedMessage);
                 cli.handleMessageFromServer(receivedMessage);
 
             }

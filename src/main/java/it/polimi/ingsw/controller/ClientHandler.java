@@ -45,9 +45,6 @@ public class ClientHandler implements Runnable {
             while (true) {
                 Message receivedMessage = (Message) in.readObject();
                 readMessage(receivedMessage);
-                //invece di salvare un attributo responseMessage si potrebbe gestire la scrittura della risposta all'interno della
-                //catena di metodi che vengono chiamati
-                //out.writeObject(responseMessage); //infine manda fuori la risposta del server
                 }
             } catch (IOException e) {
             System.out.println("Chiudo la connessione con il client");
