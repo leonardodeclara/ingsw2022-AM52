@@ -36,45 +36,46 @@ public class ClientBoard implements Serializable {
         //stampo il nickname
         System.out.println("************************************************"+getOwner().toUpperCase() + "'S SCHOOL"+"************************************************");
         //stampo la lobby
-        System.out.println("LOBBY:");
+        System.out.print("LOBBY: ");
         for (Color color : Color.values()) {
             int numberOfStudentPerColor = (int) getLobby().stream().filter(c -> c == color).count();
             for (int i = 0; i < numberOfStudentPerColor; i++) {
                 System.out.print(Constants.getStudentsColor(color) + "■");
-                System.out.println(Constants.RESET);
+                System.out.print(Constants.RESET);
             }
         }
-        System.out.println("\n");
+        System.out.print("\n");
 
         //stampo la StudentsTable
-        System.out.println("STUDENTS TABLE:");
+        System.out.print("STUDENTS TABLE: ");
         try {
             for (Color color : Color.values()) {
                 int numberOfStudentPerColor1 = getStudentsTable().get(color);
                 for (int i = 0; i < Constants.MAX_LOBBY_SIZE; i++)
                     System.out.print(Constants.getStudentsColor(color) + (i < numberOfStudentPerColor1 ? "○ " : "■ "));
-                System.out.println();
-                System.out.println(Constants.RESET);
+                System.out.print("\n");
+                System.out.print(Constants.RESET);
             }
+
         } catch (NullPointerException e){
             System.out.println("No students in the Table");
         }
 
 
         //stampo la TeachersTable
-        System.out.println("TEACHERS TABLE:");
+        System.out.print("TEACHERS TABLE: ");
         try {
             for (Color color : Color.values()) {
-                System.out.println(Constants.getStudentsColor(color) + (getTeacherTable().contains(color) ? "■ " : "○ "));
-                System.out.println(Constants.RESET);
+                System.out.print(Constants.getStudentsColor(color) + (getTeacherTable().contains(color) ? "■ " : "○ "));
+                System.out.print(Constants.RESET);
             }
-            System.out.println();
+            System.out.print("\n");
         } catch(NullPointerException e){
             System.out.println("No teachers in the Table");
         }
 
         //stampo le torri
-        System.out.println("TOWERS:");
+        System.out.print("TOWERS: ");
         try {
             for (int i = 0; i < getTowers(); i++) {
                 if (getTeam().equals(Tower.BLACK))
@@ -85,14 +86,13 @@ public class ClientBoard implements Serializable {
                     System.out.print(Constants.GREY + "♦ ");
 
             }
-            System.out.println(Constants.RESET);
+            System.out.print(Constants.RESET);
         }catch (NullPointerException e){
             System.out.println("No towers");
         }
-        System.out.println();
 
         if (getCurrentCard()!= 0)
-            System.out.println("CURRENT ASSISTANT CARD: " + getCurrentCard());
+            System.out.println("CURRENT ASSISTANT CARD:" + getCurrentCard());
 
 
         //mancano da stampare: monete (se in expert game)
@@ -101,7 +101,7 @@ public class ClientBoard implements Serializable {
                 System.out.println("CARTA ASSISTENTE "+entry.getKey()+":"+"(priorità: "+entry.getKey()+",numero mosse: "+entry.getValue()+")");
             }
         }
-        System.out.println("\n\n");
+        System.out.print("\n\n");
 
 
 
