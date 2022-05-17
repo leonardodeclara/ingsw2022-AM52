@@ -64,7 +64,7 @@ public class CLI implements Runnable{
 
 
 
-        while(active) { //bisogna trovare il modo di impedire al giocatore di spammare invio (invio dovrebbe forzare l'
+        while(active) { //bisogna trovare il modo di impedire al giocatore di spammare invio
             if (inputStream.hasNext()) {
                 playerInput = inputParser.parse(inputStream.nextLine(), currentState);
                 if (playerInput.size() > 0) { //se il messaggio è valido

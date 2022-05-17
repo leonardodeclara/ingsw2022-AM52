@@ -183,7 +183,7 @@ public class GameHandler implements PropertyChangeListener{
         }
     }
 
-    /*
+
     private void handleMoveStudentMessage(MoveStudentsFromLobbyMessage message, ClientHandler client){
         ArrayList<Integer> studentIDs = message.getStudentIndex();
         ArrayList<Integer> destIDs = message.getDestinationIndex();
@@ -206,7 +206,7 @@ public class GameHandler implements PropertyChangeListener{
         }
 
     }
-*/
+
     private void sendTo(String nickname,Message message){
         ClientHandler clientHandler = nameToHandlerMap.get(nickname);
         System.out.println("Mando a "+nickname+" su client handler " +clientHandler.getID() + " un messaggio di tipo " + (message.getClass().toString()) );
