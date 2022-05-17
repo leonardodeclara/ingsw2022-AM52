@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.CLI.ClientBoard;
 import it.polimi.ingsw.CLI.ClientCloud;
 import it.polimi.ingsw.CLI.ClientIsland;
 import it.polimi.ingsw.messages.*;
@@ -19,6 +20,7 @@ public class UpdateMessageBuilder {
 
     public Message buildGameInstantiationMessage(Game game){
         ArrayList<ClientIsland> clientIslands = new ArrayList<ClientIsland>();
+        int towersNumber = game.getNumOfPlayers() == 2 ? 8 : 6;
 
         for (Island modelIsland: game.getIslands()){
             ClientIsland newIsland = new ClientIsland(modelIsland.getIslandIndex());
@@ -26,9 +28,19 @@ public class UpdateMessageBuilder {
             newIsland.setStudents(modelIsland.getStudents());
             clientIslands.add(newIsland);
         }
+        HashMap<String, ClientBoard> clientBoards = new HashMap<>();
+        for (Player modelPlayer: game.getPlayers()){
+            Board modelBoard = modelPlayer.getBoard();
+            ClientBoard newBoard = new ClientBoard(towersNumber,modelPlayer.getNickname());
+            newBoard.setTeacherTable(new ArrayList<>(modelBoard.getTeacherTable()));
+            newBoard.setLobby(new ArrayList<>(modelBoard.getLobby()));
+            newBoard.setStudentsTable(new HashMap<>(modelBoard.getStudentsTable()));
+            clientBoards.put(modelPlayer.getNickname(), newBoard);
+
+        }
 
         System.out.println("MessageBuilder: ho preparato messaggio di GameInstantiation");
-        return new GameInstantiationMessage(clientIslands);
+        return new GameInstantiationMessage(clientIslands, clientBoards);
 
     }
 
@@ -130,7 +142,8 @@ public class UpdateMessageBuilder {
         Player updatedPlayer = (Player) event.getNewValue();
         Board updatedBoard = updatedPlayer.getBoard();
         String updatedOwner = updatedPlayer.getNickname();
-        return new BoardUpdateMessage(updatedBoard.getStudentsTable(), updatedBoard.getLobby(), updatedBoard.getTeacherTable(), updatedOwner);
+        int numTowers = updatedBoard.getTowers();
+        return new BoardUpdateMessage(updatedBoard.getStudentsTable(), updatedBoard.getLobby(), updatedBoard.getTeacherTable(), updatedOwner, numTowers);
     }
 
     public Message buildActivePersonalityMessage(PropertyChangeEvent event){

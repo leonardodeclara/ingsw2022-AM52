@@ -166,7 +166,7 @@ public class CLI implements Runnable{
     }
 
     public void setInitialGameBoard(GameInstantiationMessage message){
-        GB.instantiateGameElements(message.getIslands());
+        GB.instantiateGameElements(message.getIslands(), message.getBoards());
         System.out.println("PRIMA PRINT DELLA BOARD");
         GB.print();
     }
@@ -228,7 +228,7 @@ public class CLI implements Runnable{
 
     public void updatePlayerBoard(BoardUpdateMessage message){
         String boardOwner = message.getOwner();
-        GB.setUpdatedClientBoard(boardOwner, message.getUpdatedBoardTable(), message.getUpdatedLobbyTable(), message.getUpdatedTeacherTable());
+        GB.setUpdatedClientBoard(boardOwner, message.getUpdatedBoardTable(), message.getUpdatedLobbyTable(), message.getUpdatedTeacherTable(), message.getNumTowers());
         System.out.println("Aggiornata la board di" + boardOwner);
         System.out.println();
         GB.print();

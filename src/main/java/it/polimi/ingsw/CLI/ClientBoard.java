@@ -21,16 +21,15 @@ public class ClientBoard implements Serializable {
     private String owner;
     private Tower team;
     private int currentCard;
-    private GameBoard GB;
+    private GameBoard GB; //TODO: da togliere, gestire in qualche altro modo il fatto di stampare le carte assistente o no
 
-    public ClientBoard(int towers, String owner,GameBoard GB) {
+    public ClientBoard(int towers, String owner) {
         this.studentsTable = new HashMap<>();
         this.teacherTable = new ArrayList<>();
         this.lobby = new ArrayList<>();
         this.deck = new HashMap<>();
         this.towers = towers;
         this.owner = owner;
-        this.GB = GB;
     }
     public void print(){
         //stampo il nickname
@@ -40,19 +39,19 @@ public class ClientBoard implements Serializable {
         for (Color color : Color.values()) {
             int numberOfStudentPerColor = (int) getLobby().stream().filter(c -> c == color).count();
             for (int i = 0; i < numberOfStudentPerColor; i++) {
-                System.out.print(Constants.getStudentsColor(color) + "■");
+                System.out.print(Constants.getStudentsColor(color) + "■ ");
                 System.out.print(Constants.RESET);
             }
         }
         System.out.print("\n");
 
         //stampo la StudentsTable
-        System.out.print("STUDENTS TABLE: ");
+        System.out.println("STUDENTS TABLE: ");
         try {
             for (Color color : Color.values()) {
                 int numberOfStudentPerColor1 = getStudentsTable().get(color);
                 for (int i = 0; i < Constants.MAX_LOBBY_SIZE; i++)
-                    System.out.print(Constants.getStudentsColor(color) + (i < numberOfStudentPerColor1 ? "○ " : "■ "));
+                    System.out.print(Constants.getStudentsColor(color) + (i < numberOfStudentPerColor1 ? "■ " : "○ "));
                 System.out.print("\n");
                 System.out.print(Constants.RESET);
             }
@@ -95,12 +94,14 @@ public class ClientBoard implements Serializable {
             System.out.println("CURRENT ASSISTANT CARD:" + getCurrentCard());
 
 
+        /*
         //mancano da stampare: monete (se in expert game)
         if(GB.getNickname().equals(getOwner())){
             for(Map.Entry<Integer,Integer> entry : getDeck().entrySet()){
                 System.out.println("CARTA ASSISTENTE "+entry.getKey()+":"+"(priorità: "+entry.getKey()+",numero mosse: "+entry.getValue()+")");
             }
         }
+        */
         System.out.print("\n\n");
 
 

@@ -35,8 +35,8 @@ public class ExpertGame extends Game {
      * This method instantiates all the game elements (clouds,teachers,basket,islands and boards)
      */
     @Override
-    public void instantiateGameElements() {
-        super.instantiateGameElements();
+    public void instantiateGameElements(ArrayList<String> playersNames) {
+        super.instantiateGameElements(playersNames);
         //l'estrazione potrebbe essere resa indipendente da instantiateGameElements
         //extractPersonalityCards();
     }
