@@ -9,7 +9,7 @@ import java.util.*;
 
 /**
  * This is a subclass of game
- * contains the informations and the actions that can be performed in the expert game mode
+ * contains the information and the actions that can be performed in the expert game mode
  * Each player can play 3 Personality card
  * Each player can earn money to purchase Personality card
  */

@@ -759,7 +759,10 @@ public class Game {
         return numOfPlayers;
     }
 
-    //metodo che aggiunge i listener a tutte le classi ascoltate
+    /**
+     * Method setPropertyChangeListeners sets the listeners of Game's main attributes.
+     * @param controller: object that listens to the game's changes.
+     */
     public void setPropertyChangeListeners(GameController controller){
         listeners.addPropertyChangeListener("MotherNature", controller); //fire fatto, anche in exp
         listeners.addPropertyChangeListener("Merge", controller); //fire fatto
