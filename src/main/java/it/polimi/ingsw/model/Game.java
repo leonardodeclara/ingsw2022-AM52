@@ -218,8 +218,8 @@ public class Game {
 
     public ArrayList<String> getActionPhasePlayerOrder() {
         ArrayList<Assistant> assistants = new ArrayList<>(currentTurnAssistantCards.values());
-        assistants.sort(Comparator.comparingInt(card -> card.getPriority()));
-
+        assistants.sort(Comparator.comparingInt(Assistant::getPriority));
+        Collections.reverse(assistants);
         ArrayList<String> nicknames = new ArrayList<>();
 
         for (Assistant assistant : assistants) {

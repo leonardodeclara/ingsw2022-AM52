@@ -74,6 +74,7 @@ public class GameBoard {
     }
 
     public void print(){
+        outputStream.print("\033[H\033[2J");
         outputStream.flush();
         printClientBoards();
         printClouds();
