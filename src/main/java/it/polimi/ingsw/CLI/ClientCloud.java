@@ -22,9 +22,10 @@ public class ClientCloud implements Serializable {
             for(Color color : Color.values()) {
                 int numberOfStudentPerColor = (int) getStudents().stream().filter(c -> c == color).count();
                 for (int i = 0; i < numberOfStudentPerColor; i++) {
-                    System.out.print(Constants.getStudentsColor(color) + "■");
+                    System.out.print(Constants.getStudentsColor(color) + "■ ");
                 }
-                System.out.println(Constants.RESET);
+                System.out.print(Constants.RESET);
+                System.out.println();
             }
 
         } catch (NullPointerException e) {
