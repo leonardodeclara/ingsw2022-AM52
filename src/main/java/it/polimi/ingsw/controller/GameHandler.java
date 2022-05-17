@@ -189,11 +189,11 @@ public class GameHandler implements PropertyChangeListener{
         ArrayList<Integer> destIDs = message.getDestinationIndex();
         String clientName = getNicknameFromClientID(client.getID());
         System.out.println("GameHandler:è arrivato un messaggio di moveStudentFromLobby da " + clientName);
-        Message response = gameController.moveStudentsFromLobby(clientName, studentIDs,destIDs); //se il messaggio andava bene il model si è aggiornato dopo questa riga
-        sendTo(clientName, response);
-        if (!(response instanceof ErrorMessage)){
-            System.out.println(clientName+ " ha spostato gli studenti, ora lo sto mandando in WAIT_TURN"); //da sostituire con l'eventualità di giocare una carta
-        }
+        //Message response = gameController.moveStudentsFromLobby(clientName, studentIDs,destIDs); //se il messaggio andava bene il model si è aggiornato dopo questa riga
+        //sendTo(clientName, response);
+        //if (!(response instanceof ErrorMessage)){
+        //    System.out.println(clientName+ " ha spostato gli studenti, ora lo sto mandando in WAIT_TURN"); //da sostituire con l'eventualità di giocare una carta
+        //}
 
         if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
             String nextPlayer = playersOrderIterator.next();
