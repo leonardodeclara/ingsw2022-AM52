@@ -129,7 +129,6 @@ public class InputParser {
             }
 
     }
-
     private ArrayList<Integer> convertStringsToNumberArray(String[] array){
         ArrayList<Integer> arrayInt = new ArrayList<>();
         for(String s : array){
