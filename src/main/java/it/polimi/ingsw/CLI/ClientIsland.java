@@ -41,7 +41,7 @@ public class ClientIsland implements Serializable {
                 System.out.println("No studenti del colore " + color.toString());
             }
 
-            System.out.println(Constants.RESET);
+            System.out.print(Constants.RESET);
         }
         System.out.println();
         System.out.print("TOWERS ON THE ISLAND: ");
@@ -54,10 +54,10 @@ public class ClientIsland implements Serializable {
             else if (towerOnIsland.equals(Tower.GREY))
                 System.out.print(Constants.GREY + "♦ ");
         }
-        System.out.println(Constants.RESET);
+        System.out.print(Constants.RESET);
         System.out.println();
 
-        System.out.println("NUMBER OF MERGED ISLANDS: " + getNumMergedIslands());
+        System.out.print("NUMBER OF MERGED ISLANDS: " + getNumMergedIslands());
 
         if (isMotherNature())
             System.out.println("MOTHER NATURE IS HERE!");
