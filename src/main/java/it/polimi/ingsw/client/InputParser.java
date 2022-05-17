@@ -119,20 +119,28 @@ public class InputParser {
 
         if(words.length==4)
             if(words[0].equalsIgnoreCase("move")){
-                String[] studentIDs = input.split(",");
-                for(String studentID : studentIDs){
-
+                String[] studentIDs = words[1].split(",");
+                ArrayList<Integer> studentIDsInteger = convertStringsToNumberArray(studentIDs);
+                if(studentIDsInteger!=null){
+                    if(words[2].equalsIgnoreCase("in")){
+                        String[] destIDs = words[3].split(",");
+                    }
                 }
             }
 
     }
 
-    private Integer[] convertStringsToNumberArray(String[] array){
+    private ArrayList<Integer> convertStringsToNumberArray(String[] array){
         ArrayList<Integer> arrayInt = new ArrayList<>();
         for(String s : array){
-            try
+            try{
+                Integer.parseInt(s);
                 arrayInt.add(Integer.parseInt(s));
+            }catch(NumberFormatException e){
+                return null;
+            }
         }
+        return arrayInt;
     }
     public String getNickname() {
         return nickname;
