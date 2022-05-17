@@ -75,7 +75,7 @@ public class ClientBoard implements Serializable {
         }
 
         //stampo le torri
-        System.out.print("TOWERS: ");
+        System.out.print("TOWERS:\n");
         try {
             for (int i = 0; i < getTowers(); i++) {
                 if (getTeam().equals(Tower.BLACK))
@@ -86,6 +86,7 @@ public class ClientBoard implements Serializable {
                     System.out.print(Constants.GREY + "♦ ");
 
             }
+            System.out.print("\n");
             System.out.print(Constants.RESET);
         }catch (NullPointerException e){
             System.out.println("No towers");
