@@ -78,7 +78,6 @@ public class Game {
                 Player player = new Player(players.size(), playerName);
                 player.getBoard().setTowers(numOfPlayers == 2 ? 8 : 6);
                 players.add(player);
-                //giveAssistantDeck(player.getNickname(), wizardID);
             } else
                 throw new RuntimeException("Superato limite di giocatori");
     }
@@ -107,13 +106,6 @@ public class Game {
         }
         //System.out.println("Game: ho finito di istanziare i deck assistenti");
 
-        //istanziate le isole -> spostato nel costruttore, altrimenti non veniva ascoltato il primo fill delle Island
-        /*
-        for (int i = 0; i< Constants.MAX_NUM_ISLANDS; i++){
-            islands.add(new Island(i));
-        }
-
-        */
         //posizionata in maniera randomica madre natura
         Random indexGenerator = new Random();
         int initialMotherNature = indexGenerator.nextInt(Constants.MAX_NUM_ISLANDS);
@@ -135,14 +127,6 @@ public class Game {
 
         //riempio il sacchetto definitivo
         basket = new Basket(new int[]{24, 24, 24, 24, 24});
-
-
-        //creo le nuvole -> spostato nel costruttore,
-        /*
-        for (int i = 0; i < numOfPlayers; i++){
-            clouds.add(new Cloud(i));
-        }
-        */
 
         addPlayers(playersNames);
         initiatePlayersLobbies();
