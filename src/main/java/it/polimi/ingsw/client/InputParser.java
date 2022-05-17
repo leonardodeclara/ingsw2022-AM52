@@ -8,6 +8,7 @@ import it.polimi.ingsw.messages.Message;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.Tower;
 
+import java.sql.Array;
 import java.util.ArrayList;
 
 public class InputParser {
@@ -113,10 +114,26 @@ public class InputParser {
         }
     }
 
-    private void moveStudentFromLobby(String input){ //move studentID1,studentID2,studentID3 in table,2,3
-        //TO-DO
+    private void moveStudentsFromLobby(String input){ //move studentID1,studentID2,studentID3 in table,2,3
+        String[] words = input.split(" ");
+
+        if(words.length==4)
+            if(words[0].equalsIgnoreCase("move")){
+                String[] studentIDs = input.split(",");
+                for(String studentID : studentIDs){
+
+                }
+            }
+
     }
 
+    private Integer[] convertStringsToNumberArray(String[] array){
+        ArrayList<Integer> arrayInt = new ArrayList<>();
+        for(String s : array){
+            try
+                arrayInt.add(Integer.parseInt(s));
+        }
+    }
     public String getNickname() {
         return nickname;
     }
