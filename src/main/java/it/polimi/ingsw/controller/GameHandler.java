@@ -42,8 +42,8 @@ public class GameHandler implements PropertyChangeListener{
             handleTowerSelectionMessage((TowerSelectionMessage)message, clientHandler);
         else if(message instanceof PlayAssistantCardMessage)
             handlePlayAssistantCardMessage((PlayAssistantCardMessage) message,clientHandler);
-        //else if (message instanceof MoveStudentsFromLobbyMessage)
-          //  handleMoveStudentMessage((MoveStudentsFromLobbyMessage) message, clientHandler);
+        else if (message instanceof MoveStudentsFromLobbyMessage)
+            handleMoveStudentMessage((MoveStudentsFromLobbyMessage) message, clientHandler);
     }
 
 

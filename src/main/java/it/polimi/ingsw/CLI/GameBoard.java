@@ -4,6 +4,9 @@ import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -20,11 +23,12 @@ public class GameBoard {
     private ArrayList<ClientPersonality> personalities;
     private ClientPersonality activePersonality;
     private HashMap<String, ArrayList<ClientAssistant>> nameToDeckMap;
+    private PrintStream outputStream;
     int coins;
 
 //TODO sostituire con ascii art intestazioni "board","islands","clouds"
 
-    public GameBoard(){
+    public GameBoard(PrintStream outputStream){
         availableWizards = new ArrayList<>();
         availableTowers = new ArrayList<>();
         islands = new ArrayList<>();
@@ -36,6 +40,7 @@ public class GameBoard {
         availableWizards.add(2);
         availableWizards.add(3);
         availableWizards.add(4);
+        this.outputStream = outputStream;
         coins = 20; //intanto lo settiamo al massimo, ma in teoria all'inizio ogni giocatore ha una moneta
     }
 
@@ -69,6 +74,7 @@ public class GameBoard {
     }
 
     public void print(){
+        outputStream.flush();
         printClientBoards();
         printClouds();
         printIslands();
@@ -77,38 +83,38 @@ public class GameBoard {
     }
 
     private void printClientBoards(){ //sarebbe meglio se ogni componente avesse un metodo print e qui venisse chiamato solo quello
-        System.out.println("*****************************************BOARDS DEI GIOCATORI*****************************************************");
+        outputStream.println("*****************************************BOARDS DEI GIOCATORI*****************************************************");
         for(ClientBoard clientBoard : clientBoards.values()){
             clientBoard.print();
         }
-        System.out.println("\n");
+        outputStream.println("\n");
     }
 
     private void printIslands() {
-        System.out.println("*****************************************ISOLE*****************************************");
+        outputStream.println("*****************************************ISOLE*****************************************");
         for (ClientIsland island : islands) {
             island.print();
         }
-        System.out.println("\n");
+        outputStream.println("\n");
     }
 
 
 
     private void printClouds(){
-        System.out.println("*****************************************NUVOLE*****************************************");
+        outputStream.println("*****************************************NUVOLE*****************************************");
         for (ClientCloud cloud : clouds){
             cloud.print();
         }
-        System.out.println("\n");
+        outputStream.println("\n");
     }
 
    private void printPersonalityCards(){
-        System.out.println("AVAILABLE PERSONALITY CARDS:");
+        outputStream.println("AVAILABLE PERSONALITY CARDS:");
         for(ClientPersonality personality : personalities){
-            System.out.print(personality.getCardID() + " ");
+            outputStream.print(personality.getCardID() + " ");
 
         }
-        System.out.println();
+       outputStream.println();
     }
 
     public void setClientTeam(String playerNickname, Tower tower){
