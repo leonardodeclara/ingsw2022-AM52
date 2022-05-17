@@ -39,7 +39,7 @@ public class CLI implements Runnable{
         client = new Client(this);
         receivedMessage = null;
         executorService = Executors.newSingleThreadScheduledExecutor();
-        GB = new GameBoard();
+        GB = new GameBoard(outputStream);
         inputParser = new InputParser();
         inputStream.useDelimiter("\n");
     }
@@ -67,7 +67,7 @@ public class CLI implements Runnable{
         while(active) { //bisogna trovare il modo di impedire al giocatore di spammare invio
             if (inputStream.hasNext()) {
                 playerInput = inputParser.parse(inputStream.nextLine(), currentState);
-                if (playerInput.size() > 0) { //se il messaggio è valido
+                if (playerInput.size() > 0) {
                     Message messageToSend = client.buildMessageFromPlayerInput(playerInput, currentState);
                     try {
                         clientSocket.send(messageToSend);
@@ -76,7 +76,7 @@ public class CLI implements Runnable{
                     }
                 }
                 else{
-                    visualizeInputErrorMessage(); //l'input inserito non è valido, quindi visualizza l'errore
+                    visualizeInputErrorMessage();
                     visualizeContextMessage();
                 }
             }

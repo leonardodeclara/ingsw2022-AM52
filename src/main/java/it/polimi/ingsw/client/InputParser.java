@@ -40,6 +40,9 @@ public class InputParser {
             case PLAY_ASSISTANT_CARD:
                 parseAssistantCardString(input);
                 break;
+            case MOVE_FROM_LOBBY:
+                parseMoveStudentsFromLobby(input);
+                break;
         }
         return data;
     }
@@ -114,25 +117,34 @@ public class InputParser {
         }
     }
 
-    private void moveStudentsFromLobby(String input){ //move studentID1,studentID2,studentID3 in table,2,3
+    private void parseMoveStudentsFromLobby(String input){ //move studentID1,studentID2,studentID3 in table,2,3
         String[] words = input.split(" ");
 
-        if(words.length==4)
+        if(words.length==4){
             if(words[0].equalsIgnoreCase("move")){
                 String[] studentIDs = words[1].split(",");
                 ArrayList<Integer> studentIDsInteger = convertStringsToNumberArray(studentIDs);
                 if(studentIDsInteger!=null){
                     if(words[2].equalsIgnoreCase("in")){
                         String[] destIDs = words[3].split(",");
+                        ArrayList<Integer> destIDsInteger = convertStringsToNumberArray(destIDs);
+                        if(destIDsInteger!=null){
+                            data.add(studentIDsInteger);
+                            data.add(destIDsInteger);
+                        }
                     }
                 }
             }
-
+        }
     }
+
+
     private ArrayList<Integer> convertStringsToNumberArray(String[] array){
         ArrayList<Integer> arrayInt = new ArrayList<>();
         for(String s : array){
             try{
+                if(s.equalsIgnoreCase("table"))
+                    arrayInt.add(Constants.ISLAND_ID_NOT_RECEIVED);
                 Integer.parseInt(s);
                 arrayInt.add(Integer.parseInt(s));
             }catch(NumberFormatException e){
@@ -140,6 +152,14 @@ public class InputParser {
             }
         }
         return arrayInt;
+    }
+
+    private Integer isStringNumber(String s){
+        try{
+            return Integer.parseInt(s);
+        }catch(NumberFormatException e){
+            return -1;
+        }
     }
     public String getNickname() {
         return nickname;
