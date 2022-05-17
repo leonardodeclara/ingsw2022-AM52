@@ -10,13 +10,15 @@ public class BoardUpdateMessage implements Message{
     HashMap<Color, Integer> updatedBoardTable;
     ArrayList<Color> updatedLobbyTable;
     ArrayList<Color> updatedTeacherTable;
+    int numTowers;
     String owner;
 
-    public BoardUpdateMessage(HashMap<Color, Integer> updatedBoardTable, ArrayList<Color> updatedLobbyTable, ArrayList<Color> updatedTeacherTable, String owner) {
+    public BoardUpdateMessage(HashMap<Color, Integer> updatedBoardTable, ArrayList<Color> updatedLobbyTable, ArrayList<Color> updatedTeacherTable, String owner, int numTowers) {
         this.updatedBoardTable = updatedBoardTable;
         this.updatedLobbyTable = updatedLobbyTable;
         this.updatedTeacherTable = updatedTeacherTable;
         this.owner = owner;
+        this.numTowers = numTowers;
     }
 
     public HashMap<Color, Integer> getUpdatedBoardTable() {
@@ -33,5 +35,9 @@ public class BoardUpdateMessage implements Message{
 
     public String getOwner() {
         return owner;
+    }
+
+    public int getNumTowers() {
+        return numTowers;
     }
 }

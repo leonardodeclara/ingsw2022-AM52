@@ -154,8 +154,8 @@ public class GameHandler implements PropertyChangeListener{
         else{
             //mando in broadcast la scelta di torri di ogni player, in modo che tutti possano visualizzarle
             //in teoria qui per la prima volta i client visualizzano la view
-            Message gameStart = gameController.buildPlayerTowerAssociation();
-            sendAll(gameStart);
+            //Message gameStart = gameController.buildPlayerTowerAssociation();
+            //sendAll(gameStart);
             startPlanningPhase();
             System.out.println("Adesso faccio partire la partita con la scelta delle carte assistente (credo). comunque la fase dopo");
         }

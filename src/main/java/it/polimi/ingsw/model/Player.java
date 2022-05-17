@@ -23,12 +23,12 @@ public class Player {
      * Constructor creates a Player instance.
      * @param index: unique identification for the player.
      */
-    public Player(int index, String nickname, Tower team) {
+    public Player(int index, String nickname) {
         playerId = index;
         this.nickname=nickname;
         board = new Board();
         deck = new ArrayList<>();
-        this.team = team;
+        //this.team = team;
         listeners = new PropertyChangeSupport(this);
     }
 
@@ -39,6 +39,7 @@ public class Player {
     public void setDeck(ArrayList<Assistant> newDeck){
         deck.clear();
         deck.addAll(newDeck);
+        listeners.firePropertyChange("Deck", null, this);
     }
 
     /**
@@ -84,6 +85,7 @@ public class Player {
 
     public void setTeam(Tower team) {
         this.team = team;
+        listeners.firePropertyChange("Board", null, this);
     }
 
     //TO DO: TESTARLA
