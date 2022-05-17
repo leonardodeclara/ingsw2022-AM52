@@ -7,15 +7,15 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/*
+
 class ExpertGameTest {
 
     @Test
     void instantiateGameElementsTest() {
         ExpertGame game = new ExpertGame(2);
-        game.addPlayer(new Player(0,"mari",Tower.BLACK));
-        game.addPlayer(new Player(1,"frizio",Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"mari",Tower.BLACK), 0);
+        game.addPlayer(new Player(1,"frizio",Tower.WHITE),1);
         assertEquals(20,game.getCoins());
         assertEquals(4, game.getBans());
     }
@@ -23,9 +23,10 @@ class ExpertGameTest {
     @Test
     void personalityExtractionTest(){
         ExpertGame game = new ExpertGame(2);
-        game.addPlayer(new Player(0,"mari",Tower.BLACK));
-        game.addPlayer(new Player(1,"frizio",Tower.WHITE));
         game.instantiateGameElements();
+        game.addPlayer(new Player(0,"mari",Tower.BLACK),0);
+        game.addPlayer(new Player(1,"frizio",Tower.WHITE),1);
+
         game.extractPersonalityCards();
         assertEquals(3, game.getPersonalities().size());
         for (int i = 0; i< 2; i++){
@@ -39,11 +40,14 @@ class ExpertGameTest {
         }
     }
 
+    /**
+     * TODO: moveStudentFromLobbyForCard2 va modificato. Andranno modificati correttamente anche i test
+     */
     @Test
     void moveStudentFromLobbyForCard2() {
         ExpertGame game = new ExpertGame(2);
-        game.addPlayer(new Player(0,"leo",Tower.WHITE));
-        game.addPlayer(new Player(1,"frizio",Tower.BLACK));
+        game.addPlayer(new Player(0,"leo",Tower.WHITE),0);
+        game.addPlayer(new Player(1,"frizio",Tower.BLACK),1);
         game.instantiateGameElements();
         for (int i = 0; i<7; i++){
             game.getPlayers().get(0).addToBoardLobby(Color.BLUE);
@@ -64,8 +68,8 @@ class ExpertGameTest {
     @Test
     void modifiedTeacherMovementTest() {
         ExpertGame game = new ExpertGame(2);
-        game.addPlayer(new Player(0, "leo", Tower.BLACK));
-        game.addPlayer(new Player(1, "mari", Tower.WHITE));
+        game.addPlayer(new Player(0, "leo", Tower.BLACK),0);
+        game.addPlayer(new Player(1, "mari", Tower.WHITE),1);
         game.instantiateGameElements();
         for (int i = 0; i < 7; i++){
             game.getPlayerByName("leo").addToBoardTable(Color.BLUE);
@@ -104,8 +108,8 @@ class ExpertGameTest {
     @Test
     void moveMotherNatureForCard4() {
         ExpertGame game = new ExpertGame(2);
-        game.addPlayer(new Player(0,"mari",Tower.GREY));
-        game.addPlayer(new Player(1,"leo",Tower.WHITE));
+        game.addPlayer(new Player(0,"mari",Tower.GREY),0);
+        game.addPlayer(new Player(1,"leo",Tower.WHITE),1);
         game.instantiateGameElements();
         game.giveAssistantDeck("mari",0);
         game.giveAssistantDeck("leo",2);
@@ -123,8 +127,8 @@ class ExpertGameTest {
     @Test
     void calculateInfluenceForCard6() {
         ExpertGame game = new ExpertGame(2);
-        game.addPlayer(new Player(0,"mari",Tower.GREY));
-        game.addPlayer(new Player(1,"frizio",Tower.WHITE));
+        game.addPlayer(new Player(0,"mari",Tower.GREY),0);
+        game.addPlayer(new Player(1,"frizio",Tower.WHITE),1);
         game.instantiateGameElements();
         int oppositeToMN = 0;
         for (int i = 0; i< 12;i++){
@@ -157,8 +161,8 @@ class ExpertGameTest {
     @Test
     void card8EffectTest() {
         ExpertGame game = new ExpertGame(2);
-        game.addPlayer(new Player(0,"leo",Tower.GREY));
-        game.addPlayer(new Player(1,"mari",Tower.BLACK));
+        game.addPlayer(new Player(0,"leo",Tower.GREY),0);
+        game.addPlayer(new Player(1,"mari",Tower.BLACK),1);
         game.instantiateGameElements();
         int mnPosition = 0;
         for (int i = 0; i< 12;i++){
@@ -196,8 +200,8 @@ class ExpertGameTest {
     @Test
     void card8EffectWithTowersTest() {
         ExpertGame game = new ExpertGame(2);
-        game.addPlayer(new Player(0,"mari",Tower.GREY));
-        game.addPlayer(new Player(1,"frizio",Tower.WHITE));
+        game.addPlayer(new Player(0,"mari",Tower.GREY),0);
+        game.addPlayer(new Player(1,"frizio",Tower.WHITE),1);
         game.instantiateGameElements();
         int mnPosition = 0;
         for (int i = 0; i< 12;i++){
@@ -230,8 +234,8 @@ class ExpertGameTest {
     @Test
     void card9EffectTest() {
         ExpertGame game = new ExpertGame(2);
-        game.addPlayer(new Player(0,"mari",Tower.BLACK));
-        game.addPlayer(new Player(1,"frizio",Tower.WHITE));
+        game.addPlayer(new Player(0,"mari",Tower.BLACK),0);
+        game.addPlayer(new Player(1,"frizio",Tower.WHITE),1);
         game.instantiateGameElements();
         int mnPosition = 0;
         for (int i = 0; i< 12;i++){
@@ -267,8 +271,8 @@ class ExpertGameTest {
     @Test
     void card9EffectWithTowersTest() {
         ExpertGame game = new ExpertGame(2);
-        game.addPlayer(new Player(0,"leo",Tower.WHITE));
-        game.addPlayer(new Player(1,"mari",Tower.GREY));
+        game.addPlayer(new Player(0,"leo",Tower.WHITE),0);
+        game.addPlayer(new Player(1,"mari",Tower.GREY),1);
         game.instantiateGameElements();
         int mnPosition = 0;
         for (int k = 0; k< 12;k++){
@@ -298,9 +302,9 @@ class ExpertGameTest {
     @Test
     void personalityCardManagementTest(){
         ExpertGame game = new ExpertGame(3);
-        game.addPlayer(new Player(0,"leo",Tower.WHITE));
-        game.addPlayer(new Player(1,"mari",Tower.GREY));
-        game.addPlayer(new Player(2,"frizio",Tower.BLACK));
+        game.addPlayer(new Player(0,"leo",Tower.WHITE),0);
+        game.addPlayer(new Player(1,"mari",Tower.GREY),1);
+        game.addPlayer(new Player(2,"frizio",Tower.BLACK),2);
         game.instantiateGameElements();
         game.extractPersonalityCards();
         ArrayList<Personality> playableCards= game.getPersonalities();
@@ -313,9 +317,9 @@ class ExpertGameTest {
     @Test
     void invalidPersonalitySelectionTest(){
         ExpertGame game = new ExpertGame(3);
-        game.addPlayer(new Player(0,"leo",Tower.WHITE));
-        game.addPlayer(new Player(1,"mari",Tower.GREY));
-        game.addPlayer(new Player(2,"frizio",Tower.BLACK));
+        game.addPlayer(new Player(0,"leo",Tower.WHITE),0);
+        game.addPlayer(new Player(1,"mari",Tower.GREY),1);
+        game.addPlayer(new Player(2,"frizio",Tower.BLACK),2);
         game.instantiateGameElements();
         game.extractPersonalityCards();
         assertThrows(RuntimeException.class, ()->game.setActivePersonality(0));
@@ -326,9 +330,9 @@ class ExpertGameTest {
     @Test
     void personalityResetTest(){
         ExpertGame game = new ExpertGame(3);
-        game.addPlayer(new Player(0,"mari",Tower.BLACK));
-        game.addPlayer(new Player(1,"frizio",Tower.WHITE));
-        game.addPlayer(new Player(2,"leo",Tower.GREY));
+        game.addPlayer(new Player(0,"mari",Tower.BLACK),0);
+        game.addPlayer(new Player(1,"frizio",Tower.WHITE),1);
+        game.addPlayer(new Player(2,"leo",Tower.GREY),2);
         game.instantiateGameElements();
         game.extractPersonalityCards();
         ArrayList<Personality> playableCards = game.getPersonalities();
@@ -346,4 +350,4 @@ class ExpertGameTest {
 
 }
 
-*/
+
