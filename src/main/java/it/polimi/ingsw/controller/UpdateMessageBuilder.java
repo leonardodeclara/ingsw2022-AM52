@@ -138,12 +138,20 @@ public class UpdateMessageBuilder {
         return new CloudUpdateMessage(cloudIndex);
     }
 
+    //messaggio personalizzato manda la nuova clientBoard aggiornata
+    //a questo metodo si possono aggiungere dei clientBoard.setX() se altri el possono cambiare
+    //poi andrà cambiato anche il metodo setUpdatedClientBoard in GameBoard
     public Message buildBoardUpdateMessage(PropertyChangeEvent event){
         Player updatedPlayer = (Player) event.getNewValue();
         Board updatedBoard = updatedPlayer.getBoard();
         String updatedOwner = updatedPlayer.getNickname();
-        int numTowers = updatedBoard.getTowers();
-        return new BoardUpdateMessage(updatedBoard.getStudentsTable(), updatedBoard.getLobby(), updatedBoard.getTeacherTable(), updatedOwner, numTowers);
+        ClientBoard clientBoard = new ClientBoard(updatedOwner);
+        clientBoard.setTeam(updatedPlayer.getTeam());
+        clientBoard.setTowers( updatedBoard.getTowers());
+        clientBoard.setStudentsTable(updatedBoard.getStudentsTable());
+        clientBoard.setTeacherTable(updatedBoard.getTeacherTable());
+        clientBoard.setLobby(updatedBoard.getLobby());
+        return new BoardUpdateMessage(updatedOwner, clientBoard);
     }
 
     public Message buildActivePersonalityMessage(PropertyChangeEvent event){

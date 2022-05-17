@@ -3,7 +3,6 @@ package it.polimi.ingsw.client;
 import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.messages.*;
-import it.polimi.ingsw.model.Island;
 import it.polimi.ingsw.model.Tower;
 
 import java.io.IOException;
@@ -131,7 +130,7 @@ public class CLI implements Runnable{
             updateAvailableTower((AvailableTowerMessage) updateMessage);
         else if (updateMessage instanceof GameInstantiationMessage)
             setInitialGameBoard((GameInstantiationMessage) updateMessage);
-        else if (updateMessage instanceof GameStartMessage)
+        else if (updateMessage instanceof GameStartMessage) //in teoria questo messaggio va cancellato
             updatePlayerTowerAssociation((GameStartMessage) updateMessage);
         else if (updateMessage instanceof CurrentTurnAssistantCardsUpdateMessage)
             updateCurrentTurnAssistantCards((CurrentTurnAssistantCardsUpdateMessage) updateMessage);
@@ -228,7 +227,7 @@ public class CLI implements Runnable{
 
     public void updatePlayerBoard(BoardUpdateMessage message){
         String boardOwner = message.getOwner();
-        GB.setUpdatedClientBoard(boardOwner, message.getUpdatedBoardTable(), message.getUpdatedLobbyTable(), message.getUpdatedTeacherTable(), message.getNumTowers());
+        GB.setUpdatedClientBoard(boardOwner, message.getClientBoard());
         System.out.println("Aggiornata la board di" + boardOwner);
         System.out.println();
         GB.print();

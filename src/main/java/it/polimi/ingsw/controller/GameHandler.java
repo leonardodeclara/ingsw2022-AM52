@@ -138,6 +138,7 @@ public class GameHandler implements PropertyChangeListener{
         Tower chosenTower = message.getTower();
         String clientName = getNicknameFromClientID(client.getID());
         System.out.println("GameHandler:è arrivato un messaggio di towerSelection da " + clientName);
+        System.out.println(clientName + "Ha scelto la torre del colore" + chosenTower.toString());
         Message response = gameController.updateTowerSelection(clientName, chosenTower);
         sendTo(clientName, response);
         if (!(response instanceof ErrorMessage)){
@@ -153,8 +154,8 @@ public class GameHandler implements PropertyChangeListener{
             else{
                 //mando in broadcast la scelta di torri di ogni player, in modo che tutti possano visualizzarle
                 //in teoria qui per la prima volta i client visualizzano la view
-                Message gameStart = gameController.buildPlayerTowerAssociation();
-                sendAll(gameStart);
+                //Message gameStart = gameController.buildPlayerTowerAssociation();
+                //sendAll(gameStart);
                 startPlanningPhase();
                 System.out.println("Adesso faccio partire la partita con la scelta delle carte assistente. comunque la fase dopo");
             }
@@ -168,7 +169,10 @@ public class GameHandler implements PropertyChangeListener{
         System.out.println("GameHandler:è arrivato un messaggio di playAssistantCard da " + clientName);
         Message response = gameController.updateAssistantCards(clientName, chosenCard); //se il messaggio andava bene il model si è aggiornato dopo questa riga
         sendTo(clientName, response);
+
         if (!(response instanceof ErrorMessage)){
+            //bisogna mandare in broadcast un messaggio con le carte giocate fino ad ora (CurrentTurnAssistantCard)
+            // ->cambiarei da come sono state pensate e farei l'aggiornamento carta per carta,si potrebbe usare AssistantDeckUpdate. boh rivedere
             System.out.println(clientName+ " ha scelto la sua carta, ora lo sto mandando in WAIT_TURN");
             if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
                 String nextPlayer = playersOrderIterator.next();
@@ -177,6 +181,7 @@ public class GameHandler implements PropertyChangeListener{
                 sendTo(nextPlayer,playAssistantCardMessage);
             }
             else{
+
                 startActionPhase();
             }
         }

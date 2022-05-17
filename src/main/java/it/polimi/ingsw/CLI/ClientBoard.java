@@ -23,14 +23,23 @@ public class ClientBoard implements Serializable {
     private int currentCard;
     private GameBoard GB; //TODO: da togliere, gestire in qualche altro modo il fatto di stampare le carte assistente o no
 
-    public ClientBoard(int towers, String owner) {
+    public ClientBoard(String owner){
+        this.owner = owner;
         this.studentsTable = new HashMap<>();
         this.teacherTable = new ArrayList<>();
         this.lobby = new ArrayList<>();
         this.deck = new HashMap<>();
+    }
+
+    public ClientBoard(int towers, String owner) {
         this.towers = towers;
         this.owner = owner;
+        this.studentsTable = new HashMap<>();
+        this.teacherTable = new ArrayList<>();
+        this.lobby = new ArrayList<>();
+        this.deck = new HashMap<>();
     }
+
     public void print(){
         //stampo il nickname
         System.out.println("************************************************"+getOwner().toUpperCase() + "'S SCHOOL"+"************************************************");
@@ -89,19 +98,22 @@ public class ClientBoard implements Serializable {
         }catch (NullPointerException e){
             System.out.println("No towers");
         }
+        System.out.println();
 
-        if (getCurrentCard()!= 0)
+        if (getCurrentCard()!= 0){
             System.out.println("CURRENT ASSISTANT CARD:" + getCurrentCard());
+            System.out.println();
+        }
 
 
-        /*
+
         //mancano da stampare: monete (se in expert game)
         if(GB.getNickname().equals(getOwner())){
             for(Map.Entry<Integer,Integer> entry : getDeck().entrySet()){
                 System.out.println("CARTA ASSISTENTE "+entry.getKey()+":"+"(priorità: "+entry.getKey()+",numero mosse: "+entry.getValue()+")");
             }
         }
-        */
+
         System.out.print("\n\n");
 
 
@@ -117,6 +129,10 @@ public class ClientBoard implements Serializable {
                 deck.put(priority,numMoves);
             }
         }
+    }
+
+    public void setGB(GameBoard GB) {
+        this.GB = GB;
     }
 
     public void setCurrentCard(int currentCard) {
