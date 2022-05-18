@@ -55,17 +55,15 @@ public class ClientSocket implements Runnable{
                 Message receivedMessage = (Message) in.readObject();
                 System.out.println("Ho ricevuto lato client "+receivedMessage);
                 cli.handleMessageFromServer(receivedMessage);
-
             }
         }
         catch (IOException | ClassNotFoundException ioException){
             //gestione dell'errore
         } finally {
-            //chiusura connessione
+            closeConnection();
+            //System.exit(0);
         }
-
     }
-
 
     public void send(Message msg) throws IOException {
         out.reset();
@@ -73,6 +71,17 @@ public class ClientSocket implements Runnable{
         out.flush();
     }
 
+    private void closeConnection(){
+        System.out.println("Chiudo il thread del clientSocket");
+        try{
+            in.close();
+            out.close();
+            socket.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
 

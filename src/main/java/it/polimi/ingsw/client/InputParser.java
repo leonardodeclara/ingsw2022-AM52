@@ -2,6 +2,7 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.exceptions.QuitException;
 import it.polimi.ingsw.messages.ClientState;
 import it.polimi.ingsw.messages.GameParametersMessage;
 import it.polimi.ingsw.messages.Message;
@@ -20,6 +21,8 @@ public class InputParser {
     }
 
     public ArrayList<Object> parse(String input, ClientState state) throws NumberFormatException{
+        if (parseQuitInput(input))
+            throw new QuitException(); //creata eccezione ad hoc
         data = new ArrayList<>();
         switch(state){
             case CONNECT_STATE:
@@ -161,6 +164,15 @@ public class InputParser {
             return -1;
         }
     }
+
+    private boolean parseQuitInput(String input){
+        if (input.equalsIgnoreCase("quit")){
+            System.out.println("Ha scritto quit!");
+            return true;
+        }
+        return false;
+    }
+
     public String getNickname() {
         return nickname;
     }

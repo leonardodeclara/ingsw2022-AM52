@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.exceptions.QuitException;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Game;
 
@@ -46,10 +47,10 @@ public class ClientHandler implements Runnable {
                 Message receivedMessage = (Message) in.readObject();
                 readMessage(receivedMessage);
                 }
-            } catch (IOException e) {
-            System.out.println("Chiudo la connessione con il client");
-            closeConnection();
-            //System.err.println(e.getMessage());
+            } catch (IOException | QuitException e) {
+                System.out.println("Chiudo la connessione con il client");
+                closeConnection();
+                //System.err.println(e.getMessage());
             } catch (ClassNotFoundException e) {
                 System.err.println(e.getMessage());
             }
@@ -68,6 +69,10 @@ public class ClientHandler implements Runnable {
         {
             System.out.println("ClientHandler: è arrivato un messaggio di gameParameters");
             server.handleMessage(message,this);
+        }
+        else if (message instanceof DisconnectMessage){
+            System.out.println("ClientHandler: è arrivato un messaggio di Disconnect");
+            throw new QuitException();
         }
         else
             gameHandler.handleMessage(message,this); //attende che gamehandler,gamecontroller e gli altri facciano quello che devono

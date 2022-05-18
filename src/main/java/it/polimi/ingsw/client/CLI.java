@@ -2,6 +2,7 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.exceptions.QuitException;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Tower;
 
@@ -61,25 +62,35 @@ public class CLI implements Runnable{
         active = true;
         setNextState(ClientState.CONNECT_STATE); //stato iniziale
 
-
-
-        while(active) { //bisogna trovare il modo di impedire al giocatore di spammare invio
-            if (inputStream.hasNext()) {
-                playerInput = inputParser.parse(inputStream.nextLine(), currentState);
-                if (playerInput.size() > 0) {
-                    Message messageToSend = client.buildMessageFromPlayerInput(playerInput, currentState);
-                    try {
-                        clientSocket.send(messageToSend);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+        try{
+            while(active) { //bisogna trovare il modo di impedire al giocatore di spammare invio
+                if (inputStream.hasNext()) {
+                    playerInput = inputParser.parse(inputStream.nextLine(), currentState);
+                    if (playerInput.size() > 0) {
+                        Message messageToSend = client.buildMessageFromPlayerInput(playerInput, currentState);
+                        try {
+                            clientSocket.send(messageToSend);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-                else{
-                    visualizeInputErrorMessage();
-                    visualizeContextMessage();
+                    else{
+                        visualizeInputErrorMessage();
+                        visualizeContextMessage();
+                    }
                 }
             }
         }
+        //creare eccezione ad hoc
+        catch (QuitException e){
+            try {
+                clientSocket.send(new DisconnectMessage("Chiudo"));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("Ora mi chiudo");
+        }
+        System.out.println("Qui muore il thread della cli");
     }
 
     public void handleMessageFromServer(Message receivedMessage){

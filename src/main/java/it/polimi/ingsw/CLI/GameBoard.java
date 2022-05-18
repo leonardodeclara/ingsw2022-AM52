@@ -22,7 +22,6 @@ public class GameBoard {
     private HashMap<String,ClientBoard> clientBoards; //deve diventare una mappa
     private ArrayList<ClientPersonality> personalities;
     private ClientPersonality activePersonality;
-    private HashMap<String, ArrayList<ClientAssistant>> nameToDeckMap;
     private PrintStream outputStream;
     int coins;
 

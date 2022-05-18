@@ -2,13 +2,13 @@ package it.polimi.ingsw.messages;
 
 public class DisconnectMessage implements Message{
 
-    String disconnectmessage;
+    String disconnectMessage;
 
     public DisconnectMessage(String disconnectmessage) {
-        this.disconnectmessage = disconnectmessage;
+        this.disconnectMessage = disconnectMessage;
     }
 
-    public String getDisconnectmessage() {
-        return disconnectmessage;
+    public String getDisconnectMessage() {
+        return disconnectMessage;
     }
 }
