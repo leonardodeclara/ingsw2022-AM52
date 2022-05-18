@@ -20,9 +20,4 @@ public class MainMenuController extends GUIController {
     }
 
 
-    @FXML
-    void connect(ActionEvent event){
-
-    }
-
 }

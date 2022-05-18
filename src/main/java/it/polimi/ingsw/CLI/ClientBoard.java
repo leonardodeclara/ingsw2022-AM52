@@ -21,38 +21,43 @@ public class ClientBoard implements Serializable {
     private String owner;
     private Tower team;
     private int currentCard;
-    private GameBoard GB;
+    private GameBoard GB; //TODO: da togliere, gestire in qualche altro modo il fatto di stampare le carte assistente o no
 
-    public ClientBoard(int towers, String owner,GameBoard GB) {
+    public ClientBoard(String owner){
+        this.owner = owner;
         this.studentsTable = new HashMap<>();
         this.teacherTable = new ArrayList<>();
         this.lobby = new ArrayList<>();
         this.deck = new HashMap<>();
+    }
+
+    public ClientBoard(int towers, String owner) {
         this.towers = towers;
         this.owner = owner;
-        this.GB = GB;
+        this.studentsTable = new HashMap<>();
+        this.teacherTable = new ArrayList<>();
+        this.lobby = new ArrayList<>();
+        this.deck = new HashMap<>();
     }
+
     public void print(){
         //stampo il nickname
         System.out.println("************************************************"+getOwner().toUpperCase() + "'S SCHOOL"+"************************************************");
         //stampo la lobby
         System.out.print("LOBBY: ");
-        for (Color color : Color.values()) {
-            int numberOfStudentPerColor = (int) getLobby().stream().filter(c -> c == color).count();
-            for (int i = 0; i < numberOfStudentPerColor; i++) {
-                System.out.print(Constants.getStudentsColor(color) + "■");
-                System.out.print(Constants.RESET);
-            }
+        for(int i=0;i<lobby.size();i++){
+            System.out.print(Constants.getStudentsColor(lobby.get(i)) + "■ ");
+            System.out.print(Constants.RESET);
         }
+
         System.out.print("\n");
 
         //stampo la StudentsTable
-        System.out.print("STUDENTS TABLE: ");
+        System.out.println("STUDENTS TABLE: ");
         try {
-            for (Color color : Color.values()) {
-                int numberOfStudentPerColor1 = getStudentsTable().get(color);
+            for(Color color : studentsTable.keySet()){
                 for (int i = 0; i < Constants.MAX_LOBBY_SIZE; i++)
-                    System.out.print(Constants.getStudentsColor(color) + (i < numberOfStudentPerColor1 ? "○ " : "■ "));
+                    System.out.print(Constants.getStudentsColor(color) + (i < studentsTable.get(color) ? "■ " : "○ "));
                 System.out.print("\n");
                 System.out.print(Constants.RESET);
             }
@@ -91,9 +96,13 @@ public class ClientBoard implements Serializable {
         }catch (NullPointerException e){
             System.out.println("No towers");
         }
+        System.out.println();
 
-        if (getCurrentCard()!= 0)
+        if (getCurrentCard()!= 0){
             System.out.println("CURRENT ASSISTANT CARD:" + getCurrentCard());
+            System.out.println();
+        }
+
 
 
         //mancano da stampare: monete (se in expert game)
@@ -102,6 +111,7 @@ public class ClientBoard implements Serializable {
                 System.out.println("CARTA ASSISTENTE "+entry.getKey()+":"+"(priorità: "+entry.getKey()+",numero mosse: "+entry.getValue()+")");
             }
         }
+
         System.out.print("\n\n");
 
 
@@ -117,6 +127,10 @@ public class ClientBoard implements Serializable {
                 deck.put(priority,numMoves);
             }
         }
+    }
+
+    public void setGB(GameBoard GB) {
+        this.GB = GB;
     }
 
     public void setCurrentCard(int currentCard) {

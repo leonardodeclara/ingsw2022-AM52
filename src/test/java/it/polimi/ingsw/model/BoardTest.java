@@ -46,7 +46,7 @@ class BoardTest {
         Board board = new Board();
         board.addToLobby(Color.BLUE);
         board.addToLobby(Color.BLUE);
-        board.removeFromLobby(1);
+        board.removeFromLobby(Color.BLUE);
         assertEquals(1, board.getLobby().size());
     }
 

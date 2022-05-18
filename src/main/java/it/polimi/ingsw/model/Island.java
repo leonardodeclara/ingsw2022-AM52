@@ -104,9 +104,9 @@ public class Island {
      */
     public void addStudent(Color student){
         students.add(student);
-        System.out.println("Island: ora scatta un propertyChange per la modifica degli students");
+        //System.out.println("Island: ora scatta un propertyChange per la modifica degli students");
         listeners.firePropertyChange("IslandStudents", null, this);
-        System.out.println("Island: è scattato il propertyChange");
+        //System.out.println("Island: è scattato il propertyChange");
     }
 
     /**
@@ -175,6 +175,11 @@ public class Island {
             return null;
     }
 
+    /**
+     * This method adds to the PropertyChangeSupport attribute two listeners: one for the changes to the island's towers,
+     * one for the changes to the island's towers.
+     * @param controller: the object that listens to the island's changes.
+     */
     public void setPropertyChangeListener(GameController controller){
         listeners.addPropertyChangeListener("IslandTowers", controller);
         listeners.addPropertyChangeListener("IslandStudents", controller);

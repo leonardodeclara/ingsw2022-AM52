@@ -44,7 +44,7 @@ public class GameController implements PropertyChangeListener {
     }
 
     public Message handleGameInstantiation(){
-        game.instantiateGameElements();
+        game.instantiateGameElements(players);
         game.setPropertyChangeListeners(this);
         System.out.println("GC: ho impostato correttamente i primi gameElements e ho settato i PropertyChange");
         return updateMessageBuilder.buildGameInstantiationMessage(game);
@@ -53,6 +53,7 @@ public class GameController implements PropertyChangeListener {
     public Message updateWizardSelection(String player, Integer wizard){
         System.out.println("Maghi disponibili lato server:"+availableWizards);
         if (availableWizards.contains(wizard)){
+            game.giveAssistantDeck(player, wizard);
             playerToWizardMap.put(player, wizard);
             availableWizards.remove(wizard);
             System.out.println("GameController: ho aggiornato i mazzi disponibili togliendo il deck " + wizard);
@@ -67,8 +68,9 @@ public class GameController implements PropertyChangeListener {
     public Message updateTowerSelection(String player, Tower tower){
         System.out.println("Torri disponibili lato server:"+availableTowers);
         if (availableTowers.contains(tower)){
-            game.addPlayer(new Player(game.getPlayers().size(),player, tower),playerToWizardMap.get(player)); //rivedere l'assegnamento dell'indice
-            game.setPlayerPropertyChangeListener(player, this); //setto il listener per questo player
+            //game.addPlayer(new Player(game.getPlayers().size(),player, tower),playerToWizardMap.get(player)); //rivedere l'assegnamento dell'indice
+            //game.setPlayerPropertyChangeListener(player, this); //setto il listener per questo player
+            game.getPlayerByName(player).setTeam(tower);
             availableTowers.remove(tower);
             System.out.println("GameController: ho aggiornato le torri disponibili togliendo " + tower.toString());
             return new ClientStateMessage(ClientState.WAIT_TURN);
@@ -88,9 +90,9 @@ public class GameController implements PropertyChangeListener {
 
     public Message moveStudentsFromLobby(String player, ArrayList<Integer> studentIDs, ArrayList<Integer> destIDs){
         if(game.moveStudentsFromLobby(player,studentIDs,destIDs))
-            return new ErrorMessage(ErrorKind.INVALID_INPUT);
-        else
             return new ClientStateMessage(ClientState.WAIT_TURN);
+        else
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
     public ArrayList<String> getActionPhaseTurnOrder(){

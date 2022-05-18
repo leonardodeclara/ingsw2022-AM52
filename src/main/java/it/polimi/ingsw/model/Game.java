@@ -64,18 +64,22 @@ public class Game {
     }
 
     /**
-     * This method add an existing player to the game.
+     * TODO: modificare javadocs e tutti i relativi test
+     */
+    /**
+     * This method add new players to the game.
      *
-     * @param player: instance of the player which has been admitted to the game.
+     * @param playersNames: names of the players which have been admitted to the game.
      */
     //bisogna gestire il lancio di questa eccezione (creare una ad hoc)
-    public void addPlayer(Player player, int wizardID) {
-        if (players.size() < 3) {
-            player.getBoard().setTowers(numOfPlayers == 2 ? 8 : 6);
-            players.add(player);
-            giveAssistantDeck(player.getNickname(), wizardID);
-        } else
-            throw new RuntimeException("Superato limite di giocatori");
+    public void addPlayers(ArrayList<String> playersNames) {
+        for (String playerName: playersNames)
+            if (players.size() < 3) {
+                Player player = new Player(players.size(), playerName);
+                player.getBoard().setTowers(numOfPlayers == 2 ? 8 : 6);
+                players.add(player);
+            } else
+                throw new RuntimeException("Superato limite di giocatori");
     }
 
     /**
@@ -84,7 +88,7 @@ public class Game {
     /**
      * This method instantiates all the game elements (clouds,teachers,basket,islands and boards).
      */
-    public void instantiateGameElements() {
+    public void instantiateGameElements(ArrayList<String> playersNames) {
         //istanziati i professori al tavolo di gioco
         teachers.addAll(Arrays.asList(Color.values()));
         for (int i = 0; i < Color.values().length; i++) {
@@ -102,13 +106,6 @@ public class Game {
         }
         //System.out.println("Game: ho finito di istanziare i deck assistenti");
 
-        //istanziate le isole -> spostato nel costruttore, altrimenti non veniva ascoltato il primo fill delle Island
-        /*
-        for (int i = 0; i< Constants.MAX_NUM_ISLANDS; i++){
-            islands.add(new Island(i));
-        }
-
-        */
         //posizionata in maniera randomica madre natura
         Random indexGenerator = new Random();
         int initialMotherNature = indexGenerator.nextInt(Constants.MAX_NUM_ISLANDS);
@@ -131,34 +128,25 @@ public class Game {
         //riempio il sacchetto definitivo
         basket = new Basket(new int[]{24, 24, 24, 24, 24});
 
-
-        //creo le nuvole -> spostato nel costruttore,
-        /*
-        for (int i = 0; i < numOfPlayers; i++){
-            clouds.add(new Cloud(i));
-        }
-        */
-
-
-        /* spostato in addPlayer
-        //setto il numero di torri nella board
-        for (Player player: players)
-            player.getBoard().setTowers(players.size()==2? 8:6);
-        */
+        addPlayers(playersNames);
+        initiatePlayersLobbies();
 
         //System.out.println("Game: ho finito di istanziare i gameElements");
     }
 
     /**
-     * Method initiatePlayerLobby calculates the number of students to put in the players' lobby
+     * TODO: cambiare i relativi test
+     */
+    /**
+     * Method initiatePlayersLobbies calculates the number of students to put in the players' lobby
      * and does it
      *
-     * @param playerId : id given to the player, used as the index for the players arrayList
      */
-    public void initiatePlayerLobby(int playerId) {
+    public void initiatePlayersLobbies() {
         int studentLimit = numOfPlayers == 2 ? 7 : 9;
-        for (int k = 0; k < studentLimit; k++)
-            players.get(playerId).addToBoardLobby(basket.pickStudent());
+        for (Player player: players)
+            for (int i = 0; i< studentLimit; i++)
+                player.addToBoardLobby(basket.pickStudent());
     }
 
     /**
@@ -218,8 +206,8 @@ public class Game {
 
     public ArrayList<String> getActionPhasePlayerOrder() {
         ArrayList<Assistant> assistants = new ArrayList<>(currentTurnAssistantCards.values());
-        assistants.sort(Comparator.comparingInt(card -> card.getPriority()));
-
+        assistants.sort(Comparator.comparingInt(Assistant::getPriority));
+        Collections.reverse(assistants);
         ArrayList<String> nicknames = new ArrayList<>();
 
         for (Assistant assistant : assistants) {
@@ -288,23 +276,35 @@ public class Game {
      * @param studentIDs : number of islands that the player identified with the playerId wants to move mother nature
      * @param islandIDs     : the id of the destination island (or -1 if no island is specified)
      */
-    //da cambiare, in input deve prendere il nickname. cambiare anche tutti i relativi test
+
+    //move 1,2,5 in 1,4,11 -> ha spostato 1,2,5 in 1,4,6 e quello sul 6 era pure di un colore sbagliato
+    //table ancora non funziona (causa input parser)
     public boolean moveStudentsFromLobby(String nickname, ArrayList<Integer> studentIDs, ArrayList<Integer> islandIDs) {
+        ArrayList<Color> studentsToMove = new ArrayList<>();
         Player player = getPlayerByName(nickname);
+        int islandIndexCounter = 0;
+
         for (int i = 0; i < studentIDs.size(); i++) { //controlliamo se la mossa è legit per ogni studente e per ogni destinazione
             if (!isMoveStudentFromLobbyLegal(player, studentIDs.get(i), islandIDs.get(i)))
                 return false;
+            studentsToMove.add(player.getBoard().getLobbyStudent(studentIDs.get(i)));
         }
-        for (int i = 0; i < studentIDs.size(); i++) { //controlliamo se la mossa è legit per ogni studente e per ogni destinazione
-            Color studentToMove = player.removeFromBoardLobby(studentIDs.get(i));
-            if (islandIDs.get(i) == Constants.ISLAND_ID_NOT_RECEIVED)
-                player.getBoard().addToTable(studentToMove);
-            else {
-                Island islandDest = islands.get(islandIDs.get(i));
-                islandDest.addStudent(studentToMove);
+
+
+        for (Color studentToMove : studentsToMove) {
+            if(player.removeFromBoardLobby(studentToMove)){
+                if (islandIDs.get(islandIndexCounter) == Constants.ISLAND_ID_NOT_RECEIVED)
+                    player.getBoard().addToTable(studentToMove);
+                else {
+                    Island islandDest = islands.get(islandIDs.get(islandIndexCounter));
+                    islandDest.addStudent(studentToMove);
+                }
+                //aggiorna l'ownership dei teacher
+                updateTeachersOwnership(player);
+                islandIndexCounter++;
+            }else{
+                return false;
             }
-            //aggiorna l'ownership dei teacher
-            updateTeachersOwnership(player);
         }
 
         return true;
@@ -767,7 +767,14 @@ public class Game {
         return Collections.frequency(values,value) > 1? 1:0;
     }
 
-    //metodo che aggiunge i listener a tutte le classi ascoltate
+    public int getNumOfPlayers() {
+        return numOfPlayers;
+    }
+
+    /**
+     * Method setPropertyChangeListeners sets the listeners of Game's main attributes.
+     * @param controller: object that listens to the game's changes.
+     */
     public void setPropertyChangeListeners(GameController controller){
         listeners.addPropertyChangeListener("MotherNature", controller); //fire fatto, anche in exp
         listeners.addPropertyChangeListener("Merge", controller); //fire fatto
@@ -781,15 +788,18 @@ public class Game {
         for (Island island: islands){
             island.setPropertyChangeListener(controller); //fire fatto, in teoria (vedere per students)
         }
-        /* SPOSTATA FUORI IN METODO A PARTE PERCHè i player non vengono aggiunti quando viene istanziato game
+
         for (Player player: players){
             player.setPropertyChangeListener(controller); //fire fatto
-        }*/
+        }
     }
 
+    /*
     public void setPlayerPropertyChangeListener(String nickname, GameController controller){
         getPlayerByName(nickname).setPropertyChangeListener(controller);
     }
+
+     */
 
     //in teoria
     //ordine di chiamata metodi Game inizio partita:

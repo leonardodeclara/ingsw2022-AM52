@@ -46,12 +46,17 @@ public class GameBoard {
 
     //usiamo questo metodo solo per inizializzare le cose che non dipendono dai giocatori in sé ma solo dai parametri di gioco,
     // quindi numero di giocatori e modalità
-    public void instantiateGameElements(ArrayList<ClientIsland> newIslands){
+    public void instantiateGameElements(ArrayList<ClientIsland> newIslands, HashMap<String,ClientBoard> boards){
         islands.addAll(newIslands);
+        for (String player: boards.keySet()){
+            boards.get(player).setGB(this);
+            clientBoards.put(player, boards.get(player));
+        }
 
         for(int i = 0; i < numberOfPlayers; i++){
             clouds.add(new ClientCloud(i));
         }
+
 
         //rivedere se ha senso aggiungere tutte le carte qui, tanto ne vengono estratte casualmente solo tre
         /*
@@ -74,6 +79,7 @@ public class GameBoard {
     }
 
     public void print(){
+        outputStream.print("\033[H\033[2J");
         outputStream.flush();
         printClientBoards();
         printClouds();
@@ -124,7 +130,7 @@ public class GameBoard {
 
     public void addClientBoard(String playerName){
         int towerNumber = numberOfPlayers == 2? 8 : 6;
-        ClientBoard newBoard = new ClientBoard(towerNumber, playerName,this);
+        ClientBoard newBoard = new ClientBoard(towerNumber, playerName);
         if (isExpertGame())
             newBoard.setCoins(1);
         newBoard.initializeDeck();
@@ -161,11 +167,14 @@ public class GameBoard {
         getIslandByIndex(islandIndex).setMotherNature(true);
     }
 
-    public void setUpdatedClientBoard(String player, HashMap<Color, Integer> updatedStudentTable, ArrayList<Color> updatedLobbyTable, ArrayList<Color> updatedTeacherTable){
+    public void setUpdatedClientBoard(String player, ClientBoard clientBoard){
         ClientBoard board = clientBoards.get(player);
-        board.setStudentsTable(updatedStudentTable);
-        board.setLobby(updatedLobbyTable);
-        board.setTeacherTable(updatedTeacherTable);
+        board.setStudentsTable(clientBoard.getStudentsTable());
+        board.setLobby(clientBoard.getLobby());
+        board.setTeacherTable(clientBoard.getTeacherTable());
+        board.setTowers(clientBoard.getTowers());
+        board.setTeam(clientBoard.getTeam());
+        //eventualmente si aggiungono gli altri set
     }
 
     public int getNumberOfPlayers() {

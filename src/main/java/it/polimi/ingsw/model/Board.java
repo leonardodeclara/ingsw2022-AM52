@@ -46,11 +46,15 @@ public class Board {
 
     /**
      * Remove a student object from the board's lobby
-     * @param index
+     * @param student
      */
 
-    public Color removeFromLobby(int index){
-        return lobby.remove(index);
+    public boolean removeFromLobby(Color student){
+        if(lobby.contains(student)){
+            lobby.remove(student);
+            return true;
+        }
+        return false;
     }
 
     /**
