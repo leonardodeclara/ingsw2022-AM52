@@ -171,6 +171,7 @@ public class GameHandler implements PropertyChangeListener{
         sendTo(clientName, response);
 
         if (!(response instanceof ErrorMessage)){
+            //Message currentTurnCards = gameController.
             //bisogna mandare in broadcast un messaggio con le carte giocate fino ad ora (CurrentTurnAssistantCard)
             // ->cambiarei da come sono state pensate e farei l'aggiornamento carta per carta,si potrebbe usare AssistantDeckUpdate. boh rivedere
             System.out.println(clientName+ " ha scelto la sua carta, ora lo sto mandando in WAIT_TURN");

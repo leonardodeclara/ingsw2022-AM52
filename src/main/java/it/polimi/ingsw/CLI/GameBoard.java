@@ -137,9 +137,14 @@ public class GameBoard {
         clientBoards.put(playerName,newBoard);
     }
 
+    //Imposto la currentTurn card per ogni giocatore e tolgo quella carta dal mazzo del tizio
+    //faccio con l'if perché in teoria l'associazione string-int di tutti i giocatori viene mandata ogni volta che un tizio gioca una carta
+    //quindi in una partita a 2 il primo che l'ha giocata riceve due volte questo messaggio contente il suo nome e la carta giocata
     public void setTurnCard(HashMap<String,Integer> playersCards){
-        for (Map.Entry<String,Integer> card: playersCards.entrySet()){
-            clientBoards.get(card.getKey()).setCurrentCard(card.getValue());
+        for (Map.Entry<String,Integer> playerToCard: playersCards.entrySet()){
+            clientBoards.get(playerToCard.getKey()).setCurrentCard(playerToCard.getValue());
+            if (clientBoards.get(playerToCard.getKey()).getDeck().containsKey(playerToCard.getValue()))
+                clientBoards.get(playerToCard.getKey()).getDeck().remove(playerToCard.getValue());
         }
     }
 

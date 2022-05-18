@@ -121,6 +121,7 @@ public class GameController implements PropertyChangeListener {
     }
 
 
+    //va cancellato perché non lo usiamo più
     public Message buildPlayerTowerAssociation(){
         HashMap<String,Tower> associations = new HashMap<>();
         for (Player player: game.getPlayers()){
@@ -150,7 +151,7 @@ public class GameController implements PropertyChangeListener {
             case "CloudsRefill":
                 toSend = updateMessageBuilder.buildCloudsRefillMessage(event);
                 break;
-            case "CurrentAssistantCards": //vedere cosa mandare effettivamente nel messaggio
+            case "CurrentTurnAssistantCards": //vedere cosa mandare effettivamente nel messaggio
                 toSend = updateMessageBuilder.buildCurrentTurnAssistantCardsMessage(event);
                 break;
             case "Deck": //non se è messaggio broadcast, forse in gameHandler va gestito in maniera diversa

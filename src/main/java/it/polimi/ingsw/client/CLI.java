@@ -170,6 +170,7 @@ public class CLI implements Runnable{
         GB.print();
     }
 
+    //in teoria questo metodo va cancellato, non si usa più
     public void updatePlayerTowerAssociation(GameStartMessage message){
         HashMap<String, Tower> associations = message.getChosenTeam();
         for (String player: associations.keySet()){
@@ -179,9 +180,13 @@ public class CLI implements Runnable{
         GB.print();
     }
 
+    //si potrebbe mettere in questo metodo anche la rimozione delle carta dal deck del giocatore.
+    //in questo momento vengono mandati due messaggi di update distinti per deck e per currentAssistantCard
+    //mettendo la rimozione della carta in questo metodo AssistantDeckUpdateMessage verrebbe utilizzata solo all'inizio della partita
+    //che non è un problema btw
     public void updateCurrentTurnAssistantCards(CurrentTurnAssistantCardsUpdateMessage message){
         GB.setTurnCard( message.getCurrentTurnAssistantCards());
-        System.out.println("Modifica delle currentAssistantCards (TODO, non sono ancora visibili)");
+        System.out.println("Modifica delle currentAssistantCards");
         System.out.println();
         GB.print();
     }

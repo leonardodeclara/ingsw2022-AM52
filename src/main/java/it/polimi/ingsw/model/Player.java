@@ -89,9 +89,10 @@ public class Player {
     }
 
     //TO DO: TESTARLA
+    //tolto il fire perché l'aggiornamento lato client viene gestito attraverso CurrentTurnAssistantCards in automatico
     public void removeAssistantCard(int cardIndex){
         deck.remove(cardIndex);
-        listeners.firePropertyChange("Deck", null, this);
+        //listeners.firePropertyChange("Deck", null, this);
     }
 
     public void addToBoardLobby(Color student){
