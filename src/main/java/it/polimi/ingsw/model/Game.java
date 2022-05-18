@@ -276,23 +276,35 @@ public class Game {
      * @param studentIDs : number of islands that the player identified with the playerId wants to move mother nature
      * @param islandIDs     : the id of the destination island (or -1 if no island is specified)
      */
-    //da cambiare, in input deve prendere il nickname. cambiare anche tutti i relativi test
+
+    //move 1,2,5 in 1,4,11 -> ha spostato 1,2,5 in 1,4,6 e quello sul 6 era pure di un colore sbagliato
+    //table ancora non funziona (causa input parser)
     public boolean moveStudentsFromLobby(String nickname, ArrayList<Integer> studentIDs, ArrayList<Integer> islandIDs) {
+        ArrayList<Color> studentsToMove = new ArrayList<>();
         Player player = getPlayerByName(nickname);
+        int islandIndexCounter = 0;
+
         for (int i = 0; i < studentIDs.size(); i++) { //controlliamo se la mossa è legit per ogni studente e per ogni destinazione
             if (!isMoveStudentFromLobbyLegal(player, studentIDs.get(i), islandIDs.get(i)))
                 return false;
+            studentsToMove.add(player.getBoard().getLobbyStudent(studentIDs.get(i)));
         }
-        for (int i = 0; i < studentIDs.size(); i++) { //controlliamo se la mossa è legit per ogni studente e per ogni destinazione
-            Color studentToMove = player.removeFromBoardLobby(studentIDs.get(i));
-            if (islandIDs.get(i) == Constants.ISLAND_ID_NOT_RECEIVED)
-                player.getBoard().addToTable(studentToMove);
-            else {
-                Island islandDest = islands.get(islandIDs.get(i));
-                islandDest.addStudent(studentToMove);
+
+
+        for (Color studentToMove : studentsToMove) {
+            if(player.removeFromBoardLobby(studentToMove)){
+                if (islandIDs.get(islandIndexCounter) == Constants.ISLAND_ID_NOT_RECEIVED)
+                    player.getBoard().addToTable(studentToMove);
+                else {
+                    Island islandDest = islands.get(islandIDs.get(islandIndexCounter));
+                    islandDest.addStudent(studentToMove);
+                }
+                //aggiorna l'ownership dei teacher
+                updateTeachersOwnership(player);
+                islandIndexCounter++;
+            }else{
+                return false;
             }
-            //aggiorna l'ownership dei teacher
-            updateTeachersOwnership(player);
         }
 
         return true;

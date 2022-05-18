@@ -99,11 +99,14 @@ public class Player {
         listeners.firePropertyChange("Board", null, this);
     }
 
-    public Color removeFromBoardLobby(int index){
-        Color removed = board.removeFromLobby(index);
-        listeners.firePropertyChange("Board", null, this);
-        return removed;
+    public boolean removeFromBoardLobby(Color student){
+        if(board.removeFromLobby(student)){
+            listeners.firePropertyChange("Board", null, this);
+            return true;
+        }
+        return false;
     }
+
 
     //in expert game ci sarà moveToTable di game per guadagnare le monete
     public boolean addToBoardTable(Color student){

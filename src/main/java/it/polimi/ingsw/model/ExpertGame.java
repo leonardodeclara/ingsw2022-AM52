@@ -42,27 +42,41 @@ public class ExpertGame extends Game {
     }
 
     /**
-     * This method is called when a player uses the Personality card whit CardID 2
+     * This method is called when a player uses the Personality card with CardID 2
      * The student can be moved to an island or to the table according to the parameters of the method
-     * @param playerId: id given to the player, used as the index for the players arrayList
-     * @param studentIndex: index that identifies the position of the student in the lobby
-     * @param islandId: ID of the island where I want to place the student, if I want to move the student
+     * @param nickname: id given to the player, used as the index for the players arrayList
+     * @param studentIDs: index that identifies the position of the student in the lobby
+     * @param islandIDs: ID of the island where I want to place the student, if I want to move the student
      *                to the table I have to write -1
      * @return false if the move isn't legal, true otherwise
      */
-    public boolean moveStudentFromLobbyForCard2(int playerId,int studentIndex,int islandId){
-        Player player = players.get(playerId);
-        if(!isMoveStudentFromLobbyLegal(player,studentIndex,islandId))
-            return false;
-        Color studentToMove = player.removeFromBoardLobby(studentIndex);
-        if(islandId == Constants.ISLAND_ID_NOT_RECEIVED)
-            player.addToBoardTable(studentToMove);
-        else {
-            Island islandDest = islands.get(islandId);
-            islandDest.addStudent(studentToMove);
+    public boolean moveStudentsFromLobbyForCard2(String nickname, ArrayList<Integer> studentIDs, ArrayList<Integer> islandIDs) {
+        ArrayList<Color> studentsToMove = new ArrayList<>();
+        Player player = getPlayerByName(nickname);
+        int islandIndexCounter = 0;
+        for (int i = 0; i < studentIDs.size(); i++) { //controlliamo se la mossa è legit per ogni studente e per ogni destinazione
+            if (!isMoveStudentFromLobbyLegal(player, studentIDs.get(i), islandIDs.get(i)))
+                return false;
+            studentsToMove.add(player.getBoard().getLobbyStudent(studentIDs.get(i)));
         }
-        //aggiorna l'ownership dei teacher
-        updateTeachersOwnershipForCard2(player);
+
+
+        for (Color studentToMove : studentsToMove) {
+            if(player.removeFromBoardLobby(studentToMove)){
+                if (islandIDs.get(islandIndexCounter) == Constants.ISLAND_ID_NOT_RECEIVED)
+                    player.getBoard().addToTable(studentToMove);
+                else {
+                    Island islandDest = islands.get(islandIDs.get(islandIndexCounter));
+                    islandDest.addStudent(studentToMove);
+                }
+                //aggiorna l'ownership dei teacher
+                updateTeachersOwnershipForCard2(player);
+                islandIndexCounter++;
+            }else{
+                return false;
+            }
+        }
+
         return true;
     }
 

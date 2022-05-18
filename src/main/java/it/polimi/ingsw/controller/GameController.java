@@ -90,9 +90,9 @@ public class GameController implements PropertyChangeListener {
 
     public Message moveStudentsFromLobby(String player, ArrayList<Integer> studentIDs, ArrayList<Integer> destIDs){
         if(game.moveStudentsFromLobby(player,studentIDs,destIDs))
-            return new ErrorMessage(ErrorKind.INVALID_INPUT);
-        else
             return new ClientStateMessage(ClientState.WAIT_TURN);
+        else
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
     public ArrayList<String> getActionPhaseTurnOrder(){

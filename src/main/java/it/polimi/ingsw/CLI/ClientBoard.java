@@ -45,22 +45,19 @@ public class ClientBoard implements Serializable {
         System.out.println("************************************************"+getOwner().toUpperCase() + "'S SCHOOL"+"************************************************");
         //stampo la lobby
         System.out.print("LOBBY: ");
-        for (Color color : Color.values()) {
-            int numberOfStudentPerColor = (int) getLobby().stream().filter(c -> c == color).count();
-            for (int i = 0; i < numberOfStudentPerColor; i++) {
-                System.out.print(Constants.getStudentsColor(color) + "■ ");
-                System.out.print(Constants.RESET);
-            }
+        for(int i=0;i<lobby.size();i++){
+            System.out.print(Constants.getStudentsColor(lobby.get(i)) + "■ ");
+            System.out.print(Constants.RESET);
         }
+
         System.out.print("\n");
 
         //stampo la StudentsTable
         System.out.println("STUDENTS TABLE: ");
         try {
-            for (Color color : Color.values()) {
-                int numberOfStudentPerColor1 = getStudentsTable().get(color);
+            for(Color color : studentsTable.keySet()){
                 for (int i = 0; i < Constants.MAX_LOBBY_SIZE; i++)
-                    System.out.print(Constants.getStudentsColor(color) + (i < numberOfStudentPerColor1 ? "■ " : "○ "));
+                    System.out.print(Constants.getStudentsColor(color) + (i < studentsTable.get(color) ? "■ " : "○ "));
                 System.out.print("\n");
                 System.out.print(Constants.RESET);
             }
