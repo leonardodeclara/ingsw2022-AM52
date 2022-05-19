@@ -95,7 +95,6 @@ public class GameController implements PropertyChangeListener {
 
     public Message moveStudentsFromLobby(String player, ArrayList<Integer> studentIDs, ArrayList<Integer> destIDs){
         if(game.moveStudentsFromLobby(player,studentIDs,destIDs))
-            //return new ClientStateMessage(ClientState.WAIT_TURN);
             return new ClientStateMessage(ClientState.MOVE_MOTHER_NATURE);
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
