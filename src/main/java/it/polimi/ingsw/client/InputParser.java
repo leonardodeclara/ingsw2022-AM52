@@ -112,9 +112,12 @@ public class InputParser {
 
         if(words.length == 3){
             if(words[0].equalsIgnoreCase("play")&& words[1].equalsIgnoreCase("card")){
-                cardID = Integer.parseInt(words[2]);
-                if(cardID >= 1 && cardID <= 10){
-                    data.add(cardID);
+                try{
+                    cardID = Integer.parseInt(words[2]);
+                    if(cardID >= 1 && cardID <= 10)
+                        data.add(cardID);
+                }catch(NumberFormatException e){
+
                 }
             }
         }
@@ -148,8 +151,10 @@ public class InputParser {
             try{
                 if(s.equalsIgnoreCase("table"))
                     arrayInt.add(Constants.ISLAND_ID_NOT_RECEIVED);
-                Integer.parseInt(s);
-                arrayInt.add(Integer.parseInt(s));
+                else{
+                    Integer.parseInt(s);
+                    arrayInt.add(Integer.parseInt(s));
+                }
             }catch(NumberFormatException e){
                 return null;
             }
