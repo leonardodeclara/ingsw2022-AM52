@@ -19,7 +19,7 @@ public class UpdateMessageBuilder {
     }
 
     public Message buildGameInstantiationMessage(Game game){
-        ArrayList<ClientIsland> clientIslands = new ArrayList<ClientIsland>();
+        ArrayList<ClientIsland> clientIslands = new ArrayList<>();
         int towersNumber = game.getNumOfPlayers() == 2 ? 8 : 6;
 
         for (Island modelIsland: game.getIslands()){

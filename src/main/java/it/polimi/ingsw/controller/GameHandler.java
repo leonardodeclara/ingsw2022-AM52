@@ -31,7 +31,7 @@ public class GameHandler implements PropertyChangeListener{
         this.expertGame=expertGame;
         players = new ArrayList<>();
         players.addAll(nameToHandlerMap.keySet());
-        playersOrder = new ArrayList<>();
+        playersOrder = new ArrayList<>(players);
         playersOrderIterator = playersOrder.iterator();
     }
 
@@ -68,6 +68,7 @@ public class GameHandler implements PropertyChangeListener{
      */
     public void startGame(){
         //System.out.println("GameHandler: ora istanzio GameController");
+        updatePlayersOrder(players);
         gameController= new GameController(expertGame, new ArrayList<>(players));
         gameController.setUpdateListener(this); //gameHandler inizia ad ascoltare il controller
         //System.out.println("GameHandler: ora faccio ascoltare game da GC");
@@ -80,14 +81,14 @@ public class GameHandler implements PropertyChangeListener{
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         Message setUpPhaseStateMessage = new ClientStateMessage(ClientState.SET_UP_WIZARD_PHASE);
 
-        sendAllExcept(nameToHandlerMap.get(players.get(0)),waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
-        sendTo(players.get(0), new AvailableWizardMessage(gameController.getAvailableWizards())); //al primo giocatore viene aggiornata la lista di wizard disponibili
-        sendTo(players.get(0),setUpPhaseStateMessage);  //viene aggiornato lo stato del primo giocatore
+        sendAllExcept(nameToHandlerMap.get(playersOrder.get(0)),waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
+        sendTo(playersOrder.get(0), new AvailableWizardMessage(gameController.getAvailableWizards())); //al primo giocatore viene aggiornata la lista di wizard disponibili
+        sendTo(playersOrder.get(0),setUpPhaseStateMessage);  //viene aggiornato lo stato del primo giocatore
 
 
         //in teoria qui manualmente vanno mandate a tutti i client le informazioni necessarie per far inizializzare le view
         //o qui oppure in  startPlanningPhase() ma dato che viene printata la board lato client in planning phase, si rischia di printare quella vecchia
-        updatePlayersOrder(players);
+
         System.out.println("GameHandler: finito startGame");
     }
 
@@ -100,7 +101,7 @@ public class GameHandler implements PropertyChangeListener{
         //qui usiamo ancora players.get(0), non è previsto un ordine specifico
         //alla prima planning phase in assoluto scegliamo random il primo giocatore (direi stesso ordine della setupPhase)
         // ma in teoria dal secondo round l'ordine è quello stabilito dalle carte assistente del round prima
-        String startingPlayer = players.get(0);
+        String startingPlayer = playersOrder.get(0);
         sendAllExcept(nameToHandlerMap.get(startingPlayer), waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
 
         sendTo(startingPlayer, playAssistantCardMessage);  //viene aggiornato lo stato del primo giocatore
@@ -267,7 +268,7 @@ public class GameHandler implements PropertyChangeListener{
             sendTo(nextPlayer,moveStudentsFromLobbyMessage);
         }
         else{
-            //handleEndRound
+            handleEndRound();
         }
 
     }
@@ -279,6 +280,9 @@ public class GameHandler implements PropertyChangeListener{
         //in caso di expert game ci saranno un po' di magheggi da fare
         //se non siamo in expert basta chiamare startPlanningPhase() e poi da lì il resto va a oltranza
         //poi non mi ricordo sinceramente
+        //ad es bisogna resettare le carte assistente
+        gameController.closeCurrentRound();
+        startPlanningPhase();
     }
 
     private void sendTo(String nickname,Message message){

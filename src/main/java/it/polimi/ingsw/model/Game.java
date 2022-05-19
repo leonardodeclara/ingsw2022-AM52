@@ -192,6 +192,10 @@ public class Game {
      * @param nickname :
      * @param cardId   : id given to the card, used as the index for the player's deck ArrayList
      */
+    /*
+    TODO: la selezione della carta non deve avvenire per indice perché il giocatore non lo conosce. in questo modo funziona solo
+     al primo round. dal secondo già è problematico. bisogna scrivere un metodo getCardById che fa la selezione per priority
+     */
     public int playAssistantCard(String nickname, int cardId) {
         ArrayList<Assistant> newDeck = getPlayerByName(nickname).getDeck();
         cardId--; //priority van da 1 a 10, ma ci serve l'index
@@ -438,9 +442,10 @@ public class Game {
                 }
             }
             cloud.fillStudents(picks); //firePropertyChange
-            listeners.firePropertyChange("CloudsRefill", null, new ArrayList<>(clouds)); //rivedere come mandare effettivamente
             picks.clear();
         }
+        //mando l'update dopo averle aggiornate entrambe
+        listeners.firePropertyChange("CloudsRefill", null, new ArrayList<>(clouds)); //rivedere come mandare effettivamente
     }
 
 
@@ -775,6 +780,12 @@ public class Game {
         return numOfPlayers;
     }
 
+
+    public void resetCurrentTurnAssistantCards(){
+        currentTurnAssistantCards.clear();
+        listeners.firePropertyChange("CurrentTurnAssistantCards", null, currentTurnAssistantCards);
+    }
+
     /**
      * Method setPropertyChangeListeners sets the listeners of Game's main attributes.
      * @param controller: object that listens to the game's changes.
@@ -797,20 +808,6 @@ public class Game {
             player.setPropertyChangeListener(controller); //fire fatto
         }
     }
-
-    /*
-    public void setPlayerPropertyChangeListener(String nickname, GameController controller){
-        getPlayerByName(nickname).setPropertyChangeListener(controller);
-    }
-
-     */
-
-    //in teoria
-    //ordine di chiamata metodi Game inizio partita:
-    //costruttore
-    //addPlayer per ogni player
-    //game.instantiateGameElements()
-    //game.setPropertyChangeListeners(controller)
 }
 
 
