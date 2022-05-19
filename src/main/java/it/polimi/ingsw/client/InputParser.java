@@ -4,12 +4,8 @@ import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.exceptions.QuitException;
 import it.polimi.ingsw.messages.ClientState;
-import it.polimi.ingsw.messages.GameParametersMessage;
-import it.polimi.ingsw.messages.Message;
-import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.Tower;
 
-import java.sql.Array;
 import java.util.ArrayList;
 
 public class InputParser {
@@ -48,6 +44,12 @@ public class InputParser {
                 break;
             case MOVE_MOTHER_NATURE:
                 parseMoveMotherNature(input);
+                break;
+            case PICK_CLOUD:
+                parseCloudSelection(input);
+                break;
+            case END_TURN:
+                parseClosingTurn(input);
                 break;
         }
         return data;
@@ -125,7 +127,7 @@ public class InputParser {
             }
         }
     }
-
+    //
     private void parseMoveStudentsFromLobby(String input){ //move studentID1,studentID2,studentID3 in table,2,3
         String[] words = input.split(" ");
 
@@ -153,7 +155,7 @@ public class InputParser {
 
         if(words.length==3){
             if(words[0].equalsIgnoreCase("move"))
-                if(words[1].equalsIgnoreCase("mn") || words[1].equalsIgnoreCase("mother nature")){
+                if(words[1].equalsIgnoreCase("mn") || words[1].equalsIgnoreCase("mothernature")){
                     try{
                         steps = Integer.parseInt(words[2]);
                         data.add(steps);
@@ -164,6 +166,33 @@ public class InputParser {
         }
     }
 
+    //non va
+    private void parseCloudSelection(String input){ //comando empty cloud 3
+        int cloudIndex = 0;
+        String[] words = input.split(" ");
+        if (words.length==3 ){
+            if (words[0].equalsIgnoreCase("empty") && words[1].equalsIgnoreCase("cloud"))
+                try{
+                    cloudIndex=Integer.parseInt(words[2]);
+                    data.add(cloudIndex);
+                } catch (NumberFormatException e){
+                }
+        }
+    }
+
+    private void parseClosingTurn(String input){
+        String[] words = input.split(" ");
+        if (words[0].equalsIgnoreCase("end"))
+            data.add(words[0]);
+        else if (words[0].equalsIgnoreCase("personality")){
+            try{
+                int personalityId = Integer.parseInt(words[1]);
+                data.add(personalityId);
+            }
+            catch( NumberFormatException e){
+            }
+        }
+    }
 
 
     private ArrayList<Integer> convertStringsToNumberArray(String[] array){

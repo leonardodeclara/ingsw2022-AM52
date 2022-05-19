@@ -35,7 +35,7 @@ public class ClientSocket implements Runnable{
                     send(new Ping());
                 }
             } catch (InterruptedException | IOException e) {
-                //gestione dell'eccezione
+                System.out.println("Morto il thread del ping");
             }
         });
     }

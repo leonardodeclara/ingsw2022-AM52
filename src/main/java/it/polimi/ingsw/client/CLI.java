@@ -293,21 +293,27 @@ public class CLI implements Runnable{
                 outputStream.println("Torri disponibili:"+GB.getAvailableTowers()); //prendiamo dalla view le informazioni da stampare a schermo
                 break;
             case PLAY_ASSISTANT_CARD:
-                GB.print(); //questo è il momento in cui printiamo l'attuale stato della partita.
+                GB.print(); //si può evitare credo, la board viene stampata con le print degli update
                 outputStream.println("Scegli una carta da giocare!");
                 break;
             case MOVE_FROM_LOBBY:
-                GB.print();
+                GB.print(); //si può evitare credo
                 outputStream.println("Scegli tre studenti da spostare nella table o su un'isola");
                 outputStream.println("Per esempio digita move studentID1,studentID2,studentID3 in table,2,3 per muovere il primo studente nella table,il secondo sull'isola 2, il terzo sull'isola 3");
                 break;
             case MOVE_MOTHER_NATURE:
-                GB.print();
+                GB.print(); //si può evitare credo
                 outputStream.println("Puoi far compiere a Madre Natura fino a X passi"); //prendere X dalla priority della carta giocata
                 outputStream.println("Per esempio digita move mn 5 per spostarla di 5 isole");
                 break;
-
-
+            case PICK_CLOUD:
+                outputStream.println("Scegli una nuvola! I suoi studenti passeranno sulla tua lobby ");
+                outputStream.println("Per esempio digita empty cloud 3 per scegliere la nuvola 3");
+                break;
+            case END_TURN:
+                outputStream.println("Sei alla fine del tuo turno! Per chiudere il turno scrivi end");
+                if (GB.isExpertGame() /*&& può essere giocata una carta (quindi non è già stata giocata e ha abbastanza coins (credo))*/)
+                    outputStream.println("Puoi ancora giocare una carta personaggio! Per giocarla scrivi personality id" );
         }
 
     }
@@ -331,6 +337,10 @@ public class CLI implements Runnable{
             case MOVE_MOTHER_NATURE:
                 outputStream.println("Non puoi spostare lì Madre Natura!");
                 break;
+            case PICK_CLOUD:
+                outputStream.println("Non puoi scegliere quella nuvola! Riprova");
+            case END_TURN:
+                outputStream.println("Errore!"); //si può fare di meglio
         }
     }
 
@@ -363,6 +373,11 @@ public class CLI implements Runnable{
             case MOVE_MOTHER_NATURE:
                 outputStream.println("Non hai inserito un comando valido!");
                 break;
+            case PICK_CLOUD:
+                outputStream.println("Comando non valido!");
+                break;
+            case END_TURN:
+                outputStream.println("Comando non valido!");
         }
     }
 

@@ -42,6 +42,13 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
                 return buildMoveFromLobbyMessage(data);
             case MOVE_MOTHER_NATURE:
                 return buildMoveMotherNature(data);
+            case PICK_CLOUD:
+                return buildCloudSelectionMessage(data);
+            case END_TURN:
+                if (data.get(0).equals("end"))
+                    return buildCloseTurnMessage(data);
+                //else carta personaggio
+                //bisognerà farlo anche nei tre stati precedenti
         }
         return null;
     }
@@ -73,6 +80,15 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
 
     private Message buildMoveMotherNature(ArrayList<Object> data){
         return new MotherNatureMoveMessage((Integer) data.get(0));
+    }
+
+    private Message buildCloudSelectionMessage(ArrayList<Object> data){
+        return new CloudSelectionMessage((Integer) data.get(0));
+    }
+
+    //in questo
+    private Message buildCloseTurnMessage(ArrayList<Object> data){
+        return new CloseTurnMessage((String) data.get(0));
     }
 }
 
