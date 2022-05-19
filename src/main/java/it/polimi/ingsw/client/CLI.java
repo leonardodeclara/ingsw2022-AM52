@@ -387,20 +387,26 @@ public class CLI implements Runnable{
 
 
     public String askIP(){
+        String ip;
         outputStream.println("Benvenuto!");
         outputStream.println("Inserisci l'indirizzo ip del server: ");
         outputStream.println(">");
-        return inputStream.nextLine();
+        ip = inputStream.nextLine();
+        ip = ip.replaceAll("\s","");
+        return ip;
     }
 
     public int askPort(){ //ogni metodo di CLI richiede gli input e gestisce gli errori base (tipo scrivo davide come porta per il server)
         boolean validInput = false; //si potrebbe fare la stessa cosa con while(1) e break ma così è più elegante
+        String input;
         int port = 0;
         while(!validInput){
             try{
                 outputStream.println("Inserisci la porta del server: ");
                 outputStream.println(">");
-                port = Integer.parseInt(inputStream.nextLine());
+                input = inputStream.nextLine();
+                input = input.replaceAll("\s","");
+                port = Integer.parseInt(input);
                 validInput = true;
             }catch(NumberFormatException e){
                 outputStream.println("La porta dovrebbe essere un numero intero, riprova");
