@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.ExpertGame;
 import it.polimi.ingsw.model.Game;
@@ -79,6 +80,10 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
+    public void updateCloudsStudents(){
+        game.refillClouds();
+    }
+
     public Message updateAssistantCards(String player, int cardID){
         if(game.playAssistantCard(player,cardID)==-1){ //se returna -1 la carta non può essere giocata
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
@@ -90,7 +95,26 @@ public class GameController implements PropertyChangeListener {
 
     public Message moveStudentsFromLobby(String player, ArrayList<Integer> studentIDs, ArrayList<Integer> destIDs){
         if(game.moveStudentsFromLobby(player,studentIDs,destIDs))
-            return new ClientStateMessage(ClientState.WAIT_TURN);
+            //return new ClientStateMessage(ClientState.WAIT_TURN);
+            return new ClientStateMessage(ClientState.MOVE_MOTHER_NATURE);
+        else
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
+    }
+
+    public Message moveMotherNature(String player, int steps){
+        if(game.moveMotherNature(player,steps))
+            return new ClientStateMessage(ClientState.PICK_CLOUD);
+        else
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
+    }
+
+
+    public Message refillLobby(String player, int cloudIndex){
+        if(game.moveStudentsToLobby(player, cloudIndex))
+            return new ClientStateMessage(ClientState.END_TURN);
+            //soluzione temporanea che va cambiata:
+            //se sono in expert Game e non ho giocato la carta + ho i coins devo essere in grado di giocarla
+            //intanto usiamo END_TURN
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
@@ -121,6 +145,7 @@ public class GameController implements PropertyChangeListener {
     }
 
 
+    //va cancellato perché non lo usiamo più
     public Message buildPlayerTowerAssociation(){
         HashMap<String,Tower> associations = new HashMap<>();
         for (Player player: game.getPlayers()){
@@ -150,7 +175,7 @@ public class GameController implements PropertyChangeListener {
             case "CloudsRefill":
                 toSend = updateMessageBuilder.buildCloudsRefillMessage(event);
                 break;
-            case "CurrentAssistantCards": //vedere cosa mandare effettivamente nel messaggio
+            case "CurrentTurnAssistantCards": //vedere cosa mandare effettivamente nel messaggio
                 toSend = updateMessageBuilder.buildCurrentTurnAssistantCardsMessage(event);
                 break;
             case "Deck": //non se è messaggio broadcast, forse in gameHandler va gestito in maniera diversa

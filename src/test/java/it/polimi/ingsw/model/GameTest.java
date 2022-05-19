@@ -388,8 +388,8 @@ class GameTest {
         int l1size = game.getPlayers().get(0).getBoard().getLobby().size();
         int l2size = game.getPlayers().get(1).getBoard().getLobby().size();
         game.refillClouds();
-        game.moveStudentsToLobby(0, 0);
-        game.moveStudentsToLobby(1, 1);
+        game.moveStudentsToLobby("leo", 0);
+        game.moveStudentsToLobby("mari", 1);
         //test per vedere se le nuvole sono vuote
         assertEquals(true, game.getClouds().get(0).getStudents().size() == 0);
         assertEquals(true, game.getClouds().get(1).getStudents().size() == 0);

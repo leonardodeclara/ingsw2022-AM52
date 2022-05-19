@@ -339,14 +339,18 @@ public class Game {
     }
 
     /**
+     * TODO: fix javadocs
+     */
+
+    /**
      * Method moveStudentsToLobby moves all the students on a given cloud, to the given player lobby
      *
-     * @param playerId : id given to the player, used as the index for the players ArrayList
+     * @param playerName : naem given to the player,
      * @param cloudId : id given to the cloud to empty
      */
     //da cambiare, in input deve prendere il nickname. cambiare anche tutti i relativi test
-    public boolean moveStudentsToLobby(int playerId,int cloudId){
-        Player player = players.get(playerId);
+    public boolean moveStudentsToLobby(String playerName,int cloudId){
+        Player player = getPlayerByName(playerName);
         if(!isMoveStudentsToLobbyLegal(player,cloudId))
             return false;
         Cloud cloud = clouds.get(cloudId);

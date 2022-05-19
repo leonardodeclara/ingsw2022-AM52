@@ -44,6 +44,12 @@ public class GameHandler implements PropertyChangeListener{
             handlePlayAssistantCardMessage((PlayAssistantCardMessage) message,clientHandler);
         else if (message instanceof MoveStudentsFromLobbyMessage)
             handleMoveStudentMessage((MoveStudentsFromLobbyMessage) message, clientHandler);
+        else if (message instanceof MotherNatureMoveMessage)
+            handleMoveMotherNatureMessage((MotherNatureMoveMessage)message,clientHandler);
+        else if (message instanceof CloudSelectionMessage)
+            handleCloudPick((CloudSelectionMessage) message, clientHandler);
+        else if (message instanceof CloseTurnMessage)
+            handleEndTurn((CloseTurnMessage) message, clientHandler);
     }
 
 
@@ -86,6 +92,7 @@ public class GameHandler implements PropertyChangeListener{
 
     private void startPlanningPhase(){
 
+        gameController.updateCloudsStudents(); //all'inizio della planning phase vengono riempite le clouds
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         Message playAssistantCardMessage = new ClientStateMessage(ClientState.PLAY_ASSISTANT_CARD);
 
@@ -111,10 +118,24 @@ public class GameHandler implements PropertyChangeListener{
         updatePlayersOrder(currentTurnOrder);
     }
 
+    private void startActionPhase2(){
+        Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
+        Message moveFromLobbyMessage = new ClientStateMessage(ClientState.MOVE_MOTHER_NATURE);
+
+        ArrayList<String> currentTurnOrder = gameController.getActionPhaseTurnOrder();
+        String startingPlayer = currentTurnOrder.get(0);
+        sendAllExcept(nameToHandlerMap.get(startingPlayer),waitStateMessage);
+        sendTo(startingPlayer,moveFromLobbyMessage);
+        updatePlayersOrder(currentTurnOrder);
+    }
+
     private void updatePlayersOrder(ArrayList<String> players){
         playersOrder = new ArrayList<String>(players);
         playersOrderIterator = playersOrder.iterator();
         System.out.println("Ordine previsto dei giocatori:"+ playersOrderIterator.toString());
+        for (int i = 0; i < players.size(); i++){
+            System.out.println(playersOrder.get(i));
+        }
         playersOrderIterator.next();
     }
     private void handleWizardSelectionMessage(WizardSelectionMessage message, ClientHandler client){
@@ -152,10 +173,6 @@ public class GameHandler implements PropertyChangeListener{
                 sendTo(nextPlayer, setUpPhaseStateMessage);  //viene aggiornato lo stato del primo giocatore
             }
             else{
-                //mando in broadcast la scelta di torri di ogni player, in modo che tutti possano visualizzarle
-                //in teoria qui per la prima volta i client visualizzano la view
-                //Message gameStart = gameController.buildPlayerTowerAssociation();
-                //sendAll(gameStart);
                 startPlanningPhase();
                 System.out.println("Adesso faccio partire la partita con la scelta delle carte assistente. comunque la fase dopo");
             }
@@ -171,6 +188,7 @@ public class GameHandler implements PropertyChangeListener{
         sendTo(clientName, response);
 
         if (!(response instanceof ErrorMessage)){
+            //Message currentTurnCards = gameController.
             //bisogna mandare in broadcast un messaggio con le carte giocate fino ad ora (CurrentTurnAssistantCard)
             // ->cambiarei da come sono state pensate e farei l'aggiornamento carta per carta,si potrebbe usare AssistantDeckUpdate. boh rivedere
             System.out.println(clientName+ " ha scelto la sua carta, ora lo sto mandando in WAIT_TURN");
@@ -181,7 +199,6 @@ public class GameHandler implements PropertyChangeListener{
                 sendTo(nextPlayer,playAssistantCardMessage);
             }
             else{
-
                 startActionPhase();
             }
         }
@@ -196,20 +213,81 @@ public class GameHandler implements PropertyChangeListener{
         Message response = gameController.moveStudentsFromLobby(clientName, studentIDs,destIDs); //se il messaggio andava bene il model si è aggiornato dopo questa riga
         sendTo(clientName, response);
         if (!(response instanceof ErrorMessage)){
+            /*
             System.out.println(clientName+ " ha spostato gli studenti, ora lo sto mandando in WAIT_TURN"); //da sostituire con l'eventualità di giocare una carta
             if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
                 String nextPlayer = playersOrderIterator.next();
-                Message playAssistantCardMessage = new ClientStateMessage(ClientState.MOVE_FROM_LOBBY);
+                Message moveStudentsFromLobbyMessage = new ClientStateMessage(ClientState.MOVE_FROM_LOBBY);
                 System.out.println("Siccome " + clientName + " ha finito la sua selezione ora è il turno di " + nextPlayer);
-                sendTo(nextPlayer,playAssistantCardMessage);
+                sendTo(nextPlayer,moveStudentsFromLobbyMessage);
             }
             else{
-                //passa a moveMN phase
+                startActionPhase2();
             }
+            */
+            System.out.println(clientName + " ha spostato gli studenti, ora lo mando in MOVE_MN");
+        }
+    }
+
+    private void handleMoveMotherNatureMessage(MotherNatureMoveMessage message, ClientHandler client){
+        int steps = message.getSteps();
+        String clientName = getNicknameFromClientID(client.getID());
+        System.out.println("GameHandler:è arrivato un messaggio di moveMotherNature da " + clientName);
+        Message response = gameController.moveMotherNature(clientName, steps); //se il messaggio andava bene il model si è aggiornato dopo questa riga
+        sendTo(clientName,response);
+        if (!(response instanceof ErrorMessage)){
+            /*
+            System.out.println(clientName+ " ha spostato madre natura, ora lo sto mandando in WAIT_TURN"); //da sostituire con l'eventualità di giocare una carta
+            if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
+                String nextPlayer = playersOrderIterator.next();
+                Message moveMotherNatureMessage = new ClientStateMessage(ClientState.MOVE_MOTHER_NATURE);
+                System.out.println("Siccome " + clientName + " ha terminato la sua mossa, ora è il turno di " + nextPlayer);
+                sendTo(nextPlayer,moveMotherNatureMessage);
+            }
+            else{
+                startActionPhase2();
+            }
+             */
+            System.out.println(clientName + "ha spostato MN, ora lo mando in PICK_CLOUD");
+        }
+    }
+
+    private void handleCloudPick(CloudSelectionMessage message, ClientHandler client){
+        int cloudIndex = message.getCloudIndex();
+        String clientName = getNicknameFromClientID(client.getID());
+        System.out.println("GameHandler: è arrivato un messaggio di CloudSelection da " + clientName);
+        Message response = gameController.refillLobby(clientName, cloudIndex);
+        sendTo(clientName, response);
+        if (!(response instanceof  ErrorMessage)){
+            System.out.println(clientName + "ha spostato le pedine nella lobby, ora lo mando in END_TURN ma dovrebbe esserci la parte di personaggio");
+        }
+    }
+
+    private void handleEndTurn(CloseTurnMessage message, ClientHandler client){
+        String clientName = getNicknameFromClientID(client.getID());
+        //qui metto l'avanzamento dell'iterator
+        // se l'ultimo giocatore ha giocato passo a EndRound quindi nuova planning phase ecce
+        if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
+            Message stateChange = new ClientStateMessage(ClientState.WAIT_TURN);
+            sendTo(clientName, stateChange);
+            String nextPlayer = playersOrderIterator.next();
+            Message moveStudentsFromLobbyMessage = new ClientStateMessage(ClientState.MOVE_FROM_LOBBY);
+            System.out.println("Siccome " + clientName + " ha finito il suo turno ora è il turno di " + nextPlayer);
+            sendTo(nextPlayer,moveStudentsFromLobbyMessage);
+        }
+        else{
+            //handleEndRound
         }
 
+    }
 
-
+    /**
+     * TODO: gestione fine round
+     */
+    private void handleEndRound(){
+        //in caso di expert game ci saranno un po' di magheggi da fare
+        //se non siamo in expert basta gestire il nuovo ordine di studenti per la planning phase
+        //poi non mi ricordo sinceramente
     }
 
     private void sendTo(String nickname,Message message){

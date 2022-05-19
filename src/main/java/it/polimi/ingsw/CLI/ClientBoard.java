@@ -129,6 +129,7 @@ public class ClientBoard implements Serializable {
         }
     }
 
+
     public void setGB(GameBoard GB) {
         this.GB = GB;
     }
