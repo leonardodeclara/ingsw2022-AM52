@@ -301,6 +301,11 @@ public class CLI implements Runnable{
                 outputStream.println("Scegli tre studenti da spostare nella table o su un'isola");
                 outputStream.println("Per esempio digita move studentID1,studentID2,studentID3 in table,2,3 per muovere il primo studente nella table,il secondo sull'isola 2, il terzo sull'isola 3");
                 break;
+            case MOVE_MOTHER_NATURE:
+                GB.print();
+                outputStream.println("Puoi far compiere a Madre Natura fino a X passi"); //prendere X dalla priority della carta giocata
+                outputStream.println("Per esempio digita move mn 5 per spostarla di 5 isole");
+                break;
 
 
         }
@@ -322,6 +327,9 @@ public class CLI implements Runnable{
                 break;
             case MOVE_FROM_LOBBY:
                 outputStream.println("Scelta non valida! Riprova");
+                break;
+            case MOVE_MOTHER_NATURE:
+                outputStream.println("Non puoi spostare lì Madre Natura!");
                 break;
         }
     }
@@ -351,6 +359,9 @@ public class CLI implements Runnable{
                 break;
             case MOVE_FROM_LOBBY:
                 outputStream.println("I parametri inseriti non sono validi!");
+                break;
+            case MOVE_MOTHER_NATURE:
+                outputStream.println("Non hai inserito un comando valido!");
                 break;
         }
     }

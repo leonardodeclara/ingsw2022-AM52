@@ -95,6 +95,13 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
+    public Message moveMotherNature(String player, int steps){
+        if(game.moveMotherNature(player,steps))
+            return new ClientStateMessage(ClientState.WAIT_TURN);
+        else
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
+    }
+
     public ArrayList<String> getActionPhaseTurnOrder(){
         return game.getActionPhasePlayerOrder();
     }

@@ -46,6 +46,9 @@ public class InputParser {
             case MOVE_FROM_LOBBY:
                 parseMoveStudentsFromLobby(input);
                 break;
+            case MOVE_MOTHER_NATURE:
+                parseMoveMotherNature(input);
+                break;
         }
         return data;
     }
@@ -143,6 +146,24 @@ public class InputParser {
             }
         }
     }
+
+    private void parseMoveMotherNature(String input){ //comando: move mn 5
+        int steps = 0;
+        String[] words = input.split(" ");
+
+        if(words.length==3){
+            if(words[0].equalsIgnoreCase("move"))
+                if(words[1].equalsIgnoreCase("mn") || words[1].equalsIgnoreCase("mother nature")){
+                    try{
+                        steps = Integer.parseInt(words[2]);
+                        data.add(steps);
+                    }catch(NumberFormatException e){
+
+                    }
+            }
+        }
+    }
+
 
 
     private ArrayList<Integer> convertStringsToNumberArray(String[] array){

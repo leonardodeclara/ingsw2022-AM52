@@ -40,6 +40,8 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
                 return buildPlayAssistantCardMessage(data);
             case MOVE_FROM_LOBBY:
                 return buildMoveFromLobbyMessage(data);
+            case MOVE_MOTHER_NATURE:
+                return buildMoveMotherNature(data);
         }
         return null;
     }
@@ -67,6 +69,10 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
 
     private Message buildMoveFromLobbyMessage(ArrayList<Object> data){
         return new MoveStudentsFromLobbyMessage((ArrayList<Integer>) data.get(0),(ArrayList<Integer>) data.get(1));
+    }
+
+    private Message buildMoveMotherNature(ArrayList<Object> data){
+        return new MotherNatureMoveMessage((Integer) data.get(0));
     }
 }
 
