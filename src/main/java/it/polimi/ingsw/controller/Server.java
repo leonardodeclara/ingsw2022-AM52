@@ -91,7 +91,7 @@ public class Server {
         boolean expert = lobby.isExpertGame();
         lobbies.remove(lobby); //cancella la lobby
         System.out.println("Inizializziamo il GH");
-        HashMap<String, ClientHandler> playerInGame = removeUnusedPlayers(nameToHandlerMap,players);
+        HashMap<String, ClientHandler> playerInGame = selectLobbyPlayers(players);
         for (String player: playerInGame.keySet()){
             System.out.println("Nella nuova partita c'è "+ player +", clientHandler numero " + playerInGame.get(player).getID());
         }
@@ -110,11 +110,11 @@ public class Server {
         gameHandler.startGame();
     }
 
-    private HashMap<String,ClientHandler> removeUnusedPlayers(HashMap<String,ClientHandler> hashMap, ArrayList<String> list){
-        HashMap<String, ClientHandler> inGamePlayers = (HashMap<String, ClientHandler>) hashMap.clone();
-        for (String nickname : inGamePlayers.keySet()){
-            if(!list.contains(nickname))
-                inGamePlayers.remove(nickname);
+    private HashMap<String,ClientHandler> selectLobbyPlayers(ArrayList<String> list){
+        HashMap<String, ClientHandler> inGamePlayers = new HashMap<>();
+        for (String nickname : nameToHandlerMap.keySet()){
+            if(list.contains(nickname))
+                inGamePlayers.put(nickname, nameToHandlerMap.get(nickname));
         }
         return inGamePlayers;
     }
