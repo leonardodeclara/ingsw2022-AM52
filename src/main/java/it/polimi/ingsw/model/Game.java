@@ -294,7 +294,7 @@ public class Game {
         for (Color studentToMove : studentsToMove) {
             if(player.removeFromBoardLobby(studentToMove)){
                 if (islandIDs.get(islandIndexCounter) == Constants.ISLAND_ID_NOT_RECEIVED)
-                    player.getBoard().addToTable(studentToMove);
+                    player.addToBoardTable(studentToMove);
                 else {
                     Island islandDest = islands.get(islandIDs.get(islandIndexCounter));
                     islandDest.addStudent(studentToMove);

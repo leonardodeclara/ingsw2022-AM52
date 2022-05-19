@@ -118,16 +118,6 @@ public class GameHandler implements PropertyChangeListener{
         updatePlayersOrder(currentTurnOrder);
     }
 
-    private void startActionPhase2(){
-        Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
-        Message moveFromLobbyMessage = new ClientStateMessage(ClientState.MOVE_MOTHER_NATURE);
-
-        ArrayList<String> currentTurnOrder = gameController.getActionPhaseTurnOrder();
-        String startingPlayer = currentTurnOrder.get(0);
-        sendAllExcept(nameToHandlerMap.get(startingPlayer),waitStateMessage);
-        sendTo(startingPlayer,moveFromLobbyMessage);
-        updatePlayersOrder(currentTurnOrder);
-    }
 
     private void updatePlayersOrder(ArrayList<String> players){
         playersOrder = new ArrayList<String>(players);
@@ -286,7 +276,7 @@ public class GameHandler implements PropertyChangeListener{
      */
     private void handleEndRound(){
         //in caso di expert game ci saranno un po' di magheggi da fare
-        //se non siamo in expert basta gestire il nuovo ordine di studenti per la planning phase
+        //se non siamo in expert basta chiamare startPlanningPhase() e poi da lì il resto va a oltranza
         //poi non mi ricordo sinceramente
     }
 
