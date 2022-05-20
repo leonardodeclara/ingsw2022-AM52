@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.GUI.UI;
 import it.polimi.ingsw.messages.*;
 
 import java.io.*;
@@ -15,10 +16,11 @@ public class ClientSocket implements Runnable{
     String ip;
     int port;
     boolean active;
-    CLI cli; //andrà sostituita con una classe madre User Interface a breve o con client
+    boolean IsClientGUI;
+    UI cli;
     Thread pinger;
 
-    public ClientSocket(String ip,int port, CLI cli) throws IOException, SocketException {
+    public ClientSocket(String ip,int port, UI cli) throws IOException, SocketException {
         this.ip = ip;
         this.port = port;
         this.cli = cli;

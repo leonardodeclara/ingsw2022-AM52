@@ -1,7 +1,10 @@
 package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.ClientSocket;
 import it.polimi.ingsw.messages.ClientState;
+import it.polimi.ingsw.messages.Message;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -20,26 +23,42 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/*
-JavaFX defines a scene graph which is a tree data structure that has a single root node.
-For your application (i.e. the code you posted), the root node is the primaryStage (this is the parameter in method start() in class Main).
-The primaryStage can have several Scenes. Each Scene must have its own root node.
- */
-public class GUI extends Application {
+
+public class GUI extends Application implements UI{
     ClientState currentState;
     boolean active;
     Stage stage;
     ArrayList<Scene> scenes;
     String[] fxmlPaths;
+    ClientSocket clientSocket;
+    Client client;
 
+    //GUI visualizza la scena
+    //GUIUpdater riceve i messaggi di update da clientsocket (lo farei in GUI ma non si può perchè già estende Applications)
+    //la GUI ha la ref di un ActionParser che trasforma i click in parametri sfusi e li passa a Client (che li trasforma in messaggi e li manda)
+    //la GUI per comunicare con il server ha necessariamente bisogno di currentState
+    //per ge
     public GUI(){
         currentState = ClientState.CONNECT_STATE;
         active = true;
         fxmlPaths = Arrays.copyOf(Constants.fxmlPaths,Constants.fxmlPaths.length);
         scenes = new ArrayList<>();
+        client = new Client(this);
+
+    }
+
+    public void handleMessageFromServer(Message message){
+
+    }
+
+
+    public void prepareView(ArrayList<Object> data){ //con questa inizializziamo il render della partita
+
     }
 
     private void renderScene(){
@@ -81,6 +100,19 @@ public class GUI extends Application {
 
     }
 
+    public void connect(String ip,String portText) throws IOException {
+        int port;
+        try{
+            port = Integer.parseInt(portText);
+            clientSocket = new ClientSocket(ip,port,this);
+            Thread socketThread = new Thread(clientSocket); //la sposti su un nuovo thread (parte run() in automatico)
+            socketThread.start();
+            //switcha a matchmakingscreen
+        }catch(NumberFormatException | UnknownHostException | SocketException e){
+            //renderizza qualche messaggio di errore
+        }
+
+    }
 
     public static void main(String[] args) {
         launch(args);

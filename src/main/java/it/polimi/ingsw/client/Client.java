@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.GUI.UI;
 import it.polimi.ingsw.controller.GameHandler;
 import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.controller.ServerSocketConnection;
@@ -18,10 +19,10 @@ import java.util.concurrent.TimeUnit;
 public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall'altro
     ClientSocket clientSocket;
     InputParser inputParser;
-    CLI cli;
+    UI cli;
     boolean active;
 
-    public Client(CLI cli) {
+    public Client(UI cli) {
         this.cli=cli;
         active = true;
     }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.GUI.UI;
 import it.polimi.ingsw.exceptions.QuitException;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Tower;
@@ -16,7 +17,7 @@ import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class CLI implements Runnable{
+public class CLI implements Runnable,UI{
     private final Scanner inputStream;
     private final PrintStream outputStream;
     private boolean active;
