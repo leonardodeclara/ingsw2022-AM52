@@ -762,12 +762,14 @@ class GameTest {
         players.add("mari");
         players.add("frizio");
         players.add("leoviatano");
-
-
         game.instantiateGameElements(players);
-        game.getPlayerByName("leoviatano").setTeam(Tower.GREY);
-        game.getPlayerByName("frizio").setTeam(Tower.WHITE);
-        game.getPlayerByName("mari").setTeam(Tower.BLACK);
+        Player leoviatano =game.getPlayerByName("leoviatano");
+        Player mari = game.getPlayerByName("mari");
+        Player frizio = game.getPlayerByName("frizio");
+
+        leoviatano.setTeam(Tower.GREY);
+        frizio.setTeam(Tower.WHITE);
+        mari.setTeam(Tower.BLACK);
         game.giveAssistantDeck("leoviatano", 0);
         game.giveAssistantDeck("frizio", 1);
         game.giveAssistantDeck("mari", 2);
@@ -775,20 +777,20 @@ class GameTest {
         ArrayList<Assistant> deck0 = game.getPlayerByName("mari").getDeck();
         ArrayList<Assistant> deck1 = game.getPlayerByName("frizio").getDeck();
         ArrayList<Assistant> deck2 = game.getPlayerByName("leoviatano").getDeck();
-        assertEquals(true,game.isCardPlayable(deck0.get(0),deck0));
-        assertEquals(true,game.isCardPlayable(deck1.get(0),deck1));
-        game.playAssistantCard("mari",1); //cardid = 1 <==> deck0.get(0)
-        assertEquals(false,game.isCardPlayable(deck1.get(0),deck1));
-        assertEquals(true,game.isCardPlayable(deck1.get(1),deck1));
-        assertEquals(false,game.isCardPlayable(deck2.get(0),deck2));
-        assertEquals(true,game.isCardPlayable(deck2.get(1),deck2));
+        assertEquals(true,game.isCardPlayable(mari.getCardByPriority(1),mari.getDeck()));
+        assertEquals(true,game.isCardPlayable(frizio.getCardByPriority(1),frizio.getDeck()));
+        game.playAssistantCard("mari",1); //cardPriority = 1 <==> getCardByPriority(1)
+        assertEquals(false,game.isCardPlayable(frizio.getCardByPriority(1),frizio.getDeck()));
+        assertEquals(true,game.isCardPlayable(frizio.getCardByPriority(2),frizio.getDeck()));
+        assertEquals(false,game.isCardPlayable(leoviatano.getCardByPriority(1),leoviatano.getDeck()));
+        assertEquals(true,game.isCardPlayable(leoviatano.getCardByPriority(2),leoviatano.getDeck()));
         game.playAssistantCard("frizio",2);
-        assertEquals(false,game.isCardPlayable(deck0.get(1),deck0));
-        assertEquals(true,game.isCardPlayable(deck0.get(2),deck0));
-        assertEquals(false,game.isCardPlayable(deck2.get(1),deck2));
-        assertEquals(true,game.isCardPlayable(deck2.get(2),deck2));
-        Assistant deck2FirstElement = deck2.get(0);
-        Assistant deck2SecondElement = deck2.get(1);
+        assertEquals(false,game.isCardPlayable(new Assistant(1,2,2),mari.getDeck()));
+        assertEquals(true,game.isCardPlayable(new Assistant(2,3,2),mari.getDeck()));
+        assertEquals(false,game.isCardPlayable(new Assistant(1,2,0),leoviatano.getDeck()));
+        assertEquals(true,game.isCardPlayable(new Assistant(2,3,0),leoviatano.getDeck()));
+        Assistant deck2FirstElement = leoviatano.getCardByPriority(1);
+        Assistant deck2SecondElement = leoviatano.getCardByPriority(2);
         deck2.clear();
         deck2.add(deck2FirstElement);
         deck2.add(deck2SecondElement);

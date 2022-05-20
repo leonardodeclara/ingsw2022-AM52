@@ -135,7 +135,7 @@ public class Game {
     }
 
     /**
-     * TODO: cambiare i relativi test
+     * TODO: cambiare i relativi test in expert game
      */
     /**
      * Method initiatePlayersLobbies calculates the number of students to put in the players' lobby
@@ -190,22 +190,22 @@ public class Game {
      * in order to calculate the playing order for the action phase
      *
      * @param nickname :
-     * @param cardId   : id given to the card, used as the index for the player's deck ArrayList
+     * @param
      */
     /*
     TODO: la selezione della carta non deve avvenire per indice perché il giocatore non lo conosce. in questo modo funziona solo
      al primo round. dal secondo già è problematico. bisogna scrivere un metodo getCardById che fa la selezione per priority
      */
-    public int playAssistantCard(String nickname, int cardId) {
-        ArrayList<Assistant> newDeck = getPlayerByName(nickname).getDeck();
-        cardId--; //priority van da 1 a 10, ma ci serve l'index
-        Assistant playedCard = newDeck.get(cardId);
-        if (!isCardPlayable(playedCard, newDeck)) return -1;
-        int cardScore = playedCard.getPriority();
-        currentTurnAssistantCards.put(nickname, playedCard); //firePropertyChange
+    public int playAssistantCard(String nickname, int cardPriority) {
+        System.out.println("Game: seleziono dal mazzo la carta scelta");
+        Player currentPlayer = getPlayerByName(nickname);
+        Assistant chosenCard = currentPlayer.getCardByPriority(cardPriority);
+        if (chosenCard == null || !isCardPlayable(chosenCard, currentPlayer.getDeck())) return -1;
+        System.out.println("Game: Ho estratto CORRETTAMENTE la carta con priority " + chosenCard.getPriority());
+        currentTurnAssistantCards.put(nickname, chosenCard); //firePropertyChange
         listeners.firePropertyChange("CurrentTurnAssistantCards", null, currentTurnAssistantCards);
-        getPlayerByName(nickname).removeAssistantCard(cardId);
-        return cardScore;
+        getPlayerByName(nickname).removeAssistantCard(cardPriority);
+        return cardPriority;
     }
 
     public ArrayList<String> getActionPhasePlayerOrder() {
