@@ -118,6 +118,10 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
+    public void closeCurrentRound(){
+        game.resetCurrentTurnAssistantCards();
+    }
+
     public ArrayList<String> getActionPhaseTurnOrder(){
         return game.getActionPhasePlayerOrder();
     }
