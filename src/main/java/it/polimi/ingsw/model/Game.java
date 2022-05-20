@@ -458,11 +458,11 @@ public class Game {
      */
 
 
-    public HashMap<String,Integer> calculateInfluence(Island island){
-        ArrayList<Integer>  influences = calculateStudentsInfluences(island,players);
-        int towersOwnerIndex = getTowersOwnerIndex(island,players);
-        if(towersOwnerIndex != -1)
-            influences.set(towersOwnerIndex,influences.get(towersOwnerIndex) + island.getTowers().size());
+    public HashMap<String,String> calculateInfluence(Island island){
+        HashMap<String,Integer>  influences = calculateStudentsInfluences(island,players);
+        String towersOwnerName = getTowersOwnerName(island,players);
+        if(towersOwnerName != null)
+            influences.put(towersOwnerName,influences.get(towersOwnerName) + island.getTowers().size());
             mergeIslands(island);
             return calculateIslandOwner(island,influences);
     }
@@ -515,18 +515,28 @@ public class Game {
      * Method that calculates the Owner of an island according to his influence on that island
      * If there is a draw of influence there's no change about the island's owner
      * @param island: reference to the island on I want to calculate influence
-     * @param influences: list of the calculated influences of each player on that island
-     * @return HashMap<String, Integer>: Hashmap that contains the information about a possible draw about the influence
-     * and the PlayerID of of the Owner
+     * @param influences: map of the calculated influences for each player on that island
+     * @return HashMap<String, String>: Hashmap that contains the information about a possible draw about the influence
+     * and the PlayerID of the Owner
      */
-    protected HashMap<String,Integer> calculateIslandOwner(Island island,ArrayList<Integer> influences){
-        int max = getMax(influences);
-        int isDraw = isDuplicate(influences,max);
-        HashMap<String, Integer> returnMap = new HashMap<>();
+    protected HashMap<String,String> calculateIslandOwner(Island island,HashMap<String,Integer> influences){
 
-        Player owner = (isDraw == 1) ? island.getOwner() : players.get(influences.indexOf(max));
-        returnMap.put("Is Draw", isDraw);
-        returnMap.put("ID Player", (owner==null) ? null : owner.getPlayerId());
+        int max = getMax(influences.values());
+        boolean isDraw = isDuplicate(influences.values(),max);
+        HashMap<String, String> returnMap = new HashMap<>();
+
+        Player owner=null;
+        if (isDraw){
+            owner = island.getOwner();
+            returnMap.put("Is Draw", Constants.DRAW);
+        }
+        else{
+            returnMap.put("Is Draw", Constants.NO_DRAW);
+            for (String player: influences.keySet())
+                if (influences.get(player)==max)
+                    owner = getPlayerByName(player);
+        }
+        returnMap.put("Player Name", (owner==null) ? null : owner.getNickname());
         if(owner!=null && owner!=island.getOwner())
             island.setOwner(owner);
         return returnMap;
@@ -538,15 +548,15 @@ public class Game {
      * @param players: list of all the players of the game
      * @return ArrayList<Integer>: list of integer that represents the influence of each players on that island
      */
-    protected ArrayList<Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players){
+    protected HashMap<String,Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players){
         int infl;
-        ArrayList<Integer> influences = new ArrayList<>();
-        for(Player p: players){
+        HashMap<String,Integer> influences = new HashMap<>();
+        for(Player player: players){
             infl = 0;
-            for(Color t:p.getBoard().getTeacherTable()){
+            for(Color t:player.getBoard().getTeacherTable()){
                 infl += island.getStudentsOfColor(t).size();
             }
-            influences.add(players.indexOf(p),infl);
+            influences.put(player.getNickname(),infl);
         }
         return influences;
     }
@@ -558,12 +568,12 @@ public class Game {
      * @param players: list of all the players of the game
      * @return PlayerID of the owner of the island or -1 if there's not an owner
      */
-    protected int getTowersOwnerIndex(Island island, ArrayList<Player> players){
-        if (island.getTowers().size() == 0) return -1;
-        for(Player p : players)
-                if (island.getOwnerTeam().equals(p.getTeam()))
-                    return players.indexOf(p);
-        return -1;
+    protected String getTowersOwnerName(Island island, ArrayList<Player> players){
+        if (island.getTowers().size() == 0) return null;
+        for(Player player : players)
+                if (island.getOwnerTeam().equals(player.getTeam()))
+                    return player.getNickname();
+        return null;
     }
 
     /**
@@ -759,7 +769,7 @@ public class Game {
      * @param list: generic list of integer
      * @return the max number of the list
      */
-    private int getMax(ArrayList<Integer> list){
+    private int getMax(Collection<Integer> list){
         return list
                 .stream()
                 .mapToInt(v -> v)
@@ -772,8 +782,8 @@ public class Game {
      * @param value: integer that method has to check if there's a duplicate
      * @return 1 if there's a duplicate of the value or 0
      */
-    private int isDuplicate(ArrayList<Integer> values, int value) {
-        return Collections.frequency(values,value) > 1? 1:0;
+    private boolean isDuplicate(Collection<Integer> values, int value) {
+        return Collections.frequency(values, value) > 1;
     }
 
     public int getNumOfPlayers() {

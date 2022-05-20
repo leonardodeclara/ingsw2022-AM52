@@ -143,8 +143,8 @@ public class ExpertGame extends Game {
      * Method that calculates influence of an island but doesn't consider the towers
      * @param island: instance of the island on which I want to calculate influence
      */
-    public HashMap<String,Integer> calculateInfluenceForCard6(Island island){
-        ArrayList<Integer>  influences = calculateStudentsInfluences(island,players);
+    public HashMap<String,String> calculateInfluenceForCard6(Island island){
+        HashMap<String,Integer>  influences = calculateStudentsInfluences(island,players);
         return calculateIslandOwner(island,influences);
     }
 
@@ -152,14 +152,14 @@ public class ExpertGame extends Game {
      * Method that calculates influence of an island and adds 2 additional points
      * @param island: instance of the island on which I want to calculates influence
      */
-    public HashMap<String,Integer> calculateInfluenceForCard8(Island island){
-        ArrayList<Integer>  influences = calculateStudentsInfluences(island,players);
-        int towersOwnerIndex = getTowersOwnerIndex(island,players);
-        int incrementedValue = influences.get(currentPlayer.getPlayerId()) + 2;
-        influences.add(currentPlayer.getPlayerId(),incrementedValue);
-        if(towersOwnerIndex != -1) {
-            int towerIncrement = influences.get(towersOwnerIndex) + island.getTowers().size();
-            influences.set(towersOwnerIndex, towerIncrement);
+    public HashMap<String,String> calculateInfluenceForCard8(Island island){
+        HashMap<String,Integer>  influences = calculateStudentsInfluences(island,players);
+        String towersOwnerName = getTowersOwnerName(island,players);
+        int incrementedValue = influences.get(currentPlayer.getNickname()) + 2;
+        influences.put(currentPlayer.getNickname(),incrementedValue);
+        if(towersOwnerName != null) {
+            int towerIncrement = influences.get(towersOwnerName) + island.getTowers().size();
+            influences.put(towersOwnerName, towerIncrement);
         }
         return calculateIslandOwner(island,influences);
     }
@@ -169,12 +169,12 @@ public class ExpertGame extends Game {
      * @param island: instance of the island on which I want to calculate influence
      * @param bannedColor: Color that I want to exclude from the influence count
      */
-    public HashMap<String,Integer> calculateInfluenceForCard9(Island island,Color bannedColor){
-        ArrayList<Integer>  influences = calculateStudentsInfluences(island,players,bannedColor);
-        int towersOwnerIndex = getTowersOwnerIndex(island,players);
-        if(towersOwnerIndex != -1){
-            int towerIncrement = influences.get(towersOwnerIndex) + island.getTowers().size();
-            influences.set(towersOwnerIndex,towerIncrement);
+    public HashMap<String,String> calculateInfluenceForCard9(Island island,Color bannedColor){
+        HashMap<String,Integer> influences = calculateStudentsInfluences(island,players,bannedColor);
+        String towersOwnerName = getTowersOwnerName(island,players);
+        if(towersOwnerName != null){
+            int towerIncrement = influences.get(towersOwnerName) + island.getTowers().size();
+            influences.put(towersOwnerName,towerIncrement);
         }
         return calculateIslandOwner(island,influences);
     }
@@ -186,16 +186,16 @@ public class ExpertGame extends Game {
      * @param bannedColor: Color that I want to exclude from the influence count
      * @return ArrayList<Integer>: list of integer that represents the influence of each players on that island
      */
-    protected ArrayList<Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players,Color bannedColor){
+    protected HashMap<String,Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players,Color bannedColor){
         int infl = 0;
-        ArrayList<Integer> influences = new ArrayList<>();
+        HashMap<String,Integer> influences = new HashMap<>();
         for(Player p: players){
             infl = 0;
             for(Color t:p.getBoard().getTeacherTable()){
                 if(t != bannedColor)
                     infl+=island.getStudentsOfColor(t).size();
             }
-            influences.add(players.indexOf(p),infl);
+            influences.put(p.getNickname(),infl);
         }
         return influences;
     }
