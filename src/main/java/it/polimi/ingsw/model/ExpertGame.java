@@ -239,9 +239,12 @@ public class ExpertGame extends Game {
      * Method that sets the Personality card that is active in the round
      * @param cardId: ID of the Personality card that is active in the round
      */
+
+    //questo funziona come gli altri metodi chiamati da Game controller ma in aggiunta usa i lambda array per settare i metodi modificabili
+    //alcuni di questi metodi però vengono chiamati dal controller e altri qui internamente
     public void setActivePersonality(int cardId){
         if (activePersonality!=null){
-            throw new InvalidMoveException(); //vedere se aggiungere messaggio
+            throw new InvalidMoveException();
         }
 
         int playedCardIndex=-1;

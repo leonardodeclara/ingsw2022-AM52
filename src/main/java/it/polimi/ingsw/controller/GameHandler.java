@@ -51,6 +51,8 @@ public class GameHandler implements PropertyChangeListener{
             handleCloudPick((CloudSelectionMessage) message, clientHandler);
         else if (message instanceof CloseTurnMessage)
             handleEndTurn((CloseTurnMessage) message, clientHandler);
+        else if (message instanceof PlayPersonalityCardMessage)
+            handlePlayPersonalityCard((PlayPersonalityCardMessage) message, clientHandler);
     }
 
 
@@ -250,6 +252,20 @@ public class GameHandler implements PropertyChangeListener{
         else{
             handleEndRound();
         }
+
+    }
+
+    private void handlePlayPersonalityCard(PlayPersonalityCardMessage message, ClientHandler client){
+        int cardID = message.getCardID();
+        String clientName = getNicknameFromClientID(client.getID());
+        System.out.println("GameHandler: è arrivato un messaggio di PlayPersonality da " + clientName);
+        Message response = gameController.playPersonalityCard(clientName, cardID);
+        sendTo(clientName, response);
+        if (!(response instanceof  ErrorMessage)){
+            System.out.println(clientName + "ha spostato le pedine nella lobby, ora lo mando in END_TURN ma dovrebbe esserci la parte di personaggio");
+        }
+
+
 
     }
 
