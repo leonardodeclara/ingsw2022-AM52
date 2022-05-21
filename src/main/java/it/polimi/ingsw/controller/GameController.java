@@ -126,14 +126,19 @@ public class GameController implements PropertyChangeListener {
 
     //questo deve costruire i messaggi degli stati ad hoc delle carte che fanno fare ai giocatori qualcosa
     //se invece modifica un input viene fatto tutto internmente a setActivePersonality
+
     public Message playPersonalityCard(String player, int cardID){
-        if(((ExpertGame) game).setActivePersonality(cardID)){
+        //if(((ExpertGame) game).setActivePersonality(cardID)){
+        //dopo rimettilo com'era ma intanto faccio così sonar mi rompe
+        if (true){
             switch(cardID){ //qui facciamo un case per ogni carta che richiede messaggi speciali e li mandiamo indietro uno stato ad hoc
-                case
+                case (1):
             }
+            return null;
         }
-        else
-            return new ErrorMessage(ErrorKind.ILLEGAL_MOVE);
+        //else
+        //    return new ErrorMessage(ErrorKind.ILLEGAL_MOVE);
+        return null;
     }
 
     //return true se la partita è finita, false otherwise
