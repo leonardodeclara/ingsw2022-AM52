@@ -166,6 +166,8 @@ public class CLI implements Runnable,UI{
             updateActivePersonality((ActivePersonalityMessage) updateMessage);
         else if (updateMessage instanceof InactivePersonalityMessage)
             updateInactivePersonality((InactivePersonalityMessage) updateMessage);
+        else if (updateMessage instanceof LastRoundMessage)
+            setLastRound((LastRoundMessage) updateMessage);
     }
 
     public void updateAvailableWizard(AvailableWizardMessage message){
@@ -245,7 +247,7 @@ public class CLI implements Runnable,UI{
     public void updatePlayerBoard(BoardUpdateMessage message){
         String boardOwner = message.getOwner();
         GB.setUpdatedClientBoard(boardOwner, message.getClientBoard());
-        System.out.println("Aggiornata la board di" + boardOwner);
+        System.out.println("Aggiornata la board di " + boardOwner);
         System.out.println();
         GB.print();
     }
@@ -268,6 +270,11 @@ public class CLI implements Runnable,UI{
         GB.resetActivePersonality(message.getInactiveCardId());
         //non so se serve stampare il fatto che una carta non è più attiva
     }
+
+    public void setLastRound(LastRoundMessage message){
+        System.out.println(message.getLastRoundMessage());
+    }
+
 
 
     private void visualizeContextMessage(){
@@ -315,6 +322,7 @@ public class CLI implements Runnable,UI{
                 outputStream.println("Sei alla fine del tuo turno! Per chiudere il turno scrivi end");
                 if (GB.isExpertGame() /*&& può essere giocata una carta (quindi non è già stata giocata e ha abbastanza coins (credo))*/)
                     outputStream.println("Puoi ancora giocare una carta personaggio! Per giocarla scrivi personality id" );
+                break;
         }
 
     }

@@ -11,6 +11,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -140,7 +141,8 @@ public class GameHandler implements PropertyChangeListener{
         if (!(response instanceof ErrorMessage)){
             System.out.println(clientName+ " ha scelto il suo wizard, ora gi chiederò che torre vuole");
             sendTo(clientName, new ClientStateMessage(ClientState.SET_UP_TOWER_PHASE));
-            sendTo(clientName, new AvailableTowerMessage(gameController.getAvailableTowers()));
+            //sendTo(clientName, new AvailableTowerMessage(gameController.getAvailableTowers()));
+            //mandiamo due volte le availableTowers
         }
     }
 
@@ -157,7 +159,6 @@ public class GameHandler implements PropertyChangeListener{
         sendTo(clientName, response);
         if (!(response instanceof ErrorMessage)){
             System.out.println(clientName+ " ha scelto la sua torre, ora lo sto mandando in WAIT_TURN");
-
             if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
                 String nextPlayer = playersOrderIterator.next();
                 Message setUpPhaseStateMessage = new ClientStateMessage(ClientState.SET_UP_WIZARD_PHASE);
@@ -179,6 +180,8 @@ public class GameHandler implements PropertyChangeListener{
         System.out.println("GameHandler:è arrivato un messaggio di playAssistantCard da " + clientName);
         Message response = gameController.updateAssistantCards(clientName, chosenCard); //se il messaggio andava bene il model si è aggiornato dopo questa riga
         sendTo(clientName, response);
+        //mandiamo il wait turn due volte se per esempio il secondo giocatore gioca una carta con minor priorità
+        //sistemare da qualche parte qui
 
         if (!(response instanceof ErrorMessage)){
             //Message currentTurnCards = gameController.
@@ -206,18 +209,6 @@ public class GameHandler implements PropertyChangeListener{
         Message response = gameController.moveStudentsFromLobby(clientName, studentIDs,destIDs); //se il messaggio andava bene il model si è aggiornato dopo questa riga
         sendTo(clientName, response);
         if (!(response instanceof ErrorMessage)){
-            /*
-            System.out.println(clientName+ " ha spostato gli studenti, ora lo sto mandando in WAIT_TURN"); //da sostituire con l'eventualità di giocare una carta
-            if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
-                String nextPlayer = playersOrderIterator.next();
-                Message moveStudentsFromLobbyMessage = new ClientStateMessage(ClientState.MOVE_FROM_LOBBY);
-                System.out.println("Siccome " + clientName + " ha finito la sua selezione ora è il turno di " + nextPlayer);
-                sendTo(nextPlayer,moveStudentsFromLobbyMessage);
-            }
-            else{
-                startActionPhase2();
-            }
-            */
             System.out.println(clientName + " ha spostato gli studenti, ora lo mando in MOVE_MN");
         }
     }
@@ -229,19 +220,7 @@ public class GameHandler implements PropertyChangeListener{
         Message response = gameController.moveMotherNature(clientName, steps); //se il messaggio andava bene il model si è aggiornato dopo questa riga
         sendTo(clientName,response);
         if (!(response instanceof ErrorMessage)){
-            /*
-            System.out.println(clientName+ " ha spostato madre natura, ora lo sto mandando in WAIT_TURN"); //da sostituire con l'eventualità di giocare una carta
-            if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
-                String nextPlayer = playersOrderIterator.next();
-                Message moveMotherNatureMessage = new ClientStateMessage(ClientState.MOVE_MOTHER_NATURE);
-                System.out.println("Siccome " + clientName + " ha terminato la sua mossa, ora è il turno di " + nextPlayer);
-                sendTo(nextPlayer,moveMotherNatureMessage);
-            }
-            else{
-                startActionPhase2();
-            }
-             */
-            System.out.println(clientName + "ha spostato MN, ora lo mando in PICK_CLOUD");
+            System.out.println(clientName + "ha spostato MN, ora lo mando in PICK_CLOUD se ci sono abbastanza pedine");
         }
     }
 
@@ -282,8 +261,19 @@ public class GameHandler implements PropertyChangeListener{
         //se non siamo in expert basta chiamare startPlanningPhase() e poi da lì il resto va a oltranza
         //poi non mi ricordo sinceramente
         //ad es bisogna resettare le carte assistente
-        gameController.closeCurrentRound();
-        startPlanningPhase();
+        if (gameController.closeCurrentRound()) //magari cambiare nome a questo metodo e mettere qualcosa tipo isThisLastRound
+            closeMatch();
+        else
+            startPlanningPhase();
+    }
+
+    public synchronized void closeMatch(){
+        System.out.println("Qui muore il gameHandler");
+        sendAll(new DisconnectMessage("Chiusa la partita"));
+        for (ClientHandler clientHandler: nameToHandlerMap.values()){
+            clientHandler.closeConnection();
+        }
+        //poi lato server bisogna cancellare la partita e tutto il resto
     }
 
     private void sendTo(String nickname,Message message){
@@ -309,6 +299,12 @@ public class GameHandler implements PropertyChangeListener{
 
     public GameController getGameController() {
         return gameController;
+    }
+
+    public synchronized void removeClientHandler(ClientHandler clientHandler){
+        for (Map.Entry<String,ClientHandler> client: nameToHandlerMap.entrySet())
+            if (client.getValue().equals(clientHandler))
+                nameToHandlerMap.remove(client);
     }
 
     @Override

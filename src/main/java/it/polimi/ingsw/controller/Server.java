@@ -162,7 +162,7 @@ public class Server {
         return idToNicknameMap;
     }
 
-    public void removeClientConnection(ClientHandler clientHandler){
+    public synchronized void removeClientConnection(ClientHandler clientHandler){
         String clientName = idToNicknameMap.get(clientHandler.getID());
         idToNicknameMap.remove(clientHandler.getID());
         //bisogna gestire in maniera diversa il caso in cui il client sia ancora in attesa o il caso in cui sia a partita iniziata
@@ -184,7 +184,6 @@ public class Server {
 
     public static void main(String[] args) {
         Server server = new Server();
-        //GameHandler gameHandler = new GameHandler();
         ServerSocketConnection serverSocket = new ServerSocketConnection(1234,server);
         //gameHandler.setServer(serverSocket);
         serverSocket.run();

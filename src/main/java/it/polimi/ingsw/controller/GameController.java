@@ -52,7 +52,7 @@ public class GameController implements PropertyChangeListener {
     }
 
     public Message updateWizardSelection(String player, Integer wizard){
-        System.out.println("Maghi disponibili lato server:"+availableWizards);
+        System.out.println("Maghi disponibili lato server: "+availableWizards);
         if (availableWizards.contains(wizard)){
             game.giveAssistantDeck(player, wizard);
             playerToWizardMap.put(player, wizard);
@@ -67,10 +67,8 @@ public class GameController implements PropertyChangeListener {
     //creo l'assocazione giocatore-torre, mi serve per poter aggiungere i giocatori alla partita
     //potrei mettere qui dentro l'assegnamento del deck, ma posso anche farlo a parte
     public Message updateTowerSelection(String player, Tower tower){
-        System.out.println("Torri disponibili lato server:"+availableTowers);
+        System.out.println("Torri disponibili lato server: "+availableTowers);
         if (availableTowers.contains(tower)){
-            //game.addPlayer(new Player(game.getPlayers().size(),player, tower),playerToWizardMap.get(player)); //rivedere l'assegnamento dell'indice
-            //game.setPlayerPropertyChangeListener(player, this); //setto il listener per questo player
             game.getPlayerByName(player).setTeam(tower);
             availableTowers.remove(tower);
             System.out.println("GameController: ho aggiornato le torri disponibili togliendo " + tower.toString());
@@ -102,7 +100,15 @@ public class GameController implements PropertyChangeListener {
 
     public Message moveMotherNature(String player, int steps){
         if(game.moveMotherNature(player,steps))
-            return new ClientStateMessage(ClientState.PICK_CLOUD);
+            //qui va aggiunto tutta la gestione del calcolo influenza, spostamento torri, merge isole ecc
+            if (game.isLastRound() && !game.areCloudsFull())
+                //svuotamento delle nuvole viene saltato se siamo all'ultimo round e non ci sono abbastanza pedine studente per tutti
+                //soluzione temporanea perché questo tipo di controllo va bene solo per il primo giocatore del turno
+                //infatti se sono state riempite tutte le nuvole e quindi tutti possono pescare
+                //dopo che il primo giocatore ha fatto pick_cloud questo metodo restituirà false, il che è sbagliato
+                return new ClientStateMessage(ClientState.END_TURN);
+            else
+                return new ClientStateMessage(ClientState.PICK_CLOUD);
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
@@ -118,8 +124,16 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
-    public void closeCurrentRound(){
+    //return true se la partita è finita, false otherwise
+    public boolean closeCurrentRound(){
+        //bisogna gestire la fine partita nel caso fosse il lastRound
+        if (game.isLastRound()){
+            //in game manca tutto il calcolo del vincitore in caso la partita finisca al termine del lastRound
+            System.out.println("Finita la partita");
+            return true;
+        }
         game.resetCurrentTurnAssistantCards();
+        return false;
     }
 
     public ArrayList<String> getActionPhaseTurnOrder(){
@@ -145,16 +159,6 @@ public class GameController implements PropertyChangeListener {
         listener.addPropertyChangeListener("UpdateMessage", gameHandler);
         //si potrebbe mettere anche il listener per il messaggio di errore,
         // o magari quello lo gestisco in maniera diversa. rivedere
-    }
-
-
-    //va cancellato perché non lo usiamo più
-    public Message buildPlayerTowerAssociation(){
-        HashMap<String,Tower> associations = new HashMap<>();
-        for (Player player: game.getPlayers()){
-            associations.put(player.getNickname(), player.getTeam());
-        }
-        return new GameStartMessage(associations);
     }
 
     @Override

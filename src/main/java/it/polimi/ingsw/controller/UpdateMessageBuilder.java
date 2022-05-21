@@ -78,7 +78,7 @@ public class UpdateMessageBuilder {
         if (winnerName!=null)
             return new EndGameMessage("Abbiamo un vincitore", winnerName);
         else
-            return new EndGameMessage("LA partita è finita in parità", null);
+            return new EndGameMessage("La partita è finita in parità", null);
         //poi in gameHandler si può gestire il caso di mandare un messaggio di win al vincitore, di lose ai perdenti ecc
         //per il momento mandiamo in broadcast il nome del vincitore se ce n'è uno
     }

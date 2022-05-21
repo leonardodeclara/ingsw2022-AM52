@@ -83,9 +83,6 @@ public class Game {
     }
 
     /**
-     * TODO: modificare i test di instantiateGameElements perché sono stati spostati degli assegnamenti, vedere sotto
-     */
-    /**
      * This method instantiates all the game elements (clouds,teachers,basket,islands and boards).
      */
     public void instantiateGameElements(ArrayList<String> playersNames) {
@@ -126,7 +123,8 @@ public class Game {
         //System.out.println("Game: ho finito di fare fill alle isole ");
 
         //riempio il sacchetto definitivo
-        basket = new Basket(new int[]{24, 24, 24, 24, 24});
+        //basket = new Basket(new int[]{24, 24, 24, 24, 24}); //per testare si può modificare questa cosa
+        basket = new Basket(new int[]{4, 4, 4, 4, 4});
 
         addPlayers(playersNames);
         initiatePlayersLobbies();
@@ -434,6 +432,9 @@ public class Game {
                     picks.add(pick);
                 }
                 catch (EmptyBasketException e){
+                    cloud.fillStudents(picks); //se non ci sono abbastanza pedine metto quelle che ci sono e chiudo il refill
+                    picks.clear();
+                    listeners.firePropertyChange("CloudsRefill", null, new ArrayList<>(clouds));
                     boolean oldLastRound = lastRound;
                     setLastRound(true); //firePropertyChange per messaggio di Last Round
                     listeners.firePropertyChange("LastRound", oldLastRound, lastRound);
@@ -456,8 +457,6 @@ public class Game {
      * which tells to the Controller who called the calculateInfluence method if the outcome of the calculation was a draw or not.
      * @param island : reference of the island on which the influence is calculated
      */
-
-
     public HashMap<String,String> calculateInfluence(Island island){
         HashMap<String,Integer>  influences = calculateStudentsInfluences(island,players);
         String towersOwnerName = getTowersOwnerName(island,players);
@@ -520,7 +519,6 @@ public class Game {
      * and the PlayerID of the Owner
      */
     protected HashMap<String,String> calculateIslandOwner(Island island,HashMap<String,Integer> influences){
-
         int max = getMax(influences.values());
         boolean isDraw = isDuplicate(influences.values(),max);
         HashMap<String, String> returnMap = new HashMap<>();
@@ -670,18 +668,18 @@ public class Game {
         return assistantDecks;
     }
 
-
-    /**
-     * Method that checks if the Game is ended
-     * @return true if there's a Game over. false if there isn't
-     */
-
     /*Da rivedere*/
     /*potremmo aggiungere attributo winner a game*/
     /*Vittoria: return true, winner = playerVincitore
     * Partita continua: return false, winner = null
     * Parità: return true, winner=null
     * */
+    //Questo metodo va chiamato dopo aver messo una torre, dopo aver unificato delle isole
+
+    /**
+     * Method that checks if the Game is ended
+     * @return true if the game current game is over, false otherwise
+     */
     public boolean checkGameOver(){
         for(Player player: players){
             if(player.getBoard().getTowers()==0){
@@ -709,17 +707,20 @@ public class Game {
 
             }
             else {
-                int minTeachers = 5;
+                int maxTeachers = -1;
                 for (Player finalPlayer : potentialWinners) {
-                    if (finalPlayer.getBoard().getTeacherTable().size()<minTeachers){
+                    if (finalPlayer.getBoard().getTeacherTable().size()>maxTeachers){
                         winner = finalPlayer; //firePropertyChange
-                        minTeachers= finalPlayer.getBoard().getTeacherTable().size();
+                        maxTeachers= finalPlayer.getBoard().getTeacherTable().size();
                     }
-                    else if (finalPlayer.getBoard().getTeacherTable().size()==minTeachers){
+                    else if (finalPlayer.getBoard().getTeacherTable().size()==maxTeachers){
                         winner = null;
                     }
                 }
-                listeners.firePropertyChange("GameOver", null, null); //rivedere, magari mando un dato strutturato
+                if (winner !=null)
+                    listeners.firePropertyChange("GameOver", null, winner.getNickname());
+                else
+                    listeners.firePropertyChange("GameOver", null, null);
                 return true;
             }
         }
@@ -778,9 +779,9 @@ public class Game {
 
     /**
      * Method that checks if a value occurs more than once in an ArrayList
-     * @param values: ArrayList that method has to check
+     * @param values: Collection that method has to check
      * @param value: integer that method has to check if there's a duplicate
-     * @return 1 if there's a duplicate of the value or 0
+     * @return true if there's a duplicate of the value, false otherwise
      */
     private boolean isDuplicate(Collection<Integer> values, int value) {
         return Collections.frequency(values, value) > 1;
@@ -788,6 +789,17 @@ public class Game {
 
     public int getNumOfPlayers() {
         return numOfPlayers;
+    }
+
+    /*
+    TODO: testarla
+     */
+    public boolean areCloudsFull(){
+        int cloudSize = numOfPlayers+1;
+        for (Cloud cloud: clouds)
+            if (cloud.getStudents().size()!=cloudSize)
+                return false;
+        return true;
     }
 
 
@@ -813,7 +825,6 @@ public class Game {
         for (Island island: islands){
             island.setPropertyChangeListener(controller); //fire fatto, in teoria (vedere per students)
         }
-
         for (Player player: players){
             player.setPropertyChangeListener(controller); //fire fatto
         }

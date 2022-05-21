@@ -42,7 +42,10 @@ public class ClientSocket implements Runnable{
         });
     }
 
-
+    /**
+     * TODO: per ora la fine partita è gestita con la chiusura di tutto lato server, che manda un messaggio di tipo Disconnect.
+     * Bisogna gestirlo opportunamente e far chiudere in qualche modo la cli/gui perché per ora bisogna scrivere comunque quit
+     */
 
     @Override
     public void run() {

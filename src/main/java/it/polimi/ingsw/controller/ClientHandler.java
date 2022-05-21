@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Scanner;
 
 //AGGIUNGERE ACTIVE PER DISATTIVARE I CLIENTHANDLER DEI CLIENT IN WAIT STATE (TANTO PER SICUREZZA)
@@ -47,13 +48,18 @@ public class ClientHandler implements Runnable {
                 Message receivedMessage = (Message) in.readObject();
                 readMessage(receivedMessage);
                 }
-            } catch (IOException | QuitException e) {
-                System.out.println("Chiudo la connessione con il client");
+            } catch (QuitException | SocketTimeoutException e) {
+                System.out.println(ID + " si è disconnesso da solo. Chiudo la connessione e chiudo la partita");
+                gameHandler.removeClientHandler(this);
                 closeConnection();
+                gameHandler.closeMatch();
                 //System.err.println(e.getMessage());
             } catch (ClassNotFoundException e) {
                 System.err.println(e.getMessage());
-            }
+            } catch (IOException e){
+                System.out.println("Qualcuno si è disconnesso chiudo la connessione con il client " + ID);
+                closeConnection();
+        }
     }
 
     public void readMessage(Message message){
