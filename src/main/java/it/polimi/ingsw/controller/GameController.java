@@ -118,6 +118,21 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
+    //questo deve costruire i messaggi degli stati ad hoc delle carte che fanno fare ai giocatori qualcosa
+    //se invece modifica un input viene fatto tutto internmente a setActivePersonality
+    public Message playPersonalityCard(String player, int cardID){
+        if(((ExpertGame) game).setActivePersonality(cardID)){
+            switch(cardID){ //qui facciamo un case per ogni carta che richiede messaggi speciali e li mandiamo indietro uno stato ad hoc
+                case
+            }
+        }
+        else
+            return new ErrorMessage(ErrorKind.ILLEGAL_MOVE);
+    }
+
+
+
+
     public void closeCurrentRound(){
         game.resetCurrentTurnAssistantCards();
     }

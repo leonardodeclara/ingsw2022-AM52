@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class InputParser {
     ArrayList<Object> data;
     String nickname;
-
+    boolean isExpert;
 
     public InputParser(){
     }
@@ -144,11 +144,16 @@ public class InputParser {
                         if(destIDsInteger!=null){
                             data.add(studentIDsInteger);
                             data.add(destIDsInteger);
+                            return;
                         }
                     }
                 }
             }
         }
+
+        if(isExpert)
+            parsePlayPersonalityCard(words);
+
     }
 
     //bug: se si scrolla e poi si preme invio va a capo ma non invia. se lo si preme di nuovo invia ma a volte manda carattere vuoto
@@ -161,11 +166,15 @@ public class InputParser {
                     try{
                         steps = Integer.parseInt(words[2]);
                         data.add(steps);
+                        return;
                     }catch(NumberFormatException e){
 
                     }
             }
         }
+
+        if(isExpert)
+            parsePlayPersonalityCard(words);
     }
 
 
@@ -177,26 +186,43 @@ public class InputParser {
                 try{
                     cloudIndex=Integer.parseInt(words[2]);
                     data.add(cloudIndex);
+                    return;
                 } catch (NumberFormatException e){
                 }
         }
+
+        if(isExpert)
+            parsePlayPersonalityCard(words);
     }
 
     private void parseClosingTurn(String input){
-        input = input.replaceAll("\s","");
-        if (input.equalsIgnoreCase("end"))
-            data.add(input);
-        else if (input.equalsIgnoreCase("personality")){
-            try{
-                int personalityId = Integer.parseInt(input);
-                data.add(personalityId);
-            }
-            catch( NumberFormatException e){
+        String[] words = input.split("\\s+");
+        if(words.length==1){
+            if (words[0].equalsIgnoreCase("end")){
+                data.add(words[0]);
+                return;
             }
         }
+
+        if(isExpert)
+            parsePlayPersonalityCard(words);
     }
 
+    private void parsePlayPersonalityCard(String[] words){
+        int cardID=0;
+        boolean hasPlayedPersonality = true;
+        if(words.length==3){
+            if(words[0].equalsIgnoreCase("play") && words[1].equalsIgnoreCase("personality"))
+                try{
+                    cardID = Integer.parseInt(words[2]);
+                    data.add(cardID);
+                    data.add(hasPlayedPersonality); //serve per segnalare al client che nell'array c'è l'id di una carta
+                    return;
+                }catch(NumberFormatException e){
 
+                }
+        }
+    }
     private ArrayList<Integer> convertStringsToNumberArray(String[] array){
         ArrayList<Integer> arrayInt = new ArrayList<>();
         for(String s : array){
@@ -232,6 +258,14 @@ public class InputParser {
 
     public String getNickname() {
         return nickname;
+    }
+
+    public boolean getIsExpert(){
+        return isExpert;
+    }
+
+    public void setIsExpert(boolean isExpert){
+        this.isExpert = isExpert;
     }
 
 }

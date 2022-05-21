@@ -66,7 +66,7 @@ public class CLI implements Runnable,UI{
         try{
             while(active) { //bisogna trovare il modo di impedire al giocatore di spammare invio
                 if (inputStream.hasNext()) {
-                    playerInput = inputParser.parse(inputStream.nextLine(), currentState);   //non nextLine()
+                    playerInput = inputParser.parse(inputStream.nextLine(), currentState);
                     if (playerInput.size() > 0) {
                         Message messageToSend = client.buildMessageFromPlayerInput(playerInput, currentState);
                         try {
@@ -131,8 +131,7 @@ public class CLI implements Runnable,UI{
     public void prepareView(ArrayList<Object> data){
         GB.setNumberOfPlayers((Integer)data.get(0));
         GB.setExpertGame((Boolean)data.get(1));
-        //GB.instantiateGameElements();
-        // spostato dopo che vengono estratti i primi studenti per le isole e viene posizionata MN
+        inputParser.setIsExpert((Boolean)data.get(1));
     }
 
     public void updateView(Message updateMessage) {
@@ -294,27 +293,30 @@ public class CLI implements Runnable,UI{
                 outputStream.println("Torri disponibili:"+GB.getAvailableTowers()); //prendiamo dalla view le informazioni da stampare a schermo
                 break;
             case PLAY_ASSISTANT_CARD:
-                GB.print(); //si può evitare credo, la board viene stampata con le print degli update
                 outputStream.println("Scegli una carta da giocare!");
                 break;
             case MOVE_FROM_LOBBY:
-                GB.print(); //si può evitare credo
                 outputStream.println("Scegli tre studenti da spostare nella table o su un'isola");
                 outputStream.println("Per esempio digita move studentID1,studentID2,studentID3 in table,2,3 per muovere il primo studente nella table,il secondo sull'isola 2, il terzo sull'isola 3");
+                if (GB.isExpertGame() /*&& può essere giocata una carta (quindi non è già stata giocata e ha abbastanza coins (credo))*/)
+                    outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
                 break;
             case MOVE_MOTHER_NATURE:
-                GB.print(); //si può evitare credo
                 outputStream.println("Puoi far compiere a Madre Natura fino a X passi"); //prendere X dalla priority della carta giocata
                 outputStream.println("Per esempio digita move mn 5 per spostarla di 5 isole");
+                if (GB.isExpertGame() /*&& può essere giocata una carta (quindi non è già stata giocata e ha abbastanza coins (credo))*/)
+                    outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
                 break;
             case PICK_CLOUD:
                 outputStream.println("Scegli una nuvola! I suoi studenti passeranno sulla tua lobby ");
                 outputStream.println("Per esempio digita empty cloud 3 per scegliere la nuvola 3");
+                if (GB.isExpertGame() /*&& può essere giocata una carta (quindi non è già stata giocata e ha abbastanza coins (credo))*/)
+                    outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
                 break;
             case END_TURN:
                 outputStream.println("Sei alla fine del tuo turno! Per chiudere il turno scrivi end");
                 if (GB.isExpertGame() /*&& può essere giocata una carta (quindi non è già stata giocata e ha abbastanza coins (credo))*/)
-                    outputStream.println("Puoi ancora giocare una carta personaggio! Per giocarla scrivi personality id" );
+                    outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
         }
 
     }
@@ -335,7 +337,7 @@ public class CLI implements Runnable,UI{
             case MOVE_FROM_LOBBY:
                 outputStream.println("Scelta non valida! Riprova");
                 break;
-            case MOVE_MOTHER_NATURE:
+            case MOVE_MOTHER_NATURE: //qui bisogna differenziare i messaggi oppure paracularsi con messaggi generici tipo Scelta non valida!
                 outputStream.println("Non puoi spostare lì Madre Natura!");
                 break;
             case PICK_CLOUD:
