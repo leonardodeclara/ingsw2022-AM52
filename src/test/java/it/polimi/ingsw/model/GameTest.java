@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.exceptions.EmptyBasketException;
 import it.polimi.ingsw.model.*;
 import org.junit.jupiter.api.Test;
@@ -431,22 +432,23 @@ class GameTest {
         game.getIslands().get(mnIndex).addStudent(Color.PINK);
         game.getPlayerByName("leo").addTeacherToBoard(Color.BLUE);
         game.getPlayerByName("frizio").addTeacherToBoard(Color.RED);
-        ArrayList<Integer> influences = new ArrayList<>();
-        influences.add(1);
-        influences.add(0);
-        influences.add(0);
-        ArrayList<Integer> result = game.calculateStudentsInfluences(game.getIslands().get(mnIndex), game.getPlayers());
+        HashMap<String,Integer> influences = new HashMap<>();
+        influences.put("leo",1);
+        influences.put("frizio",0);
+        influences.put("mari",0);
+        HashMap<String,Integer> result = new HashMap<>();
+        result = game.calculateStudentsInfluences(game.getIslands().get(mnIndex), game.getPlayers());
         assertEquals(influences,result);
         assertEquals(3,result.size());
         game.getPlayerByName("mari").addTeacherToBoard(Color.PINK);
         game.getIslands().get(mnIndex).addStudent(Color.BLUE);
-        influences.set(0,2);
-        influences.set(1,1);
+        influences.put("leo",2);
+        influences.put("mari",1);
         result = game.calculateStudentsInfluences(game.getIslands().get(mnIndex), game.getPlayers());
         assertEquals(influences,result);
         assertEquals(3,result.size());
         game.getIslands().get(mnIndex).addStudent(Color.PINK);
-        influences.set(1,2);
+        influences.put("mari",2);
         result = game.calculateStudentsInfluences(game.getIslands().get(mnIndex), game.getPlayers());
         assertEquals(influences,result);
         assertEquals(3,result.size());
@@ -473,23 +475,24 @@ class GameTest {
                 mnIndex=j;
         }
         Island testedIsland = game.getIslands().get(mnIndex);
-        ArrayList<Integer> influences = new ArrayList<>();
-        influences.add(1);
-        influences.add(0);
-        influences.add(2);
-        HashMap<String,Integer> result = game.calculateIslandOwner(testedIsland,influences);
-        assertEquals(2, result.get("ID Player"));
-        assertEquals(0, result.get("Is Draw"));
-        assertEquals(game.getPlayerByName("leo"), testedIsland.getOwner());
-        influences.set(1,2);
+        HashMap<String,Integer> influences = new HashMap<>();
+        influences.put("mari", 1);
+        influences.put("frizio",0);
+        influences.put("leo",2);
+        HashMap<String,String> result  = new HashMap<>();
         result = game.calculateIslandOwner(testedIsland,influences);
-        assertEquals(2, result.get("ID Player"));
-        assertEquals(1, result.get("Is Draw"));
+        assertEquals("leo", result.get("Player Name"));
+        assertEquals(Constants.NO_DRAW, result.get("Is Draw"));
         assertEquals(game.getPlayerByName("leo"), testedIsland.getOwner());
-        influences.set(1,3);
+        influences.put("frizio",2);
         result = game.calculateIslandOwner(testedIsland,influences);
-        assertEquals(1, result.get("ID Player"));
-        assertEquals(0, result.get("Is Draw"));
+        assertEquals("leo", result.get("Player Name"));
+        assertEquals(Constants.DRAW, result.get("Is Draw"));
+        assertEquals(game.getPlayerByName("leo"), testedIsland.getOwner());
+        influences.put("frizio",3);
+        result = game.calculateIslandOwner(testedIsland,influences);
+        assertEquals("frizio", result.get("Player Name"));
+        assertEquals(Constants.NO_DRAW, result.get("Is Draw"));
         assertEquals(game.getPlayerByName("frizio"), testedIsland.getOwner());
     }
 
@@ -512,8 +515,8 @@ class GameTest {
             if(game.getIslands().get(j).isMotherNature())
                 mnIndex=j;
         }
-        assertNull(game.calculateInfluence(game.getIslands().get(mnIndex)).get("ID Player"));
-        assertEquals(1, game.calculateInfluence(game.getIslands().get(mnIndex)).get("Is Draw"));
+        assertNull(game.calculateInfluence(game.getIslands().get(mnIndex)).get("Player Name"));
+        assertEquals(Constants.DRAW, game.calculateInfluence(game.getIslands().get(mnIndex)).get("Is Draw"));
         game.getPlayerByName("leo").addTeacherToBoard(Color.BLUE);
         game.getPlayerByName("leo").addTeacherToBoard(Color.PINK);
         game.getPlayerByName("leo").addTeacherToBoard(Color.RED);
@@ -521,12 +524,12 @@ class GameTest {
         game.getPlayerByName("mari").addTeacherToBoard(Color.GREEN);
         game.getIslands().get(0).addStudent(Color.BLUE);
         game.getIslands().get(0).addStudent(Color.BLUE);
-        assertEquals(0,game.calculateInfluence(game.getIslands().get(0)).get("ID Player"));
+        assertEquals("leo",game.calculateInfluence(game.getIslands().get(0)).get("Player Name"));
         game.getIslands().get(0).addStudent(Color.YELLOW);
         game.getIslands().get(0).addStudent(Color.YELLOW);
         game.getIslands().get(0).addStudent(Color.YELLOW);
         game.getIslands().get(0).addStudent(Color.YELLOW);
-        assertEquals(1,game.calculateInfluence(game.getIslands().get(0)).get("ID Player"));
+        assertEquals("mari",game.calculateInfluence(game.getIslands().get(0)).get("Player Name"));
     }
 
     //test con torri e senza pareggi
@@ -551,13 +554,13 @@ class GameTest {
         game.getIslands().get(0).setOwner(game.getPlayerByName("leo"));
         game.getIslands().get(0).addTower(Tower.WHITE);
         game.getIslands().get(0).addStudent(Color.BLUE);
-        assertEquals(0,game.calculateInfluence(game.getIslands().get(0)).get("ID Player"));
+        assertEquals("leo",game.calculateInfluence(game.getIslands().get(0)).get("Player Name"));
         game.getIslands().get(0).removeTower();
         game.getIslands().get(0).setOwner(game.getPlayerByName("mari"));
         game.getIslands().get(0).addTower(Tower.BLACK);
         game.getIslands().get(0).addStudent(Color.GREEN);
         game.getIslands().get(0).addStudent(Color.GREEN);
-        assertEquals(1,game.calculateInfluence(game.getIslands().get(0)).get("ID Player"));
+        assertEquals("mari",game.calculateInfluence(game.getIslands().get(0)).get("Player Name"));
     }
 
     /**
@@ -689,9 +692,9 @@ class GameTest {
         game.getPlayerByName("frizio").setTeam(Tower.WHITE);
         game.getPlayerByName("leo").setTeam(Tower.BLACK);
         game.getIslands().get(0).setOwner(game.getPlayerByName("leo"));
-        assertEquals(-1, game.getTowersOwnerIndex(game.getIslands().get(0), game.getPlayers()));
+        assertEquals(null, game.getTowersOwnerName(game.getIslands().get(0), game.getPlayers()));
         game.getIslands().get(0).addTower(Tower.BLACK);
-        assertEquals(0, game.getTowersOwnerIndex(game.getIslands().get(0), game.getPlayers()));
+        assertEquals("leo", game.getTowersOwnerName(game.getIslands().get(0), game.getPlayers()));
     }
 
     /**
@@ -762,12 +765,14 @@ class GameTest {
         players.add("mari");
         players.add("frizio");
         players.add("leoviatano");
-
-
         game.instantiateGameElements(players);
-        game.getPlayerByName("leoviatano").setTeam(Tower.GREY);
-        game.getPlayerByName("frizio").setTeam(Tower.WHITE);
-        game.getPlayerByName("mari").setTeam(Tower.BLACK);
+        Player leoviatano =game.getPlayerByName("leoviatano");
+        Player mari = game.getPlayerByName("mari");
+        Player frizio = game.getPlayerByName("frizio");
+
+        leoviatano.setTeam(Tower.GREY);
+        frizio.setTeam(Tower.WHITE);
+        mari.setTeam(Tower.BLACK);
         game.giveAssistantDeck("leoviatano", 0);
         game.giveAssistantDeck("frizio", 1);
         game.giveAssistantDeck("mari", 2);
@@ -775,20 +780,20 @@ class GameTest {
         ArrayList<Assistant> deck0 = game.getPlayerByName("mari").getDeck();
         ArrayList<Assistant> deck1 = game.getPlayerByName("frizio").getDeck();
         ArrayList<Assistant> deck2 = game.getPlayerByName("leoviatano").getDeck();
-        assertEquals(true,game.isCardPlayable(deck0.get(0),deck0));
-        assertEquals(true,game.isCardPlayable(deck1.get(0),deck1));
-        game.playAssistantCard("mari",1); //cardid = 1 <==> deck0.get(0)
-        assertEquals(false,game.isCardPlayable(deck1.get(0),deck1));
-        assertEquals(true,game.isCardPlayable(deck1.get(1),deck1));
-        assertEquals(false,game.isCardPlayable(deck2.get(0),deck2));
-        assertEquals(true,game.isCardPlayable(deck2.get(1),deck2));
+        assertEquals(true,game.isCardPlayable(mari.getCardByPriority(1),mari.getDeck()));
+        assertEquals(true,game.isCardPlayable(frizio.getCardByPriority(1),frizio.getDeck()));
+        game.playAssistantCard("mari",1); //cardPriority = 1 <==> getCardByPriority(1)
+        assertEquals(false,game.isCardPlayable(frizio.getCardByPriority(1),frizio.getDeck()));
+        assertEquals(true,game.isCardPlayable(frizio.getCardByPriority(2),frizio.getDeck()));
+        assertEquals(false,game.isCardPlayable(leoviatano.getCardByPriority(1),leoviatano.getDeck()));
+        assertEquals(true,game.isCardPlayable(leoviatano.getCardByPriority(2),leoviatano.getDeck()));
         game.playAssistantCard("frizio",2);
-        assertEquals(false,game.isCardPlayable(deck0.get(1),deck0));
-        assertEquals(true,game.isCardPlayable(deck0.get(2),deck0));
-        assertEquals(false,game.isCardPlayable(deck2.get(1),deck2));
-        assertEquals(true,game.isCardPlayable(deck2.get(2),deck2));
-        Assistant deck2FirstElement = deck2.get(0);
-        Assistant deck2SecondElement = deck2.get(1);
+        assertEquals(false,game.isCardPlayable(new Assistant(1,2,2),mari.getDeck()));
+        assertEquals(true,game.isCardPlayable(new Assistant(2,3,2),mari.getDeck()));
+        assertEquals(false,game.isCardPlayable(new Assistant(1,2,0),leoviatano.getDeck()));
+        assertEquals(true,game.isCardPlayable(new Assistant(2,3,0),leoviatano.getDeck()));
+        Assistant deck2FirstElement = leoviatano.getCardByPriority(1);
+        Assistant deck2SecondElement = leoviatano.getCardByPriority(2);
         deck2.clear();
         deck2.add(deck2FirstElement);
         deck2.add(deck2SecondElement);

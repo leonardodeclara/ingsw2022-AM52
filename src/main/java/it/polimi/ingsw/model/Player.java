@@ -88,10 +88,17 @@ public class Player {
         listeners.firePropertyChange("Board", null, this);
     }
 
-    //TO DO: TESTARLA
+    /*
+    TODO: testare le modifiche
+     */
     //tolto il fire perché l'aggiornamento lato client viene gestito attraverso CurrentTurnAssistantCards in automatico
-    public void removeAssistantCard(int cardIndex){
-        deck.remove(cardIndex);
+    //rimozione avviene attraverso la priority della carta
+    public void removeAssistantCard(int cardPriority){
+        for (int i =0; i< deck.size();i++)
+        if (deck.get(i).getPriority()==cardPriority){
+            deck.remove(i);
+            return;
+        }
         //listeners.firePropertyChange("Deck", null, this);
     }
 
@@ -140,6 +147,18 @@ public class Player {
     public void removeTowerFromBoard(){
         board.removeTower();
         listeners.firePropertyChange("Board", null, this);
+    }
+
+    /*
+    TODO: testarla
+     */
+    public Assistant getCardByPriority(int priority){
+        for (Assistant card: deck){
+            if (card.getPriority()==priority)
+                return card;
+        }
+        System.out.println("Non ho trovato quella carta!");
+        return null;
     }
 
     //vanno cambiati tutti i test

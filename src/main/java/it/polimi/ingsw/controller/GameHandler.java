@@ -100,15 +100,15 @@ public class GameHandler implements PropertyChangeListener{
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         Message playAssistantCardMessage = new ClientStateMessage(ClientState.PLAY_ASSISTANT_CARD);
 
-        //qui usiamo ancora players.get(0), non è previsto un ordine specifico
-        //alla prima planning phase in assoluto scegliamo random il primo giocatore (direi stesso ordine della setupPhase)
-        // ma in teoria dal secondo round l'ordine è quello stabilito dalle carte assistente del round prima
         String startingPlayer = playersOrder.get(0);
         sendAllExcept(nameToHandlerMap.get(startingPlayer), waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
 
         sendTo(startingPlayer, playAssistantCardMessage);  //viene aggiornato lo stato del primo giocatore
 
-        updatePlayersOrder(players);
+        updatePlayersOrder(playersOrder);
+        // in teoria togliendo questa chiamata non ci dovrebbero essere problemi con l'ordine
+        //perché alla prima planningPhase in assoluto il turno è stato stabilito in startGame
+        // e dall seconda si usa l'ordine stabilito dalle carte del round precedente finché non hanno scelto tutti le carte
     }
 
     private void startActionPhase(){
@@ -132,6 +132,7 @@ public class GameHandler implements PropertyChangeListener{
         }
         playersOrderIterator.next();
     }
+
     private void handleWizardSelectionMessage(WizardSelectionMessage message, ClientHandler client){
         int chosenWizard = message.getWizard();
         String clientName = getNicknameFromClientID(client.getID());
