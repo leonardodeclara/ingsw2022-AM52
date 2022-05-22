@@ -289,10 +289,11 @@ public class GameHandler implements PropertyChangeListener{
 
     public synchronized void closeMatch(){
         System.out.println("Qui muore il gameHandler");
-        sendAll(new DisconnectMessage("Chiusa la partita"));
+        sendAll(new ClientStateMessage(ClientState.END_GAME));
         for (ClientHandler clientHandler: nameToHandlerMap.values()){
             clientHandler.closeConnection();
         }
+        server.removeGameHandler(this);
         //poi lato server bisogna cancellare la partita e tutto il resto
     }
 

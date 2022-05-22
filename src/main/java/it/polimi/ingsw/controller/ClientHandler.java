@@ -50,9 +50,9 @@ public class ClientHandler implements Runnable {
                 }
             } catch (QuitException | SocketTimeoutException e) {
                 System.out.println(ID + " si è disconnesso da solo. Chiudo la connessione e chiudo la partita");
-                gameHandler.removeClientHandler(this);
+                if (gameHandler!=null ) gameHandler.removeClientHandler(this);
                 closeConnection();
-                gameHandler.closeMatch();
+                if (gameHandler!=null ) gameHandler.closeMatch();
                 //System.err.println(e.getMessage());
             } catch (ClassNotFoundException e) {
                 System.err.println(e.getMessage());

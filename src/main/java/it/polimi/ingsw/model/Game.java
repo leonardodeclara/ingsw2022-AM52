@@ -124,7 +124,7 @@ public class Game {
 
         //riempio il sacchetto definitivo
         //basket = new Basket(new int[]{24, 24, 24, 24, 24}); //per testare si può modificare questa cosa
-        basket = new Basket(new int[]{4, 4, 4, 4, 4});
+        basket = new Basket(new int[]{10, 10, 10, 10, 10});
 
         addPlayers(playersNames);
         initiatePlayersLobbies();

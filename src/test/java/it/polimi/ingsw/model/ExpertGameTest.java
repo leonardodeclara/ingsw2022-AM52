@@ -95,7 +95,7 @@ class ExpertGameTest {
         assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.GREEN));
         assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.YELLOW));
         assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.RED));
-        game.updateTeachersOwnershipForCard2(game.getPlayerByName("leo"));
+        game.updateTeachersOwnershipForCard2("leo");
         assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.BLUE));
         assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.PINK));
         assertFalse(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.GREEN));
@@ -104,7 +104,7 @@ class ExpertGameTest {
         assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.RED));
 
         game.getPlayerByName("mari").addToBoardTable(Color.RED);
-        game.updateTeachersOwnershipForCard2(game.getPlayerByName("mari"));
+        game.updateTeachersOwnershipForCard2("mari");
         assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.RED));
         assertFalse(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.RED));
         assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.BLUE));
@@ -148,25 +148,25 @@ class ExpertGameTest {
                 oppositeToMN=(i+6)%12;
         }
         HashMap<String,String> result;
-        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN));
+        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN),null);
         assertNull(result.get("Player Name"));
         assertEquals(Constants.DRAW,result.get("Is Draw"));
         game.getPlayerByName("frizio").addTeacherToBoard(Color.BLUE);
         game.getIslands().get(oppositeToMN).addStudent(Color.BLUE);
-        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN));
+        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN),null);
         assertEquals("frizio",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         game.getIslands().get(oppositeToMN).addTower(game.getPlayerByName("frizio").getTeam());
-        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN));
+        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN),null);
         assertEquals("frizio",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         game.getPlayerByName("mari").addTeacherToBoard(Color.GREEN);
         game.getIslands().get(oppositeToMN).addStudent(Color.GREEN);
-        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN));
+        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN),null);
         assertEquals("frizio",result.get("Player Name"));
         assertEquals(Constants.DRAW,result.get("Is Draw"));
         game.getIslands().get(oppositeToMN).addStudent(Color.GREEN);
-        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN));
+        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN),null);
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
     }
@@ -188,7 +188,7 @@ class ExpertGameTest {
         }
         game.setCurrentPlayer(game.getPlayerByName("mari"));
         //testo il calcolo dell'influenza su due isole vuote
-        HashMap<String,String> result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
+        HashMap<String,String> result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         //riempio le isole e ricalcolo l'influenza
@@ -197,19 +197,19 @@ class ExpertGameTest {
         game.getIslands().get(mnPosition).addStudent(Color.YELLOW);
         game.getPlayerByName("leo").addTeacherToBoard(Color.RED);
         game.getPlayerByName("mari").addTeacherToBoard(Color.PINK);
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition)); //mari 3 - leo 1
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null); //mari 3 - leo 1
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         game.getPlayerByName("leo").addTeacherToBoard(Color.YELLOW);
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));//mari 3 - leo 2
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);//mari 3 - leo 2
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         game.getIslands().get(mnPosition).addStudent(Color.YELLOW); //mari 3 - leo 3
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.DRAW,result.get("Is Draw"));
         game.getIslands().get(mnPosition).addStudent(Color.RED);
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition)); //mari 3 - leo 4
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null); //mari 3 - leo 4
         assertEquals("leo",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW, result.get("Is Draw"));
     }
@@ -235,15 +235,15 @@ class ExpertGameTest {
         game.getIslands().get(mnPosition).addStudent(Color.GREEN);
         game.getPlayerByName("mari").getBoard().addTeacher(Color.PINK);
         game.getPlayerByName("mari").getBoard().addTeacher(Color.GREEN);
-        HashMap<String,String> result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
+        HashMap<String,String> result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);
         assertEquals("frizio",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         game.getIslands().get(mnPosition).addStudent(Color.GREEN);
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);
         assertEquals("frizio",result.get("Player Name"));
         assertEquals(Constants.DRAW,result.get("Is Draw"));
         game.getIslands().get(mnPosition).addStudent(Color.GREEN);
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition), null);
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
     }

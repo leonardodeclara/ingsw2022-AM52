@@ -3,6 +3,7 @@ package it.polimi.ingsw.client;
 import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.GUI.UI;
+import it.polimi.ingsw.exceptions.EndGameException;
 import it.polimi.ingsw.exceptions.QuitException;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Tower;
@@ -89,7 +90,10 @@ public class CLI implements Runnable,UI{
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            System.out.println("Ora mi chiudo");
+            System.out.println("Ora mi chiudo per quit dell'utente");
+        }
+        catch (EndGameException e){
+            System.out.println("Ora mi chiudo perché la partita è finita e l'utente ha scritto close");
         }
         System.out.println("Qui muore il thread della cli");
     }
@@ -274,8 +278,6 @@ public class CLI implements Runnable,UI{
         System.out.println(message.getLastRoundMessage());
     }
 
-
-
     private void visualizeContextMessage(){
         //System.out.println("Vediamo che messaggio ho ricevuto");
         switch(currentState){
@@ -324,6 +326,9 @@ public class CLI implements Runnable,UI{
                 outputStream.println("Sei alla fine del tuo turno! Per chiudere il turno scrivi end");
                 if (GB.isExpertGame() /*&& può essere giocata una carta (quindi non è già stata giocata e ha abbastanza coins (credo))*/)
                     outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
+                break;
+            case END_GAME:
+                outputStream.println("La partita si è conclusa! Per chiudere il gioco scrivi close");
                 break;
         }
 
@@ -389,6 +394,10 @@ public class CLI implements Runnable,UI{
                 break;
             case END_TURN:
                 outputStream.println("Comando non valido!");
+                break;
+            case END_GAME:
+                outputStream.println("Input non valido!");
+                break;
         }
     }
 

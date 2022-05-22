@@ -21,8 +21,7 @@ public class Lobby {
     }
 
     public void checkIfShouldStart(){
-
-        shouldStart = players.size() == numberPlayersRequired ? true:false;
+        shouldStart = players.size() == numberPlayersRequired;
     }
 
     public int getNumberPlayersRequired() {
@@ -34,6 +33,10 @@ public class Lobby {
     }
     public ArrayList<String> getPlayers() {
         return new ArrayList<>(players);
+    }
+
+    public void removePlayer(String playerName){
+        players.remove(playerName);
     }
 
     public boolean isExpertGame() {

@@ -515,8 +515,8 @@ class GameTest {
             if(game.getIslands().get(j).isMotherNature())
                 mnIndex=j;
         }
-        assertNull(game.calculateInfluence(game.getIslands().get(mnIndex)).get("Player Name"));
-        assertEquals(Constants.DRAW, game.calculateInfluence(game.getIslands().get(mnIndex)).get("Is Draw"));
+        assertNull(game.calculateInfluence(game.getIslands().get(mnIndex), null).get("Player Name"));
+        assertEquals(Constants.DRAW, game.calculateInfluence(game.getIslands().get(mnIndex), null).get("Is Draw"));
         game.getPlayerByName("leo").addTeacherToBoard(Color.BLUE);
         game.getPlayerByName("leo").addTeacherToBoard(Color.PINK);
         game.getPlayerByName("leo").addTeacherToBoard(Color.RED);
@@ -524,12 +524,12 @@ class GameTest {
         game.getPlayerByName("mari").addTeacherToBoard(Color.GREEN);
         game.getIslands().get(0).addStudent(Color.BLUE);
         game.getIslands().get(0).addStudent(Color.BLUE);
-        assertEquals("leo",game.calculateInfluence(game.getIslands().get(0)).get("Player Name"));
+        assertEquals("leo",game.calculateInfluence(game.getIslands().get(0), null).get("Player Name"));
         game.getIslands().get(0).addStudent(Color.YELLOW);
         game.getIslands().get(0).addStudent(Color.YELLOW);
         game.getIslands().get(0).addStudent(Color.YELLOW);
         game.getIslands().get(0).addStudent(Color.YELLOW);
-        assertEquals("mari",game.calculateInfluence(game.getIslands().get(0)).get("Player Name"));
+        assertEquals("mari",game.calculateInfluence(game.getIslands().get(0), null).get("Player Name"));
     }
 
     //test con torri e senza pareggi
@@ -554,13 +554,13 @@ class GameTest {
         game.getIslands().get(0).setOwner(game.getPlayerByName("leo"));
         game.getIslands().get(0).addTower(Tower.WHITE);
         game.getIslands().get(0).addStudent(Color.BLUE);
-        assertEquals("leo",game.calculateInfluence(game.getIslands().get(0)).get("Player Name"));
+        assertEquals("leo",game.calculateInfluence(game.getIslands().get(0), null).get("Player Name"));
         game.getIslands().get(0).removeTower();
         game.getIslands().get(0).setOwner(game.getPlayerByName("mari"));
         game.getIslands().get(0).addTower(Tower.BLACK);
         game.getIslands().get(0).addStudent(Color.GREEN);
         game.getIslands().get(0).addStudent(Color.GREEN);
-        assertEquals("mari",game.calculateInfluence(game.getIslands().get(0)).get("Player Name"));
+        assertEquals("mari",game.calculateInfluence(game.getIslands().get(0), null).get("Player Name"));
     }
 
     /**

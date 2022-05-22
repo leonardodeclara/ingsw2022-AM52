@@ -171,14 +171,26 @@ public class Server {
         //partita esiste
         if (clientHandler.getGameHandler()!=null){
             playerToGameMap.remove(clientName);
+
         }
         else //è ancora in lobby
         {
-            //cancello il giocatore dalla lista di membri alla lobby
-            //ora come ora non riesco a risalire conoscendo lobbies e clientHandler la relazione di appartenenza
+            removeClientFromLobby(clientName);
         }
         nameToHandlerMap.remove(clientName);
 
+    }
+
+
+    public void removeClientFromLobby(String nickname){
+        for (Lobby lobby: lobbies)
+            if (lobby.getPlayers().contains(nickname)){
+                lobby.removePlayer(nickname);
+            }
+    }
+
+    public void removeGameHandler(GameHandler gameHandler){
+        gameHandlers.remove(gameHandler);
     }
 
 

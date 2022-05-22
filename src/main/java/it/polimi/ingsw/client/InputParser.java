@@ -2,8 +2,10 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.exceptions.EndGameException;
 import it.polimi.ingsw.exceptions.QuitException;
 import it.polimi.ingsw.messages.ClientState;
+import it.polimi.ingsw.messages.EndGameMessage;
 import it.polimi.ingsw.model.Tower;
 
 import java.util.ArrayList;
@@ -50,6 +52,9 @@ public class InputParser {
                 break;
             case END_TURN:
                 parseClosingTurn(input);
+                break;
+            case END_GAME:
+                parseEndGame(input);
                 break;
         }
         return data;
@@ -223,6 +228,15 @@ public class InputParser {
                 }
         }
     }
+
+    private void parseEndGame(String input){
+        String[] words = input.split("\\s+");
+        if (words.length==1){
+            if (words[0].equalsIgnoreCase("close"))
+                throw new EndGameException();
+        }
+    }
+
     private ArrayList<Integer> convertStringsToNumberArray(String[] array){
         ArrayList<Integer> arrayInt = new ArrayList<>();
         for(String s : array){
