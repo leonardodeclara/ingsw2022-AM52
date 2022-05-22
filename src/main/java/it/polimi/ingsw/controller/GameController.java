@@ -7,10 +7,7 @@ import it.polimi.ingsw.model.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 import java.util.function.*;
 
 
@@ -132,18 +129,14 @@ public class GameController implements PropertyChangeListener {
     //questo deve costruire i messaggi degli stati ad hoc delle carte che fanno fare ai giocatori qualcosa
     //se invece modifica un input viene fatto tutto internmente a setActivePersonality
 
-    public Message playPersonalityCard(String player, int cardID){
-        //if(((ExpertGame) game).setActivePersonality(cardID)){
-        //dopo rimettilo com'era ma intanto faccio così sonar mi rompe
-        if (true){
-            switch(cardID){ //qui facciamo un case per ogni carta che richiede messaggi speciali e li mandiamo indietro uno stato ad hoc
-                case (1):
-            }
-            return null;
+    public Message playPersonalityCard(String player, int cardID,ClientState currentClientState){
+        if(((ExpertGame) game).setActivePersonality(cardID)) {
+            changeGameRulesForPersonalityCard(cardID);
+            Optional<ClientState> clientState = ClientState.valueOf(cardID);
+            return clientState.map(ClientStateMessage::new).orElseGet(() -> new ClientStateMessage(currentClientState));
+        }else{
+            return new ErrorMessage(ErrorKind.ILLEGAL_MOVE);
         }
-        //else
-        //    return new ErrorMessage(ErrorKind.ILLEGAL_MOVE);
-        return null;
     }
 
     private void changeGameRulesForPersonalityCard(int cardID){

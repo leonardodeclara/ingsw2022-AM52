@@ -207,13 +207,12 @@ public class ExpertGame extends Game {
      * @param cardId: ID of the Personality card that is active in the round
      */
 
-    //questo funziona come gli altri metodi chiamati da Game controller ma in aggiunta usa i lambda array per settare i metodi modificabili
-    //alcuni di questi metodi però vengono chiamati dal controller e altri qui internamente
-    public void setActivePersonality(int cardId){
+    //in teoria dovrebbe comportarsi come tutti gli altri metodi chiamati dal controller ossia
+    //se può giocare la carta la gioca e returna true altrimenti returna false
+    public boolean setActivePersonality(int cardId){
         if (activePersonality!=null){
-            throw new InvalidMoveException();
+            return false;
         }
-
         int playedCardIndex=-1;
         for (Personality card: personalities){
             if (card.getCharacterId()==cardId){
@@ -232,6 +231,8 @@ public class ExpertGame extends Game {
         //bisogna creare una classe di eccezioni InvalidMoveException
 
         //rivedere come gestire questo caso
+
+        return false;
         //si potrebbe inserire all'interno di un blocco try questa chiamata + le modifiche alle monete ecc
     }
 

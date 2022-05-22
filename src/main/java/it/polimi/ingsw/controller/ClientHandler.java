@@ -24,7 +24,7 @@ public class ClientHandler implements Runnable {
     private GameHandler gameHandler;
     private Message responseMessage;
     private boolean active;
-
+    private ClientState currentClientState;
 
     public ClientHandler(Socket socket, Server server) throws IOException {
         this.socket = socket;
@@ -88,6 +88,9 @@ public class ClientHandler implements Runnable {
     public void sendMessage(Message message){
         try{
             System.out.println("Sono CH " + ID + " e sto mandando un messaggio " + (message.getClass().toString()));
+            if(message instanceof ClientStateMessage)
+                currentClientState = ((ClientStateMessage) message).getNewState();
+
             out.reset();
             out.writeObject(message);
             out.flush();
@@ -121,6 +124,10 @@ public class ClientHandler implements Runnable {
         catch (IOException e){
             System.err.println(e.getMessage());
         }
+    }
+
+    public ClientState getCurrentClientState(){
+        return currentClientState;
     }
 }
 

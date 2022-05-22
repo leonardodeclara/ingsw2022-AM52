@@ -256,17 +256,21 @@ public class GameHandler implements PropertyChangeListener{
     }
 
     private void handlePlayPersonalityCard(PlayPersonalityCardMessage message, ClientHandler client){
-        int cardID = message.getCardID();
         String clientName = getNicknameFromClientID(client.getID());
-        System.out.println("GameHandler: è arrivato un messaggio di PlayPersonality da " + clientName);
-        Message response = gameController.playPersonalityCard(clientName, cardID);
-        sendTo(clientName, response);
-        if (!(response instanceof  ErrorMessage)){
-            System.out.println(clientName + "ha spostato le pedine nella lobby, ora lo mando in END_TURN ma dovrebbe esserci la parte di personaggio");
+        if(expertGame){
+            int cardID = message.getCardID();
+            System.out.println("GameHandler: è arrivato un messaggio di PlayPersonality da " + clientName);
+            Message response = gameController.playPersonalityCard(clientName, cardID,client.getCurrentClientState());
+            sendTo(clientName, response);
+            if (!(response instanceof  ErrorMessage)){
+                System.out.println(clientName + "ha spostato le pedine nella lobby, ora lo mando in END_TURN ma dovrebbe esserci la parte di personaggio");
+            }
         }
-
-
-
+        else
+        {
+            Message response = new ErrorMessage(ErrorKind.ILLEGAL_MOVE); //il client non dovrebbe mai costringere il client a farlo, ma per solidità facciamo un doppio controllo
+            sendTo(clientName,response);
+        }
     }
 
     /**
