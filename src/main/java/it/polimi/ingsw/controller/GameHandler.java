@@ -323,9 +323,15 @@ public class GameHandler implements PropertyChangeListener{
     }
 
     public synchronized void removeClientHandler(ClientHandler clientHandler){
-        for (Map.Entry<String,ClientHandler> client: nameToHandlerMap.entrySet())
-            if (client.getValue().equals(clientHandler))
-                nameToHandlerMap.remove(client);
+        System.out.println("GameHandler: ora rimuovo dalla mia lista di CH " + clientHandler.getID());
+        for (Map.Entry<String,ClientHandler> client: nameToHandlerMap.entrySet()){
+            System.out.println("Entry di nameToHandlerMap: " + client.getKey());
+            if (client.getValue().equals(clientHandler)){
+                nameToHandlerMap.remove(client.getKey());
+                System.out.println("GameHandler: ho rimosso dalla mia lista di CH " + clientHandler.getID());
+                return;
+            }
+        }
     }
 
     @Override

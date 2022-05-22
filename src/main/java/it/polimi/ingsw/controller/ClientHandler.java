@@ -116,6 +116,7 @@ public class ClientHandler implements Runnable {
     //questo metodo va chiamato in caso di termine/crash partita,
     // chiusura inaspettata della connessione lato client, chiusura volontaria lato client (manca messaggio disconnect)
     public void closeConnection() {
+        System.out.println("ClientHandler "+ ID+ ": tolgo i miei riferimenti dal server e poi chiudo la socket");
         //toglie da tutte le mappe di server questo client, connessioni ecc.
         server.removeClientConnection(this);
         try {
@@ -124,6 +125,7 @@ public class ClientHandler implements Runnable {
         catch (IOException e){
             System.err.println(e.getMessage());
         }
+        System.out.println("ClientHandler: chiusa la connessione con " + ID);
     }
 
     public ClientState getCurrentClientState(){
