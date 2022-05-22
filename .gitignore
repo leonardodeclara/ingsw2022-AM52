@@ -14,6 +14,8 @@
 .idea/**/shelf
 .idea/**
 target/**
+src/**/CLI-jar
+src/**/server-jar
 
 # AWS User-specific
 .idea/**/aws.xml
