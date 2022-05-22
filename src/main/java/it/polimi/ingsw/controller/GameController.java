@@ -152,16 +152,31 @@ public class GameController implements PropertyChangeListener {
                 moveMotherNature = game::moveMotherNature;
                 updateTeachersOwnership = game::updateTeachersOwnership;
                 calculateInfluence = game::calculateInfluence;
-            case 2:
-
+                break;
+            case 2: //in teoria quando chiamiamo case != 0, è già stato resettato tutto, ma per sicurezza li mettiamo tutti i metodi
+                moveMotherNature = game::moveMotherNature;
+                updateTeachersOwnership = ((ExpertGame)game)::updateTeachersOwnershipForCard2;
+                calculateInfluence = game::calculateInfluence;
                 break;
             case 4:
+                moveMotherNature = ((ExpertGame)game)::moveMotherNatureForCard4;
+                updateTeachersOwnership = game::updateTeachersOwnership;
+                calculateInfluence = game::calculateInfluence;
                 break;
             case 6:
+                moveMotherNature = game::moveMotherNature;
+                updateTeachersOwnership = game::updateTeachersOwnership;
+                calculateInfluence = ((ExpertGame)game)::calculateInfluenceForCard6;
                 break;
             case 8:
+                moveMotherNature = game::moveMotherNature;
+                updateTeachersOwnership = game::updateTeachersOwnership;
+                calculateInfluence = ((ExpertGame)game)::calculateInfluenceForCard8;
                 break;
             case 9:
+                moveMotherNature = game::moveMotherNature;
+                updateTeachersOwnership = game::updateTeachersOwnership;
+                calculateInfluence = ((ExpertGame)game)::calculateInfluenceForCard9;
                 break;
         }
     }

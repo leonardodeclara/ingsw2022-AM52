@@ -44,51 +44,16 @@ public class ExpertGame extends Game {
         //extractPersonalityCards();
     }
 
-    /**
-     * This method is called when a player uses the Personality card with CardID 2
-     * The student can be moved to an island or to the table according to the parameters of the method
-     * @param nickname: id given to the player, used as the index for the players arrayList
-     * @param studentIDs: index that identifies the position of the student in the lobby
-     * @param islandIDs: ID of the island where I want to place the student, if I want to move the student
-     *                to the table I have to write -1
-     * @return false if the move isn't legal, true otherwise
-     */
-    public boolean moveStudentsFromLobbyForCard2(String nickname, ArrayList<Integer> studentIDs, ArrayList<Integer> islandIDs) {
-        ArrayList<Color> studentsToMove = new ArrayList<>();
-        Player player = getPlayerByName(nickname);
-        int islandIndexCounter = 0;
-        for (int i = 0; i < studentIDs.size(); i++) { //controlliamo se la mossa è legit per ogni studente e per ogni destinazione
-            if (!isMoveStudentFromLobbyLegal(player, studentIDs.get(i), islandIDs.get(i)))
-                return false;
-            studentsToMove.add(player.getBoard().getLobbyStudent(studentIDs.get(i)));
-        }
-
-
-        for (Color studentToMove : studentsToMove) {
-            if(player.removeFromBoardLobby(studentToMove)){
-                if (islandIDs.get(islandIndexCounter) == Constants.ISLAND_ID_NOT_RECEIVED)
-                    player.getBoard().addToTable(studentToMove);
-                else {
-                    Island islandDest = islands.get(islandIDs.get(islandIndexCounter));
-                    islandDest.addStudent(studentToMove);
-                }
-                islandIndexCounter++;
-            }else{
-                return false;
-            }
-        }
-
-        return true;
-    }
 
     /**
      * This Method recalculates the given player's number of students and possibly assigns him 1+
      * teachers ownership
      * It's different from the updateTeachersOwnership method because the player takes control
      * of the professors even if they have the same number of students in the Table as the current owner
-     * @param player : reference of the player of whom we want to check teachers' ownership
+     * @param nickname : reference of the player of whom we want to check teachers' ownership
      */
-    public void updateTeachersOwnershipForCard2(Player player){
+    public void updateTeachersOwnershipForCard2(String nickname){
+        Player player = getPlayerByName(nickname);
         for(Color c : Color.values()) {
             Player owner = teachersOwners.get(c);
             if(owner!=null){
