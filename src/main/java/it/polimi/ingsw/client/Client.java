@@ -30,19 +30,17 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
             case PLAY_ASSISTANT_CARD:
                 return buildPlayAssistantCardMessage(data);
             case MOVE_FROM_LOBBY:
-                if(data.size() >= 2)
-                    if((Boolean) data.get(1) == true)
+                if(data.get(0) instanceof Boolean)
                         return buildPlayPersonalityCardMessage(data);
+
                 return buildMoveFromLobbyMessage(data);
             case MOVE_MOTHER_NATURE:
-                if(data.size() >= 2)
-                    if((Boolean) data.get(1) == true)
+                if(data.get(0) instanceof Boolean)
                         return buildPlayPersonalityCardMessage(data);
 
                 return buildMoveMotherNature(data);
             case PICK_CLOUD:
-                if(data.size() >= 2)
-                    if((Boolean) data.get(1) == true)
+                if(data.get(0) instanceof Boolean)
                         return buildPlayPersonalityCardMessage(data);
 
                 return buildCloudSelectionMessage(data);

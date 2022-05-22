@@ -89,7 +89,7 @@ class ExpertGameTest {
         game.getPlayerByName("mari").addToBoardTable(Color.YELLOW);
         game.getPlayerByName("mari").addToBoardTable(Color.GREEN);
 
-        game.updateTeachersOwnership(game.getPlayerByName("mari"));
+        game.updateTeachersOwnership("mari");
         assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.BLUE));
         assertFalse(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.PINK));
         assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.GREEN));

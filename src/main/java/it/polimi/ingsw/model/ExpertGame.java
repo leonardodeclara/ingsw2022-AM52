@@ -21,6 +21,9 @@ public class ExpertGame extends Game {
     private int coins;
     private int bans;
 
+
+
+
     /**
      * Constructor creates an ExpertGame instance
      */
@@ -69,8 +72,6 @@ public class ExpertGame extends Game {
                     Island islandDest = islands.get(islandIDs.get(islandIndexCounter));
                     islandDest.addStudent(studentToMove);
                 }
-                //aggiorna l'ownership dei teacher
-                updateTeachersOwnershipForCard2(player);
                 islandIndexCounter++;
             }else{
                 return false;
@@ -143,7 +144,7 @@ public class ExpertGame extends Game {
      * Method that calculates influence of an island but doesn't consider the towers
      * @param island: instance of the island on which I want to calculate influence
      */
-    public HashMap<String,String> calculateInfluenceForCard6(Island island){
+    public HashMap<String,String> calculateInfluenceForCard6(Island island,Object args){
         HashMap<String,Integer>  influences = calculateStudentsInfluences(island,players);
         return calculateIslandOwner(island,influences);
     }
@@ -152,7 +153,7 @@ public class ExpertGame extends Game {
      * Method that calculates influence of an island and adds 2 additional points
      * @param island: instance of the island on which I want to calculates influence
      */
-    public HashMap<String,String> calculateInfluenceForCard8(Island island){
+    public HashMap<String,String> calculateInfluenceForCard8(Island island,Object args){
         HashMap<String,Integer>  influences = calculateStudentsInfluences(island,players);
         String towersOwnerName = getTowersOwnerName(island,players);
         int incrementedValue = influences.get(currentPlayer.getNickname()) + 2;
@@ -167,9 +168,10 @@ public class ExpertGame extends Game {
     /**
      * Method that calculates influence on an island but doesn't consider the bannedColor students
      * @param island: instance of the island on which I want to calculate influence
-     * @param bannedColor: Color that I want to exclude from the influence count
+     * @param args: Color that I want to exclude from the influence count
      */
-    public HashMap<String,String> calculateInfluenceForCard9(Island island,Color bannedColor){
+    public HashMap<String,String> calculateInfluenceForCard9(Island island,Object args){
+        Color bannedColor = (Color) args;
         HashMap<String,Integer> influences = calculateStudentsInfluences(island,players,bannedColor);
         String towersOwnerName = getTowersOwnerName(island,players);
         if(towersOwnerName != null){

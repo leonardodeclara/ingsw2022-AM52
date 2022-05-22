@@ -301,8 +301,6 @@ public class Game {
                     Island islandDest = islands.get(islandIDs.get(islandIndexCounter));
                     islandDest.addStudent(studentToMove);
                 }
-                //aggiorna l'ownership dei teacher
-                updateTeachersOwnership(player);
                 islandIndexCounter++;
             }else{
                 return false;
@@ -317,10 +315,11 @@ public class Game {
     /**
      * Method updateTeachersOwnership recalculates the given player's number of students and possibly assigns him 1+
      *  teachers ownership
-     * @param player : reference of the player of whom we want to check teachers' ownership
+     * @param nickname : name of the player of whom we want to check teachers' ownership
      *
      */
-    public void updateTeachersOwnership(Player player){
+    public void updateTeachersOwnership(String nickname){
+        Player player = getPlayerByName(nickname);
         for(Color c : Color.values()) {
             Player owner = teachersOwners.get(c);
             if(owner != null){
@@ -457,7 +456,7 @@ public class Game {
      * which tells to the Controller who called the calculateInfluence method if the outcome of the calculation was a draw or not.
      * @param island : reference of the island on which the influence is calculated
      */
-    public HashMap<String,String> calculateInfluence(Island island){
+    public HashMap<String,String> calculateInfluence(Island island,Object args){
         HashMap<String,Integer>  influences = calculateStudentsInfluences(island,players);
         String towersOwnerName = getTowersOwnerName(island,players);
         if(towersOwnerName != null)

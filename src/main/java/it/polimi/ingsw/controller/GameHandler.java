@@ -70,11 +70,11 @@ public class GameHandler implements PropertyChangeListener{
     si manda in broadcast a tutti i client il numero di giocatori e il tipo di partita così che possano inizializzare la view
      */
     public void startGame(){
-        //System.out.println("GameHandler: ora istanzio GameController");
+        System.out.println("GameHandler: ora istanzio GameController");
         updatePlayersOrder(players);
         gameController= new GameController(expertGame, new ArrayList<>(players));
         gameController.setUpdateListener(this); //gameHandler inizia ad ascoltare il controller
-        //System.out.println("GameHandler: ora faccio ascoltare game da GC");
+        System.out.println("GameHandler: ora faccio ascoltare game da GC");
         //mando a tutti le isole istanziate
         Message gameInstantiationMessage = gameController.handleGameInstantiation();
         sendAll(gameInstantiationMessage);

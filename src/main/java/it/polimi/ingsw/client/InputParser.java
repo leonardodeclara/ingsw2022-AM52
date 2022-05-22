@@ -215,8 +215,8 @@ public class InputParser {
             if(words[0].equalsIgnoreCase("play") && words[1].equalsIgnoreCase("personality"))
                 try{
                     cardID = Integer.parseInt(words[2]);
-                    data.add(cardID);
                     data.add(hasPlayedPersonality); //serve per segnalare al client che nell'array c'è l'id di una carta
+                    data.add(cardID);
                     return;
                 }catch(NumberFormatException e){
 

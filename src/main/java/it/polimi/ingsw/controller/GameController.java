@@ -2,10 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.messages.*;
-import it.polimi.ingsw.model.ExpertGame;
-import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.Tower;
+import it.polimi.ingsw.model.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -14,18 +11,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.function.*;
 
 
-//aggiorna model
 public class GameController implements PropertyChangeListener {
-    private Game game;
+    private final Game game;
     private String currentPlayer;
-    private ArrayList<String> players;
-    private PropertyChangeSupport listener;
-    private UpdateMessageBuilder updateMessageBuilder;
-    private ArrayList<Tower> availableTowers;
-    private ArrayList<Integer> availableWizards; //poi sta cosa va tolta da game
-    private HashMap<String, Integer> playerToWizardMap;
+    private final ArrayList<String> players;
+    private final PropertyChangeSupport listener;
+    private final UpdateMessageBuilder updateMessageBuilder;
+    private final ArrayList<Tower> availableTowers;
+    private final ArrayList<Integer> availableWizards; //poi sta cosa va tolta da game
+    private final HashMap<String, Integer> playerToWizardMap;
+    private BiPredicate<String,Integer> moveMotherNature;
+    private BiFunction<Island,Object,HashMap<String,String>> calculateInfluence;
+    private Consumer<String> updateTeachersOwnership;
+
 
     public GameController(boolean isExpert, ArrayList<String> players) {
         updateMessageBuilder = new UpdateMessageBuilder();
@@ -40,6 +41,9 @@ public class GameController implements PropertyChangeListener {
         availableTowers = new ArrayList<>();
         availableTowers.addAll(Arrays.asList(Tower.values()));
         playerToWizardMap = new HashMap<>();
+
+
+        changeGameRulesForPersonalityCard(0); //settiamo le default rules
 
         System.out.println("GameController: mi sono istanziato");
     }
@@ -92,14 +96,16 @@ public class GameController implements PropertyChangeListener {
 
 
     public Message moveStudentsFromLobby(String player, ArrayList<Integer> studentIDs, ArrayList<Integer> destIDs){
-        if(game.moveStudentsFromLobby(player,studentIDs,destIDs))
+        if(game.moveStudentsFromLobby(player,studentIDs,destIDs)){
+            updateTeachersOwnership.accept(player);
             return new ClientStateMessage(ClientState.MOVE_MOTHER_NATURE);
+        }
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
     public Message moveMotherNature(String player, int steps){
-        if(game.moveMotherNature(player,steps))
+        if(moveMotherNature.test(player,steps))
             //qui va aggiunto tutta la gestione del calcolo influenza, spostamento torri, merge isole ecc
             if (game.isLastRound() && !game.areCloudsFull())
                 //svuotamento delle nuvole viene saltato se siamo all'ultimo round e non ci sono abbastanza pedine studente per tutti
@@ -112,7 +118,6 @@ public class GameController implements PropertyChangeListener {
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
-
 
     public Message refillLobby(String player, int cloudIndex){
         if(game.moveStudentsToLobby(player, cloudIndex))
@@ -140,6 +145,27 @@ public class GameController implements PropertyChangeListener {
         //    return new ErrorMessage(ErrorKind.ILLEGAL_MOVE);
         return null;
     }
+
+    private void changeGameRulesForPersonalityCard(int cardID){
+        switch(cardID){
+            case 0: //resetta gli effetti sulle regole di gioco
+                moveMotherNature = game::moveMotherNature;
+                updateTeachersOwnership = game::updateTeachersOwnership;
+                calculateInfluence = game::calculateInfluence;
+            case 2:
+
+                break;
+            case 4:
+                break;
+            case 6:
+                break;
+            case 8:
+                break;
+            case 9:
+                break;
+        }
+    }
+
 
     //return true se la partita è finita, false otherwise
     public boolean closeCurrentRound(){

@@ -65,7 +65,7 @@ public class Server {
             createMatch(matchingLobby);
         } else { //lobby appena creata/lobby già esistente ma non abbastanza players
             System.out.println("Mando lo stato di attesa della lobby");
-            sender.sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY)); //questo messaggio non arriva mai, capire perché
+            sender.sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY));
         }
     }
 

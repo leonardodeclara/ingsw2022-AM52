@@ -629,13 +629,13 @@ class GameTest {
         game.getPlayerByName("leo").addToBoardTable(Color.GREEN);
         game.getPlayerByName("mari").addToBoardTable(Color.RED);
 
-        game.updateTeachersOwnership(game.getPlayerByName("mari"));
+        game.updateTeachersOwnership("mari");
         assertFalse(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.BLUE));
         assertFalse(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.PINK));
         assertFalse(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.GREEN));
         assertFalse(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.YELLOW));
         assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.RED));
-        game.updateTeachersOwnership(game.getPlayerByName("leo"));
+        game.updateTeachersOwnership("leo");
         assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.BLUE));
         assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.PINK));
         assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.GREEN));
@@ -644,7 +644,7 @@ class GameTest {
 
         game.getPlayerByName("leo").addToBoardTable(Color.RED);
         game.getPlayerByName("leo").addToBoardTable(Color.RED);
-        game.updateTeachersOwnership(game.getPlayerByName("leo"));
+        game.updateTeachersOwnership("leo");
         assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.RED));
         assertFalse(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.RED));
         assertTrue(game.getPlayerByName("leo").getBoard().getTeacherTable().contains(Color.BLUE));
