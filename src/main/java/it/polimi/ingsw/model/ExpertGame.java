@@ -41,7 +41,7 @@ public class ExpertGame extends Game {
     public void instantiateGameElements(ArrayList<String> playersNames) {
         super.instantiateGameElements(playersNames);
         //l'estrazione potrebbe essere resa indipendente da instantiateGameElements
-        //extractPersonalityCards();
+        extractPersonalityCards();
     }
 
 
@@ -172,7 +172,9 @@ public class ExpertGame extends Game {
      * This method differentiates the types of card drawn according to the ID
      */
     public void extractPersonalityCards() {
+        /*
         ArrayList<Integer> extractedIndexes = new ArrayList<>();
+
         int randomIndex=0;
         for (int i = 0; i < NUM_PLAYABLE_PERSONALITY_CARDS; i++) {
             Random random = new Random();
@@ -200,6 +202,12 @@ public class ExpertGame extends Game {
                 personalities.add(extractedCard);
             }
         }
+        */
+        personalities.add(new Personality(2));
+        personalities.add(new Personality(3));
+        personalities.add(new Personality(4));
+        listeners.firePropertyChange("ExtractedPersonalities", null, personalities);
+
     }
 
     /**
@@ -224,15 +232,15 @@ public class ExpertGame extends Game {
             activePersonality.setHasBeenUsed(true);
             activePersonality.updateCost();
             listeners.firePropertyChange("ActivePersonality", null, cardId);
+            return true;
         }
         catch (IndexOutOfBoundsException exception){
-            throw new RuntimeException();
-        };
+            return false;
+        }
         //bisogna creare una classe di eccezioni InvalidMoveException
 
         //rivedere come gestire questo caso
 
-        return false;
         //si potrebbe inserire all'interno di un blocco try questa chiamata + le modifiche alle monete ecc
     }
 
@@ -276,6 +284,7 @@ public class ExpertGame extends Game {
     @Override
     public void setPropertyChangeListeners(GameController controller) {
         super.setPropertyChangeListeners(controller);
+        listeners.addPropertyChangeListener("ExtractedPersonalities",controller);
         listeners.addPropertyChangeListener("ActivePersonality", controller);
         listeners.addPropertyChangeListener("NotOwnedCoins", controller);
         listeners.addPropertyChangeListener("Bans", controller);

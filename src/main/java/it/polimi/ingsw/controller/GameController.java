@@ -252,6 +252,9 @@ public class GameController implements PropertyChangeListener {
             case "Board":
                 toSend = updateMessageBuilder.buildBoardUpdateMessage(event);
                 break;
+            case "ExtractedPersonalities":
+                toSend = updateMessageBuilder.buildExtractedPersonalitiesMessage(event);
+                break;
             case "ActivePersonality":
                 toSend = updateMessageBuilder.buildActivePersonalityMessage(event);
                 break;

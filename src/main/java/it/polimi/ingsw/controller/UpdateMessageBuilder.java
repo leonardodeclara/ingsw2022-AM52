@@ -3,6 +3,8 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.CLI.ClientBoard;
 import it.polimi.ingsw.CLI.ClientCloud;
 import it.polimi.ingsw.CLI.ClientIsland;
+import it.polimi.ingsw.CLI.ClientPersonality;
+import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.*;
 
@@ -152,6 +154,19 @@ public class UpdateMessageBuilder {
         clientBoard.setTeacherTable(updatedBoard.getTeacherTable());
         clientBoard.setLobby(updatedBoard.getLobby());
         return new BoardUpdateMessage(updatedOwner, clientBoard);
+    }
+
+    public Message buildExtractedPersonalitiesMessage(PropertyChangeEvent event){
+        System.out.println("Costruisco un messaggio di extractedPersonalities");
+        ArrayList<Personality> personalities = (ArrayList<Personality>) event.getNewValue();
+        ArrayList<ClientPersonality> clientPersonalities = new ArrayList<>();
+
+        for(Personality personality : personalities){
+            ClientPersonality clientPersonality = new ClientPersonality(personality.getCharacterId(),false, personality.getCost());
+            clientPersonalities.add(clientPersonality);
+        }
+
+        return new ExtractedPersonalitiesMessage(clientPersonalities);
     }
 
     public Message buildActivePersonalityMessage(PropertyChangeEvent event){

@@ -165,6 +165,8 @@ public class CLI implements Runnable,UI{
             updatePlayerBoard((BoardUpdateMessage) updateMessage);
         else if (updateMessage instanceof CloudsRefillMessage)
             updateRefilledClouds((CloudsRefillMessage) updateMessage);
+        else if(updateMessage instanceof ExtractedPersonalitiesMessage)
+            updateExtractedPersonalities((ExtractedPersonalitiesMessage) updateMessage);
         else if (updateMessage instanceof ActivePersonalityMessage)
             updateActivePersonality((ActivePersonalityMessage) updateMessage);
         else if (updateMessage instanceof InactivePersonalityMessage)
@@ -262,6 +264,11 @@ public class CLI implements Runnable,UI{
         GB.print();
     }
 
+    public void updateExtractedPersonalities(ExtractedPersonalitiesMessage message){
+        GB.setPersonalities(message.getPersonalities());
+        System.out.println("Aggiunte le carte");
+        GB.print();
+    }
     public void updateActivePersonality(ActivePersonalityMessage message){
         GB.setActivePersonality(message.getActiveCardId());
         System.out.println("È stata attivata una carta personaggio");

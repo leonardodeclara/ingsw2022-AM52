@@ -279,8 +279,6 @@ public class Game {
      * @param islandIDs     : the id of the destination island (or -1 if no island is specified)
      */
 
-    //move 1,2,5 in 1,4,11 -> ha spostato 1,2,5 in 1,4,6 e quello sul 6 era pure di un colore sbagliato
-    //table ancora non funziona (causa input parser)
     public boolean moveStudentsFromLobby(String nickname, ArrayList<Integer> studentIDs, ArrayList<Integer> islandIDs) {
         ArrayList<Color> studentsToMove = new ArrayList<>();
         Player player = getPlayerByName(nickname);

@@ -88,7 +88,7 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
     }
 
     private Message buildPlayPersonalityCardMessage(ArrayList<Object> data){
-        return new PlayPersonalityCardMessage((Integer) data.get(0));
+        return new PlayPersonalityCardMessage((Integer) data.get(1));
     }
 
     //in questo
