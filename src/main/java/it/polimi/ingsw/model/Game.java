@@ -259,10 +259,14 @@ public class Game {
         if (!isMoveMNLegal(nickname, numSteps))
             return false;
 
-        Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
-        Island dest = islands.get((from.getIslandIndex() + numSteps) % islands.size());
-
-        currentMotherNatureIsland = islands.get(dest.getIslandIndex()); //firePropertyChange
+        //Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
+        //Island dest = islands.get((from.getIslandIndex() + numSteps) % islands.size());
+        Island from = islands.get(islands.indexOf(currentMotherNatureIsland));
+        System.out.println("Posizione iniziale di MN nell'array di isole: " +islands.indexOf(from));
+        Island dest = islands.get((islands.indexOf(from)+numSteps) % islands.size());
+        System.out.println("Posizione finale in teoria di MN nell'array di isole: " +islands.indexOf(dest));
+        //currentMotherNatureIsland = islands.get(dest.getIslandIndex()); //firePropertyChange
+        currentMotherNatureIsland = dest;
         from.setMotherNature(false);
         dest.setMotherNature(true);
         listeners.firePropertyChange("MotherNature", from.getIslandIndex(), currentMotherNatureIsland.getIslandIndex());
@@ -458,9 +462,9 @@ public class Game {
         String towersOwnerName = getTowersOwnerName(island,players);
         if(towersOwnerName != null)
             influences.put(towersOwnerName,influences.get(towersOwnerName) + island.getTowers().size());
-            HashMap<String, String> result = calculateIslandOwner(island,influences);
-            mergeIslands(island);
-            return result;
+        HashMap<String, String> result = calculateIslandOwner(island,influences);
+        mergeIslands(island);
+        return result;
     }
 
     /**
@@ -478,10 +482,14 @@ public class Game {
        if(leftIsland.getOwnerTeam() != null){
             if(leftIsland.getOwnerTeam().equals(island.getOwnerTeam())){
                 if(leftIsland.getIslandIndex() < island.getIslandIndex()){
+                    if (island.equals(currentMotherNatureIsland))
+                        currentMotherNatureIsland=leftIsland;
                     mergerId = leftIsland.getIslandIndex();
                     leftIsland.merge(island);
                     islands.remove(island);
                 }else{
+                    if (leftIsland.equals(currentMotherNatureIsland))
+                        currentMotherNatureIsland=leftIsland;
                     mergerId = island.getIslandIndex();
                     island.merge(leftIsland);
                     islands.remove(leftIsland);
@@ -494,10 +502,14 @@ public class Game {
         if(rightIsland.getOwnerTeam() != null){
             if(rightIsland.getOwnerTeam().equals(island.getOwnerTeam())){
                 if(rightIsland.getIslandIndex() < island.getIslandIndex()){
+                    if (island.equals(currentMotherNatureIsland))
+                        currentMotherNatureIsland=rightIsland;
                     mergerId = rightIsland.getIslandIndex();
                     rightIsland.merge(island);
                     islands.remove(island);
                 }else{
+                    if (rightIsland.equals(currentMotherNatureIsland))
+                        currentMotherNatureIsland=island;
                     mergerId = island.getIslandIndex();
                     island.merge(rightIsland);
                     islands.remove(rightIsland);
