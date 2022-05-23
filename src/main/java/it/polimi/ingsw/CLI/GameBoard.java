@@ -1,6 +1,7 @@
 package it.polimi.ingsw.CLI;
 
 import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.exceptions.InvalidMoveException;
 import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
 
@@ -46,7 +47,7 @@ public class GameBoard {
 
     //usiamo questo metodo solo per inizializzare le cose che non dipendono dai giocatori in sé ma solo dai parametri di gioco,
     // quindi numero di giocatori e modalità
-    public void instantiateGameElements(ArrayList<ClientIsland> newIslands, HashMap<String,ClientBoard> boards){
+    public void instantiateGameElements(ArrayList<ClientIsland> newIslands, HashMap<String,ClientBoard> boards,ArrayList<ClientPersonality> personalities){
         islands.addAll(newIslands);
         for (String player: boards.keySet()){
             boards.get(player).setGB(this);
@@ -57,25 +58,8 @@ public class GameBoard {
             clouds.add(new ClientCloud(i));
         }
 
-
-        //rivedere se ha senso aggiungere tutte le carte qui, tanto ne vengono estratte casualmente solo tre
-        /*
-        if (expertGame) {
-            personalities.add(new ClientPersonality(1, false, 1));
-            personalities.add(new ClientPersonality(2, false, 2));
-            personalities.add(new ClientPersonality(3, false, 3));
-            personalities.add(new ClientPersonality(4, false, 1));
-            personalities.add(new ClientPersonality(5, false, 2));
-            personalities.add(new ClientPersonality(6, false, 3));
-            personalities.add(new ClientPersonality(7, false, 1));
-            personalities.add(new ClientPersonality(8, false, 2));
-            personalities.add(new ClientPersonality(9, false, 3));
-            personalities.add(new ClientPersonality(10, false, 1));
-            personalities.add(new ClientPersonality(11, false, 2));
-            personalities.add(new ClientPersonality(12, false, 3));
-
-        }
-           */
+        if(personalities!=null)
+            this.personalities = new ArrayList<>(personalities);
     }
 
     public void print(){
@@ -117,10 +101,12 @@ public class GameBoard {
    private void printPersonalityCards(){
         outputStream.println("AVAILABLE PERSONALITY CARDS:");
         for(ClientPersonality personality : personalities){
-            outputStream.print(personality.getCardID() + " ");
-
+            outputStream.println("( ID: "+personality.getCardID() + " " +"Costo: "+personality.getCost()+" )");
         }
        outputStream.println();
+        if(activePersonality!=null)
+            outputStream.println("ACTIVE PERSONALITY CARD:"+activePersonality.getCardID());
+
     }
 
     public void setClientTeam(String playerNickname, Tower tower){
@@ -242,7 +228,9 @@ public class GameBoard {
         return coins;
     }
 
-
+    public boolean isPersonalityCardBeenPlayed(){
+        return activePersonality != null;
+    }
     public String getNickname() {
         return nickname;
     }
@@ -252,15 +240,18 @@ public class GameBoard {
     }
 
     public void setActivePersonality(int activePersonality) {
-        /**
-         * TODO: set dell'active card
-         */
+        Optional<ClientPersonality> activePers = personalities.stream()
+                                                .filter(clientPersonality -> clientPersonality.getCardID() == activePersonality)
+                                                .findFirst();
+        if(activePers.isPresent())
+            this.activePersonality = activePers.get();
+        else
+            new Throwable().printStackTrace(); //non dovrebbe mai accadere quindi mettiamo eccezione così nel caso in runtime salta fuori un bug
     }
 
     public void resetActivePersonality(int inactivePersonality){
-        /**
-         * TODO: reset dell'active card
-         */
+        outputStream.println("La carta personaggio "+inactivePersonality+ " non è più attiva!");
+        this.activePersonality = null;
     }
 
     public void setNumberOfPlayers(int numberOfPlayers) {

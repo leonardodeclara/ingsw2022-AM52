@@ -40,7 +40,6 @@ public class ExpertGame extends Game {
     @Override
     public void instantiateGameElements(ArrayList<String> playersNames) {
         super.instantiateGameElements(playersNames);
-        //l'estrazione potrebbe essere resa indipendente da instantiateGameElements
         extractPersonalityCards();
     }
 
@@ -248,9 +247,9 @@ public class ExpertGame extends Game {
      * Method that reset the active Personality card
      */
     public void resetActivePersonality(){
-        Personality oldCard = getActivePersonality();
-        if (oldCard != null && !personalities.contains(oldCard))
-            personalities.add(oldCard);
+        int cardID = activePersonality.getCharacterId();
+        activePersonality = null;
+        listeners.firePropertyChange("NoLongerActivePersonality", null, cardID);
     }
 
     /**
@@ -284,10 +283,10 @@ public class ExpertGame extends Game {
     @Override
     public void setPropertyChangeListeners(GameController controller) {
         super.setPropertyChangeListeners(controller);
-        listeners.addPropertyChangeListener("ExtractedPersonalities",controller);
         listeners.addPropertyChangeListener("ActivePersonality", controller);
         listeners.addPropertyChangeListener("NotOwnedCoins", controller);
         listeners.addPropertyChangeListener("Bans", controller);
         listeners.addPropertyChangeListener("SelectedPersonality", controller);
+        listeners.addPropertyChangeListener("NoLongerActivePersonality", controller);
     }
 }

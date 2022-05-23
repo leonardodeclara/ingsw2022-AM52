@@ -143,6 +143,10 @@ public class GameController implements PropertyChangeListener {
         }
     }
 
+    public void resetPersonalityCard(){
+        ((ExpertGame) game).resetActivePersonality();
+    }
+
     private void changeGameRulesForPersonalityCard(int cardID){
         switch(cardID){
             case 0: //resetta gli effetti sulle regole di gioco
@@ -255,9 +259,6 @@ public class GameController implements PropertyChangeListener {
                 break;
             case "Board":
                 toSend = updateMessageBuilder.buildBoardUpdateMessage(event);
-                break;
-            case "ExtractedPersonalities":
-                toSend = updateMessageBuilder.buildExtractedPersonalitiesMessage(event);
                 break;
             case "ActivePersonality":
                 toSend = updateMessageBuilder.buildActivePersonalityMessage(event);

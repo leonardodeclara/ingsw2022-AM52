@@ -7,6 +7,8 @@ public class ClientPersonality implements Serializable {
     private Integer CardID;
     private Boolean hasBeenUsed;
     private Integer cost;
+    private String description; //descrizione da visualizzare quando si printa la board
+
 
     public ClientPersonality(Integer cardID, Boolean hasBeenUsed, Integer cost) {
         CardID = cardID;

@@ -23,8 +23,8 @@ public class GameHandler implements PropertyChangeListener{
     ArrayList<String> players;
     HashMap<String, ClientHandler> nameToHandlerMap;
     boolean expertGame;
-    ArrayList<String> playersOrder; //ora superfluo ma poi nelle fasi di gioco effettivo è  indispensabile
-    Iterator<String> playersOrderIterator; //si fa .next() e si vede a chi tocca dopo
+    ArrayList<String> playersOrder;
+    Iterator<String> playersOrderIterator;
 
     public GameHandler(Server server,HashMap<String, ClientHandler> nameToHandlerMap, boolean expertGame){
         this.server = server;
@@ -284,8 +284,11 @@ public class GameHandler implements PropertyChangeListener{
         //ad es bisogna resettare le carte assistente
         if (gameController.closeCurrentRound()) //magari cambiare nome a questo metodo e mettere qualcosa tipo isThisLastRound
             closeMatch();
-        else
+        else{
+            if(expertGame)
+                gameController.resetPersonalityCard();
             startPlanningPhase();
+        }
     }
 
     public synchronized void closeMatch(){
