@@ -342,6 +342,33 @@ public class CLI implements Runnable,UI{
             case END_GAME:
                 outputStream.println("La partita si è conclusa! Per chiudere il gioco scrivi close");
                 break;
+            case CHOOSE_STUDENT_FOR_CARD_1:
+                outputStream.println("Scegli uno studente");
+                break;
+            case CHOOSE_ISLAND_FOR_CARD_3:
+                outputStream.println("Scegli un'isola");
+                break;
+            case CHOOSE_ISLAND_FOR_CARD_5:
+                outputStream.println("Scegli un'isola");
+                break;
+            case SWAP_STUDENTS_FOR_CARD_7:
+                outputStream.println("Scegli un massimo di 3 studenti dalla carta per scambiarli con 3 della lobby");
+                break;
+            case CHOOSE_COLOR_FOR_CARD_9:
+                outputStream.println("Scegli un colore");
+                break;
+            case CHOOSE_STUDENTS_FOR_CARD_10:
+                outputStream.println("Scegli un massimo di 2 studenti da scambiare tra la tua sala e l'ingresso");
+                break;
+            case CHOOSE_STUDENT_FOR_CARD_11:
+                outputStream.println("Scegli uno studente");
+                break;
+            case CHOOSE_COLOR_FOR_CARD_12:
+                outputStream.println("Scegli un colore");
+                break;
+            case CHOOSE_STUDENTS_TO_LOSE_FOR_CARD_12:
+                outputStream.println("Scegli fino a 3 studenti del colore x per rimetterli nel sacchetto");
+                break;
         }
 
     }
@@ -369,6 +396,33 @@ public class CLI implements Runnable,UI{
                 outputStream.println("Non puoi scegliere quella nuvola! Riprova");
             case END_TURN:
                 outputStream.println("Errore!"); //si può fare di meglio
+            case CHOOSE_STUDENT_FOR_CARD_1:
+                outputStream.println("Non hai scelto uno studente valido");
+                break;
+            case CHOOSE_ISLAND_FOR_CARD_3:
+                outputStream.println("Non hai scelto un'isola valida");
+                break;
+            case CHOOSE_ISLAND_FOR_CARD_5:
+                outputStream.println("Non hai scelto un'isola valida");
+                break;
+            case SWAP_STUDENTS_FOR_CARD_7:
+                outputStream.println("Lo scambio non è valido!");
+                break;
+            case CHOOSE_COLOR_FOR_CARD_9:
+                outputStream.println("Il colore selezionato non può essere scelto");
+                break;
+            case CHOOSE_STUDENTS_FOR_CARD_10:
+                outputStream.println("Lo scambio non è valido!");
+                break;
+            case CHOOSE_STUDENT_FOR_CARD_11:
+                outputStream.println("Lo studente selezionato non è valido!");
+                break;
+            case CHOOSE_COLOR_FOR_CARD_12:
+                outputStream.println("Il colore selezionato non è valido!");
+                break;
+            case CHOOSE_STUDENTS_TO_LOSE_FOR_CARD_12:
+                outputStream.println("Gli studenti scelti non sono validi!");
+                break;
         }
     }
 
@@ -399,16 +453,19 @@ public class CLI implements Runnable,UI{
                 outputStream.println("I parametri inseriti non sono validi!");
                 break;
             case MOVE_MOTHER_NATURE:
-                outputStream.println("Non hai inserito un comando valido!");
-                break;
             case PICK_CLOUD:
-                outputStream.println("Comando non valido!");
-                break;
             case END_TURN:
-                outputStream.println("Comando non valido!");
-                break;
             case END_GAME:
-                outputStream.println("Input non valido!");
+            case CHOOSE_STUDENT_FOR_CARD_1:
+            case CHOOSE_ISLAND_FOR_CARD_3:
+            case CHOOSE_ISLAND_FOR_CARD_5:
+            case SWAP_STUDENTS_FOR_CARD_7:
+            case CHOOSE_COLOR_FOR_CARD_9:
+            case CHOOSE_STUDENTS_FOR_CARD_10:
+            case CHOOSE_STUDENT_FOR_CARD_11:
+            case CHOOSE_COLOR_FOR_CARD_12:
+            case CHOOSE_STUDENTS_TO_LOSE_FOR_CARD_12:
+                outputStream.println("Comando non valido!");
                 break;
         }
     }
