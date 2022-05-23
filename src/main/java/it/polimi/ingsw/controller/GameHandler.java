@@ -110,8 +110,6 @@ public class GameHandler implements PropertyChangeListener{
         // in teoria togliendo questa chiamata non ci dovrebbero essere problemi con l'ordine
         //perché alla prima planningPhase in assoluto il turno è stato stabilito in startGame
         // e dall seconda si usa l'ordine stabilito dalle carte del round precedente finché non hanno scelto tutti le carte
-        if(expertGame)
-            gameController.resetPersonalityCard();
     }
 
     private void startActionPhase(){
@@ -286,8 +284,11 @@ public class GameHandler implements PropertyChangeListener{
         //ad es bisogna resettare le carte assistente
         if (gameController.closeCurrentRound()) //magari cambiare nome a questo metodo e mettere qualcosa tipo isThisLastRound
             closeMatch();
-        else
+        else{
+            if(expertGame)
+                gameController.resetPersonalityCard();
             startPlanningPhase();
+        }
     }
 
     public synchronized void closeMatch(){

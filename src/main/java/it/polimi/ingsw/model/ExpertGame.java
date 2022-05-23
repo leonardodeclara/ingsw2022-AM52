@@ -247,8 +247,9 @@ public class ExpertGame extends Game {
      * Method that reset the active Personality card
      */
     public void resetActivePersonality(){
+        int cardID = activePersonality.getCharacterId();
         activePersonality = null;
-        listeners.firePropertyChange("NoLongerActivePersonality", null, null);
+        listeners.firePropertyChange("NoLongerActivePersonality", null, cardID);
     }
 
     /**
