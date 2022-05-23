@@ -139,8 +139,9 @@ public class Player {
         return removed;
     }
 
-    public void addTowerToBoard(){
-        board.addTower();
+    public void addTowersToBoard(int numTowers){
+        for (int i= 0; i<numTowers;i++)
+            board.addTower();
         listeners.firePropertyChange("Board", null, this);
     }
 

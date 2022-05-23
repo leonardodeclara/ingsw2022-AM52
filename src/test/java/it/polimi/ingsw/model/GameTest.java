@@ -274,18 +274,18 @@ class GameTest {
         for(int i = 0;i<7;i++)
             game.getPlayerByName("mari").addToBoardLobby(Color.YELLOW);
 
-        for(int i = 0;i<10;i++) //riempie completamente la table rosa di "leo"
+        for(int i = 0;i<10;i++) //riempie completamente la table rossa di "leo"
             game.getPlayerByName("leo").addToBoardTable(Color.RED);
         for(int i = 0;i<10;i++) //riempie completamente la table blu di "mari"
             game.getPlayerByName("mari").addToBoardTable(Color.BLUE);
 
-        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("leo"), 7, 3));
-        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("leo"), 7, -1));
-        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("leo"), 6, 1));
-        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"), 7, 6));
-        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"), 6, 6));
-        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"), 0, 23));
-        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"),-1,10));
+        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("leo"), 7, 3,0));
+        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("leo"), 7, -1,0));
+        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("leo"), 6, 1,0));
+        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"), 7, 6,0));
+        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"), 6, 6,0));
+        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"), 0, 23,0));
+        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"),-1,10,0));
     }
 
     /**
@@ -528,6 +528,7 @@ class GameTest {
         game.getIslands().get(0).addStudent(Color.BLUE);
         game.getIslands().get(0).addStudent(Color.BLUE);
         assertEquals("leo",game.calculateInfluence(game.getIslands().get(0), null).get("Player Name"));
+        game.getIslands().get(0).addStudent(Color.YELLOW);
         game.getIslands().get(0).addStudent(Color.YELLOW);
         game.getIslands().get(0).addStudent(Color.YELLOW);
         game.getIslands().get(0).addStudent(Color.YELLOW);

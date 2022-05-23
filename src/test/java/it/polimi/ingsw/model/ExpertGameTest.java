@@ -32,7 +32,7 @@ class ExpertGameTest {
         players.add("leo");
         players.add("frizio");
         game.instantiateGameElements(players);
-        game.extractPersonalityCards();
+        //game.extractPersonalityCards();
         assertEquals(3, game.getPersonalities().size());
         for (int i = 0; i< 2; i++){
             for(int j = i+1; j<3; j++){
@@ -175,7 +175,6 @@ class ExpertGameTest {
     void card8EffectTest() {
         ExpertGame game = new ExpertGame(2);
         ArrayList<String> players = new ArrayList<>();
-
         players.add("leo");
         players.add("mari");
         game.instantiateGameElements(players);
@@ -186,10 +185,10 @@ class ExpertGameTest {
             if(game.getIslands().get(i).isMotherNature())
                 mnPosition=i;
         }
-        game.setCurrentPlayer(game.getPlayerByName("mari"));
+        game.setCurrentPlayer("mari");
         //testo il calcolo dell'influenza su due isole vuote
         HashMap<String,String> result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);
-        assertEquals("mari",result.get("Player Name"));
+        assertEquals("mari",result.get("Player Name")); //mari 3 (torre + 2 bonus)
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         //riempio le isole e ricalcolo l'influenza
         game.getIslands().get(mnPosition).addStudent(Color.RED);
@@ -197,21 +196,21 @@ class ExpertGameTest {
         game.getIslands().get(mnPosition).addStudent(Color.YELLOW);
         game.getPlayerByName("leo").addTeacherToBoard(Color.RED);
         game.getPlayerByName("mari").addTeacherToBoard(Color.PINK);
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null); //mari 3 - leo 1
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null); //mari 4 - leo 1
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         game.getPlayerByName("leo").addTeacherToBoard(Color.YELLOW);
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);//mari 3 - leo 2
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);//mari 4 - leo 2
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
-        game.getIslands().get(mnPosition).addStudent(Color.YELLOW); //mari 3 - leo 3
+        game.getIslands().get(mnPosition).addStudent(Color.YELLOW); //mari 4 - leo 3
         result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);
         assertEquals("mari",result.get("Player Name"));
-        assertEquals(Constants.DRAW,result.get("Is Draw"));
-        game.getIslands().get(mnPosition).addStudent(Color.RED);
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null); //mari 3 - leo 4
-        assertEquals("leo",result.get("Player Name"));
-        assertEquals(Constants.NO_DRAW, result.get("Is Draw"));
+        assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
+        game.getIslands().get(mnPosition).addStudent(Color.RED);//mari 4 - leo 4
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);
+        assertEquals("mari",result.get("Player Name"));
+        assertEquals(Constants.DRAW, result.get("Is Draw"));
     }
 
     @Test
@@ -228,7 +227,7 @@ class ExpertGameTest {
             if(game.getIslands().get(i).isMotherNature())
                 mnPosition=i;
         }
-        game.setCurrentPlayer(game.getPlayerByName("frizio"));
+        game.setCurrentPlayer("frizio");
         game.getIslands().get(mnPosition).setOwner(game.getPlayerByName("frizio"));
         game.getIslands().get(mnPosition).addTower(Tower.WHITE);
         game.getIslands().get(mnPosition).addStudent(Color.PINK);
@@ -262,7 +261,7 @@ class ExpertGameTest {
         players.add("frizio");
         game.instantiateGameElements(players);
         game.getPlayerByName("mari").setTeam(Tower.BLACK);
-        game.getPlayerByName("mari").setTeam(Tower.WHITE);
+        game.getPlayerByName("frizio").setTeam(Tower.WHITE);
         int mnPosition = 0;
         for (int i = 0; i< 12;i++){
             if(game.getIslands().get(i).isMotherNature())
@@ -281,16 +280,17 @@ class ExpertGameTest {
         game.getIslands().get(mnPosition).addStudent(Color.YELLOW);
         game.getPlayerByName("frizio").addTeacherToBoard(Color.BLUE);
         game.getPlayerByName("mari").addTeacherToBoard(Color.PINK);
-        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.BLUE);
+        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.BLUE);  //mari 1, frizio 0 ->mari mette una torre (2-0)
         assertEquals("mari",result.get("Player Name"));
         assertEquals( Constants.NO_DRAW, result.get("Is Draw"));
-        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.PINK);
+        game.getIslands().get(mnPosition).addStudent(Color.BLUE);
+        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.PINK); //mari 1, frizio 2 -> mari toglie una torre e la mette frizio (0-3)
         assertEquals("frizio",result.get("Player Name"));
         assertEquals( Constants.NO_DRAW, result.get("Is Draw"));
         game.getPlayerByName("frizio").addTeacherToBoard(Color.YELLOW);
         result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.YELLOW);
         assertEquals("frizio",result.get("Player Name"));
-        assertEquals( Constants.DRAW, result.get("Is Draw")); //pareggio, resta proprietario il precedente proprietario
+        assertEquals( Constants.NO_DRAW, result.get("Is Draw"));
         //dovrei testare anche con le torri
     }
 

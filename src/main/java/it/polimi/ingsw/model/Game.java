@@ -278,14 +278,13 @@ public class Game {
      * @param studentIDs : number of islands that the player identified with the playerId wants to move mother nature
      * @param islandIDs     : the id of the destination island (or -1 if no island is specified)
      */
-
     public boolean moveStudentsFromLobby(String nickname, ArrayList<Integer> studentIDs, ArrayList<Integer> islandIDs) {
         ArrayList<Color> studentsToMove = new ArrayList<>();
         Player player = getPlayerByName(nickname);
         int islandIndexCounter = 0;
 
         for (int i = 0; i < studentIDs.size(); i++) { //controlliamo se la mossa è legit per ogni studente e per ogni destinazione
-            if (!isMoveStudentFromLobbyLegal(player, studentIDs.get(i), islandIDs.get(i)))
+            if (!isMoveStudentFromLobbyLegal(player, studentIDs.get(i), islandIDs.get(i), studentsToMove.size()))
                 return false;
             studentsToMove.add(player.getBoard().getLobbyStudent(studentIDs.get(i)));
         }
@@ -383,14 +382,14 @@ public class Game {
      * @param studentIndex : number of islands that the player identified with the playerId wants to move mother nature
      * @param islandId : the id of the destination island (or -1 if no island is specified)
      */
-    public boolean isMoveStudentFromLobbyLegal(Player player,int studentIndex,int islandId){
+    public boolean isMoveStudentFromLobbyLegal(Player player,int studentIndex,int islandId, int toBeAdded){
         //non sono sicuro sia il modo giusto per gestire questo caso
         if (studentIndex >= player.getBoard().getLobby().size() || studentIndex<0)
             return false;
         Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
         if(studentToMove != null){
             if(islandId == Constants.ISLAND_ID_NOT_RECEIVED){
-                if(!player.getBoard().isTableFull(studentToMove))
+                if(!player.getBoard().isTableFull(studentToMove, toBeAdded))
                     return true;
             }
             else if(islandId >= 0 && islandId <= islands.size())
@@ -459,8 +458,9 @@ public class Game {
         String towersOwnerName = getTowersOwnerName(island,players);
         if(towersOwnerName != null)
             influences.put(towersOwnerName,influences.get(towersOwnerName) + island.getTowers().size());
+            HashMap<String, String> result = calculateIslandOwner(island,influences);
             mergeIslands(island);
-            return calculateIslandOwner(island,influences);
+            return result;
     }
 
     /**
@@ -520,28 +520,46 @@ public class Game {
         boolean isDraw = isDuplicate(influences.values(),max);
         HashMap<String, String> returnMap = new HashMap<>();
 
-        Player owner=null;
+        Player newOwner=null;
         if (isDraw){
-            owner = island.getOwner();
+            newOwner = island.getOwner();
             returnMap.put("Is Draw", Constants.DRAW);
         }
         else{
             returnMap.put("Is Draw", Constants.NO_DRAW);
             for (String player: influences.keySet())
                 if (influences.get(player)==max)
-                    owner = getPlayerByName(player);
+                    newOwner = getPlayerByName(player);
         }
-        returnMap.put("Player Name", (owner==null) ? null : owner.getNickname());
-        if(owner!=null && owner!=island.getOwner())
-            island.setOwner(owner);
+        returnMap.put("Player Name", (newOwner==null) ? null : newOwner.getNickname()); //null se non c'è mai stato un proprietario
+        if(newOwner!=null && newOwner!=island.getOwner()){
+            changeIslandOwnership(island, newOwner);
+        }
+
         return returnMap;
+    }
+    /*
+    TODO: testarla
+     */
+    protected void changeIslandOwnership(Island island, Player newOwner){
+        ArrayList<Tower> oldTowers = island.removeTower();
+        int numOldTowers = oldTowers.size();
+        if (numOldTowers!=0)
+            for (Player player: players)
+                if (player.getTeam().equals(oldTowers.get(0)))
+                    player.addTowersToBoard(numOldTowers);
+        island.setOwner(newOwner);
+        for (int i = 0; i< island.getNumMergedIslands();i++){
+            island.addTower(newOwner.getTeam());
+            newOwner.removeTowerFromBoard();
+        }
     }
 
     /**
      * Method that calculates the influence of each player on an island
      * @param island: instance of the island on which I want to calculate influence
      * @param players: list of all the players of the game
-     * @return ArrayList<Integer>: list of integer that represents the influence of each players on that island
+     * @return
      */
     protected HashMap<String,Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players){
         int infl;
@@ -601,7 +619,7 @@ public class Game {
     }
 
     /**
-     * @return istance of the basket used in the game
+     * @return instance of the basket used in the game
      */
     public Basket getBasket() {
         return basket;
@@ -756,10 +774,10 @@ public class Game {
 
     /**
      * Method that sets a player as a current player according to the turn priority
-     * @param currentPlayer: reference of the player
+     * @param currentPlayerName: name of the current Plater
      */
-    public void setCurrentPlayer(Player currentPlayer) {
-        this.currentPlayer = currentPlayer;
+    public void setCurrentPlayer(String currentPlayerName) {
+        this.currentPlayer = getPlayerByName(currentPlayerName);
     }
 
     /**
@@ -803,6 +821,10 @@ public class Game {
     public void resetCurrentTurnAssistantCards(){
         currentTurnAssistantCards.clear();
         listeners.firePropertyChange("CurrentTurnAssistantCards", null, currentTurnAssistantCards);
+    }
+
+    public Island getCurrentMotherNatureIsland() {
+        return currentMotherNatureIsland;
     }
 
     /**

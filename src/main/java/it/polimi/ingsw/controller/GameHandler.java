@@ -245,6 +245,7 @@ public class GameHandler implements PropertyChangeListener{
             Message stateChange = new ClientStateMessage(ClientState.WAIT_TURN);
             sendTo(clientName, stateChange);
             String nextPlayer = playersOrderIterator.next();
+            gameController.setCurrentPlayer(nextPlayer); //serve per le carte
             Message moveStudentsFromLobbyMessage = new ClientStateMessage(ClientState.MOVE_FROM_LOBBY);
             System.out.println("Siccome " + clientName + " ha finito il suo turno ora è il turno di " + nextPlayer);
             sendTo(nextPlayer,moveStudentsFromLobbyMessage);

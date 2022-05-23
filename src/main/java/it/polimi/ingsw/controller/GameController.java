@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.*;
@@ -102,8 +103,10 @@ public class GameController implements PropertyChangeListener {
     }
 
     public Message moveMotherNature(String player, int steps){
-        if(moveMotherNature.test(player,steps))
+        if(moveMotherNature.test(player,steps)){
             //qui va aggiunto tutta la gestione del calcolo influenza, spostamento torri, merge isole ecc
+            calculateInfluence.apply(game.getCurrentMotherNatureIsland(),null);
+
             if (game.isLastRound() && !game.areCloudsFull())
                 //svuotamento delle nuvole viene saltato se siamo all'ultimo round e non ci sono abbastanza pedine studente per tutti
                 //soluzione temporanea perché questo tipo di controllo va bene solo per il primo giocatore del turno
@@ -112,6 +115,7 @@ public class GameController implements PropertyChangeListener {
                 return new ClientStateMessage(ClientState.END_TURN);
             else
                 return new ClientStateMessage(ClientState.PICK_CLOUD);
+        }
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
@@ -279,5 +283,10 @@ public class GameController implements PropertyChangeListener {
 
     public Game getGame() {
         return game;
+    }
+
+    public void setCurrentPlayer(String currentPlayer) {
+        this.currentPlayer = currentPlayer;
+        game.setCurrentPlayer(currentPlayer);
     }
 }

@@ -145,8 +145,6 @@ public class CLI implements Runnable,UI{
             updateAvailableTower((AvailableTowerMessage) updateMessage);
         else if (updateMessage instanceof GameInstantiationMessage)
             setInitialGameBoard((GameInstantiationMessage) updateMessage);
-        else if (updateMessage instanceof GameStartMessage) //in teoria questo messaggio va cancellato
-            updatePlayerTowerAssociation((GameStartMessage) updateMessage);
         else if (updateMessage instanceof CurrentTurnAssistantCardsUpdateMessage)
             updateCurrentTurnAssistantCards((CurrentTurnAssistantCardsUpdateMessage) updateMessage);
         else if (updateMessage instanceof AssistantDeckUpdateMessage)
@@ -185,17 +183,8 @@ public class CLI implements Runnable,UI{
 
     public void setInitialGameBoard(GameInstantiationMessage message){
         GB.instantiateGameElements(message.getIslands(), message.getBoards());
+        clearScreen();
         System.out.println("PRIMA PRINT DELLA BOARD");
-        GB.print();
-    }
-
-    //in teoria questo metodo va cancellato, non si usa più
-    public void updatePlayerTowerAssociation(GameStartMessage message){
-        HashMap<String, Tower> associations = message.getChosenTeam();
-        for (String player: associations.keySet()){
-            GB.addClientBoard(player);
-            GB.setClientTeam(player, associations.get(player));
-        }
         GB.print();
     }
 
@@ -205,6 +194,7 @@ public class CLI implements Runnable,UI{
     //che non è un problema btw
     public void updateCurrentTurnAssistantCards(CurrentTurnAssistantCardsUpdateMessage message){
         GB.setTurnCard( message.getCurrentTurnAssistantCards());
+        clearScreen();
         System.out.println("Modifica delle currentAssistantCards");
         System.out.println();
         GB.print();
@@ -216,6 +206,7 @@ public class CLI implements Runnable,UI{
 
     public void updateIslandStudents(IslandStudentsUpdateMessage message){
         GB.setIslandStudents(message.getIslandIndex(), message.getStudents());
+        clearScreen();
         System.out.println("Modifica degli studenti nelle isole");
         System.out.println();
         GB.print();
@@ -223,6 +214,7 @@ public class CLI implements Runnable,UI{
 
     public void updateIslandTowers(IslandTowersUpdateMessage message){
         GB.setIslandTowers(message.getIslandIndex(), message.getTowers());
+        clearScreen();
         System.out.println("Modifica delle torri nelle isole");
         System.out.println();
         GB.print();
@@ -230,6 +222,7 @@ public class CLI implements Runnable,UI{
 
     public void updateCloud(CloudUpdateMessage message){
         GB.emptyCloud(message.getCloudIndex());
+        clearScreen();
         System.out.println("Svuotamento di una nuvola");
         System.out.println();
         GB.print();
@@ -237,6 +230,7 @@ public class CLI implements Runnable,UI{
 
     public void updateMotherNaturePosition(MotherNatureMovementUpdateMessage message){
         GB.changeMNPosition(message.getIslandIndex());
+        clearScreen();
         System.out.println("Spostamento di MN");
         System.out.println();
         GB.print();
@@ -244,6 +238,7 @@ public class CLI implements Runnable,UI{
 
     public void updateIslandsMerge(IslandMergeUpdateMessage message){
         GB.setIslands(message.getUpdatedClientIslands());
+        clearScreen();
         System.out.println("Merge di isole");
         System.out.println();
         GB.print();
@@ -252,6 +247,7 @@ public class CLI implements Runnable,UI{
     public void updatePlayerBoard(BoardUpdateMessage message){
         String boardOwner = message.getOwner();
         GB.setUpdatedClientBoard(boardOwner, message.getClientBoard());
+        clearScreen();
         System.out.println("Aggiornata la board di " + boardOwner);
         System.out.println();
         GB.print();
@@ -259,6 +255,7 @@ public class CLI implements Runnable,UI{
 
     public void updateRefilledClouds(CloudsRefillMessage message){
         GB.setClouds(message.getClouds());
+        clearScreen();
         System.out.println("Riempite le clouds");
         System.out.println();
         GB.print();
@@ -266,11 +263,13 @@ public class CLI implements Runnable,UI{
 
     public void updateExtractedPersonalities(ExtractedPersonalitiesMessage message){
         GB.setPersonalities(message.getPersonalities());
+        clearScreen();
         System.out.println("Aggiunte le carte");
         GB.print();
     }
     public void updateActivePersonality(ActivePersonalityMessage message){
         GB.setActivePersonality(message.getActiveCardId());
+        clearScreen();
         System.out.println("È stata attivata una carta personaggio");
         System.out.println();
         GB.print();
@@ -279,6 +278,12 @@ public class CLI implements Runnable,UI{
     public void updateInactivePersonality(InactivePersonalityMessage message){
         GB.resetActivePersonality(message.getInactiveCardId());
         //non so se serve stampare il fatto che una carta non è più attiva
+    }
+
+    //Ha ancora dei problemi
+    public void clearScreen(){
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 
     public void setLastRound(LastRoundMessage message){
