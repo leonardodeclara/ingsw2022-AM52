@@ -163,8 +163,6 @@ public class CLI implements Runnable,UI{
             updatePlayerBoard((BoardUpdateMessage) updateMessage);
         else if (updateMessage instanceof CloudsRefillMessage)
             updateRefilledClouds((CloudsRefillMessage) updateMessage);
-        else if(updateMessage instanceof ExtractedPersonalitiesMessage)
-            updateExtractedPersonalities((ExtractedPersonalitiesMessage) updateMessage);
         else if (updateMessage instanceof ActivePersonalityMessage)
             updateActivePersonality((ActivePersonalityMessage) updateMessage);
         else if (updateMessage instanceof InactivePersonalityMessage)
@@ -182,7 +180,7 @@ public class CLI implements Runnable,UI{
     }
 
     public void setInitialGameBoard(GameInstantiationMessage message){
-        GB.instantiateGameElements(message.getIslands(), message.getBoards());
+        GB.instantiateGameElements(message.getIslands(), message.getBoards(),message.getPersonalities());
         clearScreen();
         System.out.println("PRIMA PRINT DELLA BOARD");
         GB.print();
@@ -261,12 +259,6 @@ public class CLI implements Runnable,UI{
         GB.print();
     }
 
-    public void updateExtractedPersonalities(ExtractedPersonalitiesMessage message){
-        GB.setPersonalities(message.getPersonalities());
-        clearScreen();
-        System.out.println("Aggiunte le carte");
-        GB.print();
-    }
     public void updateActivePersonality(ActivePersonalityMessage message){
         GB.setActivePersonality(message.getActiveCardId());
         clearScreen();
@@ -277,10 +269,9 @@ public class CLI implements Runnable,UI{
 
     public void updateInactivePersonality(InactivePersonalityMessage message){
         GB.resetActivePersonality(message.getInactiveCardId());
-        //non so se serve stampare il fatto che una carta non è più attiva
     }
 
-    //Ha ancora dei problemi
+    //Ha ancora dei problemi si lo so
     public void clearScreen(){
         System.out.print("\033[H\033[2J");
         System.out.flush();
@@ -319,24 +310,24 @@ public class CLI implements Runnable,UI{
             case MOVE_FROM_LOBBY:
                 outputStream.println("Scegli tre studenti da spostare nella table o su un'isola");
                 outputStream.println("Per esempio digita move studentID1,studentID2,studentID3 in table,2,3 per muovere il primo studente nella table,il secondo sull'isola 2, il terzo sull'isola 3");
-                if (GB.isExpertGame() /*&& può essere giocata una carta (quindi non è già stata giocata e ha abbastanza coins (credo))*/)
+                if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
                     outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
                 break;
             case MOVE_MOTHER_NATURE:
                 outputStream.println("Puoi far compiere a Madre Natura fino a X passi"); //prendere X dalla priority della carta giocata
                 outputStream.println("Per esempio digita move mn 5 per spostarla di 5 isole");
-                if (GB.isExpertGame() /*&& può essere giocata una carta (quindi non è già stata giocata e ha abbastanza coins (credo))*/)
+                if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
                     outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
                 break;
             case PICK_CLOUD:
                 outputStream.println("Scegli una nuvola! I suoi studenti passeranno sulla tua lobby ");
                 outputStream.println("Per esempio digita empty cloud 3 per scegliere la nuvola 3");
-                if (GB.isExpertGame() /*&& può essere giocata una carta (quindi non è già stata giocata e ha abbastanza coins (credo))*/)
+                if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
                     outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
                 break;
             case END_TURN:
                 outputStream.println("Sei alla fine del tuo turno! Per chiudere il turno scrivi end");
-                if (GB.isExpertGame() /*&& può essere giocata una carta (quindi non è già stata giocata e ha abbastanza coins (credo))*/)
+                if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
                     outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
                 break;
             case END_GAME:
@@ -394,8 +385,10 @@ public class CLI implements Runnable,UI{
                 break;
             case PICK_CLOUD:
                 outputStream.println("Non puoi scegliere quella nuvola! Riprova");
+                break;
             case END_TURN:
                 outputStream.println("Errore!"); //si può fare di meglio
+                break;
             case CHOOSE_STUDENT_FOR_CARD_1:
                 outputStream.println("Non hai scelto uno studente valido");
                 break;

@@ -23,8 +23,8 @@ public class GameHandler implements PropertyChangeListener{
     ArrayList<String> players;
     HashMap<String, ClientHandler> nameToHandlerMap;
     boolean expertGame;
-    ArrayList<String> playersOrder; //ora superfluo ma poi nelle fasi di gioco effettivo è  indispensabile
-    Iterator<String> playersOrderIterator; //si fa .next() e si vede a chi tocca dopo
+    ArrayList<String> playersOrder;
+    Iterator<String> playersOrderIterator;
 
     public GameHandler(Server server,HashMap<String, ClientHandler> nameToHandlerMap, boolean expertGame){
         this.server = server;
@@ -110,6 +110,8 @@ public class GameHandler implements PropertyChangeListener{
         // in teoria togliendo questa chiamata non ci dovrebbero essere problemi con l'ordine
         //perché alla prima planningPhase in assoluto il turno è stato stabilito in startGame
         // e dall seconda si usa l'ordine stabilito dalle carte del round precedente finché non hanno scelto tutti le carte
+        if(expertGame)
+            gameController.resetPersonalityCard();
     }
 
     private void startActionPhase(){

@@ -41,8 +41,17 @@ public class UpdateMessageBuilder {
 
         }
 
-        System.out.println("MessageBuilder: ho preparato messaggio di GameInstantiation");
-        return new GameInstantiationMessage(clientIslands, clientBoards);
+        if(game instanceof ExpertGame){
+            ArrayList<ClientPersonality> personalities = new ArrayList<>();
+            for(Personality personality : ((ExpertGame) game).getPersonalities()){
+                ClientPersonality clientPersonality = new ClientPersonality(personality.getCharacterId(),false, personality.getCost());
+                personalities.add(clientPersonality);
+            }
+
+            return new GameInstantiationMessage(clientIslands, clientBoards,personalities);
+        }
+
+        return new GameInstantiationMessage(clientIslands,clientBoards);
 
     }
 
@@ -156,18 +165,6 @@ public class UpdateMessageBuilder {
         return new BoardUpdateMessage(updatedOwner, clientBoard);
     }
 
-    public Message buildExtractedPersonalitiesMessage(PropertyChangeEvent event){
-        System.out.println("Costruisco un messaggio di extractedPersonalities");
-        ArrayList<Personality> personalities = (ArrayList<Personality>) event.getNewValue();
-        ArrayList<ClientPersonality> clientPersonalities = new ArrayList<>();
-
-        for(Personality personality : personalities){
-            ClientPersonality clientPersonality = new ClientPersonality(personality.getCharacterId(),false, personality.getCost());
-            clientPersonalities.add(clientPersonality);
-        }
-
-        return new ExtractedPersonalitiesMessage(clientPersonalities);
-    }
 
     public Message buildActivePersonalityMessage(PropertyChangeEvent event){
         int activeCardId = (int) event.getNewValue();
