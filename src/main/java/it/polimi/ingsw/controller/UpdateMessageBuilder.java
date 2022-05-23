@@ -3,6 +3,8 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.CLI.ClientBoard;
 import it.polimi.ingsw.CLI.ClientCloud;
 import it.polimi.ingsw.CLI.ClientIsland;
+import it.polimi.ingsw.CLI.ClientPersonality;
+import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.*;
 
@@ -19,7 +21,7 @@ public class UpdateMessageBuilder {
     }
 
     public Message buildGameInstantiationMessage(Game game){
-        ArrayList<ClientIsland> clientIslands = new ArrayList<ClientIsland>();
+        ArrayList<ClientIsland> clientIslands = new ArrayList<>();
         int towersNumber = game.getNumOfPlayers() == 2 ? 8 : 6;
 
         for (Island modelIsland: game.getIslands()){
@@ -39,8 +41,17 @@ public class UpdateMessageBuilder {
 
         }
 
-        System.out.println("MessageBuilder: ho preparato messaggio di GameInstantiation");
-        return new GameInstantiationMessage(clientIslands, clientBoards);
+        if(game instanceof ExpertGame){
+            ArrayList<ClientPersonality> personalities = new ArrayList<>();
+            for(Personality personality : ((ExpertGame) game).getPersonalities()){
+                ClientPersonality clientPersonality = new ClientPersonality(personality.getCharacterId(),false, personality.getCost());
+                personalities.add(clientPersonality);
+            }
+
+            return new GameInstantiationMessage(clientIslands, clientBoards,personalities);
+        }
+
+        return new GameInstantiationMessage(clientIslands,clientBoards);
 
     }
 
@@ -78,7 +89,7 @@ public class UpdateMessageBuilder {
         if (winnerName!=null)
             return new EndGameMessage("Abbiamo un vincitore", winnerName);
         else
-            return new EndGameMessage("LA partita è finita in parità", null);
+            return new EndGameMessage("La partita è finita in parità", null);
         //poi in gameHandler si può gestire il caso di mandare un messaggio di win al vincitore, di lose ai perdenti ecc
         //per il momento mandiamo in broadcast il nome del vincitore se ce n'è uno
     }
@@ -153,6 +164,7 @@ public class UpdateMessageBuilder {
         clientBoard.setLobby(updatedBoard.getLobby());
         return new BoardUpdateMessage(updatedOwner, clientBoard);
     }
+
 
     public Message buildActivePersonalityMessage(PropertyChangeEvent event){
         int activeCardId = (int) event.getNewValue();

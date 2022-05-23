@@ -65,7 +65,7 @@ public class Server {
             createMatch(matchingLobby);
         } else { //lobby appena creata/lobby già esistente ma non abbastanza players
             System.out.println("Mando lo stato di attesa della lobby");
-            sender.sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY)); //questo messaggio non arriva mai, capire perché
+            sender.sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY));
         }
     }
 
@@ -91,7 +91,7 @@ public class Server {
         boolean expert = lobby.isExpertGame();
         lobbies.remove(lobby); //cancella la lobby
         System.out.println("Inizializziamo il GH");
-        HashMap<String, ClientHandler> playerInGame = removeUnusedPlayers(nameToHandlerMap,players);
+        HashMap<String, ClientHandler> playerInGame = selectLobbyPlayers(players);
         for (String player: playerInGame.keySet()){
             System.out.println("Nella nuova partita c'è "+ player +", clientHandler numero " + playerInGame.get(player).getID());
         }
@@ -110,11 +110,11 @@ public class Server {
         gameHandler.startGame();
     }
 
-    private HashMap<String,ClientHandler> removeUnusedPlayers(HashMap<String,ClientHandler> hashMap, ArrayList<String> list){
-        HashMap<String, ClientHandler> inGamePlayers = (HashMap<String, ClientHandler>) hashMap.clone();
-        for (String nickname : inGamePlayers.keySet()){
-            if(!list.contains(nickname))
-                inGamePlayers.remove(nickname);
+    private HashMap<String,ClientHandler> selectLobbyPlayers(ArrayList<String> list){
+        HashMap<String, ClientHandler> inGamePlayers = new HashMap<>();
+        for (String nickname : nameToHandlerMap.keySet()){
+            if(list.contains(nickname))
+                inGamePlayers.put(nickname, nameToHandlerMap.get(nickname));
         }
         return inGamePlayers;
     }
@@ -162,7 +162,7 @@ public class Server {
         return idToNicknameMap;
     }
 
-    public void removeClientConnection(ClientHandler clientHandler){
+    public synchronized void removeClientConnection(ClientHandler clientHandler){
         String clientName = idToNicknameMap.get(clientHandler.getID());
         idToNicknameMap.remove(clientHandler.getID());
         //bisogna gestire in maniera diversa il caso in cui il client sia ancora in attesa o il caso in cui sia a partita iniziata
@@ -171,20 +171,31 @@ public class Server {
         //partita esiste
         if (clientHandler.getGameHandler()!=null){
             playerToGameMap.remove(clientName);
+
         }
         else //è ancora in lobby
         {
-            //cancello il giocatore dalla lista di membri alla lobby
-            //ora come ora non riesco a risalire conoscendo lobbies e clientHandler la relazione di appartenenza
+            removeClientFromLobby(clientName);
         }
         nameToHandlerMap.remove(clientName);
 
     }
 
 
+    public void removeClientFromLobby(String nickname){
+        for (Lobby lobby: lobbies)
+            if (lobby.getPlayers().contains(nickname)){
+                lobby.removePlayer(nickname);
+            }
+    }
+
+    public void removeGameHandler(GameHandler gameHandler){
+        gameHandlers.remove(gameHandler);
+    }
+
+
     public static void main(String[] args) {
         Server server = new Server();
-        //GameHandler gameHandler = new GameHandler();
         ServerSocketConnection serverSocket = new ServerSocketConnection(1234,server);
         //gameHandler.setServer(serverSocket);
         serverSocket.run();

@@ -1,9 +1,11 @@
 package it.polimi.ingsw.CLI;
 
 import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.exceptions.InvalidMoveException;
 import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
 
+import javax.swing.*;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -45,7 +47,7 @@ public class GameBoard {
 
     //usiamo questo metodo solo per inizializzare le cose che non dipendono dai giocatori in sé ma solo dai parametri di gioco,
     // quindi numero di giocatori e modalità
-    public void instantiateGameElements(ArrayList<ClientIsland> newIslands, HashMap<String,ClientBoard> boards){
+    public void instantiateGameElements(ArrayList<ClientIsland> newIslands, HashMap<String,ClientBoard> boards,ArrayList<ClientPersonality> personalities){
         islands.addAll(newIslands);
         for (String player: boards.keySet()){
             boards.get(player).setGB(this);
@@ -56,25 +58,8 @@ public class GameBoard {
             clouds.add(new ClientCloud(i));
         }
 
-
-        //rivedere se ha senso aggiungere tutte le carte qui, tanto ne vengono estratte casualmente solo tre
-        /*
-        if (expertGame) {
-            personalities.add(new ClientPersonality(1, false, 1));
-            personalities.add(new ClientPersonality(2, false, 2));
-            personalities.add(new ClientPersonality(3, false, 3));
-            personalities.add(new ClientPersonality(4, false, 1));
-            personalities.add(new ClientPersonality(5, false, 2));
-            personalities.add(new ClientPersonality(6, false, 3));
-            personalities.add(new ClientPersonality(7, false, 1));
-            personalities.add(new ClientPersonality(8, false, 2));
-            personalities.add(new ClientPersonality(9, false, 3));
-            personalities.add(new ClientPersonality(10, false, 1));
-            personalities.add(new ClientPersonality(11, false, 2));
-            personalities.add(new ClientPersonality(12, false, 3));
-
-        }
-           */
+        if(personalities!=null)
+            this.personalities = new ArrayList<>(personalities);
     }
 
     public void print(){
@@ -116,10 +101,12 @@ public class GameBoard {
    private void printPersonalityCards(){
         outputStream.println("AVAILABLE PERSONALITY CARDS:");
         for(ClientPersonality personality : personalities){
-            outputStream.print(personality.getCardID() + " ");
-
+            outputStream.println("( ID: "+personality.getCardID() + " " +"Costo: "+personality.getCost()+" )");
         }
        outputStream.println();
+        if(activePersonality!=null)
+            outputStream.println("ACTIVE PERSONALITY CARD:"+activePersonality.getCardID());
+
     }
 
     public void setClientTeam(String playerNickname, Tower tower){
@@ -140,11 +127,15 @@ public class GameBoard {
     //faccio con l'if perché in teoria l'associazione string-int di tutti i giocatori viene mandata ogni volta che un tizio gioca una carta
     //quindi in una partita a 2 il primo che l'ha giocata riceve due volte questo messaggio contente il suo nome e la carta giocata
     public void setTurnCard(HashMap<String,Integer> playersCards){
-        for (Map.Entry<String,Integer> playerToCard: playersCards.entrySet()){
-            clientBoards.get(playerToCard.getKey()).setCurrentCard(playerToCard.getValue());
-            if (clientBoards.get(playerToCard.getKey()).getDeck().containsKey(playerToCard.getValue()))
-                clientBoards.get(playerToCard.getKey()).getDeck().remove(playerToCard.getValue());
-        }
+        if (playersCards.isEmpty())
+            for (String player: clientBoards.keySet())
+                clientBoards.get(player).setCurrentCard(0);
+        else
+            for (Map.Entry<String,Integer> playerToCard: playersCards.entrySet()){
+                clientBoards.get(playerToCard.getKey()).setCurrentCard(playerToCard.getValue());
+                if (clientBoards.get(playerToCard.getKey()).getDeck().containsKey(playerToCard.getValue()))
+                    clientBoards.get(playerToCard.getKey()).getDeck().remove(playerToCard.getValue());
+                }
     }
 
     public void setPlayerDeck(String player, HashMap<Integer, Integer> cards){
@@ -237,7 +228,9 @@ public class GameBoard {
         return coins;
     }
 
-
+    public boolean isPersonalityCardBeenPlayed(){
+        return activePersonality != null;
+    }
     public String getNickname() {
         return nickname;
     }
@@ -247,15 +240,18 @@ public class GameBoard {
     }
 
     public void setActivePersonality(int activePersonality) {
-        /**
-         * TODO: set dell'active card
-         */
+        Optional<ClientPersonality> activePers = personalities.stream()
+                                                .filter(clientPersonality -> clientPersonality.getCardID() == activePersonality)
+                                                .findFirst();
+        if(activePers.isPresent())
+            this.activePersonality = activePers.get();
+        else
+            new Throwable().printStackTrace(); //non dovrebbe mai accadere quindi mettiamo eccezione così nel caso in runtime salta fuori un bug
     }
 
     public void resetActivePersonality(int inactivePersonality){
-        /**
-         * TODO: reset dell'active card
-         */
+        outputStream.println("La carta personaggio "+inactivePersonality+ " non è più attiva!");
+        this.activePersonality = null;
     }
 
     public void setNumberOfPlayers(int numberOfPlayers) {

@@ -1,9 +1,9 @@
 package it.polimi.ingsw.messages;
 
-public class PlayChardCardMessage implements Message{
+public class PlayPersonalityCardMessage implements Message{
     int cardID;
 
-    public PlayChardCardMessage(int cardID) {
+    public PlayPersonalityCardMessage(int cardID) {
         this.cardID = cardID;
     }
 

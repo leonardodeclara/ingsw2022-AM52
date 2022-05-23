@@ -1,13 +1,13 @@
 package it.polimi.ingsw.messages;
 
 public class LastRoundMessage implements Message{
-    String lastroundmessage;
+    String lastRoundMessage;
 
-    public LastRoundMessage(String lastroundmessage) {
-        this.lastroundmessage = lastroundmessage;
+    public LastRoundMessage(String lastRoundMessage) {
+        this.lastRoundMessage = lastRoundMessage;
     }
 
-    public String getLastroundmessage() {
-        return lastroundmessage;
+    public String getLastRoundMessage() {
+        return lastRoundMessage;
     }
 }

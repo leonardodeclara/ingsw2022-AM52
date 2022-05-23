@@ -183,9 +183,9 @@ class BoardTest {
             board.addToTable(Color.BLUE);
         for (int i = 0; i<9; i++)
             board.addToTable(Color.PINK);
-        assertTrue(board.isTableFull(Color.BLUE));
-        assertFalse(board.isTableFull(Color.PINK));
-        assertFalse(board.isTableFull(Color.RED));
+        assertTrue(board.isTableFull(Color.BLUE,0));
+        assertFalse(board.isTableFull(Color.PINK,0));
+        assertFalse(board.isTableFull(Color.RED,0));
     }
 
     /**

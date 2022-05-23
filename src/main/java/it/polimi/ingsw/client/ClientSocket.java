@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.GUI.UI;
 import it.polimi.ingsw.messages.*;
 
 import java.io.*;
@@ -15,10 +16,11 @@ public class ClientSocket implements Runnable{
     String ip;
     int port;
     boolean active;
-    CLI cli; //andrà sostituita con una classe madre User Interface a breve o con client
+    boolean IsClientGUI;
+    UI cli;
     Thread pinger;
 
-    public ClientSocket(String ip,int port, CLI cli) throws IOException, SocketException {
+    public ClientSocket(String ip,int port, UI cli) throws IOException, SocketException {
         this.ip = ip;
         this.port = port;
         this.cli = cli;
@@ -40,7 +42,10 @@ public class ClientSocket implements Runnable{
         });
     }
 
-
+    /**
+     * TODO: per ora la fine partita è gestita con la chiusura di tutto lato server, che manda un messaggio di tipo Disconnect.
+     * Bisogna gestirlo opportunamente e far chiudere in qualche modo la cli/gui perché per ora bisogna scrivere comunque quit
+     */
 
     @Override
     public void run() {

@@ -56,8 +56,9 @@ public class ClientBoard implements Serializable {
         System.out.println("STUDENTS TABLE: ");
         try {
             for(Color color : studentsTable.keySet()){
-                for (int i = 0; i < Constants.MAX_LOBBY_SIZE; i++)
+                for (int i = 0; i < Constants.MAX_LOBBY_SIZE; i++){
                     System.out.print(Constants.getStudentsColor(color) + (i < studentsTable.get(color) ? "■ " : "○ "));
+                }
                 System.out.print("\n");
                 System.out.print(Constants.RESET);
             }

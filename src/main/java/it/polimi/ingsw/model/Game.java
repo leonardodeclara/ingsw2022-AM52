@@ -83,9 +83,6 @@ public class Game {
     }
 
     /**
-     * TODO: modificare i test di instantiateGameElements perché sono stati spostati degli assegnamenti, vedere sotto
-     */
-    /**
      * This method instantiates all the game elements (clouds,teachers,basket,islands and boards).
      */
     public void instantiateGameElements(ArrayList<String> playersNames) {
@@ -126,7 +123,8 @@ public class Game {
         //System.out.println("Game: ho finito di fare fill alle isole ");
 
         //riempio il sacchetto definitivo
-        basket = new Basket(new int[]{24, 24, 24, 24, 24});
+        //basket = new Basket(new int[]{24, 24, 24, 24, 24}); //per testare si può modificare questa cosa
+        basket = new Basket(new int[]{10, 10, 10, 10, 10});
 
         addPlayers(playersNames);
         initiatePlayersLobbies();
@@ -135,7 +133,7 @@ public class Game {
     }
 
     /**
-     * TODO: cambiare i relativi test
+     * TODO: cambiare i relativi test in expert game
      */
     /**
      * Method initiatePlayersLobbies calculates the number of students to put in the players' lobby
@@ -190,18 +188,22 @@ public class Game {
      * in order to calculate the playing order for the action phase
      *
      * @param nickname :
-     * @param cardId   : id given to the card, used as the index for the player's deck ArrayList
+     * @param
      */
-    public int playAssistantCard(String nickname, int cardId) {
-        ArrayList<Assistant> newDeck = getPlayerByName(nickname).getDeck();
-        cardId--; //priority van da 1 a 10, ma ci serve l'index
-        Assistant playedCard = newDeck.get(cardId);
-        if (!isCardPlayable(playedCard, newDeck)) return -1;
-        int cardScore = playedCard.getPriority();
-        currentTurnAssistantCards.put(nickname, playedCard); //firePropertyChange
+    /*
+    TODO: la selezione della carta non deve avvenire per indice perché il giocatore non lo conosce. in questo modo funziona solo
+     al primo round. dal secondo già è problematico. bisogna scrivere un metodo getCardById che fa la selezione per priority
+     */
+    public int playAssistantCard(String nickname, int cardPriority) {
+        System.out.println("Game: seleziono dal mazzo la carta scelta");
+        Player currentPlayer = getPlayerByName(nickname);
+        Assistant chosenCard = currentPlayer.getCardByPriority(cardPriority);
+        if (chosenCard == null || !isCardPlayable(chosenCard, currentPlayer.getDeck())) return -1;
+        System.out.println("Game: Ho estratto CORRETTAMENTE la carta con priority " + chosenCard.getPriority());
+        currentTurnAssistantCards.put(nickname, chosenCard); //firePropertyChange
         listeners.firePropertyChange("CurrentTurnAssistantCards", null, currentTurnAssistantCards);
-        getPlayerByName(nickname).removeAssistantCard(cardId);
-        return cardScore;
+        getPlayerByName(nickname).removeAssistantCard(cardPriority);
+        return cardPriority;
     }
 
     public ArrayList<String> getActionPhasePlayerOrder() {
@@ -276,16 +278,13 @@ public class Game {
      * @param studentIDs : number of islands that the player identified with the playerId wants to move mother nature
      * @param islandIDs     : the id of the destination island (or -1 if no island is specified)
      */
-
-    //move 1,2,5 in 1,4,11 -> ha spostato 1,2,5 in 1,4,6 e quello sul 6 era pure di un colore sbagliato
-    //table ancora non funziona (causa input parser)
     public boolean moveStudentsFromLobby(String nickname, ArrayList<Integer> studentIDs, ArrayList<Integer> islandIDs) {
         ArrayList<Color> studentsToMove = new ArrayList<>();
         Player player = getPlayerByName(nickname);
         int islandIndexCounter = 0;
 
         for (int i = 0; i < studentIDs.size(); i++) { //controlliamo se la mossa è legit per ogni studente e per ogni destinazione
-            if (!isMoveStudentFromLobbyLegal(player, studentIDs.get(i), islandIDs.get(i)))
+            if (!isMoveStudentFromLobbyLegal(player, studentIDs.get(i), islandIDs.get(i), studentsToMove.size()))
                 return false;
             studentsToMove.add(player.getBoard().getLobbyStudent(studentIDs.get(i)));
         }
@@ -294,13 +293,11 @@ public class Game {
         for (Color studentToMove : studentsToMove) {
             if(player.removeFromBoardLobby(studentToMove)){
                 if (islandIDs.get(islandIndexCounter) == Constants.ISLAND_ID_NOT_RECEIVED)
-                    player.getBoard().addToTable(studentToMove);
+                    player.addToBoardTable(studentToMove);
                 else {
                     Island islandDest = islands.get(islandIDs.get(islandIndexCounter));
                     islandDest.addStudent(studentToMove);
                 }
-                //aggiorna l'ownership dei teacher
-                updateTeachersOwnership(player);
                 islandIndexCounter++;
             }else{
                 return false;
@@ -315,10 +312,11 @@ public class Game {
     /**
      * Method updateTeachersOwnership recalculates the given player's number of students and possibly assigns him 1+
      *  teachers ownership
-     * @param player : reference of the player of whom we want to check teachers' ownership
+     * @param nickname : name of the player of whom we want to check teachers' ownership
      *
      */
-    public void updateTeachersOwnership(Player player){
+    public void updateTeachersOwnership(String nickname){
+        Player player = getPlayerByName(nickname);
         for(Color c : Color.values()) {
             Player owner = teachersOwners.get(c);
             if(owner != null){
@@ -384,14 +382,14 @@ public class Game {
      * @param studentIndex : number of islands that the player identified with the playerId wants to move mother nature
      * @param islandId : the id of the destination island (or -1 if no island is specified)
      */
-    public boolean isMoveStudentFromLobbyLegal(Player player,int studentIndex,int islandId){
+    public boolean isMoveStudentFromLobbyLegal(Player player,int studentIndex,int islandId, int toBeAdded){
         //non sono sicuro sia il modo giusto per gestire questo caso
         if (studentIndex >= player.getBoard().getLobby().size() || studentIndex<0)
             return false;
         Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
         if(studentToMove != null){
             if(islandId == Constants.ISLAND_ID_NOT_RECEIVED){
-                if(!player.getBoard().isTableFull(studentToMove))
+                if(!player.getBoard().isTableFull(studentToMove, toBeAdded))
                     return true;
             }
             else if(islandId >= 0 && islandId <= islands.size())
@@ -430,6 +428,9 @@ public class Game {
                     picks.add(pick);
                 }
                 catch (EmptyBasketException e){
+                    cloud.fillStudents(picks); //se non ci sono abbastanza pedine metto quelle che ci sono e chiudo il refill
+                    picks.clear();
+                    listeners.firePropertyChange("CloudsRefill", null, new ArrayList<>(clouds));
                     boolean oldLastRound = lastRound;
                     setLastRound(true); //firePropertyChange per messaggio di Last Round
                     listeners.firePropertyChange("LastRound", oldLastRound, lastRound);
@@ -438,9 +439,10 @@ public class Game {
                 }
             }
             cloud.fillStudents(picks); //firePropertyChange
-            listeners.firePropertyChange("CloudsRefill", null, new ArrayList<>(clouds)); //rivedere come mandare effettivamente
             picks.clear();
         }
+        //mando l'update dopo averle aggiornate entrambe
+        listeners.firePropertyChange("CloudsRefill", null, new ArrayList<>(clouds)); //rivedere come mandare effettivamente
     }
 
 
@@ -451,15 +453,14 @@ public class Game {
      * which tells to the Controller who called the calculateInfluence method if the outcome of the calculation was a draw or not.
      * @param island : reference of the island on which the influence is calculated
      */
-
-
-    public HashMap<String,Integer> calculateInfluence(Island island){
-        ArrayList<Integer>  influences = calculateStudentsInfluences(island,players);
-        int towersOwnerIndex = getTowersOwnerIndex(island,players);
-        if(towersOwnerIndex != -1)
-            influences.set(towersOwnerIndex,influences.get(towersOwnerIndex) + island.getTowers().size());
+    public HashMap<String,String> calculateInfluence(Island island,Object args){
+        HashMap<String,Integer>  influences = calculateStudentsInfluences(island,players);
+        String towersOwnerName = getTowersOwnerName(island,players);
+        if(towersOwnerName != null)
+            influences.put(towersOwnerName,influences.get(towersOwnerName) + island.getTowers().size());
+            HashMap<String, String> result = calculateIslandOwner(island,influences);
             mergeIslands(island);
-            return calculateIslandOwner(island,influences);
+            return result;
     }
 
     /**
@@ -510,38 +511,65 @@ public class Game {
      * Method that calculates the Owner of an island according to his influence on that island
      * If there is a draw of influence there's no change about the island's owner
      * @param island: reference to the island on I want to calculate influence
-     * @param influences: list of the calculated influences of each player on that island
-     * @return HashMap<String, Integer>: Hashmap that contains the information about a possible draw about the influence
-     * and the PlayerID of of the Owner
+     * @param influences: map of the calculated influences for each player on that island
+     * @return HashMap<String, String>: Hashmap that contains the information about a possible draw about the influence
+     * and the PlayerID of the Owner
      */
-    protected HashMap<String,Integer> calculateIslandOwner(Island island,ArrayList<Integer> influences){
-        int max = getMax(influences);
-        int isDraw = isDuplicate(influences,max);
-        HashMap<String, Integer> returnMap = new HashMap<>();
+    protected HashMap<String,String> calculateIslandOwner(Island island,HashMap<String,Integer> influences){
+        int max = getMax(influences.values());
+        boolean isDraw = isDuplicate(influences.values(),max);
+        HashMap<String, String> returnMap = new HashMap<>();
 
-        Player owner = (isDraw == 1) ? island.getOwner() : players.get(influences.indexOf(max));
-        returnMap.put("Is Draw", isDraw);
-        returnMap.put("ID Player", (owner==null) ? null : owner.getPlayerId());
-        if(owner!=null && owner!=island.getOwner())
-            island.setOwner(owner);
+        Player newOwner=null;
+        if (isDraw){
+            newOwner = island.getOwner();
+            returnMap.put("Is Draw", Constants.DRAW);
+        }
+        else{
+            returnMap.put("Is Draw", Constants.NO_DRAW);
+            for (String player: influences.keySet())
+                if (influences.get(player)==max)
+                    newOwner = getPlayerByName(player);
+        }
+        returnMap.put("Player Name", (newOwner==null) ? null : newOwner.getNickname()); //null se non c'è mai stato un proprietario
+        if(newOwner!=null && newOwner!=island.getOwner()){
+            changeIslandOwnership(island, newOwner);
+        }
+
         return returnMap;
+    }
+    /*
+    TODO: testarla
+     */
+    protected void changeIslandOwnership(Island island, Player newOwner){
+        ArrayList<Tower> oldTowers = island.removeTower();
+        int numOldTowers = oldTowers.size();
+        if (numOldTowers!=0)
+            for (Player player: players)
+                if (player.getTeam().equals(oldTowers.get(0)))
+                    player.addTowersToBoard(numOldTowers);
+        island.setOwner(newOwner);
+        for (int i = 0; i< island.getNumMergedIslands();i++){
+            island.addTower(newOwner.getTeam());
+            newOwner.removeTowerFromBoard();
+        }
     }
 
     /**
      * Method that calculates the influence of each player on an island
      * @param island: instance of the island on which I want to calculate influence
      * @param players: list of all the players of the game
-     * @return ArrayList<Integer>: list of integer that represents the influence of each players on that island
+     * @return
      */
-    protected ArrayList<Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players){
+    protected HashMap<String,Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players){
         int infl;
-        ArrayList<Integer> influences = new ArrayList<>();
-        for(Player p: players){
+        HashMap<String,Integer> influences = new HashMap<>();
+        for(Player player: players){
             infl = 0;
-            for(Color t:p.getBoard().getTeacherTable()){
+            for(Color t:player.getBoard().getTeacherTable()){
                 infl += island.getStudentsOfColor(t).size();
             }
-            influences.add(players.indexOf(p),infl);
+            influences.put(player.getNickname(),infl);
         }
         return influences;
     }
@@ -553,12 +581,12 @@ public class Game {
      * @param players: list of all the players of the game
      * @return PlayerID of the owner of the island or -1 if there's not an owner
      */
-    protected int getTowersOwnerIndex(Island island, ArrayList<Player> players){
-        if (island.getTowers().size() == 0) return -1;
-        for(Player p : players)
-                if (island.getOwnerTeam().equals(p.getTeam()))
-                    return players.indexOf(p);
-        return -1;
+    protected String getTowersOwnerName(Island island, ArrayList<Player> players){
+        if (island.getTowers().size() == 0) return null;
+        for(Player player : players)
+                if (island.getOwnerTeam().equals(player.getTeam()))
+                    return player.getNickname();
+        return null;
     }
 
     /**
@@ -591,7 +619,7 @@ public class Game {
     }
 
     /**
-     * @return istance of the basket used in the game
+     * @return instance of the basket used in the game
      */
     public Basket getBasket() {
         return basket;
@@ -655,18 +683,18 @@ public class Game {
         return assistantDecks;
     }
 
-
-    /**
-     * Method that checks if the Game is ended
-     * @return true if there's a Game over. false if there isn't
-     */
-
     /*Da rivedere*/
     /*potremmo aggiungere attributo winner a game*/
     /*Vittoria: return true, winner = playerVincitore
     * Partita continua: return false, winner = null
     * Parità: return true, winner=null
     * */
+    //Questo metodo va chiamato dopo aver messo una torre, dopo aver unificato delle isole
+
+    /**
+     * Method that checks if the Game is ended
+     * @return true if the game current game is over, false otherwise
+     */
     public boolean checkGameOver(){
         for(Player player: players){
             if(player.getBoard().getTowers()==0){
@@ -694,17 +722,20 @@ public class Game {
 
             }
             else {
-                int minTeachers = 5;
+                int maxTeachers = -1;
                 for (Player finalPlayer : potentialWinners) {
-                    if (finalPlayer.getBoard().getTeacherTable().size()<minTeachers){
+                    if (finalPlayer.getBoard().getTeacherTable().size()>maxTeachers){
                         winner = finalPlayer; //firePropertyChange
-                        minTeachers= finalPlayer.getBoard().getTeacherTable().size();
+                        maxTeachers= finalPlayer.getBoard().getTeacherTable().size();
                     }
-                    else if (finalPlayer.getBoard().getTeacherTable().size()==minTeachers){
+                    else if (finalPlayer.getBoard().getTeacherTable().size()==maxTeachers){
                         winner = null;
                     }
                 }
-                listeners.firePropertyChange("GameOver", null, null); //rivedere, magari mando un dato strutturato
+                if (winner !=null)
+                    listeners.firePropertyChange("GameOver", null, winner.getNickname());
+                else
+                    listeners.firePropertyChange("GameOver", null, null);
                 return true;
             }
         }
@@ -743,10 +774,10 @@ public class Game {
 
     /**
      * Method that sets a player as a current player according to the turn priority
-     * @param currentPlayer: reference of the player
+     * @param currentPlayerName: name of the current Plater
      */
-    public void setCurrentPlayer(Player currentPlayer) {
-        this.currentPlayer = currentPlayer;
+    public void setCurrentPlayer(String currentPlayerName) {
+        this.currentPlayer = getPlayerByName(currentPlayerName);
     }
 
     /**
@@ -754,7 +785,7 @@ public class Game {
      * @param list: generic list of integer
      * @return the max number of the list
      */
-    private int getMax(ArrayList<Integer> list){
+    private int getMax(Collection<Integer> list){
         return list
                 .stream()
                 .mapToInt(v -> v)
@@ -763,16 +794,37 @@ public class Game {
 
     /**
      * Method that checks if a value occurs more than once in an ArrayList
-     * @param values: ArrayList that method has to check
+     * @param values: Collection that method has to check
      * @param value: integer that method has to check if there's a duplicate
-     * @return 1 if there's a duplicate of the value or 0
+     * @return true if there's a duplicate of the value, false otherwise
      */
-    private int isDuplicate(ArrayList<Integer> values, int value) {
-        return Collections.frequency(values,value) > 1? 1:0;
+    private boolean isDuplicate(Collection<Integer> values, int value) {
+        return Collections.frequency(values, value) > 1;
     }
 
     public int getNumOfPlayers() {
         return numOfPlayers;
+    }
+
+    /*
+    TODO: testarla
+     */
+    public boolean areCloudsFull(){
+        int cloudSize = numOfPlayers+1;
+        for (Cloud cloud: clouds)
+            if (cloud.getStudents().size()!=cloudSize)
+                return false;
+        return true;
+    }
+
+
+    public void resetCurrentTurnAssistantCards(){
+        currentTurnAssistantCards.clear();
+        listeners.firePropertyChange("CurrentTurnAssistantCards", null, currentTurnAssistantCards);
+    }
+
+    public Island getCurrentMotherNatureIsland() {
+        return currentMotherNatureIsland;
     }
 
     /**
@@ -792,25 +844,10 @@ public class Game {
         for (Island island: islands){
             island.setPropertyChangeListener(controller); //fire fatto, in teoria (vedere per students)
         }
-
         for (Player player: players){
             player.setPropertyChangeListener(controller); //fire fatto
         }
     }
-
-    /*
-    public void setPlayerPropertyChangeListener(String nickname, GameController controller){
-        getPlayerByName(nickname).setPropertyChangeListener(controller);
-    }
-
-     */
-
-    //in teoria
-    //ordine di chiamata metodi Game inizio partita:
-    //costruttore
-    //addPlayer per ogni player
-    //game.instantiateGameElements()
-    //game.setPropertyChangeListeners(controller)
 }
 
 

@@ -2,8 +2,10 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.exceptions.EndGameException;
 import it.polimi.ingsw.exceptions.QuitException;
 import it.polimi.ingsw.messages.ClientState;
+import it.polimi.ingsw.messages.EndGameMessage;
 import it.polimi.ingsw.model.Tower;
 
 import java.util.ArrayList;
@@ -11,7 +13,7 @@ import java.util.ArrayList;
 public class InputParser {
     ArrayList<Object> data;
     String nickname;
-
+    boolean isExpert;
 
     public InputParser(){
     }
@@ -51,13 +53,17 @@ public class InputParser {
             case END_TURN:
                 parseClosingTurn(input);
                 break;
+            case END_GAME:
+                parseEndGame(input);
+                break;
         }
         return data;
     }
 
 
     private void parseConnectString(String input){
-        if(input.length() <= 16 && !input.equals("") && !input.equals(" ")){
+        input = input.replaceAll("\s","");
+        if(input.length() <= 16 && !input.equals("") && !input.equals("\s")){
             data.add(input);
             nickname = input; //salva il nickname così poi lo passiamo alla CLI quando ci arriva conferma dal server che va bene
         }
@@ -67,7 +73,7 @@ public class InputParser {
     private void parseNewGameParametersString(String input){ //gestiamo base/expert case insensitive e consideriamo separatore spazio
         int numberOfPlayers = 0;
         boolean expert = false;
-        String[] words = input.split(" ");
+        String[] words = input.split("\\s+");
 
         if(words.length == 2){
             if(words[0].equals("2")|| words[0].equalsIgnoreCase("3")){
@@ -83,7 +89,7 @@ public class InputParser {
 
     private void parseSetUpWizardPhaseString(String input){
         int chosenDeckID = 0;
-
+        input = input.replaceAll("\s","");
         try{
             chosenDeckID = Integer.parseInt(input);
             /* Questo controllo si dovrebbe fare lato server, vedere se eventualmente fare qualche controllo lato client. per ora no
@@ -99,6 +105,7 @@ public class InputParser {
     }
 
     private void parseSetUpTowerPhaseString(String input){
+        input = input.replaceAll("\s","");
         try{
             if (input.equalsIgnoreCase("grey"))
                 data.add(Tower.GREY);
@@ -113,7 +120,7 @@ public class InputParser {
 
     private void parseAssistantCardString(String input){ //il comando è play card x
         int cardID = 0; //priority
-        String[] words = input.split(" ");
+        String[] words = input.split("\\s+");
 
         if(words.length == 3){
             if(words[0].equalsIgnoreCase("play")&& words[1].equalsIgnoreCase("card")){
@@ -129,7 +136,7 @@ public class InputParser {
     }
     //
     private void parseMoveStudentsFromLobby(String input){ //move studentID1,studentID2,studentID3 in table,2,3
-        String[] words = input.split(" ");
+        String[] words = input.split("\\s+");
 
         if(words.length==4){
             if(words[0].equalsIgnoreCase("move")){
@@ -142,58 +149,93 @@ public class InputParser {
                         if(destIDsInteger!=null){
                             data.add(studentIDsInteger);
                             data.add(destIDsInteger);
+                            return;
                         }
                     }
                 }
             }
         }
+
+        if(isExpert)
+            parsePlayPersonalityCard(words);
+
     }
 
+    //bug: se si scrolla e poi si preme invio va a capo ma non invia. se lo si preme di nuovo invia ma a volte manda carattere vuoto
     private void parseMoveMotherNature(String input){ //comando: move mn 5
         int steps = 0;
-        String[] words = input.split(" ");
-
+        String[] words = input.split("\\s+");
         if(words.length==3){
             if(words[0].equalsIgnoreCase("move"))
                 if(words[1].equalsIgnoreCase("mn") || words[1].equalsIgnoreCase("mothernature")){
                     try{
                         steps = Integer.parseInt(words[2]);
                         data.add(steps);
+                        return;
                     }catch(NumberFormatException e){
 
                     }
             }
         }
+
+        if(isExpert)
+            parsePlayPersonalityCard(words);
     }
 
-    //non va
+
     private void parseCloudSelection(String input){ //comando empty cloud 3
         int cloudIndex = 0;
-        String[] words = input.split(" ");
+        String[] words = input.split("\\s+");
         if (words.length==3 ){
             if (words[0].equalsIgnoreCase("empty") && words[1].equalsIgnoreCase("cloud"))
                 try{
                     cloudIndex=Integer.parseInt(words[2]);
                     data.add(cloudIndex);
+                    return;
                 } catch (NumberFormatException e){
+                }
+        }
+
+        if(isExpert)
+            parsePlayPersonalityCard(words);
+    }
+
+    private void parseClosingTurn(String input){
+        String[] words = input.split("\\s+");
+        if(words.length==1){
+            if (words[0].equalsIgnoreCase("end")){
+                data.add(words[0]);
+                return;
+            }
+        }
+
+        if(isExpert)
+            parsePlayPersonalityCard(words);
+    }
+
+    private void parsePlayPersonalityCard(String[] words){
+        int cardID=0;
+        boolean hasPlayedPersonality = true;
+        if(words.length==3){
+            if(words[0].equalsIgnoreCase("play") && words[1].equalsIgnoreCase("personality"))
+                try{
+                    cardID = Integer.parseInt(words[2]);
+                    data.add(hasPlayedPersonality); //serve per segnalare al client che nell'array c'è l'id di una carta
+                    data.add(cardID);
+                    return;
+                }catch(NumberFormatException e){
+
                 }
         }
     }
 
-    private void parseClosingTurn(String input){
-        String[] words = input.split(" ");
-        if (words[0].equalsIgnoreCase("end"))
-            data.add(words[0]);
-        else if (words[0].equalsIgnoreCase("personality")){
-            try{
-                int personalityId = Integer.parseInt(words[1]);
-                data.add(personalityId);
-            }
-            catch( NumberFormatException e){
-            }
+    private void parseEndGame(String input){
+        String[] words = input.split("\\s+");
+        if (words.length==1){
+            if (words[0].equalsIgnoreCase("close"))
+                throw new EndGameException();
         }
     }
-
 
     private ArrayList<Integer> convertStringsToNumberArray(String[] array){
         ArrayList<Integer> arrayInt = new ArrayList<>();
@@ -230,6 +272,14 @@ public class InputParser {
 
     public String getNickname() {
         return nickname;
+    }
+
+    public boolean getIsExpert(){
+        return isExpert;
+    }
+
+    public void setIsExpert(boolean isExpert){
+        this.isExpert = isExpert;
     }
 
 }

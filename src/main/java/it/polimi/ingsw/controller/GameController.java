@@ -1,31 +1,30 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.messages.*;
-import it.polimi.ingsw.model.ExpertGame;
-import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.Tower;
+import it.polimi.ingsw.model.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
+import java.util.function.*;
 
 
-//aggiorna model
 public class GameController implements PropertyChangeListener {
-    private Game game;
+    private final Game game;
     private String currentPlayer;
-    private ArrayList<String> players;
-    private PropertyChangeSupport listener;
-    private UpdateMessageBuilder updateMessageBuilder;
-    private ArrayList<Tower> availableTowers;
-    private ArrayList<Integer> availableWizards; //poi sta cosa va tolta da game
-    private HashMap<String, Integer> playerToWizardMap;
+    private final ArrayList<String> players;
+    private final PropertyChangeSupport listener;
+    private final UpdateMessageBuilder updateMessageBuilder;
+    private final ArrayList<Tower> availableTowers;
+    private final ArrayList<Integer> availableWizards; //poi sta cosa va tolta da game
+    private final HashMap<String, Integer> playerToWizardMap;
+    private BiPredicate<String,Integer> moveMotherNature;
+    private BiFunction<Island,Object,HashMap<String,String>> calculateInfluence;
+    private Consumer<String> updateTeachersOwnership;
+
 
     public GameController(boolean isExpert, ArrayList<String> players) {
         updateMessageBuilder = new UpdateMessageBuilder();
@@ -41,6 +40,9 @@ public class GameController implements PropertyChangeListener {
         availableTowers.addAll(Arrays.asList(Tower.values()));
         playerToWizardMap = new HashMap<>();
 
+
+        changeGameRulesForPersonalityCard(0); //settiamo le default rules
+
         System.out.println("GameController: mi sono istanziato");
     }
 
@@ -52,7 +54,7 @@ public class GameController implements PropertyChangeListener {
     }
 
     public Message updateWizardSelection(String player, Integer wizard){
-        System.out.println("Maghi disponibili lato server:"+availableWizards);
+        System.out.println("Maghi disponibili lato server: "+availableWizards);
         if (availableWizards.contains(wizard)){
             game.giveAssistantDeck(player, wizard);
             playerToWizardMap.put(player, wizard);
@@ -67,10 +69,8 @@ public class GameController implements PropertyChangeListener {
     //creo l'assocazione giocatore-torre, mi serve per poter aggiungere i giocatori alla partita
     //potrei mettere qui dentro l'assegnamento del deck, ma posso anche farlo a parte
     public Message updateTowerSelection(String player, Tower tower){
-        System.out.println("Torri disponibili lato server:"+availableTowers);
+        System.out.println("Torri disponibili lato server: "+availableTowers);
         if (availableTowers.contains(tower)){
-            //game.addPlayer(new Player(game.getPlayers().size(),player, tower),playerToWizardMap.get(player)); //rivedere l'assegnamento dell'indice
-            //game.setPlayerPropertyChangeListener(player, this); //setto il listener per questo player
             game.getPlayerByName(player).setTeam(tower);
             availableTowers.remove(tower);
             System.out.println("GameController: ho aggiornato le torri disponibili togliendo " + tower.toString());
@@ -94,20 +94,31 @@ public class GameController implements PropertyChangeListener {
 
 
     public Message moveStudentsFromLobby(String player, ArrayList<Integer> studentIDs, ArrayList<Integer> destIDs){
-        if(game.moveStudentsFromLobby(player,studentIDs,destIDs))
-            //return new ClientStateMessage(ClientState.WAIT_TURN);
+        if(game.moveStudentsFromLobby(player,studentIDs,destIDs)){
+            updateTeachersOwnership.accept(player);
             return new ClientStateMessage(ClientState.MOVE_MOTHER_NATURE);
+        }
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
     public Message moveMotherNature(String player, int steps){
-        if(game.moveMotherNature(player,steps))
-            return new ClientStateMessage(ClientState.PICK_CLOUD);
+        if(moveMotherNature.test(player,steps)){
+            //qui va aggiunto tutta la gestione del calcolo influenza, spostamento torri, merge isole ecc
+            calculateInfluence.apply(game.getCurrentMotherNatureIsland(),null);
+
+            if (game.isLastRound() && !game.areCloudsFull())
+                //svuotamento delle nuvole viene saltato se siamo all'ultimo round e non ci sono abbastanza pedine studente per tutti
+                //soluzione temporanea perché questo tipo di controllo va bene solo per il primo giocatore del turno
+                //infatti se sono state riempite tutte le nuvole e quindi tutti possono pescare
+                //dopo che il primo giocatore ha fatto pick_cloud questo metodo restituirà false, il che è sbagliato
+                return new ClientStateMessage(ClientState.END_TURN);
+            else
+                return new ClientStateMessage(ClientState.PICK_CLOUD);
+        }
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
-
 
     public Message refillLobby(String player, int cloudIndex){
         if(game.moveStudentsToLobby(player, cloudIndex))
@@ -117,6 +128,71 @@ public class GameController implements PropertyChangeListener {
             //intanto usiamo END_TURN
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
+    }
+
+    //questo deve costruire i messaggi degli stati ad hoc delle carte che fanno fare ai giocatori qualcosa
+    //se invece modifica un input viene fatto tutto internmente a setActivePersonality
+
+    public Message playPersonalityCard(String player, int cardID,ClientState currentClientState){
+        if(((ExpertGame) game).setActivePersonality(cardID)) {
+            changeGameRulesForPersonalityCard(cardID);
+            Optional<ClientState> clientState = ClientState.valueOf(cardID);
+            return clientState.map(ClientStateMessage::new).orElseGet(() -> new ClientStateMessage(currentClientState));
+        }else{
+            return new ErrorMessage(ErrorKind.ILLEGAL_MOVE);
+        }
+    }
+
+    public void resetPersonalityCard(){
+        ((ExpertGame) game).resetActivePersonality();
+    }
+
+    private void changeGameRulesForPersonalityCard(int cardID){
+        switch(cardID){
+            case 0: //resetta gli effetti sulle regole di gioco
+                moveMotherNature = game::moveMotherNature;
+                updateTeachersOwnership = game::updateTeachersOwnership;
+                calculateInfluence = game::calculateInfluence;
+                break;
+            case 2: //in teoria quando chiamiamo case != 0, è già stato resettato tutto, ma per sicurezza li mettiamo tutti i metodi
+                moveMotherNature = game::moveMotherNature;
+                updateTeachersOwnership = ((ExpertGame)game)::updateTeachersOwnershipForCard2;
+                calculateInfluence = game::calculateInfluence;
+                break;
+            case 4:
+                moveMotherNature = ((ExpertGame)game)::moveMotherNatureForCard4;
+                updateTeachersOwnership = game::updateTeachersOwnership;
+                calculateInfluence = game::calculateInfluence;
+                break;
+            case 6:
+                moveMotherNature = game::moveMotherNature;
+                updateTeachersOwnership = game::updateTeachersOwnership;
+                calculateInfluence = ((ExpertGame)game)::calculateInfluenceForCard6;
+                break;
+            case 8:
+                moveMotherNature = game::moveMotherNature;
+                updateTeachersOwnership = game::updateTeachersOwnership;
+                calculateInfluence = ((ExpertGame)game)::calculateInfluenceForCard8;
+                break;
+            case 9:
+                moveMotherNature = game::moveMotherNature;
+                updateTeachersOwnership = game::updateTeachersOwnership;
+                calculateInfluence = ((ExpertGame)game)::calculateInfluenceForCard9;
+                break;
+        }
+    }
+
+
+    //return true se la partita è finita, false otherwise
+    public boolean closeCurrentRound(){
+        //bisogna gestire la fine partita nel caso fosse il lastRound
+        if (game.isLastRound()){
+            //in game manca tutto il calcolo del vincitore in caso la partita finisca al termine del lastRound
+            System.out.println("Finita la partita");
+            return true;
+        }
+        game.resetCurrentTurnAssistantCards();
+        return false;
     }
 
     public ArrayList<String> getActionPhaseTurnOrder(){
@@ -142,16 +218,6 @@ public class GameController implements PropertyChangeListener {
         listener.addPropertyChangeListener("UpdateMessage", gameHandler);
         //si potrebbe mettere anche il listener per il messaggio di errore,
         // o magari quello lo gestisco in maniera diversa. rivedere
-    }
-
-
-    //va cancellato perché non lo usiamo più
-    public Message buildPlayerTowerAssociation(){
-        HashMap<String,Tower> associations = new HashMap<>();
-        for (Player player: game.getPlayers()){
-            associations.put(player.getNickname(), player.getTeam());
-        }
-        return new GameStartMessage(associations);
     }
 
     @Override
@@ -218,5 +284,10 @@ public class GameController implements PropertyChangeListener {
 
     public Game getGame() {
         return game;
+    }
+
+    public void setCurrentPlayer(String currentPlayer) {
+        this.currentPlayer = currentPlayer;
+        game.setCurrentPlayer(currentPlayer);
     }
 }

@@ -1,27 +1,18 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.controller.GameHandler;
-import it.polimi.ingsw.controller.Server;
-import it.polimi.ingsw.controller.ServerSocketConnection;
+import it.polimi.ingsw.GUI.UI;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Tower;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall'altro
     ClientSocket clientSocket;
     InputParser inputParser;
-    CLI cli;
+    UI cli;
     boolean active;
 
-    public Client(CLI cli) {
+    public Client(UI cli) {
         this.cli=cli;
         active = true;
     }
@@ -39,16 +30,26 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
             case PLAY_ASSISTANT_CARD:
                 return buildPlayAssistantCardMessage(data);
             case MOVE_FROM_LOBBY:
+                if(data.get(0) instanceof Boolean)
+                        return buildPlayPersonalityCardMessage(data);
+
                 return buildMoveFromLobbyMessage(data);
             case MOVE_MOTHER_NATURE:
+                if(data.get(0) instanceof Boolean)
+                        return buildPlayPersonalityCardMessage(data);
+
                 return buildMoveMotherNature(data);
             case PICK_CLOUD:
+                if(data.get(0) instanceof Boolean)
+                        return buildPlayPersonalityCardMessage(data);
+
                 return buildCloudSelectionMessage(data);
             case END_TURN:
-                if (data.get(0).equals("end"))
-                    return buildCloseTurnMessage(data);
-                //else carta personaggio
-                //bisognerà farlo anche nei tre stati precedenti
+                if(data.size() >= 2)
+                    if((Boolean) data.get(1) == true)
+                        return buildPlayPersonalityCardMessage(data);
+
+                return buildCloseTurnMessage(data);
         }
         return null;
     }
@@ -84,6 +85,10 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
 
     private Message buildCloudSelectionMessage(ArrayList<Object> data){
         return new CloudSelectionMessage((Integer) data.get(0));
+    }
+
+    private Message buildPlayPersonalityCardMessage(ArrayList<Object> data){
+        return new PlayPersonalityCardMessage((Integer) data.get(1));
     }
 
     //in questo

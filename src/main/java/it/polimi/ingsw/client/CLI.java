@@ -2,6 +2,8 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.GUI.UI;
+import it.polimi.ingsw.exceptions.EndGameException;
 import it.polimi.ingsw.exceptions.QuitException;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Tower;
@@ -16,7 +18,7 @@ import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class CLI implements Runnable{
+public class CLI implements Runnable,UI{
     private final Scanner inputStream;
     private final PrintStream outputStream;
     private boolean active;
@@ -88,7 +90,10 @@ public class CLI implements Runnable{
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            System.out.println("Ora mi chiudo");
+            System.out.println("Ora mi chiudo per quit dell'utente");
+        }
+        catch (EndGameException e){
+            System.out.println("Ora mi chiudo perché la partita è finita e l'utente ha scritto close");
         }
         System.out.println("Qui muore il thread della cli");
     }
@@ -130,8 +135,7 @@ public class CLI implements Runnable{
     public void prepareView(ArrayList<Object> data){
         GB.setNumberOfPlayers((Integer)data.get(0));
         GB.setExpertGame((Boolean)data.get(1));
-        //GB.instantiateGameElements();
-        // spostato dopo che vengono estratti i primi studenti per le isole e viene posizionata MN
+        inputParser.setIsExpert((Boolean)data.get(1));
     }
 
     public void updateView(Message updateMessage) {
@@ -141,8 +145,6 @@ public class CLI implements Runnable{
             updateAvailableTower((AvailableTowerMessage) updateMessage);
         else if (updateMessage instanceof GameInstantiationMessage)
             setInitialGameBoard((GameInstantiationMessage) updateMessage);
-        else if (updateMessage instanceof GameStartMessage) //in teoria questo messaggio va cancellato
-            updatePlayerTowerAssociation((GameStartMessage) updateMessage);
         else if (updateMessage instanceof CurrentTurnAssistantCardsUpdateMessage)
             updateCurrentTurnAssistantCards((CurrentTurnAssistantCardsUpdateMessage) updateMessage);
         else if (updateMessage instanceof AssistantDeckUpdateMessage)
@@ -165,6 +167,8 @@ public class CLI implements Runnable{
             updateActivePersonality((ActivePersonalityMessage) updateMessage);
         else if (updateMessage instanceof InactivePersonalityMessage)
             updateInactivePersonality((InactivePersonalityMessage) updateMessage);
+        else if (updateMessage instanceof LastRoundMessage)
+            setLastRound((LastRoundMessage) updateMessage);
     }
 
     public void updateAvailableWizard(AvailableWizardMessage message){
@@ -176,18 +180,9 @@ public class CLI implements Runnable{
     }
 
     public void setInitialGameBoard(GameInstantiationMessage message){
-        GB.instantiateGameElements(message.getIslands(), message.getBoards());
+        GB.instantiateGameElements(message.getIslands(), message.getBoards(),message.getPersonalities());
+        clearScreen();
         System.out.println("PRIMA PRINT DELLA BOARD");
-        GB.print();
-    }
-
-    //in teoria questo metodo va cancellato, non si usa più
-    public void updatePlayerTowerAssociation(GameStartMessage message){
-        HashMap<String, Tower> associations = message.getChosenTeam();
-        for (String player: associations.keySet()){
-            GB.addClientBoard(player);
-            GB.setClientTeam(player, associations.get(player));
-        }
         GB.print();
     }
 
@@ -197,6 +192,7 @@ public class CLI implements Runnable{
     //che non è un problema btw
     public void updateCurrentTurnAssistantCards(CurrentTurnAssistantCardsUpdateMessage message){
         GB.setTurnCard( message.getCurrentTurnAssistantCards());
+        clearScreen();
         System.out.println("Modifica delle currentAssistantCards");
         System.out.println();
         GB.print();
@@ -208,6 +204,7 @@ public class CLI implements Runnable{
 
     public void updateIslandStudents(IslandStudentsUpdateMessage message){
         GB.setIslandStudents(message.getIslandIndex(), message.getStudents());
+        clearScreen();
         System.out.println("Modifica degli studenti nelle isole");
         System.out.println();
         GB.print();
@@ -215,6 +212,7 @@ public class CLI implements Runnable{
 
     public void updateIslandTowers(IslandTowersUpdateMessage message){
         GB.setIslandTowers(message.getIslandIndex(), message.getTowers());
+        clearScreen();
         System.out.println("Modifica delle torri nelle isole");
         System.out.println();
         GB.print();
@@ -222,6 +220,7 @@ public class CLI implements Runnable{
 
     public void updateCloud(CloudUpdateMessage message){
         GB.emptyCloud(message.getCloudIndex());
+        clearScreen();
         System.out.println("Svuotamento di una nuvola");
         System.out.println();
         GB.print();
@@ -229,6 +228,7 @@ public class CLI implements Runnable{
 
     public void updateMotherNaturePosition(MotherNatureMovementUpdateMessage message){
         GB.changeMNPosition(message.getIslandIndex());
+        clearScreen();
         System.out.println("Spostamento di MN");
         System.out.println();
         GB.print();
@@ -236,6 +236,7 @@ public class CLI implements Runnable{
 
     public void updateIslandsMerge(IslandMergeUpdateMessage message){
         GB.setIslands(message.getUpdatedClientIslands());
+        clearScreen();
         System.out.println("Merge di isole");
         System.out.println();
         GB.print();
@@ -244,13 +245,15 @@ public class CLI implements Runnable{
     public void updatePlayerBoard(BoardUpdateMessage message){
         String boardOwner = message.getOwner();
         GB.setUpdatedClientBoard(boardOwner, message.getClientBoard());
-        System.out.println("Aggiornata la board di" + boardOwner);
+        clearScreen();
+        System.out.println("Aggiornata la board di " + boardOwner);
         System.out.println();
         GB.print();
     }
 
     public void updateRefilledClouds(CloudsRefillMessage message){
         GB.setClouds(message.getClouds());
+        clearScreen();
         System.out.println("Riempite le clouds");
         System.out.println();
         GB.print();
@@ -258,6 +261,7 @@ public class CLI implements Runnable{
 
     public void updateActivePersonality(ActivePersonalityMessage message){
         GB.setActivePersonality(message.getActiveCardId());
+        clearScreen();
         System.out.println("È stata attivata una carta personaggio");
         System.out.println();
         GB.print();
@@ -265,9 +269,17 @@ public class CLI implements Runnable{
 
     public void updateInactivePersonality(InactivePersonalityMessage message){
         GB.resetActivePersonality(message.getInactiveCardId());
-        //non so se serve stampare il fatto che una carta non è più attiva
     }
 
+    //Ha ancora dei problemi si lo so
+    public void clearScreen(){
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+
+    public void setLastRound(LastRoundMessage message){
+        System.out.println(message.getLastRoundMessage());
+    }
 
     private void visualizeContextMessage(){
         //System.out.println("Vediamo che messaggio ho ricevuto");
@@ -293,27 +305,61 @@ public class CLI implements Runnable{
                 outputStream.println("Torri disponibili:"+GB.getAvailableTowers()); //prendiamo dalla view le informazioni da stampare a schermo
                 break;
             case PLAY_ASSISTANT_CARD:
-                GB.print(); //si può evitare credo, la board viene stampata con le print degli update
                 outputStream.println("Scegli una carta da giocare!");
                 break;
             case MOVE_FROM_LOBBY:
-                GB.print(); //si può evitare credo
                 outputStream.println("Scegli tre studenti da spostare nella table o su un'isola");
                 outputStream.println("Per esempio digita move studentID1,studentID2,studentID3 in table,2,3 per muovere il primo studente nella table,il secondo sull'isola 2, il terzo sull'isola 3");
+                if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
+                    outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
                 break;
             case MOVE_MOTHER_NATURE:
-                GB.print(); //si può evitare credo
                 outputStream.println("Puoi far compiere a Madre Natura fino a X passi"); //prendere X dalla priority della carta giocata
                 outputStream.println("Per esempio digita move mn 5 per spostarla di 5 isole");
+                if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
+                    outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
                 break;
             case PICK_CLOUD:
                 outputStream.println("Scegli una nuvola! I suoi studenti passeranno sulla tua lobby ");
                 outputStream.println("Per esempio digita empty cloud 3 per scegliere la nuvola 3");
+                if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
+                    outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
                 break;
             case END_TURN:
                 outputStream.println("Sei alla fine del tuo turno! Per chiudere il turno scrivi end");
-                if (GB.isExpertGame() /*&& può essere giocata una carta (quindi non è già stata giocata e ha abbastanza coins (credo))*/)
-                    outputStream.println("Puoi ancora giocare una carta personaggio! Per giocarla scrivi personality id" );
+                if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
+                    outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
+                break;
+            case END_GAME:
+                outputStream.println("La partita si è conclusa! Per chiudere il gioco scrivi close");
+                break;
+            case CHOOSE_STUDENT_FOR_CARD_1:
+                outputStream.println("Scegli uno studente");
+                break;
+            case CHOOSE_ISLAND_FOR_CARD_3:
+                outputStream.println("Scegli un'isola");
+                break;
+            case CHOOSE_ISLAND_FOR_CARD_5:
+                outputStream.println("Scegli un'isola");
+                break;
+            case SWAP_STUDENTS_FOR_CARD_7:
+                outputStream.println("Scegli un massimo di 3 studenti dalla carta per scambiarli con 3 della lobby");
+                break;
+            case CHOOSE_COLOR_FOR_CARD_9:
+                outputStream.println("Scegli un colore");
+                break;
+            case CHOOSE_STUDENTS_FOR_CARD_10:
+                outputStream.println("Scegli un massimo di 2 studenti da scambiare tra la tua sala e l'ingresso");
+                break;
+            case CHOOSE_STUDENT_FOR_CARD_11:
+                outputStream.println("Scegli uno studente");
+                break;
+            case CHOOSE_COLOR_FOR_CARD_12:
+                outputStream.println("Scegli un colore");
+                break;
+            case CHOOSE_STUDENTS_TO_LOSE_FOR_CARD_12:
+                outputStream.println("Scegli fino a 3 studenti del colore x per rimetterli nel sacchetto");
+                break;
         }
 
     }
@@ -334,13 +380,42 @@ public class CLI implements Runnable{
             case MOVE_FROM_LOBBY:
                 outputStream.println("Scelta non valida! Riprova");
                 break;
-            case MOVE_MOTHER_NATURE:
+            case MOVE_MOTHER_NATURE: //qui bisogna differenziare i messaggi oppure paracularsi con messaggi generici tipo Scelta non valida!
                 outputStream.println("Non puoi spostare lì Madre Natura!");
                 break;
             case PICK_CLOUD:
                 outputStream.println("Non puoi scegliere quella nuvola! Riprova");
+                break;
             case END_TURN:
                 outputStream.println("Errore!"); //si può fare di meglio
+                break;
+            case CHOOSE_STUDENT_FOR_CARD_1:
+                outputStream.println("Non hai scelto uno studente valido");
+                break;
+            case CHOOSE_ISLAND_FOR_CARD_3:
+                outputStream.println("Non hai scelto un'isola valida");
+                break;
+            case CHOOSE_ISLAND_FOR_CARD_5:
+                outputStream.println("Non hai scelto un'isola valida");
+                break;
+            case SWAP_STUDENTS_FOR_CARD_7:
+                outputStream.println("Lo scambio non è valido!");
+                break;
+            case CHOOSE_COLOR_FOR_CARD_9:
+                outputStream.println("Il colore selezionato non può essere scelto");
+                break;
+            case CHOOSE_STUDENTS_FOR_CARD_10:
+                outputStream.println("Lo scambio non è valido!");
+                break;
+            case CHOOSE_STUDENT_FOR_CARD_11:
+                outputStream.println("Lo studente selezionato non è valido!");
+                break;
+            case CHOOSE_COLOR_FOR_CARD_12:
+                outputStream.println("Il colore selezionato non è valido!");
+                break;
+            case CHOOSE_STUDENTS_TO_LOSE_FOR_CARD_12:
+                outputStream.println("Gli studenti scelti non sono validi!");
+                break;
         }
     }
 
@@ -371,13 +446,20 @@ public class CLI implements Runnable{
                 outputStream.println("I parametri inseriti non sono validi!");
                 break;
             case MOVE_MOTHER_NATURE:
-                outputStream.println("Non hai inserito un comando valido!");
-                break;
             case PICK_CLOUD:
+            case END_TURN:
+            case END_GAME:
+            case CHOOSE_STUDENT_FOR_CARD_1:
+            case CHOOSE_ISLAND_FOR_CARD_3:
+            case CHOOSE_ISLAND_FOR_CARD_5:
+            case SWAP_STUDENTS_FOR_CARD_7:
+            case CHOOSE_COLOR_FOR_CARD_9:
+            case CHOOSE_STUDENTS_FOR_CARD_10:
+            case CHOOSE_STUDENT_FOR_CARD_11:
+            case CHOOSE_COLOR_FOR_CARD_12:
+            case CHOOSE_STUDENTS_TO_LOSE_FOR_CARD_12:
                 outputStream.println("Comando non valido!");
                 break;
-            case END_TURN:
-                outputStream.println("Comando non valido!");
         }
     }
 
@@ -387,20 +469,26 @@ public class CLI implements Runnable{
 
 
     public String askIP(){
+        String ip;
         outputStream.println("Benvenuto!");
         outputStream.println("Inserisci l'indirizzo ip del server: ");
         outputStream.println(">");
-        return inputStream.nextLine();
+        ip = inputStream.nextLine();
+        ip = ip.replaceAll("\s","");
+        return ip;
     }
 
     public int askPort(){ //ogni metodo di CLI richiede gli input e gestisce gli errori base (tipo scrivo davide come porta per il server)
         boolean validInput = false; //si potrebbe fare la stessa cosa con while(1) e break ma così è più elegante
+        String input;
         int port = 0;
         while(!validInput){
             try{
                 outputStream.println("Inserisci la porta del server: ");
                 outputStream.println(">");
-                port = Integer.parseInt(inputStream.nextLine());
+                input = inputStream.nextLine();
+                input = input.replaceAll("\s","");
+                port = Integer.parseInt(input);
                 validInput = true;
             }catch(NumberFormatException e){
                 outputStream.println("La porta dovrebbe essere un numero intero, riprova");

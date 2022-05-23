@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Scanner;
 
 //AGGIUNGERE ACTIVE PER DISATTIVARE I CLIENTHANDLER DEI CLIENT IN WAIT STATE (TANTO PER SICUREZZA)
@@ -23,7 +24,7 @@ public class ClientHandler implements Runnable {
     private GameHandler gameHandler;
     private Message responseMessage;
     private boolean active;
-
+    private ClientState currentClientState;
 
     public ClientHandler(Socket socket, Server server) throws IOException {
         this.socket = socket;
@@ -47,13 +48,18 @@ public class ClientHandler implements Runnable {
                 Message receivedMessage = (Message) in.readObject();
                 readMessage(receivedMessage);
                 }
-            } catch (IOException | QuitException e) {
-                System.out.println("Chiudo la connessione con il client");
+            } catch (QuitException | SocketTimeoutException e) {
+                System.out.println(ID + " si è disconnesso da solo. Chiudo la connessione e chiudo la partita");
+                if (gameHandler!=null ) gameHandler.removeClientHandler(this);
                 closeConnection();
+                if (gameHandler!=null ) gameHandler.closeMatch();
                 //System.err.println(e.getMessage());
             } catch (ClassNotFoundException e) {
                 System.err.println(e.getMessage());
-            }
+            } catch (IOException e){
+                System.out.println("Qualcuno si è disconnesso chiudo la connessione con il client " + ID);
+                closeConnection();
+        }
     }
 
     public void readMessage(Message message){
@@ -82,6 +88,9 @@ public class ClientHandler implements Runnable {
     public void sendMessage(Message message){
         try{
             System.out.println("Sono CH " + ID + " e sto mandando un messaggio " + (message.getClass().toString()));
+            if(message instanceof ClientStateMessage)
+                currentClientState = ((ClientStateMessage) message).getNewState();
+
             out.reset();
             out.writeObject(message);
             out.flush();
@@ -107,6 +116,7 @@ public class ClientHandler implements Runnable {
     //questo metodo va chiamato in caso di termine/crash partita,
     // chiusura inaspettata della connessione lato client, chiusura volontaria lato client (manca messaggio disconnect)
     public void closeConnection() {
+        System.out.println("ClientHandler "+ ID+ ": tolgo i miei riferimenti dal server e poi chiudo la socket");
         //toglie da tutte le mappe di server questo client, connessioni ecc.
         server.removeClientConnection(this);
         try {
@@ -115,6 +125,11 @@ public class ClientHandler implements Runnable {
         catch (IOException e){
             System.err.println(e.getMessage());
         }
+        System.out.println("ClientHandler: chiusa la connessione con " + ID);
+    }
+
+    public ClientState getCurrentClientState(){
+        return currentClientState;
     }
 }
 
