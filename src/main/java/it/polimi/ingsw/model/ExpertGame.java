@@ -18,6 +18,7 @@ public class ExpertGame extends Game {
     private static final int NUM_PLAYABLE_PERSONALITY_CARDS = 3;
     private static final int NUM_EXISTING_PERSONALITY_CARDS = 12;
     private Personality activePersonality; //c'è un solo personaggio attivo per round
+    private Player currentPersonalityPlayer;
     private int coins;
     private int bans;
 
@@ -83,11 +84,14 @@ public class ExpertGame extends Game {
         if(!isMoveMNLegalForCard4(nickname,numSteps))
             return false;
 
-        Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
-        Island dest = islands.get((from.getIslandIndex() + numSteps) % islands.size());
-
-        //manca il ricalcolo dell'influenza
-        currentMotherNatureIsland=islands.get(dest.getIslandIndex());
+        //Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
+        //Island dest = islands.get((from.getIslandIndex() + numSteps) % islands.size());
+        Island from = islands.get(islands.indexOf(currentMotherNatureIsland));
+        System.out.println("Posizione iniziale di MN nell'array di isole: " +islands.indexOf(from));
+        Island dest = islands.get((islands.indexOf(from)+numSteps) % islands.size());
+        System.out.println("Posizione finale in teoria di MN nell'array di isole: " +islands.indexOf(dest));
+        //currentMotherNatureIsland = islands.get(dest.getIslandIndex()); //firePropertyChange
+        currentMotherNatureIsland = dest;
         from.setMotherNature(false);
         dest.setMotherNature(true);
         listeners.firePropertyChange("MotherNature", from.getIslandIndex(), currentMotherNatureIsland.getIslandIndex());
@@ -100,7 +104,8 @@ public class ExpertGame extends Game {
      * @param numSteps : number of islands that the player identified with the playerId wants to move mother nature
      */
     public boolean isMoveMNLegalForCard4(String nickname,int numSteps){
-        int playerMaxSteps = currentTurnAssistantCards.get(nickname).getNumMoves() + 2;
+        int add = (getPlayerByName(nickname).equals(currentPersonalityPlayer) ? 2 : 0);
+        int playerMaxSteps = currentTurnAssistantCards.get(nickname).getNumMoves() + add;
         return numSteps > playerMaxSteps? false : true;
     }
 
@@ -230,6 +235,7 @@ public class ExpertGame extends Game {
             activePersonality=personalities.remove(playedCardIndex);
             activePersonality.setHasBeenUsed(true);
             activePersonality.updateCost();
+            currentPersonalityPlayer = currentPlayer;
             listeners.firePropertyChange("ActivePersonality", null, cardId);
             return true;
         }
@@ -249,6 +255,7 @@ public class ExpertGame extends Game {
     public void resetActivePersonality(){
         int cardID = activePersonality.getCharacterId();
         activePersonality = null;
+        currentPersonalityPlayer = null;
         listeners.firePropertyChange("NoLongerActivePersonality", null, cardID);
     }
 

@@ -37,7 +37,7 @@ public class GUI extends Application implements UI{
     String[] fxmlPaths;
     ClientSocket clientSocket;
     Client client;
-
+    ActionParser actionParser;
     //GUI visualizza la scena
     //GUIUpdater riceve i messaggi di update da clientsocket (lo farei in GUI ma non si può perchè già estende Applications)
     //la GUI ha la ref di un ActionParser che trasforma i click in parametri sfusi e li passa a Client (che li trasforma in messaggi e li manda)
@@ -49,11 +49,10 @@ public class GUI extends Application implements UI{
         fxmlPaths = Arrays.copyOf(Constants.fxmlPaths,Constants.fxmlPaths.length);
         scenes = new ArrayList<>();
         client = new Client(this);
-
+        actionParser = new ActionParser();
     }
 
-    public void handleMessageFromServer(Message message){
-
+    public void handleMessageFromServer(Message message){ //quando arriva il messaggio viene gestito come sulla CLI e viee cambiata/aggiornata la scena
     }
 
 
@@ -77,6 +76,7 @@ public class GUI extends Application implements UI{
             scenes.add(scene);
             GUIController controller = fxmlLoader.getController();
             controller.setGUI(this);
+            controller.setClient(this.client);
         }
     }
 
@@ -107,12 +107,19 @@ public class GUI extends Application implements UI{
             clientSocket = new ClientSocket(ip,port,this);
             Thread socketThread = new Thread(clientSocket); //la sposti su un nuovo thread (parte run() in automatico)
             socketThread.start();
-            //switcha a matchmakingscreen
+            setScene(2);
         }catch(NumberFormatException | UnknownHostException | SocketException e){
             //renderizza qualche messaggio di errore
         }
 
     }
+
+    public void passToSocket(Message message){ //chiamato dai controller
+        try {
+            clientSocket.send(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }    }
 
     public static void main(String[] args) {
         launch(args);

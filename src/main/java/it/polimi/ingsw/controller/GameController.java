@@ -145,6 +145,7 @@ public class GameController implements PropertyChangeListener {
 
     public void resetPersonalityCard(){
         ((ExpertGame) game).resetActivePersonality();
+        changeGameRulesForPersonalityCard(0);
     }
 
     private void changeGameRulesForPersonalityCard(int cardID){
