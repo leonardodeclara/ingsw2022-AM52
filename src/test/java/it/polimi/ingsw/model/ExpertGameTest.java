@@ -123,7 +123,7 @@ class ExpertGameTest {
         game.instantiateGameElements(players);
         game.giveAssistantDeck("mari",0);
         game.giveAssistantDeck("leo",2);
-        game.playAssistantCard("leo",1);
+        game.playAssistantCard("leo",10);
         Island oldMNIsland = game.currentMotherNatureIsland;
         Island newMNIsland = game.islands.get((game.islands.indexOf(oldMNIsland) + 3)%game.islands.size());
         assertTrue(oldMNIsland.isMotherNature());
@@ -337,9 +337,7 @@ class ExpertGameTest {
         players.add("leo");
         players.add("mari");
         players.add("frizio");
-        game.addPlayers(players);
         game.instantiateGameElements(players);
-        game.extractPersonalityCards();
         ArrayList<Personality> playableCards= game.getPersonalities();
         int idOfPlayedCard= playableCards.get(0).getCharacterId();
         game.setActivePersonality(idOfPlayedCard);
@@ -354,12 +352,12 @@ class ExpertGameTest {
         players.add("leo");
         players.add("mari");
         players.add("frizio");
-        game.addPlayers(players);
+
         game.instantiateGameElements(players);
-        game.extractPersonalityCards();
-        assertThrows(RuntimeException.class, ()->game.setActivePersonality(0));
+
+        assertFalse(game.setActivePersonality(0));
         game.setActivePersonality(game.getPersonalities().get(0).getCharacterId());
-        assertThrows(RuntimeException.class, ()->game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
+        assertFalse(game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
     }
 
     @Test
@@ -369,9 +367,7 @@ class ExpertGameTest {
         players.add("leo");
         players.add("mari");
         players.add("frizio");
-        game.addPlayers(players);
         game.instantiateGameElements(players);
-        game.extractPersonalityCards();
         ArrayList<Personality> playableCards = game.getPersonalities();
         playableCards.get(0).setHasBeenUsed(true);
         playableCards.get(0).updateCost();
@@ -381,6 +377,7 @@ class ExpertGameTest {
         for (Personality personality: playableCards){
             assertTrue(game.getPersonalities().contains(personality));
         }
+        assertNull(game.getActivePersonality());
     }
 
 
