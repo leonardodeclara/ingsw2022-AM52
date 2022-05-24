@@ -197,6 +197,11 @@ public class Game {
     public int playAssistantCard(String nickname, int cardPriority) {
         System.out.println("Game: seleziono dal mazzo la carta scelta");
         Player currentPlayer = getPlayerByName(nickname);
+        if (currentPlayer.getDeck().size()==1){
+            boolean oldLastRound = lastRound;
+            setLastRound(true); //firePropertyChange per messaggio di Last Round
+            listeners.firePropertyChange("LastRound", oldLastRound, lastRound);
+        }
         Assistant chosenCard = currentPlayer.getCardByPriority(cardPriority);
         if (chosenCard == null || !isCardPlayable(chosenCard, currentPlayer.getDeck())) return -1;
         System.out.println("Game: Ho estratto CORRETTAMENTE la carta con priority " + chosenCard.getPriority());
@@ -204,6 +209,8 @@ public class Game {
         listeners.firePropertyChange("CurrentTurnAssistantCards", null, currentTurnAssistantCards);
         getPlayerByName(nickname).removeAssistantCard(cardPriority);
         return cardPriority;
+
+        //aggiungere gestione fine carte
     }
 
     public ArrayList<String> getActionPhasePlayerOrder() {
@@ -396,7 +403,7 @@ public class Game {
                 if(!player.getBoard().isTableFull(studentToMove, toBeAdded))
                     return true;
             }
-            else if(islandId >= 0 && islandId <= islands.size())
+            else if(getIslandById(islandId)!=null)
                     return true;
         }
         return false;
