@@ -759,6 +759,74 @@ class GameTest {
         //aggiungere caso in cui mergia 3 isole invece di 2
     }
 
+    @Test
+    void moveAndInfluenceTest(){
+        Game game = new Game(2);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("leoviatano");
+        players.add("frizio");
+        game.instantiateGameElements(players);
+        game.getPlayerByName("leoviatano").setTeam(Tower.BLACK);
+        game.getPlayerByName("frizio").setTeam(Tower.WHITE);
+        game.giveAssistantDeck("leoviatano", 0);
+        game.giveAssistantDeck("frizio", 1);
+        game.playAssistantCard("leoviatano",8);
+        game.playAssistantCard("frizio",4);
+        game.getPlayerByName("leoviatano").addTeacherToBoard(Color.RED);
+        int mnIndex = 0;
+        for (int j = 0; j< 12;j++){
+            if(game.getIslands().get(j).isMotherNature())
+                mnIndex=j;
+        }
+        Island initialMNIsland = game.getIslands().get(mnIndex);
+        game.getIslands().get((mnIndex+1)%game.getIslands().size()).setOwner(game.getPlayerByName("leoviatano"));
+        game.getIslands().get((mnIndex+1)%game.getIslands().size()).addTower(Tower.BLACK);
+        game.getIslands().get((mnIndex+2)%game.getIslands().size()).addStudent(Color.RED);
+        game.getIslands().get((mnIndex+2)%game.getIslands().size()).addStudent(Color.RED);
+        game.moveMotherNature("leoviatano", 2);
+        assertEquals((mnIndex+2)%game.getIslands().size(), game.getCurrentMotherNatureIsland().getIslandIndex());
+        assertEquals((game.getIslands().indexOf(initialMNIsland)+2)%game.getIslands().size(), game.getIslands().indexOf(game.getCurrentMotherNatureIsland()));
+        Island dest = game.getIslands().get((mnIndex+2)%game.getIslands().size());
+        game.calculateInfluence(dest,null);
+        assertEquals("leoviatano", dest.getOwner().getNickname());
+        assertEquals(11,game.getIslands().size());
+        //Struttura del test: trovo madre natura, nella isola dopo ci piazzo una torre di leo
+        //poi muovo madre natura di due posizioni  e chiamo calculateInfluence in modo da fare merge
+        //poi faccio spostare a frizio madre natura e controllo che sia finita al posto giusto
+    }
+
+    @Test
+    void influenceAndMergeTest(){
+        Game game = new Game(2);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("leoviatano");
+        players.add("frizio");
+        game.instantiateGameElements(players);
+        game.getPlayerByName("leoviatano").setTeam(Tower.BLACK);
+        game.getPlayerByName("frizio").setTeam(Tower.WHITE);
+        game.getPlayerByName("leoviatano").addTeacherToBoard(Color.RED);
+        game.giveAssistantDeck("leoviatano", 0);
+        game.giveAssistantDeck("frizio", 1);
+        game.playAssistantCard("leoviatano",8);
+        game.playAssistantCard("frizio",4);
+        int mnIndex = 0;
+        for (int j = 0; j< 12;j++){
+            if(game.getIslands().get(j).isMotherNature())
+                mnIndex=j;
+        }
+        Island initialMN = game.getIslands().get(mnIndex);
+        game.getIslands().get((mnIndex+2)%game.getIslands().size()).addStudent(Color.RED);
+        game.getIslands().get((mnIndex+2)%game.getIslands().size()).addStudent(Color.RED);
+        game.getIslands().get((mnIndex+1)%game.getIslands().size()).setOwner(game.getPlayerByName("leoviatano"));
+        game.getIslands().get((mnIndex+1)%game.getIslands().size()).addTower(Tower.BLACK);
+        Island dest = game.getIslands().get((mnIndex+2)%game.getIslands().size());
+        game.calculateInfluence(dest,null);
+        game.moveMotherNature("leoviatano", 2);
+        assertEquals((mnIndex+2)%game.getIslands().size(),game.getIslands().indexOf(game.getCurrentMotherNatureIsland()));
+        game.moveMotherNature("frizio", 1);
+        assertEquals((mnIndex+3)%game.getIslands().size(),game.getIslands().indexOf(game.getCurrentMotherNatureIsland()));
+    }
+
     /**
      * TODO: controllare il funzionamento
      */
