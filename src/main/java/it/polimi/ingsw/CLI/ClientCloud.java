@@ -17,7 +17,7 @@ public class ClientCloud implements Serializable {
     }
 
     public void print(){
-        System.out.println("NUVOLA: " + getCloudIndex());
+        System.out.println("NUVOLA " + getCloudIndex() + ":");
         try {
             for(Color color : Color.values()) {
                 int numberOfStudentPerColor = (int) getStudents().stream().filter(c -> c == color).count();
@@ -25,8 +25,8 @@ public class ClientCloud implements Serializable {
                     System.out.print(Constants.getStudentsColor(color) + "■ ");
                 }
                 System.out.print(Constants.RESET);
-                System.out.println();
             }
+            System.out.println();
 
         } catch (NullPointerException e) {
             System.out.println("no studenti");

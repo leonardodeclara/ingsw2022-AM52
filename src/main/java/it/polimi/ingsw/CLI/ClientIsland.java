@@ -57,7 +57,7 @@ public class ClientIsland implements Serializable {
         System.out.print(Constants.RESET);
         System.out.println();
 
-        System.out.print("NUMBER OF MERGED ISLANDS: " + getNumMergedIslands());
+        System.out.print("NUMBER OF MERGED ISLANDS: " + getNumMergedIslands() + "\n");
 
         if (isMotherNature())
             System.out.println("\nMOTHER NATURE IS HERE!");
