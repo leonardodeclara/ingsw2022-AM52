@@ -251,6 +251,7 @@ public class GameHandler implements PropertyChangeListener{
         String clientName = getNicknameFromClientID(client.getID());
         if(expertGame)
             gameController.resetPersonalityCard();
+        System.out.println("GH: Mi è arrivato messaggio di endTurn");
         //qui metto l'avanzamento dell'iterator
         // se l'ultimo giocatore ha giocato passo a EndRound quindi nuova planning phase ecce
         if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio

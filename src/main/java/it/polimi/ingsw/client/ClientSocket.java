@@ -71,9 +71,12 @@ public class ClientSocket implements Runnable{
     }
 
     public void send(Message msg) throws IOException {
+
         out.reset();
         out.writeObject(msg);
         out.flush();
+        if (!(msg instanceof  Ping) )
+            System.out.println("Ho mandato un messaggio");
     }
 
     private void closeConnection(){
