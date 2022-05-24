@@ -8,7 +8,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="379.0" prefWidth="681.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.GUI.MatchMakingController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="379.0" prefWidth="681.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.GUI.NicknameController">
    <children>
       <ImageView fitHeight="379.0" fitWidth="685.0" layoutX="200.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="94.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="48.0" AnchorPane.topAnchor="0.0">
          <image>
@@ -20,11 +20,11 @@
             <Font name="Britannic Bold" size="16.0" />
          </font>
       </Text>
-      <Button layoutX="297.0" layoutY="322.0" mnemonicParsing="false" onAction="#searchGame" text="CONTINUE">
+      <Button layoutX="297.0" layoutY="322.0" mnemonicParsing="false" onAction="#authenticate" text="CONTINUE">
          <font>
             <Font name="Britannic Bold" size="13.0" />
          </font>
       </Button>
-      <TextField layoutX="261.0" layoutY="222.0" />
+      <TextField id = "nickname" fx:id="nickname" layoutX="261.0" layoutY="222.0" />
    </children>
 </AnchorPane>

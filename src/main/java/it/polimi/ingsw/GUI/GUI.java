@@ -4,8 +4,10 @@ import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.ClientSocket;
 import it.polimi.ingsw.messages.ClientState;
+import it.polimi.ingsw.messages.ClientStateMessage;
 import it.polimi.ingsw.messages.Message;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -53,6 +55,10 @@ public class GUI extends Application implements UI{
     }
 
     public void handleMessageFromServer(Message message){ //quando arriva il messaggio viene gestito come sulla CLI e viee cambiata/aggiornata la scena
+        if(message instanceof ClientStateMessage){
+            currentState = ((ClientStateMessage) message).getNewState();
+            renderScene(); //update scene in funzione del nuovo stato
+        }
     }
 
 
@@ -63,8 +69,12 @@ public class GUI extends Application implements UI{
     private void renderScene(){
         //renderBackground(); //il background lo renderizziamo sempre
         switch(currentState){
-            case CONNECT_STATE:
-                //renderConnectWindow();
+            case INSERT_NEW_GAME_PARAMETERS:
+                setScene(3);
+                break;
+            case WAIT_IN_LOBBY:
+                setScene(4);
+                break;
         }
     }
 
@@ -82,9 +92,15 @@ public class GUI extends Application implements UI{
 
 
     public void setScene(int index){
-        stage.setScene(scenes.get(index));
-        stage.show();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                stage.setScene(scenes.get(index));
+                stage.show();
+            }
+        });
     }
+
     @Override
     public void start(Stage primaryStage) throws IOException {
         stage = primaryStage;
