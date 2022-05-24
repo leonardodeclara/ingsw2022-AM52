@@ -57,6 +57,4 @@ class PersonalityTest {
         card.removeBan();
         assertEquals(0, card.getBans());
     }
-
-
 }

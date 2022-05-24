@@ -25,7 +25,7 @@ public class Game {
     private ArrayList<Integer> wizards;
     private ArrayList<Assistant> assistantDecks;
     protected HashMap<String, Assistant> currentTurnAssistantCards;
-    protected Island currentMotherNatureIsland; //firePropertyChange
+    protected Island currentMotherNatureIsland;
     private boolean lastRound;
     protected HashMap<Color, Player> teachersOwners;
     protected PropertyChangeSupport listeners;
@@ -49,9 +49,9 @@ public class Game {
         wizards.add(3);
         wizards.add(4);
         assistantDecks = new ArrayList<>();
-        currentTurnAssistantCards = new HashMap<String, Assistant>();
+        currentTurnAssistantCards = new HashMap<>();
         lastRound = false;
-        winner = null; //firePropertyChange
+        winner = null;
         teachersOwners = new HashMap<>();
         listeners = new PropertyChangeSupport(this);
 
@@ -91,7 +91,6 @@ public class Game {
         for (int i = 0; i < Color.values().length; i++) {
             teachersOwners.put(Color.values()[i], null);
         }
-        //System.out.println("Game: ho finito di istanziare i professori");
 
         //aggiunte tutte le carte di tutti i maghi
         for (int numWizard = 0; numWizard < 4; numWizard++) {
@@ -101,7 +100,6 @@ public class Game {
                 assistantDecks.add(new Assistant(numMoves, priority, numWizard));
             }
         }
-        //System.out.println("Game: ho finito di istanziare i deck assistenti");
 
         //posizionata in maniera randomica madre natura
         Random indexGenerator = new Random();
@@ -111,30 +109,21 @@ public class Game {
         islands.get(initialMotherNature).setMotherNature(true);
 
         currentMotherNatureIsland = islands.get(initialMotherNature);
-        //listeners.firePropertyChange("MotherNature", null, currentMotherNatureIsland.getIslandIndex());
-        //vedere se ci va
-
-        //System.out.println("Game: ho finito di settare la posizione iniziale di MN");
         //istanzio il sacchetto preparatorio
         basket = new Basket(new int[]{2, 2, 2, 2, 2});
 
         //riempio le isole con le pedine
         fillIslands();
-        //System.out.println("Game: ho finito di fare fill alle isole ");
 
         //riempio il sacchetto definitivo
         //basket = new Basket(new int[]{24, 24, 24, 24, 24}); //per testare si può modificare questa cosa
-        basket = new Basket(new int[]{5, 5, 5, 5, 5});
+        basket = new Basket(new int[]{15, 15, 15, 15, 15});
 
         addPlayers(playersNames);
         initiatePlayersLobbies();
 
-        //System.out.println("Game: ho finito di istanziare i gameElements");
     }
 
-    /**
-     * TODO: cambiare i relativi test in expert game
-     */
     /**
      * Method initiatePlayersLobbies calculates the number of students to put in the players' lobby
      * and does it
@@ -168,14 +157,12 @@ public class Game {
      * @param playerName : name of the player, used as the index for the players arrayList
      * @param deckId     : id given to the deck, the player uses it communicate which deck he wants
      */
-    //da cambiare, in input deve prendere il nickname. cambiare anche tutti i relativi test
     public void giveAssistantDeck(String playerName, int deckId) {
         ArrayList<Assistant> assignedDeck = new ArrayList<>();
         wizards.remove((Integer) deckId); //firePropertyChange
         for (Assistant assistant : assistantDecks) {
             if (assistant.getWizard() == deckId) {
                 assignedDeck.add(assistant);
-                //assistantDecks.remove(assistant);
             }
         }
         assistantDecks.removeAll(assignedDeck);
@@ -185,32 +172,24 @@ public class Game {
 
     /**
      * Method playAssistantCard removes the card to the player's deck and adds it to the current turn played assistant cards
-     * in order to calculate the playing order for the action phase
+     * in order to calculate the playing order for the action phase.
      *
-     * @param nickname :
-     * @param
-     */
-    /*
-    TODO: la selezione della carta non deve avvenire per indice perché il giocatore non lo conosce. in questo modo funziona solo
-     al primo round. dal secondo già è problematico. bisogna scrivere un metodo getCardById che fa la selezione per priority
+     * @param nickname : name of the player trying to play the card.
+     * @param cardPriority: priority of the card in play.
      */
     public int playAssistantCard(String nickname, int cardPriority) {
-        System.out.println("Game: seleziono dal mazzo la carta scelta");
         Player currentPlayer = getPlayerByName(nickname);
-        if (currentPlayer.getDeck().size()==1){
-            boolean oldLastRound = lastRound;
-            setLastRound(true); //firePropertyChange per messaggio di Last Round
-            listeners.firePropertyChange("LastRound", oldLastRound, lastRound);
-        }
         Assistant chosenCard = currentPlayer.getCardByPriority(cardPriority);
         if (chosenCard == null || !isCardPlayable(chosenCard, currentPlayer.getDeck())) return -1;
-        System.out.println("Game: Ho estratto CORRETTAMENTE la carta con priority " + chosenCard.getPriority());
-        currentTurnAssistantCards.put(nickname, chosenCard); //firePropertyChange
+        currentTurnAssistantCards.put(nickname, chosenCard);
         listeners.firePropertyChange("CurrentTurnAssistantCards", null, currentTurnAssistantCards);
         getPlayerByName(nickname).removeAssistantCard(cardPriority);
+        if (currentPlayer.getDeck().size()==0){
+            boolean oldLastRound = lastRound;
+            setLastRound(true);
+            listeners.firePropertyChange("LastRound", oldLastRound, lastRound);
+        }
         return cardPriority;
-
-        //aggiungere gestione fine carte
     }
 
     public ArrayList<String> getActionPhasePlayerOrder() {
@@ -265,14 +244,8 @@ public class Game {
     public boolean moveMotherNature(String nickname, int numSteps) {
         if (!isMoveMNLegal(nickname, numSteps))
             return false;
-
-        //Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
-        //Island dest = islands.get((from.getIslandIndex() + numSteps) % islands.size());
         Island from = islands.get(islands.indexOf(currentMotherNatureIsland));
-        System.out.println("Posizione iniziale di MN nell'array di isole: " +islands.indexOf(from));
         Island dest = islands.get((islands.indexOf(from)+numSteps) % islands.size());
-        System.out.println("Posizione finale in teoria di MN nell'array di isole: " +islands.indexOf(dest));
-        //currentMotherNatureIsland = islands.get(dest.getIslandIndex()); //firePropertyChange
         currentMotherNatureIsland = dest;
         from.setMotherNature(false);
         dest.setMotherNature(true);
@@ -300,7 +273,6 @@ public class Game {
             studentsToMove.add(player.getBoard().getLobbyStudent(studentIDs.get(i)));
         }
 
-
         for (Color studentToMove : studentsToMove) {
             if(player.removeFromBoardLobby(studentToMove)){
                 if (islandIDs.get(islandIndexCounter) == Constants.ISLAND_ID_NOT_RECEIVED)
@@ -318,8 +290,6 @@ public class Game {
         return true;
     }
 
-
-
     /**
      * Method updateTeachersOwnership recalculates the given player's number of students and possibly assigns him 1+
      *  teachers ownership
@@ -332,8 +302,8 @@ public class Game {
             Player owner = teachersOwners.get(c);
             if(owner != null){
                 if (player.getBoard().getTableNumberOfStudents(c) > owner.getBoard().getTableNumberOfStudents(c)) {
-                    owner.removeTeacherFromBoard(c); //firePropertyChange
-                    player.addTeacherToBoard(c); //firePropertyChange
+                    owner.removeTeacherFromBoard(c);
+                    player.addTeacherToBoard(c);
                     teachersOwners.put(c, player);
                 }
             }
@@ -348,16 +318,11 @@ public class Game {
     }
 
     /**
-     * TODO: fix javadocs
-     */
-
-    /**
-     * Method moveStudentsToLobby moves all the students on a given cloud, to the given player lobby
+     * Method moveStudentsToLobby moves all the students on a given cloud, to the given player lobby.
      *
-     * @param playerName : naem given to the player,
-     * @param cloudId : id given to the cloud to empty
+     * @param playerName : name of to the player making the movement.
+     * @param cloudId : id given to the cloud to empty.
      */
-    //da cambiare, in input deve prendere il nickname. cambiare anche tutti i relativi test
     public boolean moveStudentsToLobby(String playerName,int cloudId){
         Player player = getPlayerByName(playerName);
         if(!isMoveStudentsToLobbyLegal(player,cloudId))
@@ -368,6 +333,7 @@ public class Game {
             player.addToBoardLobby(student); //firePropertyChange
         return true;
     }
+
     /**
      * Utility method used to check whether it's the game's last round or not.
      * @return true if the game will be over at the end of the current round, false if not.
@@ -387,11 +353,12 @@ public class Game {
     }
 
     /**
-     * Method isMoveStudentFromLobbyLegal checks  if the player with Player ID can move the student in his lobby to an island or
+     * Method isMoveStudentFromLobbyLegal checks if the player can move the student in his lobby to an island or
      *  the corresponding table.
-     * @param player : id given to the player, used as the index for the players ArrayList
-     * @param studentIndex : number of islands that the player identified with the playerId wants to move mother nature
-     * @param islandId : the id of the destination island (or -1 if no island is specified)
+     * @param player : player making the move.
+     * @param studentIndex : index of the student in the board's lobby.
+     * @param islandId : id of the destination island (or -1 if no island is specified)
+     * @param toBeAdded: number of students' move already validated.
      */
     public boolean isMoveStudentFromLobbyLegal(Player player,int studentIndex,int islandId, int toBeAdded){
         //non sono sicuro sia il modo giusto per gestire questo caso
@@ -431,7 +398,6 @@ public class Game {
         Color pick;
         for (Cloud cloud: clouds){
             for(int i= 0; i< numOfPicks;i++){
-                //questo andrebbe sostituito con un trycath, il caso null è per l'errore di estrazione
                 try{
                     pick = basket.pickStudent();
                     if (pick == null)
@@ -439,17 +405,16 @@ public class Game {
                     picks.add(pick);
                 }
                 catch (EmptyBasketException e){
-                    cloud.fillStudents(picks); //se non ci sono abbastanza pedine metto quelle che ci sono e chiudo il refill
+                    cloud.fillStudents(picks);
                     picks.clear();
                     listeners.firePropertyChange("CloudsRefill", null, new ArrayList<>(clouds));
                     boolean oldLastRound = lastRound;
-                    setLastRound(true); //firePropertyChange per messaggio di Last Round
+                    setLastRound(true);
                     listeners.firePropertyChange("LastRound", oldLastRound, lastRound);
-                    //vedere poi come funziona la segnalazione del last round a tutti i giocatori
                     return;
                 }
             }
-            cloud.fillStudents(picks); //firePropertyChange
+            cloud.fillStudents(picks);
             picks.clear();
         }
         //mando l'update dopo averle aggiornate entrambe
@@ -676,7 +641,6 @@ public class Game {
      * @param nickname: name given to the player,TO DO
      * @return ArrayList<Assistant>: list of Assistant Card that are still playable
      */
-    //da cambiare, in input deve prendere il nickname. cambiare anche tutti i relativi test
     public ArrayList<Assistant> getPlayableAssistantCards(String nickname){
         return getPlayerByName(nickname).getDeck();
     }
@@ -702,14 +666,6 @@ public class Game {
         return assistantDecks;
     }
 
-    /*Da rivedere*/
-    /*potremmo aggiungere attributo winner a game*/
-    /*Vittoria: return true, winner = playerVincitore
-    * Partita continua: return false, winner = null
-    * Parità: return true, winner=null
-    * */
-    //Questo metodo va chiamato dopo aver messo una torre, dopo aver unificato delle isole
-
     /**
      * Method that checks if the Game is ended
      * @return true if the game current game is over, false otherwise
@@ -718,7 +674,6 @@ public class Game {
         for(Player player: players){
             if(player.getBoard().getTowers()==0){
                 winner = player;
-                //listeners.firePropertyChange("GameOver", null, winner.getNickname());
                 return true;
             }
         }
@@ -742,8 +697,7 @@ public class Game {
                 potentialWinners.add(potentialWinner);
         }
         if (potentialWinners.size() == 1){
-            winner = potentialWinners.get(0); //firePropertyChange
-            //listeners.firePropertyChange("GameOver", null, winner.getNickname());
+            winner = potentialWinners.get(0);
             return;
 
         }
@@ -751,26 +705,16 @@ public class Game {
             int maxTeachers = -1;
             for (Player finalPlayer : potentialWinners) {
                 if (finalPlayer.getBoard().getTeacherTable().size()>maxTeachers){
-                    winner = finalPlayer; //firePropertyChange
+                    winner = finalPlayer;
                     maxTeachers= finalPlayer.getBoard().getTeacherTable().size();
                 }
                 else if (finalPlayer.getBoard().getTeacherTable().size()==maxTeachers){
                     winner = null;
                 }
             }
-            //if (winner !=null)
-            //    listeners.firePropertyChange("GameOver", null, winner.getNickname());
-            //else
-            //    listeners.firePropertyChange("GameOver", null, null);
             return;
         }
     }
-
-    //revisione checkGameOver: divisione in metodo1 che controlla chi ha 0 torri +
-    //metodo2 che, se ci sono meno di 3 isole, controlla chi ha più torri, piu teacher ecc
-    //metodo 1 viene chiamato dopo ogni spostamento di torri (dopo calcolo influenza a rigor di logica)
-    //metodo 2 viene chiamato ogni volta che c'è un merge (in generale dopo calcolo influenza) e a fine del lastRound
-    //quindi in gameController metterei la chiamata a checkGameOver dopo calculateInfluence a calculateWinner(metodo 2) in gameController in closeCurrentRound
 
     /**
      * Method that returns the instance of a Player based on his nickname

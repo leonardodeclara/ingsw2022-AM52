@@ -28,7 +28,6 @@ public class Player {
         this.nickname=nickname;
         board = new Board();
         deck = new ArrayList<>();
-        //this.team = team;
         listeners = new PropertyChangeSupport(this);
     }
 

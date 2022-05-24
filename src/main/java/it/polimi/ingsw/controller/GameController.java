@@ -239,9 +239,6 @@ public class GameController implements PropertyChangeListener {
             case "LastRound":
                 toSend = updateMessageBuilder.buildLastRoundMessage(event);
                 break;
-            //case "Gameover":
-            //    toSend = updateMessageBuilder.buildGameOverMessage(event);
-            //    break;
             case "CloudsRefill":
                 toSend = updateMessageBuilder.buildCloudsRefillMessage(event);
                 break;

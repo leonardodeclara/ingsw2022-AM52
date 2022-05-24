@@ -244,6 +244,23 @@ class GameTest {
         assertEquals(a1.getPriority(),game.getCurrentTurnAssistantCards().get("mari").getPriority());
     }
 
+    @Test
+    void lastAssistantCardTest(){
+        Game game = new Game(2);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("leo");
+        players.add("mari");
+        game.instantiateGameElements(players);
+        game.getPlayerByName("leo").setTeam(Tower.WHITE);
+        game.getPlayerByName("mari").setTeam(Tower.BLACK);
+        ArrayList<Assistant> deck = new ArrayList<>();
+        deck.add(new Assistant(1,1,1));
+        game.getPlayerByName("leo").setDeck(deck);
+        game.playAssistantCard("leo", 1);
+        assertTrue(game.isLastRound());
+        assertEquals(0, game.getPlayerByName("leo").getDeck().size());
+    }
+
     /**
      * Method isMoveMNLegal is responsible for verifying that Mother Nature moves are legal according to
      * the numMoves written on the Assistant card played
@@ -395,8 +412,8 @@ class GameTest {
         game.moveStudentsToLobby("leo", 0);
         game.moveStudentsToLobby("mari", 1);
         //test per vedere se le nuvole sono vuote
-        assertEquals(true, game.getClouds().get(0).getStudents().size() == 0);
-        assertEquals(true, game.getClouds().get(1).getStudents().size() == 0);
+        assertTrue(game.getClouds().get(0).getStudents().size() == 0);
+        assertTrue(game.getClouds().get(1).getStudents().size() == 0);
         //test per vedere se sono stati aggiunti 3 studenti alla lobby
         assertEquals(l1size + 3, game.getPlayers().get(0).getBoard().getLobby().size());
         assertEquals(l2size + 3, game.getPlayers().get(1).getBoard().getLobby().size());
@@ -715,7 +732,7 @@ class GameTest {
         assertEquals(10,game.getPlayableAssistantCards("mari").size());
         game.playAssistantCard("mari",1);
         assertEquals(1, game.getCurrentTurnAssistantCards().get("mari").getPriority());
-        //assertFalse(game.getPlayableAssistantCards("mari").contains(playedCard)); //bisogna controllare che manchi solo quella carta giocata
+        assertFalse(game.getPlayableAssistantCards("mari").contains(new Assistant(1,1,0)));
         assertEquals(9,game.getPlayableAssistantCards("mari").size());
     }
 
@@ -820,9 +837,10 @@ class GameTest {
         game.getIslands().get((mnIndex+1)%game.getIslands().size()).setOwner(game.getPlayerByName("leoviatano"));
         game.getIslands().get((mnIndex+1)%game.getIslands().size()).addTower(Tower.BLACK);
         Island dest = game.getIslands().get((mnIndex+2)%game.getIslands().size());
-        game.calculateInfluence(dest,null);
+        game.calculateInfluence(dest,null); //qui c'è un merge
+        assertEquals(11, game.getIslands().size());
         game.moveMotherNature("leoviatano", 2);
-        assertEquals((mnIndex+2)%game.getIslands().size(),game.getIslands().indexOf(game.getCurrentMotherNatureIsland()));
+        assertEquals((mnIndex+2)%game.getIslands().size(),game.getIslands().indexOf(game.getCurrentMotherNatureIsland())); //le isole sono scalate di 1 rispetto all'inizio
         game.moveMotherNature("frizio", 1);
         assertEquals((mnIndex+3)%game.getIslands().size(),game.getIslands().indexOf(game.getCurrentMotherNatureIsland()));
     }
@@ -878,6 +896,4 @@ class GameTest {
         deck0.add(deck0FirstElement);
         assertEquals(true,game.isCardPlayable(deck0.get(0),deck0));
     }
-
-    //mancano test su moveMN e getPlayableAssistantCard
 }
