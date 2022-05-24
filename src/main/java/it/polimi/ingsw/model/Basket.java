@@ -48,7 +48,7 @@ public class Basket {
             return null;
         studentsNum[colorIndex]-=1;
         size-=1;
-        System.out.println("SACCHETTO: IL NUMERO DI PEDINE RIMASTE È " + size);
+        //System.out.println("SACCHETTO: IL NUMERO DI PEDINE RIMASTE È " + size);
         return Color.values()[colorIndex];
     }
 

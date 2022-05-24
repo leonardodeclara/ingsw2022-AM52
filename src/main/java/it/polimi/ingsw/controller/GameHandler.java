@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import com.sun.net.httpserver.Authenticator;
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Tower;
@@ -220,9 +221,18 @@ public class GameHandler implements PropertyChangeListener{
         String clientName = getNicknameFromClientID(client.getID());
         System.out.println("GameHandler:è arrivato un messaggio di moveMotherNature da " + clientName);
         Message response = gameController.moveMotherNature(clientName, steps); //se il messaggio andava bene il model si è aggiornato dopo questa riga
-        sendTo(clientName,response);
-        if (!(response instanceof ErrorMessage)){
-            System.out.println(clientName + "ha spostato MN, ora lo mando in PICK_CLOUD se ci sono abbastanza pedine");
+        //gestire qui il caso di termine partita con la chiamata a closeMatch()
+        //dividere i casi: errore, tutto okay avanti con PICK_CLOUD o END_TURN, fine partita
+        //nel secondo terzo caso entrambi i messaggi sono
+
+        if (response instanceof EndGameMessage){
+            sendAll(response);
+            closeMatch();
+        }
+        else {
+            sendTo(clientName, response);
+            if (!(response instanceof ErrorMessage))
+                System.out.println(clientName + "ha spostato MN, ora lo mando in PICK_CLOUD se ci sono abbastanza pedine");
         }
     }
 
@@ -239,6 +249,8 @@ public class GameHandler implements PropertyChangeListener{
 
     private void handleEndTurn(CloseTurnMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
+        if(expertGame)
+            gameController.resetPersonalityCard();
         //qui metto l'avanzamento dell'iterator
         // se l'ultimo giocatore ha giocato passo a EndRound quindi nuova planning phase ecce
         if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
@@ -282,11 +294,12 @@ public class GameHandler implements PropertyChangeListener{
         //se non siamo in expert basta chiamare startPlanningPhase() e poi da lì il resto va a oltranza
         //poi non mi ricordo sinceramente
         //ad es bisogna resettare le carte assistente
-        if (gameController.closeCurrentRound()) //magari cambiare nome a questo metodo e mettere qualcosa tipo isThisLastRound
+        Message endRound = gameController.closeCurrentRound();
+        if (endRound instanceof EndGameMessage){ //magari cambiare nome a questo metodo e mettere qualcosa tipo isThisLastRound
+            sendAll(endRound);
             closeMatch();
+        }
         else{
-            if(expertGame)
-                gameController.resetPersonalityCard();
             startPlanningPhase();
         }
     }

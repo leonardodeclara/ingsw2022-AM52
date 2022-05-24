@@ -124,7 +124,7 @@ public class Game {
 
         //riempio il sacchetto definitivo
         //basket = new Basket(new int[]{24, 24, 24, 24, 24}); //per testare si può modificare questa cosa
-        basket = new Basket(new int[]{10, 10, 10, 10, 10});
+        basket = new Basket(new int[]{5, 5, 5, 5, 5});
 
         addPlayers(playersNames);
         initiatePlayersLobbies();
@@ -299,7 +299,7 @@ public class Game {
                 if (islandIDs.get(islandIndexCounter) == Constants.ISLAND_ID_NOT_RECEIVED)
                     player.addToBoardTable(studentToMove);
                 else {
-                    Island islandDest = islands.get(islandIDs.get(islandIndexCounter));
+                    Island islandDest = getIslandById(islandIDs.get(islandIndexCounter));
                     islandDest.addStudent(studentToMove);
                 }
                 islandIndexCounter++;
@@ -711,48 +711,59 @@ public class Game {
         for(Player player: players){
             if(player.getBoard().getTowers()==0){
                 winner = player;
-                listeners.firePropertyChange("GameOver", null, winner.getNickname());
+                //listeners.firePropertyChange("GameOver", null, winner.getNickname());
                 return true;
             }
         }
         if (islands.size()<=Constants.ISLAND_THRESHOLD_FOR_GAME_OVER){
-            int minTowers = Constants.MAX_TOWER_NUMBER;
-            ArrayList<Player> potentialWinners = new ArrayList<>();
-            for (Player potentialWinner: players){
-                if (potentialWinner.getBoard().getTowers()<minTowers){
-                    potentialWinners.clear();
-                    potentialWinners.add(potentialWinner);
-                    minTowers=potentialWinner.getBoard().getTowers();
-                }
-                else if (potentialWinner.getBoard().getTowers()==minTowers)
-                    potentialWinners.add(potentialWinner);
-            }
-            if (potentialWinners.size() == 1){
-                winner = potentialWinners.get(0); //firePropertyChange
-                listeners.firePropertyChange("GameOver", null, winner.getNickname());
-                return true;
-
-            }
-            else {
-                int maxTeachers = -1;
-                for (Player finalPlayer : potentialWinners) {
-                    if (finalPlayer.getBoard().getTeacherTable().size()>maxTeachers){
-                        winner = finalPlayer; //firePropertyChange
-                        maxTeachers= finalPlayer.getBoard().getTeacherTable().size();
-                    }
-                    else if (finalPlayer.getBoard().getTeacherTable().size()==maxTeachers){
-                        winner = null;
-                    }
-                }
-                if (winner !=null)
-                    listeners.firePropertyChange("GameOver", null, winner.getNickname());
-                else
-                    listeners.firePropertyChange("GameOver", null, null);
-                return true;
-            }
+            calculateWinner();
+            return true;
         }
         return false;
     }
+
+    public void calculateWinner(){
+        int minTowers = Constants.MAX_TOWER_NUMBER;
+        ArrayList<Player> potentialWinners = new ArrayList<>();
+        for (Player potentialWinner: players){
+            if (potentialWinner.getBoard().getTowers()<minTowers){
+                potentialWinners.clear();
+                potentialWinners.add(potentialWinner);
+                minTowers=potentialWinner.getBoard().getTowers();
+            }
+            else if (potentialWinner.getBoard().getTowers()==minTowers)
+                potentialWinners.add(potentialWinner);
+        }
+        if (potentialWinners.size() == 1){
+            winner = potentialWinners.get(0); //firePropertyChange
+            //listeners.firePropertyChange("GameOver", null, winner.getNickname());
+            return;
+
+        }
+        else {
+            int maxTeachers = -1;
+            for (Player finalPlayer : potentialWinners) {
+                if (finalPlayer.getBoard().getTeacherTable().size()>maxTeachers){
+                    winner = finalPlayer; //firePropertyChange
+                    maxTeachers= finalPlayer.getBoard().getTeacherTable().size();
+                }
+                else if (finalPlayer.getBoard().getTeacherTable().size()==maxTeachers){
+                    winner = null;
+                }
+            }
+            //if (winner !=null)
+            //    listeners.firePropertyChange("GameOver", null, winner.getNickname());
+            //else
+            //    listeners.firePropertyChange("GameOver", null, null);
+            return;
+        }
+    }
+
+    //revisione checkGameOver: divisione in metodo1 che controlla chi ha 0 torri +
+    //metodo2 che, se ci sono meno di 3 isole, controlla chi ha più torri, piu teacher ecc
+    //metodo 1 viene chiamato dopo ogni spostamento di torri (dopo calcolo influenza a rigor di logica)
+    //metodo 2 viene chiamato ogni volta che c'è un merge (in generale dopo calcolo influenza) e a fine del lastRound
+    //quindi in gameController metterei la chiamata a checkGameOver dopo calculateInfluence a calculateWinner(metodo 2) in gameController in closeCurrentRound
 
     /**
      * Method that returns the instance of a Player based on his nickname
@@ -839,6 +850,14 @@ public class Game {
         return currentMotherNatureIsland;
     }
 
+    public Island getIslandById(int islandId){
+        for (Island island: islands){
+            if (island.getIslandIndex()==islandId)
+                return island;
+        }
+        return null;
+    }
+
     /**
      * Method setPropertyChangeListeners sets the listeners of Game's main attributes.
      * @param controller: object that listens to the game's changes.
@@ -847,7 +866,7 @@ public class Game {
         listeners.addPropertyChangeListener("MotherNature", controller); //fire fatto, anche in exp
         listeners.addPropertyChangeListener("Merge", controller); //fire fatto
         listeners.addPropertyChangeListener("LastRound", controller); //fire fatto
-        listeners.addPropertyChangeListener("Gameover", controller); //fire fatto, rivedere un po' cosa viene mandato
+        //listeners.addPropertyChangeListener("Gameover", controller); //fire fatto, rivedere un po' cosa viene mandato
         listeners.addPropertyChangeListener("CloudsRefill", controller); //fire fatto
         listeners.addPropertyChangeListener("CurrentTurnAssistantCards", controller); //fire fatto
         for (Cloud cloud: clouds){

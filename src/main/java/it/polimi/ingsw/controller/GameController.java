@@ -106,6 +106,8 @@ public class GameController implements PropertyChangeListener {
         if(moveMotherNature.test(player,steps)){
             //qui va aggiunto tutta la gestione del calcolo influenza, spostamento torri, merge isole ecc
             calculateInfluence.apply(game.getCurrentMotherNatureIsland(),null);
+            if (game.checkGameOver())
+                return new EndGameMessage(game.getWinner()==null? Constants.TIE: game.getWinner().getNickname());
 
             if (game.isLastRound() && !game.areCloudsFull())
                 //svuotamento delle nuvole viene saltato se siamo all'ultimo round e non ci sono abbastanza pedine studente per tutti
@@ -185,15 +187,16 @@ public class GameController implements PropertyChangeListener {
 
 
     //return true se la partita è finita, false otherwise
-    public boolean closeCurrentRound(){
+    public Message closeCurrentRound(){
         //bisogna gestire la fine partita nel caso fosse il lastRound
         if (game.isLastRound()){
+            game.calculateWinner();
             //in game manca tutto il calcolo del vincitore in caso la partita finisca al termine del lastRound
             System.out.println("Finita la partita");
-            return true;
+            return new EndGameMessage(game.getWinner()==null? Constants.TIE: game.getWinner().getNickname());
         }
         game.resetCurrentTurnAssistantCards();
-        return false;
+        return null;
     }
 
     public ArrayList<String> getActionPhaseTurnOrder(){
@@ -236,9 +239,9 @@ public class GameController implements PropertyChangeListener {
             case "LastRound":
                 toSend = updateMessageBuilder.buildLastRoundMessage(event);
                 break;
-            case "Gameover":
-                toSend = updateMessageBuilder.buildGameOverMessage(event);
-                break;
+            //case "Gameover":
+            //    toSend = updateMessageBuilder.buildGameOverMessage(event);
+            //    break;
             case "CloudsRefill":
                 toSend = updateMessageBuilder.buildCloudsRefillMessage(event);
                 break;

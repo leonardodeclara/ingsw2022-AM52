@@ -83,7 +83,7 @@ public class UpdateMessageBuilder {
             return new LastRoundMessage("Questo è l'ultimo round della partita!");
         else return null;
     }
-
+/*
     public Message buildGameOverMessage(PropertyChangeEvent event){
         String winnerName = (String) event.getNewValue();
         if (winnerName!=null)
@@ -93,7 +93,7 @@ public class UpdateMessageBuilder {
         //poi in gameHandler si può gestire il caso di mandare un messaggio di win al vincitore, di lose ai perdenti ecc
         //per il momento mandiamo in broadcast il nome del vincitore se ce n'è uno
     }
-
+*/
     public Message buildCloudsRefillMessage(PropertyChangeEvent event){
         ArrayList<Cloud> modelClouds = (ArrayList<Cloud>) event.getNewValue();
         ArrayList<ClientCloud> clientClouds = new ArrayList<>();

@@ -169,6 +169,8 @@ public class CLI implements Runnable,UI{
             updateInactivePersonality((InactivePersonalityMessage) updateMessage);
         else if (updateMessage instanceof LastRoundMessage)
             setLastRound((LastRoundMessage) updateMessage);
+        else if (updateMessage instanceof EndGameMessage)
+            showEndGameMessage((EndGameMessage) updateMessage);
     }
 
     public void updateAvailableWizard(AvailableWizardMessage message){
@@ -221,8 +223,8 @@ public class CLI implements Runnable,UI{
     public void updateCloud(CloudUpdateMessage message){
         GB.emptyCloud(message.getCloudIndex());
         clearScreen();
-        System.out.println("Svuotamento di una nuvola");
-        System.out.println();
+        outputStream.println("Svuotamento di una nuvola");
+        outputStream.println();
         GB.print();
     }
 
@@ -273,12 +275,19 @@ public class CLI implements Runnable,UI{
 
     //Ha ancora dei problemi si lo so
     public void clearScreen(){
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+        outputStream.print("\033[H\033[2J");
+        outputStream.flush();
     }
 
     public void setLastRound(LastRoundMessage message){
-        System.out.println(message.getLastRoundMessage());
+        outputStream.println(message.getLastRoundMessage());
+    }
+
+    public void showEndGameMessage(EndGameMessage message){
+        if(message.getWinnerName().equals(Constants.TIE))
+            outputStream.println("La partita è terminata in pareggio!");
+        else
+            outputStream.println("Il vincitore è " + message.getWinnerName() + "!");
     }
 
     private void visualizeContextMessage(){
