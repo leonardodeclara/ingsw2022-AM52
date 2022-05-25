@@ -316,12 +316,17 @@ public class GameHandler implements PropertyChangeListener{
     private void handleCard3Effect(Card3EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
         Message response = gameController.applyEffect3(message.getIslandID());
-        if (!(response instanceof  ErrorMessage)){
+        if (response instanceof EndGameMessage){
+            sendAll(response);
+            closeMatch();
+        }
+        else if (response==null) {
+            //caso in cui non c'è stato un errore o non è finita la partita
             response= new ClientStateMessage(client.getCurrentClientState());
             System.out.println(clientName + "ha utilizzato l'effetto della carta 3, " +
                     "ora lo mando nello stato precedente alla invocazione della carta");
         }
-        sendTo(clientName, response);
+        else sendTo(clientName, response);
     }
 
     private void handleCard5Effect(Card5EffectMessage message, ClientHandler client){

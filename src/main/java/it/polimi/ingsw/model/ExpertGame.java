@@ -308,6 +308,9 @@ public class ExpertGame extends Game {
      * @return true if the parameters are correct and the effect has been correctly applied, false otherwise.
      */
     public boolean executeCard7Effect(ArrayList<Integer> cardStudentsIndexes, ArrayList<Integer> lobbyStudentsIndexes){
+        if (cardStudentsIndexes.size()>3 || lobbyStudentsIndexes.size()>3
+                || cardStudentsIndexes.size()!=lobbyStudentsIndexes.size())
+            return false;
         ArrayList<Color> fromCard = new ArrayList<>();
         ArrayList<Color> fromLobby = new ArrayList<>();
         for (Integer index: cardStudentsIndexes){
