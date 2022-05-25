@@ -272,21 +272,29 @@ public class ExpertGame extends Game {
     public boolean executeCard1Effect(int chosenStudent,int islandId){
        Color student =((LobbyPersonality) activePersonality).getStudent(chosenStudent);
        Island destination = getIslandById(islandId);
-       if (student!=null && destination!=null){
-           destination.addStudent(student);
-           try{
-               ((LobbyPersonality) activePersonality).addStudent(basket.pickStudent());
-           }
-           catch (EmptyBasketException e){
-               boolean oldLastRound = lastRound;
-               setLastRound(true);
-               listeners.firePropertyChange("LastRound", oldLastRound, lastRound);
-           }
-           finally {
-               return true;
-           }
+       if (student==null || destination==null)
+           return false;
+       destination.addStudent(student);
+       try{
+           ((LobbyPersonality) activePersonality).addStudent(basket.pickStudent());
        }
-       return false;
+       catch (EmptyBasketException e){
+           boolean oldLastRound = lastRound;
+           setLastRound(true);
+           listeners.firePropertyChange("LastRound", oldLastRound, lastRound);
+       }
+       finally {
+           return true;
+       }
+
+    }
+
+    public boolean executeCard5Effect(int islandId){
+        Island bannedIsland = getIslandById(islandId);
+        if (bannedIsland==null || bans<=0) return false;
+        bannedIsland.putBan();
+        bans--;
+        return true;
     }
 
     /*
@@ -339,6 +347,47 @@ public class ExpertGame extends Game {
             return false;
     }
 
+    //da finire e poi testare
+    public boolean executeCard10Effect(ArrayList<Color> tableStudents, ArrayList<Integer> lobbyStudentsIndexes){
+        return currentPlayer.getBoard().switchStudents(tableStudents,lobbyStudentsIndexes);
+    }
+
+    public boolean executeCard11Effect(int cardStudentIndex){
+        Color toBeMoved = ((LobbyPersonality)activePersonality).getStudent(cardStudentIndex);
+        if (toBeMoved==null || currentPlayer.getBoard().isTableFull(toBeMoved,0))
+            return false;
+        currentPlayer.addToBoardTable(toBeMoved);
+        try{
+            ((LobbyPersonality) activePersonality).addStudent(basket.pickStudent());
+        }
+        catch (EmptyBasketException e){
+            boolean oldLastRound = lastRound;
+            setLastRound(true);
+            listeners.firePropertyChange("LastRound", oldLastRound, lastRound);
+        }
+        finally {
+            return true;
+        }
+    }
+
+    public boolean executeCard12Effect(Color chosenColor){
+        int removed=0;
+        for (Player player: players) {
+            removed = Math.min(player.getBoard().getTableNumberOfStudents(chosenColor), 3);
+            for (int i = 0; i<removed; i++)
+                player.removeFromBoardTable(chosenColor);
+                basket.putStudent(chosenColor);
+        }
+        return true;
+    }
+    //IMPORTANTE: capire come si comporta la teacherOwnership in questo caso
+    //nel caso in cui non venga aggiornata non si tocca nulla
+    //nal caso in cui venga aggiornata alla fine basta aggiungere la chiamata fuori dalla chiamata
+    //a game.executeCard12Effect(Color chosenColor) in applyEffect12
+    //nel caso venga aggiornata dopo che un singolo giocatore ha spostato tutte le pedine si può modificare
+    //questo metodo in modo che prenda in input chosenColor e il nome del player e poi il ciclo lo faccio in gameController
+    //nel caso venga aggiornata dopo ogni singola pedina mossa mi rifiuto
+
     /**
      * Method that returns the list of all personality cards
      */
@@ -371,7 +420,7 @@ public class ExpertGame extends Game {
     public void setPropertyChangeListeners(GameController controller) {
         super.setPropertyChangeListeners(controller);
         listeners.addPropertyChangeListener("ActivePersonality", controller);
-        listeners.addPropertyChangeListener("NotOwnedCoins", controller);
+        listeners.addPropertyChangeListener("BankCoins", controller);
         listeners.addPropertyChangeListener("Bans", controller);
         listeners.addPropertyChangeListener("SelectedPersonality", controller);
         listeners.addPropertyChangeListener("NoLongerActivePersonality", controller);

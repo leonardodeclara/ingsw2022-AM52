@@ -26,6 +26,7 @@ public class GameBoard {
     private ClientPersonality activePersonality;
     private PrintStream outputStream;
     int coins;
+    int bans;
 
 //TODO sostituire con ascii art intestazioni "board","islands","clouds"
 
@@ -42,7 +43,7 @@ public class GameBoard {
         availableWizards.add(3);
         availableWizards.add(4);
         this.outputStream = outputStream;
-        coins = 20; //intanto lo settiamo al massimo, ma in teoria all'inizio ogni giocatore ha una moneta
+        bans=4;
     }
 
     //usiamo questo metodo solo per inizializzare le cose che non dipendono dai giocatori in sé ma solo dai parametri di gioco,
@@ -58,8 +59,11 @@ public class GameBoard {
             clouds.add(new ClientCloud(i));
         }
 
-        if(personalities!=null)
+        if(expertGame){
             this.personalities = new ArrayList<>(personalities);
+            coins=20-numberOfPlayers;
+            bans=4;
+        }
     }
 
     public void print(){
@@ -68,8 +72,12 @@ public class GameBoard {
         printClientBoards();
         printClouds();
         printIslands();
-        if (isExpertGame())
+        if (isExpertGame()){
+            outputStream.println("UNUSED BANS: " + bans);
+            outputStream.println("BANK'S COINS: " + coins);
             printPersonalityCards(); //sistemare, deve stampare solo le carte estratte, non tutte
+        }
+
     }
 
     private void printClientBoards(){ //sarebbe meglio se ogni componente avesse un metodo print e qui venisse chiamato solo quello
@@ -115,7 +123,7 @@ public class GameBoard {
         clientBoards.get(playerNickname).setTeam(tower);
     }
 
-
+    //in teoria non viene mai chiamato
     public void addClientBoard(String playerName){
         int towerNumber = numberOfPlayers == 2? 8 : 6;
         ClientBoard newBoard = new ClientBoard(towerNumber, playerName);

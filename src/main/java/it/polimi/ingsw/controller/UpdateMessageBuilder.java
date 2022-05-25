@@ -47,6 +47,9 @@ public class UpdateMessageBuilder {
                 ClientPersonality clientPersonality = new ClientPersonality(personality.getCharacterId(),false, personality.getCost());
                 personalities.add(clientPersonality);
             }
+            for (String player: clientBoards.keySet()){
+                clientBoards.get(player).setCoins(1);
+            }
 
             return new GameInstantiationMessage(clientIslands, clientBoards,personalities);
         }

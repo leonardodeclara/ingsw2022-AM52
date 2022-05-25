@@ -240,7 +240,6 @@ public class GameHandler implements PropertyChangeListener{
         //gestire qui il caso di termine partita con la chiamata a closeMatch()
         //dividere i casi: errore, tutto okay avanti con PICK_CLOUD o END_TURN, fine partita
         //nel secondo terzo caso entrambi i messaggi sono
-
         if (response instanceof EndGameMessage){
             sendAll(response);
             closeMatch();
@@ -306,42 +305,86 @@ public class GameHandler implements PropertyChangeListener{
     private void handleCard1Effect(Card1EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
         Message response = gameController.applyEffect1(message.getStudentIndex(),message.getIslandID());
-        sendTo(clientName, response);
         if (!(response instanceof  ErrorMessage)){
+            response= new ClientStateMessage(client.getCurrentClientState());
             System.out.println(clientName + "ha utilizzato l'effetto della carta 1, " +
                     "ora lo mando nello stato precedente alla invocazione della carta");
         }
+        sendTo(clientName, response);
     }
 
     private void handleCard3Effect(Card3EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
         Message response = gameController.applyEffect3(message.getIslandID());
-        sendTo(clientName, response);
         if (!(response instanceof  ErrorMessage)){
+            response= new ClientStateMessage(client.getCurrentClientState());
             System.out.println(clientName + "ha utilizzato l'effetto della carta 3, " +
                     "ora lo mando nello stato precedente alla invocazione della carta");
         }
+        sendTo(clientName, response);
     }
 
-    private void handleCard5Effect(Card5EffectMessage message, ClientHandler client){}
+    private void handleCard5Effect(Card5EffectMessage message, ClientHandler client){
+        String clientName = getNicknameFromClientID(client.getID());
+        Message response = gameController.applyEffect5(message.getIslandID());
+        if (!(response instanceof ErrorMessage)){
+            response= new ClientStateMessage(client.getCurrentClientState());
+            System.out.println(clientName + "ha utilizzato l'effetto della carta 5, " +
+                    "ora lo mando nello stato precedente alla invocazione della carta");
+        }
+        sendTo(clientName, response);
+    }
 
     private void handleCard7Effect(Card7EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
         Message response = gameController.applyEffect7(message.getStudentsFromCard(), message.getStudentsFromLobby());
-        sendTo(clientName, response);
         if (!(response instanceof  ErrorMessage)){
-            System.out.println(clientName + "ha utilizzato l'effetto della carta 3, " +
+            response= new ClientStateMessage(client.getCurrentClientState());
+            System.out.println(clientName + "ha utilizzato l'effetto della carta 7, " +
                     "ora lo mando nello stato precedente alla invocazione della carta");
         }
+        sendTo(clientName, response);
     }
-    private void handleCard9Effect(Card9EffectMessage message, ClientHandler client){}
-    private void handleCard10Effect(Card10EffectMessage message, ClientHandler client){}
-    private void handleCard11Effect(Card11EffectMessage message, ClientHandler client){}
-    private void handleCard12Effect(Card12EffectMessage message, ClientHandler client){}
 
-    /**
-     * TODO: gestione fine round
+    /*
+    TODO: finire questo
      */
+    private void handleCard9Effect(Card9EffectMessage message, ClientHandler client){}
+
+    private void handleCard10Effect(Card10EffectMessage message, ClientHandler client){
+        String clientName = getNicknameFromClientID(client.getID());
+        Message response = gameController.applyEffect10(message.getStudentsFromTable(), message.getStudentsFromLobby());
+        if (!(response instanceof  ErrorMessage)){
+            response= new ClientStateMessage(client.getCurrentClientState());
+            System.out.println(clientName + "ha utilizzato l'effetto della carta 10, " +
+                    "ora lo mando nello stato precedente alla invocazione della carta");
+        }
+        sendTo(clientName, response);
+    }
+
+    private void handleCard11Effect(Card11EffectMessage message, ClientHandler client){
+        String clientName = getNicknameFromClientID(client.getID());
+        Message response = gameController.applyEffect11(message.getSelectedStudentIndex());
+
+        if (!(response instanceof  ErrorMessage)){
+            response= new ClientStateMessage(client.getCurrentClientState());
+            System.out.println(clientName + "ha utilizzato l'effetto della carta 11, " +
+                    "ora lo mando nello stato precedente alla invocazione della carta");
+        }
+        sendTo(clientName, response);
+    }
+    private void handleCard12Effect(Card12EffectMessage message, ClientHandler client){
+        String clientName = getNicknameFromClientID(client.getID());
+        Message response = gameController.applyEffect12(message.getChosenColor());
+
+        if (!(response instanceof  ErrorMessage)){
+            response= new ClientStateMessage(client.getCurrentClientState());
+            System.out.println(clientName + "ha utilizzato l'effetto della carta 12, " +
+                    "ora lo mando nello stato precedente alla invocazione della carta");
+        }
+        sendTo(clientName, response);
+    }
+
     private void handleEndRound(){
         //in caso di expert game ci saranno un po' di magheggi da fare
         //se non siamo in expert basta chiamare startPlanningPhase() e poi da lì il resto va a oltranza

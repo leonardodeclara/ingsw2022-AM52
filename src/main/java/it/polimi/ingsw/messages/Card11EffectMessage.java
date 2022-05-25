@@ -3,13 +3,13 @@ package it.polimi.ingsw.messages;
 import it.polimi.ingsw.model.Color;
 
 public class Card11EffectMessage implements Message{
-    Color selectedStudent;
+    int selectedStudentIndex;
 
-    public Card11EffectMessage(Color selectedStudent) {
-        this.selectedStudent = selectedStudent;
+    public Card11EffectMessage(int selectedStudentIndex) {
+        this.selectedStudentIndex = selectedStudentIndex;
     }
 
-    public Color getSelectedStudent() {
-        return selectedStudent;
+    public int getSelectedStudentIndex() {
+        return selectedStudentIndex;
     }
 }

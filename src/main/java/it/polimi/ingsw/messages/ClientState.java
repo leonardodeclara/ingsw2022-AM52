@@ -8,24 +8,24 @@ public enum ClientState {
     ,WAIT_TURN(0),SET_UP_WIZARD_PHASE(0),SET_UP_TOWER_PHASE(0),PLAY_ASSISTANT_CARD(0),
     MOVE_FROM_LOBBY(0),MOVE_MOTHER_NATURE(0), PICK_CLOUD(0), END_TURN(0),CHOOSE_STUDENT_FOR_CARD_1(1),CHOOSE_ISLAND_FOR_CARD_3(3),
     CHOOSE_ISLAND_FOR_CARD_5(5),SWAP_STUDENTS_FOR_CARD_7(7),CHOOSE_COLOR_FOR_CARD_9(9),CHOOSE_STUDENTS_FOR_CARD_10(10),
-    CHOOSE_STUDENT_FOR_CARD_11(11),CHOOSE_COLOR_FOR_CARD_12(12),CHOOSE_STUDENTS_TO_LOSE_FOR_CARD_12(12), END_GAME(13);
+    CHOOSE_STUDENT_FOR_CARD_11(11),CHOOSE_COLOR_FOR_CARD_12(12), END_GAME(0);
 
 
 
     private final int optionalID;
 
     /**
-     * Constructor creates a new color instance.
-     * @param optionalID: number representative for the color's index.
+     * Constructor creates a ClientState.
+     * @param optionalID: ID given to the state: IDs different from zero are relative to expert mode.
      */
     ClientState(int optionalID) {
         this.optionalID=optionalID;
     }
 
     /**
-     * @return the index of a specific color
+     * @return the optional ID of the state.
      */
-    public int getIndex() {
+    public int getOptionalID() {
         return optionalID;
     }
 

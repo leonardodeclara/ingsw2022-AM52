@@ -18,6 +18,7 @@ public class Island {
     private boolean motherNature;
     private int numMergedIslands;
     private Player owner;
+    private int bans;
     private PropertyChangeSupport listeners;
 
     /**
@@ -30,6 +31,7 @@ public class Island {
         students = new ArrayList<>();
         motherNature=false;
         numMergedIslands=1;
+        bans=0;
         listeners= new PropertyChangeSupport(this);
     }
 
@@ -158,10 +160,10 @@ public class Island {
 
     /**
      * This method set a Player as owner of the island
-     * @param o: Player that has the major influence on the island
+     * @param owner: Player that has the major influence on the island
      */
-    public void setOwner(Player o){
-        this.owner = o;
+    public void setOwner(Player owner){
+        this.owner = owner;
     }
 
     /**
@@ -173,6 +175,18 @@ public class Island {
             return owner.getTeam();
         else
             return null;
+    }
+
+    public void putBan(){
+        bans++;
+    }
+
+    public void removeBan(){
+        bans--;
+    }
+
+    public boolean isBanned(){
+        return bans>0;
     }
 
     /**

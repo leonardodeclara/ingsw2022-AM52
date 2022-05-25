@@ -1,9 +1,8 @@
 package it.polimi.ingsw.messages;
 
-import it.polimi.ingsw.model.Color;
 
 public class Card1EffectMessage implements Message{
-    Integer studentIndex;
+    int studentIndex;
     int islandID;
 
     public Card1EffectMessage(int studentIndex, int islandID) {

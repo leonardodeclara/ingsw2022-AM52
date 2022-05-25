@@ -15,6 +15,7 @@ public class ClientIsland implements Serializable {
     private ArrayList<Color> students;
     private boolean motherNature;
     private int numMergedIslands;
+    private int bans;
     private String owner;
 
     public ClientIsland(int islandIndex ) {
@@ -24,6 +25,7 @@ public class ClientIsland implements Serializable {
         this.students = new ArrayList<>();
         this.motherNature = false;
         this.numMergedIslands = 0;
+        bans = 0;
         this.owner = null;
     }
 
@@ -62,6 +64,10 @@ public class ClientIsland implements Serializable {
         if (isMotherNature())
             System.out.println("MOTHER NATURE IS HERE!\n");
         else System.out.println();
+
+        if (bans>0)
+            System.out.println("THIS ISLAND HAS " + bans + "BAN" + (bans>1? "S":""));
+
 
     }
     public int getIslandIndex() {

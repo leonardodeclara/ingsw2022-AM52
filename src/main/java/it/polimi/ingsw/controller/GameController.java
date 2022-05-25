@@ -104,15 +104,17 @@ public class GameController implements PropertyChangeListener {
 
     public Message moveMotherNature(String player, int steps){
         if(moveMotherNature.test(player,steps)){
-            //qui va aggiunto tutta la gestione del calcolo influenza, spostamento torri, merge isole ecc
-            calculateInfluence.apply(game.getCurrentMotherNatureIsland(),null);
-            if (game.checkGameOver())
-                return new EndGameMessage(game.getWinner()==null? Constants.TIE: game.getWinner().getNickname());
-
+            if (!game.getCurrentMotherNatureIsland().isBanned()){ //effetto carta 5
+                //qui va aggiunto tutta la gestione del calcolo influenza, spostamento torri, merge isole ecc
+                calculateInfluence.apply(game.getCurrentMotherNatureIsland(),null);
+                if (game.checkGameOver())
+                    return new EndGameMessage(game.getWinner()==null? Constants.TIE: game.getWinner().getNickname());
+            }
             if (game.isLastRound() && !game.areCloudsFull())
                 return new ClientStateMessage(ClientState.END_TURN);
             else
                 return new ClientStateMessage(ClientState.PICK_CLOUD);
+
         }
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
@@ -201,8 +203,37 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
+    public Message applyEffect5(int islandId){
+        if (((ExpertGame) game).executeCard5Effect(islandId))
+            return null;
+        else
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
+    }
+
     public Message applyEffect7(ArrayList<Integer> cardStudentsIndexes, ArrayList<Integer> lobbyStudentsIndexes){
         if (((ExpertGame) game).executeCard7Effect(cardStudentsIndexes, lobbyStudentsIndexes))
+            return null;
+        else
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
+    }
+
+
+    public Message applyEffect10(ArrayList<Color> tableStudents, ArrayList<Integer> lobbyStudentsIndexes){
+        if (((ExpertGame) game).executeCard10Effect(tableStudents, lobbyStudentsIndexes))
+            return null;
+        else
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
+    }
+
+    public Message applyEffect11(int cardStudentIndex){
+        if (((ExpertGame) game).executeCard11Effect(cardStudentIndex))
+            return null;
+        else
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
+    }
+
+    public Message applyEffect12(Color chosenCard){
+        if (((ExpertGame) game).executeCard12Effect(chosenCard))
             return null;
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
@@ -292,7 +323,7 @@ public class GameController implements PropertyChangeListener {
             case "NoLongerActivePersonality":
                 toSend = updateMessageBuilder.buildNoLongerActivePersonalityMessage(event);
                 break;
-            case "NotOwnedCoins": //vedere se effettivamente è utile
+            case "BankCoins": //vedere se effettivamente è utile
             case "Bans": //vedere se effettivamente è utile
             case "SelectedPersonality":
             //dovrebbero mancare listener per gli effetti "istant" delle carte personaggio, vedere quelle a parte

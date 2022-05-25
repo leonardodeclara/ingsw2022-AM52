@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.controller.GameController;
 
 import java.beans.PropertyChangeSupport;
@@ -88,10 +89,37 @@ public class Board {
         studentsTable.put(student,numOfStudents);
     }
 
-    @SuppressWarnings("GrazieInspection")
-    public void SwitchStudents() {
-        /*cosa prende in input? Un colore? Un indice?*/
 
+    /*
+    TODO: Da finire
+     */
+    //casi limite:
+    //voglio togliere due pedine verdi dalla table ma ne ho 0/1
+    //voglio mettere due pedine verdi ma la table è piena/gliene manca 1
+    public boolean switchStudents(ArrayList<Color> tableStudents, ArrayList<Integer> lobbyStudentsIndexes) {
+        if (lobbyStudentsIndexes.size()> Constants.MAX_STUDENTS_FOR_CARD_10_SWITCH
+                || tableStudents.size()>Constants.MAX_STUDENTS_FOR_CARD_10_SWITCH
+                || tableStudents.size()!=lobbyStudentsIndexes.size())
+            return false;
+        for (Integer index: lobbyStudentsIndexes)
+            if (index<0||index>lobby.size())
+                return false;
+        HashMap<Color, Integer>  fromLobby = new HashMap<>();
+        HashMap<Color, Integer>  fromTable = new HashMap<>();
+        for (int i = 0; i< Constants.MAX_STUDENTS_FOR_CARD_10_SWITCH;i++){
+            Color toBeMovedFromLobby = lobby.get(i);
+            fromLobby.put(toBeMovedFromLobby, fromLobby.get(toBeMovedFromLobby)==null? 1 : fromLobby.get(toBeMovedFromLobby)+1);
+        }
+        for (int i = 0; i< Constants.MAX_STUDENTS_FOR_CARD_10_SWITCH; i++){
+            Color toBeMovedFromTable = tableStudents.get(i);
+            fromTable.put(toBeMovedFromTable, fromLobby.get(toBeMovedFromTable)==null? 1 : fromLobby.get(toBeMovedFromTable)+1);
+        }
+        for (Color color: fromLobby.keySet())
+            if (fromLobby.get(color)+studentsTable.get(color) +
+                    (fromTable.get(color)==null?0:fromTable.get(color))>Constants.MAX_TABLE_SIZE)
+                return false;
+
+        return true;
     }
 
     /**
@@ -168,7 +196,7 @@ public class Board {
      * @return true if the part of table corresponding to the color is full, false otherwise
      */
     public boolean isTableFull(Color color, int toBeAdded){
-        return studentsTable.get(color) + toBeAdded == 10 ? true : false;
+        return studentsTable.get(color) + toBeAdded == Constants.MAX_TABLE_SIZE ? true : false;
     }
 
     /**

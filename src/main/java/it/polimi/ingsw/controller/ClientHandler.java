@@ -89,8 +89,8 @@ public class ClientHandler implements Runnable {
         try{
             System.out.println("Sono CH " + ID + " e sto mandando un messaggio " + (message.getClass().toString()));
             if(message instanceof ClientStateMessage)
-                currentClientState = ((ClientStateMessage) message).getNewState();
-
+                if (((ClientStateMessage) message).getNewState().getOptionalID()==0)
+                    currentClientState = ((ClientStateMessage) message).getNewState();
             out.reset();
             out.writeObject(message);
             out.flush();
