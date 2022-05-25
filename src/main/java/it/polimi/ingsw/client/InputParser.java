@@ -6,6 +6,7 @@ import it.polimi.ingsw.exceptions.EndGameException;
 import it.polimi.ingsw.exceptions.QuitException;
 import it.polimi.ingsw.messages.ClientState;
 import it.polimi.ingsw.messages.EndGameMessage;
+import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
 
 import java.util.ArrayList;
@@ -53,6 +54,30 @@ public class InputParser {
             case END_TURN:
                 parseClosingTurn(input);
                 break;
+            case CHOOSE_STUDENT_FOR_CARD_1:
+                parsePersonality1(input);
+                break;
+            case CHOOSE_ISLAND_FOR_CARD_3:
+                parsePersonality3(input);
+                break;
+            case CHOOSE_ISLAND_FOR_CARD_5:
+                parsePersonality5(input);
+                break;
+            case SWAP_STUDENTS_FOR_CARD_7:
+                parsePersonality7(input);
+                break;
+            case CHOOSE_COLOR_FOR_CARD_9:
+                parsePersonality9(input);
+                break;
+            case CHOOSE_STUDENTS_FOR_CARD_10:
+                parsePersonality10(input);
+                break;
+            case CHOOSE_STUDENT_FOR_CARD_11:
+                parsePersonality11(input);
+                break;
+            case CHOOSE_COLOR_FOR_CARD_12:
+                parsePersonality12(input);
+                break;
             case END_GAME:
                 parseEndGame(input);
                 break;
@@ -98,24 +123,18 @@ public class InputParser {
              */
             data.add(chosenDeckID);
         }catch(NumberFormatException e){
-            /*
-            TO DO
-             */
+            e.printStackTrace();
         }
     }
 
     private void parseSetUpTowerPhaseString(String input){
         input = input.replaceAll("\s","");
-        try{
-            if (input.equalsIgnoreCase("grey"))
-                data.add(Tower.GREY);
-            else if (input.equalsIgnoreCase("black"))
-                data.add(Tower.BLACK);
-            else if (input.equalsIgnoreCase("white"))
-                data.add(Tower.WHITE);
-        }catch(NumberFormatException e){
-        }
-
+        if (input.equalsIgnoreCase("grey"))
+            data.add(Tower.GREY);
+        else if (input.equalsIgnoreCase("black"))
+            data.add(Tower.BLACK);
+        else if (input.equalsIgnoreCase("white"))
+            data.add(Tower.WHITE);
     }
 
     private void parseAssistantCardString(String input){ //il comando è play card x
@@ -129,12 +148,13 @@ public class InputParser {
                     if(cardID >= 1 && cardID <= 10)
                         data.add(cardID);
                 }catch(NumberFormatException e){
-
+                    e.printStackTrace();
                 }
             }
         }
     }
-    //
+    //farei scrivere 1,2,3 ai giocatori per scegliere le pedine con indice 0,1,2
+    //quindi ho modificato il metodo
     private void parseMoveStudentsFromLobby(String input){ //move studentID1,studentID2,studentID3 in table,2,3
         String[] words = input.split("\\s+");
 
@@ -143,6 +163,8 @@ public class InputParser {
                 String[] studentIDs = words[1].split(",");
                 ArrayList<Integer> studentIDsInteger = convertStringsToNumberArray(studentIDs);
                 if(studentIDsInteger!=null){
+                    for (Integer index: studentIDsInteger)
+                        index=index-1; //1 per il giocatore è 0 per il server. più human readable
                     if(words[2].equalsIgnoreCase("in")){
                         String[] destIDs = words[3].split(",");
                         ArrayList<Integer> destIDsInteger = convertStringsToNumberArray(destIDs);
@@ -166,15 +188,16 @@ public class InputParser {
         int steps = 0;
         String[] words = input.split("\\s+");
         if(words.length==3){
-            if(words[0].equalsIgnoreCase("move"))
+            if(words[0].equalsIgnoreCase("move")){
                 if(words[1].equalsIgnoreCase("mn") || words[1].equalsIgnoreCase("mothernature")){
                     try{
                         steps = Integer.parseInt(words[2]);
                         data.add(steps);
                         return;
                     }catch(NumberFormatException e){
-
+                        e.printStackTrace();
                     }
+                }
             }
         }
 
@@ -208,7 +231,6 @@ public class InputParser {
                 return;
             }
         }
-
         if(isExpert)
             parsePlayPersonalityCard(words);
     }
@@ -224,8 +246,127 @@ public class InputParser {
                     data.add(cardID);
                     return;
                 }catch(NumberFormatException e){
-
+                    e.printStackTrace();
                 }
+        }
+    }
+
+    private void parsePersonality1(String input){
+        int studentIndex = 0, islandId = 0;
+        String[] words = input.split("\\s+");
+        if(words.length == 4){
+            if(words[0].equalsIgnoreCase("move") && words[2].equalsIgnoreCase("in")){
+                try{
+                    studentIndex = Integer.parseInt(words[1])-1;
+                    islandId= Integer.parseInt(words[3]);
+                    data.add(studentIndex);
+                    data.add(islandId);
+                    return;
+                }
+                catch (NumberFormatException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void parsePersonality3(String input){
+        int islandId = 0;
+        String[] words = input.split("\\s+");
+        if(words.length == 3){
+            if(words[0].equalsIgnoreCase("influence") && words[1].equals("on")){
+                try{
+                    islandId = Integer.parseInt(words[2]);
+                    data.add(islandId);
+                    return;
+                }
+                catch (NumberFormatException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void parsePersonality5(String input){
+        int islandId = 0;
+        String[] words = input.split("\\s+");
+        if(words.length == 2){
+            if(words[0].equalsIgnoreCase("ban")){
+                try{
+                    islandId = Integer.parseInt(words[1]);
+                    data.add(islandId);
+                    return;
+                }
+                catch (NumberFormatException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void parsePersonality7(String input){
+        /*
+        TODO
+         */
+    }
+
+    private void parsePersonality9(String input){
+        String[] words = input.split("\\s+");
+        if(words.length == 2){
+            if(words[0].equalsIgnoreCase("ban")){
+                if (words[1].equalsIgnoreCase("pink"))
+                    data.add(Color.PINK);
+                else if (words[1].equalsIgnoreCase("red"))
+                    data.add(Color.RED);
+                else if (words[1].equalsIgnoreCase("blue")||words[1].equalsIgnoreCase("blu"))
+                    data.add(Color.BLUE);
+                else if (words[1].equalsIgnoreCase("green"))
+                    data.add(Color.GREEN);
+                else if (words[1].equalsIgnoreCase("yellow"))
+                    data.add(Color.YELLOW);
+            }
+        }
+    }
+
+    private void parsePersonality10(String input){
+        String[] words = input.split("\\s+");
+        /*
+        TODO
+         */
+    }
+
+    private void parsePersonality11(String input){
+        int studentIndex = 0;
+        String[] words = input.split("\\s+");
+        if(words.length == 2){
+            if(words[0].equalsIgnoreCase("move")){
+                try{
+                    studentIndex = Integer.parseInt(words[1])-1;
+                    data.add(studentIndex);
+                    return;
+                }
+                catch (NumberFormatException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void parsePersonality12(String input){
+        String[] words = input.split("\\s+");
+        if(words.length == 2){
+            if(words[0].equalsIgnoreCase("steal")){
+                if (words[1].equalsIgnoreCase("pink"))
+                    data.add(Color.PINK);
+                else if (words[1].equalsIgnoreCase("red"))
+                    data.add(Color.RED);
+                else if (words[1].equalsIgnoreCase("blue") || words[1].equalsIgnoreCase("blu"))
+                    data.add(Color.BLUE);
+                else if (words[1].equalsIgnoreCase("green"))
+                    data.add(Color.GREEN);
+                else if (words[1].equalsIgnoreCase("yellow"))
+                    data.add(Color.YELLOW);
+            }
         }
     }
 
@@ -247,7 +388,8 @@ public class InputParser {
                     Integer.parseInt(s);
                     arrayInt.add(Integer.parseInt(s));
                 }
-            }catch(NumberFormatException e){
+            }
+            catch(NumberFormatException e){
                 return null;
             }
         }

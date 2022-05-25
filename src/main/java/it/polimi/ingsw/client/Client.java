@@ -3,6 +3,7 @@ package it.polimi.ingsw.client;
 import it.polimi.ingsw.GUI.UI;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Tower;
+import it.polimi.ingsw.model.Color;
 
 import java.util.ArrayList;
 
@@ -50,6 +51,22 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
                         return buildPlayPersonalityCardMessage(data);
 
                 return buildCloseTurnMessage(data);
+            case CHOOSE_STUDENT_FOR_CARD_1:
+                return buildCard1EffectMessage(data);
+            case CHOOSE_ISLAND_FOR_CARD_3:
+                return buildCard3EffectMessage(data);
+            case CHOOSE_ISLAND_FOR_CARD_5:
+                return buildCard5EffectMessage(data);
+            case SWAP_STUDENTS_FOR_CARD_7:
+                //return buildCard7EffectMessage(data);
+            case CHOOSE_COLOR_FOR_CARD_9:
+                return buildCard9EffectMessage(data);
+            case CHOOSE_STUDENTS_FOR_CARD_10:
+                //return buildCard10EffectMessage(data);
+            case CHOOSE_STUDENT_FOR_CARD_11:
+                return buildCard11EffectMessage(data);
+            case CHOOSE_COLOR_FOR_CARD_12:
+                return buildCard12EffectMessage(data);
         }
         return null;
     }
@@ -94,6 +111,34 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
     //in questo
     private Message buildCloseTurnMessage(ArrayList<Object> data){
         return new CloseTurnMessage((String) data.get(0));
+    }
+
+    private Message buildCard1EffectMessage(ArrayList<Object> data){
+        return new Card1EffectMessage((Integer) data.get(0), (Integer) data.get(1));
+    }
+
+    private Message buildCard3EffectMessage(ArrayList<Object> data){
+        return new Card3EffectMessage((Integer) data.get(0));
+    }
+
+    private Message buildCard5EffectMessage(ArrayList<Object> data){
+        return new Card5EffectMessage((Integer) data.get(0));
+    }
+
+    //private Message buildCard7EffectMessage(ArrayList<Object> data){}
+
+    private Message buildCard9EffectMessage(ArrayList<Object> data){
+        return new Card9EffectMessage((Color) data.get(0));
+    }
+
+    //private Message buildCard10EffectMessage(ArrayList<Object> data){}
+
+    private Message buildCard11EffectMessage(ArrayList<Object> data){
+        return new Card11EffectMessage((Integer)data.get(0));
+    }
+
+    private Message buildCard12EffectMessage(ArrayList<Object> data){
+        return new Card12EffectMessage((Color)data.get(0));
     }
 }
 
