@@ -896,4 +896,43 @@ class GameTest {
         deck0.add(deck0FirstElement);
         assertEquals(true,game.isCardPlayable(deck0.get(0),deck0));
     }
+
+    @Test
+    void cloudEmptinessTest(){
+        Game game = new Game(3);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("mari");
+        players.add("frizio");
+        players.add("leoviatano");
+        game.instantiateGameElements(players);
+        game.refillClouds();
+        assertTrue(game.areCloudsFull());
+        assertEquals(9,game.getPlayerByName("mari").getBoard().getLobby().size());
+        game.moveStudentsToLobby("mari", 0);
+        assertFalse(game.areCloudsFull());
+        assertEquals(13,game.getPlayerByName("mari").getBoard().getLobby().size());
+    }
+
+    @Test
+    void resetAssistantCardTest(){
+        Game game = new Game(3);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("mari");
+        players.add("frizio");
+        players.add("leo");
+        game.instantiateGameElements(players);
+        game.giveAssistantDeck("mari", 0);
+        game.giveAssistantDeck("leo", 1);
+        game.giveAssistantDeck("frizio", 2);
+        game.playAssistantCard("mari",1);
+        game.playAssistantCard("leo",2);
+        game.playAssistantCard("frizio",3);
+        assertEquals(3,game.getCurrentTurnAssistantCards().size());
+        game.resetCurrentTurnAssistantCards();
+        assertEquals(0,game.getCurrentTurnAssistantCards().size());
+    }
+    /*
+    TODO: aggiungere test che verifichi il corretto merge con una isola a dx
+     */
+
 }

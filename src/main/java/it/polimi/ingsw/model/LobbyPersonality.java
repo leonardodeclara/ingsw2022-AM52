@@ -47,6 +47,18 @@ public class LobbyPersonality extends Personality{
         return new ArrayList<>(students);
     }
 
+    public Color getStudent(int studentIndex){
+        if (studentIndex>=0 && studentIndex<students.size())
+            return students.get(studentIndex);
+        else
+            return null;
+    }
+
+    public void removeStudent(Color student){
+        if (students.contains(student))
+            students.remove(student);
+    }
+
     //all'interno di expertGame ci dovrà essere un metodo prende in input la carta LobbyPersonality
     // giocata e riempie l'arraylist gli studenti pescandoli dal basket
 

@@ -110,10 +110,6 @@ public class GameController implements PropertyChangeListener {
                 return new EndGameMessage(game.getWinner()==null? Constants.TIE: game.getWinner().getNickname());
 
             if (game.isLastRound() && !game.areCloudsFull())
-                //svuotamento delle nuvole viene saltato se siamo all'ultimo round e non ci sono abbastanza pedine studente per tutti
-                //soluzione temporanea perché questo tipo di controllo va bene solo per il primo giocatore del turno
-                //infatti se sono state riempite tutte le nuvole e quindi tutti possono pescare
-                //dopo che il primo giocatore ha fatto pick_cloud questo metodo restituirà false, il che è sbagliato
                 return new ClientStateMessage(ClientState.END_TURN);
             else
                 return new ClientStateMessage(ClientState.PICK_CLOUD);
@@ -184,6 +180,35 @@ public class GameController implements PropertyChangeListener {
                 break;
         }
     }
+
+    public Message applyEffect1(int studentIndex, int islandId){
+        if (((ExpertGame)game).executeCard1Effect(studentIndex, islandId))
+            return null;
+        else
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
+    }
+
+    public Message applyEffect3(int islandId){
+        if (game.getIslandById(islandId)!=null){
+            calculateInfluence.apply(game.getIslandById(islandId),null);
+            if (game.checkGameOver())
+                return new EndGameMessage(game.getWinner()==null? Constants.TIE: game.getWinner().getNickname());
+            else
+                return null;//bisogna mandare al client un messaggio di clientState che lo faccia tornare
+                            // allo stato precedente all'invocazione della carta
+        }
+        else
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
+    }
+
+    public Message applyEffect7(ArrayList<Integer> cardStudentsIndexes, ArrayList<Integer> lobbyStudentsIndexes){
+        if (((ExpertGame) game).executeCard7Effect(cardStudentsIndexes, lobbyStudentsIndexes))
+            return null;
+        else
+            return new ErrorMessage(ErrorKind.INVALID_INPUT);
+    }
+
+
 
 
     //return true se la partita è finita, false otherwise

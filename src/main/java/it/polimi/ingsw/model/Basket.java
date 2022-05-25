@@ -34,7 +34,6 @@ public class Basket {
      * @return a new student instance.
      */
     public Color pickStudent() {
-
         if (size==0)
             throw new EmptyBasketException();
         //alternativamente potrei lanciare un'eccezione ad hoc, tipo EmptyBasketException

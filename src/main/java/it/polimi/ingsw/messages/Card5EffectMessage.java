@@ -1,10 +1,10 @@
 package it.polimi.ingsw.messages;
 
-public class Card4EffectMessage implements Message{
+public class Card5EffectMessage implements Message{
 
     int islandID;
 
-    public Card4EffectMessage(int islandID) {
+    public Card5EffectMessage(int islandID) {
         this.islandID = islandID;
     }
 

@@ -26,7 +26,7 @@ public class Game {
     private ArrayList<Assistant> assistantDecks;
     protected HashMap<String, Assistant> currentTurnAssistantCards;
     protected Island currentMotherNatureIsland;
-    private boolean lastRound;
+    protected boolean lastRound;
     protected HashMap<Color, Player> teachersOwners;
     protected PropertyChangeSupport listeners;
 
@@ -178,13 +178,13 @@ public class Game {
      * @param cardPriority: priority of the card in play.
      */
     public int playAssistantCard(String nickname, int cardPriority) {
-        Player currentPlayer = getPlayerByName(nickname);
-        Assistant chosenCard = currentPlayer.getCardByPriority(cardPriority);
-        if (chosenCard == null || !isCardPlayable(chosenCard, currentPlayer.getDeck())) return -1;
+        Player choosingPlayer = getPlayerByName(nickname);
+        Assistant chosenCard = choosingPlayer.getCardByPriority(cardPriority);
+        if (chosenCard == null || !isCardPlayable(chosenCard, choosingPlayer.getDeck())) return -1;
         currentTurnAssistantCards.put(nickname, chosenCard);
         listeners.firePropertyChange("CurrentTurnAssistantCards", null, currentTurnAssistantCards);
         getPlayerByName(nickname).removeAssistantCard(cardPriority);
-        if (currentPlayer.getDeck().size()==0){
+        if (choosingPlayer.getDeck().size()==0){
             boolean oldLastRound = lastRound;
             setLastRound(true);
             listeners.firePropertyChange("LastRound", oldLastRound, lastRound);

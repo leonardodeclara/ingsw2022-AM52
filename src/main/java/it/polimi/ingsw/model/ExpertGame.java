@@ -18,7 +18,7 @@ public class ExpertGame extends Game {
     private static final int NUM_PLAYABLE_PERSONALITY_CARDS = 3;
     private static final int NUM_EXISTING_PERSONALITY_CARDS = 12;
     private Personality activePersonality; //c'è un solo personaggio attivo per round
-    private Player currentPersonalityPlayer;
+    private Player currentPersonalityPlayer; //si può togliere e tenere solo currentPlayer. tanto l'effetto è attivo finché è il turno del giocatore che ha giocato la carta
     private int coins;
     private int bans;
 
@@ -260,6 +260,83 @@ public class ExpertGame extends Game {
             currentPersonalityPlayer = null;
             listeners.firePropertyChange("NoLongerActivePersonality", null, cardID);
         }
+    }
+
+    /**
+     * Method executeCard1Effect implements Personality 1's Effect, therefore it moves a student tile from the card
+     * to the chosen island.
+     * @param chosenStudent: the index of the chosen student tile placed the card.
+     * @param islandId: the ID that identifies the destination island.
+     * @return true if the parameters are correct and the effect has been correctly applied, false otherwise.
+     */
+    public boolean executeCard1Effect(int chosenStudent,int islandId){
+       Color student =((LobbyPersonality) activePersonality).getStudent(chosenStudent);
+       Island destination = getIslandById(islandId);
+       if (student!=null && destination!=null){
+           destination.addStudent(student);
+           try{
+               ((LobbyPersonality) activePersonality).addStudent(basket.pickStudent());
+           }
+           catch (EmptyBasketException e){
+               boolean oldLastRound = lastRound;
+               setLastRound(true);
+               listeners.firePropertyChange("LastRound", oldLastRound, lastRound);
+           }
+           finally {
+               return true;
+           }
+       }
+       return false;
+    }
+
+    /*
+    TODO: TESTARLA
+     */
+    /**
+     * Method executeCard7Effect implements Personality 1's Effect, therefore it swaps up to 3 student tiles
+     * from the card with as many student tiles in the active player's lobby.
+     * @param cardStudentsIndexes: indexes of the student tiles on the card.
+     * @param lobbyStudentsIndexes: indexed of the students tiles int the player's lobby.
+     * @return true if the parameters are correct and the effect has been correctly applied, false otherwise.
+     */
+    public boolean executeCard7Effect(ArrayList<Integer> cardStudentsIndexes, ArrayList<Integer> lobbyStudentsIndexes){
+        ArrayList<Color> fromCard = new ArrayList<>();
+        ArrayList<Color> fromLobby = new ArrayList<>();
+        for (Integer index: cardStudentsIndexes){
+            if (isMoveStudentFromCardLegal((LobbyPersonality) activePersonality, index))
+                fromCard.add(((LobbyPersonality) activePersonality).getStudent(index));
+            else
+                return false;
+        }
+        for (Integer index: lobbyStudentsIndexes){
+            if (isMoveStudentFromLobbyLegal(index))
+                fromLobby.add(currentPlayer.getBoard().getLobbyStudent(index));
+            else
+                return false;
+        }
+        for (Color studentToCard: fromLobby){
+            ((LobbyPersonality)activePersonality).addStudent(studentToCard);
+            currentPlayer.removeFromBoardLobby(studentToCard);
+        }
+        for (Color studentToLobby: fromCard){
+            currentPlayer.addToBoardLobby(studentToLobby);
+            ((LobbyPersonality)activePersonality).removeStudent(studentToLobby);
+        }
+        return true;
+    }
+
+    public boolean isMoveStudentFromCardLegal(LobbyPersonality personality, int cardStudentId){
+        if (cardStudentId>=0 && cardStudentId <personality.getStudents().size())
+            return true;
+        else
+            return false;
+    }
+
+    public boolean isMoveStudentFromLobbyLegal(int lobbyStudentId){
+        if (lobbyStudentId>=0 && lobbyStudentId <currentPlayer.getBoard().getLobby().size())
+            return true;
+        else
+            return false;
     }
 
     /**

@@ -157,7 +157,6 @@ public class Player {
             if (card.getPriority()==priority)
                 return card;
         }
-        System.out.println("Non ho trovato quella carta!");
         return null;
     }
 

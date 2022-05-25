@@ -3,20 +3,19 @@ package it.polimi.ingsw.messages;
 import it.polimi.ingsw.model.Color;
 
 public class Card1EffectMessage implements Message{
+    Integer studentIndex;
+    int islandID;
 
-    Color Student;
-    int IslandID;
-
-    public Card1EffectMessage(Color student, Integer islandID) {
-        Student = student;
-        IslandID = islandID;
+    public Card1EffectMessage(int studentIndex, int islandID) {
+        this.studentIndex = studentIndex;
+        this.islandID = islandID;
     }
 
-    public Color getStudent() {
-        return Student;
+    public int getStudentIndex() {
+        return studentIndex;
     }
 
-    public Integer getIslandID() {
-        return IslandID;
+    public int getIslandID() {
+        return islandID;
     }
 }

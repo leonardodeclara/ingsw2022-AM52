@@ -54,6 +54,22 @@ public class GameHandler implements PropertyChangeListener{
             handleEndTurn((CloseTurnMessage) message, clientHandler);
         else if (message instanceof PlayPersonalityCardMessage)
             handlePlayPersonalityCard((PlayPersonalityCardMessage) message, clientHandler);
+        else if (message instanceof Card1EffectMessage)
+            handleCard1Effect((Card1EffectMessage) message, clientHandler);
+        else if (message instanceof Card3EffectMessage)
+            handleCard3Effect((Card3EffectMessage) message, clientHandler);
+        else if (message instanceof Card5EffectMessage)
+            handleCard5Effect((Card5EffectMessage) message, clientHandler);
+        else if (message instanceof Card7EffectMessage)
+            handleCard7Effect((Card7EffectMessage) message, clientHandler);
+        else if (message instanceof Card9EffectMessage)
+            handleCard9Effect((Card9EffectMessage) message, clientHandler);
+        else if (message instanceof Card10EffectMessage)
+            handleCard10Effect((Card10EffectMessage) message, clientHandler);
+        else if (message instanceof Card11EffectMessage)
+            handleCard11Effect((Card11EffectMessage) message, clientHandler);
+        else if (message instanceof Card12EffectMessage)
+            handleCard12Effect((Card12EffectMessage) message, clientHandler);
     }
 
 
@@ -277,7 +293,7 @@ public class GameHandler implements PropertyChangeListener{
             Message response = gameController.playPersonalityCard(clientName, cardID,client.getCurrentClientState());
             sendTo(clientName, response);
             if (!(response instanceof  ErrorMessage)){
-                System.out.println(clientName + "ha spostato le pedine nella lobby, ora lo mando in END_TURN ma dovrebbe esserci la parte di personaggio");
+                System.out.println(clientName + "ha giocato una carta personaggio, ora lo mando in uno stato che dipende dalla carta giocata");
             }
         }
         else
@@ -286,6 +302,42 @@ public class GameHandler implements PropertyChangeListener{
             sendTo(clientName,response);
         }
     }
+
+    private void handleCard1Effect(Card1EffectMessage message, ClientHandler client){
+        String clientName = getNicknameFromClientID(client.getID());
+        Message response = gameController.applyEffect1(message.getStudentIndex(),message.getIslandID());
+        sendTo(clientName, response);
+        if (!(response instanceof  ErrorMessage)){
+            System.out.println(clientName + "ha utilizzato l'effetto della carta 1, " +
+                    "ora lo mando nello stato precedente alla invocazione della carta");
+        }
+    }
+
+    private void handleCard3Effect(Card3EffectMessage message, ClientHandler client){
+        String clientName = getNicknameFromClientID(client.getID());
+        Message response = gameController.applyEffect3(message.getIslandID());
+        sendTo(clientName, response);
+        if (!(response instanceof  ErrorMessage)){
+            System.out.println(clientName + "ha utilizzato l'effetto della carta 3, " +
+                    "ora lo mando nello stato precedente alla invocazione della carta");
+        }
+    }
+
+    private void handleCard5Effect(Card5EffectMessage message, ClientHandler client){}
+
+    private void handleCard7Effect(Card7EffectMessage message, ClientHandler client){
+        String clientName = getNicknameFromClientID(client.getID());
+        Message response = gameController.applyEffect7(message.getStudentsFromCard(), message.getStudentsFromLobby());
+        sendTo(clientName, response);
+        if (!(response instanceof  ErrorMessage)){
+            System.out.println(clientName + "ha utilizzato l'effetto della carta 3, " +
+                    "ora lo mando nello stato precedente alla invocazione della carta");
+        }
+    }
+    private void handleCard9Effect(Card9EffectMessage message, ClientHandler client){}
+    private void handleCard10Effect(Card10EffectMessage message, ClientHandler client){}
+    private void handleCard11Effect(Card11EffectMessage message, ClientHandler client){}
+    private void handleCard12Effect(Card12EffectMessage message, ClientHandler client){}
 
     /**
      * TODO: gestione fine round
