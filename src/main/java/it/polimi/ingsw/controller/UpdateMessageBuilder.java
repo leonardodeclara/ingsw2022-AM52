@@ -17,23 +17,23 @@ import java.util.HashMap;
 //questo messaggio viene restituito al controller, ascoltato da gameHandler che riceverà il messaggio da controller via firePropertyChange e ne gestirà l'invio ai client
 public class UpdateMessageBuilder {
 
-    public UpdateMessageBuilder(){
+    public UpdateMessageBuilder() {
     }
 
-    public Message buildGameInstantiationMessage(Game game){
+    public Message buildGameInstantiationMessage(Game game) {
         ArrayList<ClientIsland> clientIslands = new ArrayList<>();
         int towersNumber = game.getNumOfPlayers() == 2 ? 8 : 6;
 
-        for (Island modelIsland: game.getIslands()){
+        for (Island modelIsland : game.getIslands()) {
             ClientIsland newIsland = new ClientIsland(modelIsland.getIslandIndex());
             newIsland.setMotherNature(modelIsland.isMotherNature());
             newIsland.setStudents(modelIsland.getStudents());
             clientIslands.add(newIsland);
         }
         HashMap<String, ClientBoard> clientBoards = new HashMap<>();
-        for (Player modelPlayer: game.getPlayers()){
+        for (Player modelPlayer : game.getPlayers()) {
             Board modelBoard = modelPlayer.getBoard();
-            ClientBoard newBoard = new ClientBoard(towersNumber,modelPlayer.getNickname());
+            ClientBoard newBoard = new ClientBoard(towersNumber, modelPlayer.getNickname());
             newBoard.setTeacherTable(new ArrayList<>(modelBoard.getTeacherTable()));
             newBoard.setLobby(new ArrayList<>(modelBoard.getLobby()));
             newBoard.setStudentsTable(new HashMap<>(modelBoard.getStudentsTable()));
@@ -41,33 +41,33 @@ public class UpdateMessageBuilder {
 
         }
 
-        if(game instanceof ExpertGame){
+        if (game instanceof ExpertGame) {
             ArrayList<ClientPersonality> personalities = new ArrayList<>();
-            for(Personality personality : ((ExpertGame) game).getPersonalities()){
-                ClientPersonality clientPersonality = new ClientPersonality(personality.getCharacterId(),false, personality.getCost());
+            for (Personality personality : ((ExpertGame) game).getPersonalities()) {
+                ClientPersonality clientPersonality = new ClientPersonality(personality.getCharacterId(), false, personality.getCost());
                 personalities.add(clientPersonality);
             }
-            for (String player: clientBoards.keySet()){
+            for (String player : clientBoards.keySet()) {
                 clientBoards.get(player).setCoins(1);
             }
 
-            return new GameInstantiationMessage(clientIslands, clientBoards,personalities);
+            return new GameInstantiationMessage(clientIslands, clientBoards, personalities);
         }
 
-        return new GameInstantiationMessage(clientIslands,clientBoards);
+        return new GameInstantiationMessage(clientIslands, clientBoards);
 
     }
 
-    public Message buildMotherNatureMessage(PropertyChangeEvent event){
+    public Message buildMotherNatureMessage(PropertyChangeEvent event) {
         int motherNaturePosition = (int) event.getNewValue();
         return new MotherNatureMovementUpdateMessage(motherNaturePosition);
     }
 
     //quando viene fatto un merge viene mandata l'intera lista con le isole aggiornate
-    public Message buildMergeMessage(PropertyChangeEvent event){
+    public Message buildMergeMessage(PropertyChangeEvent event) {
         ArrayList<Island> modelIslands = (ArrayList<Island>) event.getNewValue();
         ArrayList<ClientIsland> clientIslands = new ArrayList<>();
-        for (Island modelIsland: modelIslands){
+        for (Island modelIsland : modelIslands) {
             ClientIsland newIsland = new ClientIsland(modelIsland.getIslandIndex());
             newIsland.setTowers(modelIsland.getTowers());
             newIsland.setStudents(modelIsland.getStudents());
@@ -79,25 +79,26 @@ public class UpdateMessageBuilder {
         return new IslandMergeUpdateMessage(clientIslands);
     }
 
-    public Message buildLastRoundMessage(PropertyChangeEvent event){
+    public Message buildLastRoundMessage(PropertyChangeEvent event) {
         boolean oldLastRound = (boolean) event.getOldValue();
         boolean newLastRound = (boolean) event.getNewValue();
         if (oldLastRound != newLastRound)
             return new LastRoundMessage("Questo è l'ultimo round della partita!");
         else return null;
     }
-/*
-    public Message buildGameOverMessage(PropertyChangeEvent event){
-        String winnerName = (String) event.getNewValue();
-        if (winnerName!=null)
-            return new EndGameMessage("Abbiamo un vincitore", winnerName);
-        else
-            return new EndGameMessage("La partita è finita in parità", null);
-        //poi in gameHandler si può gestire il caso di mandare un messaggio di win al vincitore, di lose ai perdenti ecc
-        //per il momento mandiamo in broadcast il nome del vincitore se ce n'è uno
-    }
-*/
-    public Message buildCloudsRefillMessage(PropertyChangeEvent event){
+
+    /*
+        public Message buildGameOverMessage(PropertyChangeEvent event){
+            String winnerName = (String) event.getNewValue();
+            if (winnerName!=null)
+                return new EndGameMessage("Abbiamo un vincitore", winnerName);
+            else
+                return new EndGameMessage("La partita è finita in parità", null);
+            //poi in gameHandler si può gestire il caso di mandare un messaggio di win al vincitore, di lose ai perdenti ecc
+            //per il momento mandiamo in broadcast il nome del vincitore se ce n'è uno
+        }
+    */
+    public Message buildCloudsRefillMessage(PropertyChangeEvent event) {
         ArrayList<Cloud> modelClouds = (ArrayList<Cloud>) event.getNewValue();
         ArrayList<ClientCloud> clientClouds = new ArrayList<>();
         int numClouds = modelClouds.size();
@@ -110,36 +111,36 @@ public class UpdateMessageBuilder {
         return new CloudsRefillMessage(clientClouds);
     }
 
-    public Message buildCurrentTurnAssistantCardsMessage(PropertyChangeEvent event){
+    public Message buildCurrentTurnAssistantCardsMessage(PropertyChangeEvent event) {
         HashMap<String, Assistant> cards = (HashMap<String, Assistant>) event.getNewValue();
         HashMap<String, Integer> playerToCardMap = new HashMap<>();
         int cardPriority;
-        for (String name: cards.keySet()){
+        for (String name : cards.keySet()) {
             cardPriority = cards.get(name).getPriority();
             playerToCardMap.put(name, cardPriority);
         }
         return new CurrentTurnAssistantCardsUpdateMessage(playerToCardMap); //ritorno solo l'associazione <Giocatore, Priorità>
     }
 
-    public Message buildDeckUpdateMessage(PropertyChangeEvent event){
+    public Message buildDeckUpdateMessage(PropertyChangeEvent event) {
         Player updatedPlayer = (Player) event.getNewValue();
         ArrayList<Assistant> updatedDeck = updatedPlayer.getDeck();
         HashMap<Integer, Integer> availableCards = new HashMap<>();
-        for (Assistant card: updatedDeck){
+        for (Assistant card : updatedDeck) {
             availableCards.put(card.getPriority(), card.getNumMoves());
         }
         return new AssistantDeckUpdateMessage(updatedPlayer.getNickname(), availableCards);
     }
 
     //questo metodo e quello dopo potrebbero essere collassati. rivedere
-    public Message buildIslandTowersMessage(PropertyChangeEvent event){
+    public Message buildIslandTowersMessage(PropertyChangeEvent event) {
         Island updatedIsland = (Island) event.getNewValue();
         ArrayList<Tower> towers = updatedIsland.getTowers();
         int index = updatedIsland.getIslandIndex();
         return new IslandTowersUpdateMessage(index, towers);
     }
 
-    public Message buildIslandStudentsMessage(PropertyChangeEvent event){
+    public Message buildIslandStudentsMessage(PropertyChangeEvent event) {
         //System.out.println("MessageBuilder: ora costruisco un messaggio di update degli studenti dell'isola");
         Island updatedModelIsland = (Island) event.getNewValue();
         ArrayList<Color> students = updatedModelIsland.getStudents();
@@ -147,7 +148,7 @@ public class UpdateMessageBuilder {
         return new IslandStudentsUpdateMessage(index, students);
     }
 
-    public Message buildPickedCloudMessage(PropertyChangeEvent event){
+    public Message buildPickedCloudMessage(PropertyChangeEvent event) {
         int cloudIndex = (int) event.getNewValue();
         return new CloudUpdateMessage(cloudIndex);
     }
@@ -155,13 +156,13 @@ public class UpdateMessageBuilder {
     //messaggio personalizzato manda la nuova clientBoard aggiornata
     //a questo metodo si possono aggiungere dei clientBoard.setX() se altri el possono cambiare
     //poi andrà cambiato anche il metodo setUpdatedClientBoard in GameBoard
-    public Message buildBoardUpdateMessage(PropertyChangeEvent event){
+    public Message buildBoardUpdateMessage(PropertyChangeEvent event) {
         Player updatedPlayer = (Player) event.getNewValue();
         Board updatedBoard = updatedPlayer.getBoard();
         String updatedOwner = updatedPlayer.getNickname();
         ClientBoard clientBoard = new ClientBoard(updatedOwner);
         clientBoard.setTeam(updatedPlayer.getTeam());
-        clientBoard.setTowers( updatedBoard.getTowers());
+        clientBoard.setTowers(updatedBoard.getTowers());
         clientBoard.setStudentsTable(updatedBoard.getStudentsTable());
         clientBoard.setTeacherTable(updatedBoard.getTeacherTable());
         clientBoard.setLobby(updatedBoard.getLobby());
@@ -169,15 +170,25 @@ public class UpdateMessageBuilder {
     }
 
 
-    public Message buildActivePersonalityMessage(PropertyChangeEvent event){
+    public Message buildActivePersonalityMessage(PropertyChangeEvent event) {
         int activeCardId = (int) event.getNewValue();
         return new ActivePersonalityMessage(activeCardId);
     }
 
-    public Message buildNoLongerActivePersonalityMessage(PropertyChangeEvent event){
+    public Message buildNoLongerActivePersonalityMessage(PropertyChangeEvent event) {
         int inactiveCardId = (int) event.getNewValue();
         return new InactivePersonalityMessage(inactiveCardId);
     }
 
-
+    public Message buildCoinsUpdate(PropertyChangeEvent event) {
+        try {
+            ArrayList<Object> coinsChange = (ArrayList<Object>) event.getNewValue();
+            int coins = (int) coinsChange.get(0);
+            String player = (String) coinsChange.get(1);
+            return new CoinsUpdateMessage(coins, player);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

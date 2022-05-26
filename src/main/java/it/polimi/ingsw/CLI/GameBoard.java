@@ -1,15 +1,9 @@
 package it.polimi.ingsw.CLI;
 
-import it.polimi.ingsw.Constants;
-import it.polimi.ingsw.exceptions.InvalidMoveException;
 import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
 
-import javax.swing.*;
-import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class GameBoard {
@@ -116,7 +110,6 @@ public class GameBoard {
        outputStream.println();
         if(activePersonality!=null)
             outputStream.println("ACTIVE PERSONALITY CARD:"+activePersonality.getCardID());
-
     }
 
     public void setClientTeam(String playerNickname, Tower tower){
@@ -165,10 +158,7 @@ public class GameBoard {
 
     }
     public void changeMNPosition(int islandIndex){
-        ClientIsland oldMNIsland = islands.stream().filter(ClientIsland::isMotherNature).findFirst().orElse(null);
-        if (oldMNIsland !=null){
-            oldMNIsland.setMotherNature(false);
-        }
+        islands.stream().filter(ClientIsland::isMotherNature).findFirst().ifPresent(oldMNIsland -> oldMNIsland.setMotherNature(false));
         getIslandByIndex(islandIndex).setMotherNature(true);
     }
 
@@ -182,6 +172,11 @@ public class GameBoard {
         //eventualmente si aggiungono gli altri set
     }
 
+    public void updateCoins(int coins, String player){
+        int oldCoins = clientBoards.get(player).getCoins();
+        clientBoards.get(player).setCoins(coins);
+        this.coins-=(coins-oldCoins);
+    }
     public int getNumberOfPlayers() {
         return numberOfPlayers;
     }
@@ -253,8 +248,10 @@ public class GameBoard {
         Optional<ClientPersonality> activePers = personalities.stream()
                                                 .filter(clientPersonality -> clientPersonality.getCardID() == activePersonality)
                                                 .findFirst();
-        if(activePers.isPresent())
+        if(activePers.isPresent()){
             this.activePersonality = activePers.get();
+            activePers.get().updateCost();
+        }
         else
             new Throwable().printStackTrace(); //non dovrebbe mai accadere quindi mettiamo eccezione così nel caso in runtime salta fuori un bug
     }

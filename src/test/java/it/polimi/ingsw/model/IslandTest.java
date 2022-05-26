@@ -35,7 +35,7 @@ class IslandTest {
     @Test
     void OwnerTest(){
         Island island = new Island(10);
-        Player player = new Player(0, "leo");
+        Player player = new Player(0, "leo",false);
         player.setTeam(Tower.BLACK);
         island.setOwner(player);
         assertEquals(Tower.BLACK, island.getOwnerTeam());
@@ -50,7 +50,7 @@ class IslandTest {
         Island island = new Island(1);
         island.addTower(Tower.BLACK);
         assertEquals(0, island.getTowers().size());
-        Player player = new Player(0, "mari");
+        Player player = new Player(0, "mari",false);
         player.setTeam(Tower.BLACK);
         island.setOwner(player);
 
@@ -87,7 +87,7 @@ class IslandTest {
     @Test
     void mergingTest() {
         Island merger = new Island(7);
-        Player player = new Player(0, "leo");
+        Player player = new Player(0, "leo",false);
         player.setTeam(Tower.BLACK);
         merger.setOwner(player);
         Island merged = new Island( 10);

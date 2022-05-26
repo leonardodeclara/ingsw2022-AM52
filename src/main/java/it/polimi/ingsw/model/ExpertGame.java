@@ -31,7 +31,7 @@ public class ExpertGame extends Game {
     public ExpertGame(int playersNumber){
         super(playersNumber);
         personalities = new ArrayList<>();
-        coins=20;
+        coins=20 - numOfPlayers;
         bans=4;
     }
 
@@ -44,6 +44,19 @@ public class ExpertGame extends Game {
         extractPersonalityCards();
     }
 
+
+    @Override
+    protected void moveStudentsFromLobbyToTable(Player player, Color studentToMove){
+        if(player.addToBoardTable(studentToMove)){
+            coins--; //-1 dalla riserva
+            player.setCoins(getCoins()+1); //+ 1 al giocatore
+            ArrayList<Object> coinsChange = new ArrayList<>();
+            coinsChange.add(player.getCoins());
+            coinsChange.add(player);
+            listeners.firePropertyChange("Coins", null, coinsChange);
+        }
+
+    }
 
     /**
      * This Method recalculates the given player's number of students and possibly assigns him 1+
@@ -106,7 +119,7 @@ public class ExpertGame extends Game {
     public boolean isMoveMNLegalForCard4(String nickname,int numSteps){
         int add = (getPlayerByName(nickname).equals(currentPersonalityPlayer) ? 2 : 0);
         int playerMaxSteps = currentTurnAssistantCards.get(nickname).getNumMoves() + add;
-        return numSteps > playerMaxSteps? false : true;
+        return numSteps <= playerMaxSteps;
     }
 
     /**
@@ -231,12 +244,20 @@ public class ExpertGame extends Game {
                 playedCardIndex=personalities.indexOf(card);
             }
         }
+        if(currentPlayer.getCoins()<personalities.get(playedCardIndex).getCost())
+          return false;
+
         try {
             activePersonality=personalities.remove(playedCardIndex);
-            activePersonality.setHasBeenUsed(true);
             activePersonality.updateCost();
             currentPersonalityPlayer = currentPlayer;
             listeners.firePropertyChange("ActivePersonality", null, cardId);
+            coins++;
+            currentPlayer.setCoins(currentPlayer.getCoins()-1);
+            ArrayList<Object> coinsChange = new ArrayList<>();
+            coinsChange.add(currentPlayer.getCoins());
+            coinsChange.add(currentPlayer.getNickname());
+            listeners.firePropertyChange("Coins", null, coinsChange);
             return true;
         }
         catch (IndexOutOfBoundsException exception){
@@ -253,7 +274,7 @@ public class ExpertGame extends Game {
      * Method that reset the active Personality card
      */
     public void resetActivePersonality(){
-        if (activePersonality!=null){
+        if(activePersonality!=null){
             int cardID = activePersonality.getCharacterId();
             personalities.add(activePersonality);
             activePersonality = null;
@@ -424,6 +445,7 @@ public class ExpertGame extends Game {
         super.setPropertyChangeListeners(controller);
         listeners.addPropertyChangeListener("ActivePersonality", controller);
         listeners.addPropertyChangeListener("BankCoins", controller);
+        listeners.addPropertyChangeListener("Coins", controller);
         listeners.addPropertyChangeListener("Bans", controller);
         listeners.addPropertyChangeListener("SelectedPersonality", controller);
         listeners.addPropertyChangeListener("NoLongerActivePersonality", controller);

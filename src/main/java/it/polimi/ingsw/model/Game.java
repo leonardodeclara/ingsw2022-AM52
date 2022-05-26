@@ -75,7 +75,7 @@ public class Game {
     public void addPlayers(ArrayList<String> playersNames) {
         for (String playerName: playersNames)
             if (players.size() < 3) {
-                Player player = new Player(players.size(), playerName);
+                Player player = new Player(players.size(), playerName,(this instanceof ExpertGame));
                 player.getBoard().setTowers(numOfPlayers == 2 ? 8 : 6);
                 players.add(player);
             } else
@@ -276,7 +276,7 @@ public class Game {
         for (Color studentToMove : studentsToMove) {
             if(player.removeFromBoardLobby(studentToMove)){
                 if (islandIDs.get(islandIndexCounter) == Constants.ISLAND_ID_NOT_RECEIVED)
-                    player.addToBoardTable(studentToMove);
+                    moveStudentsFromLobbyToTable(player,studentToMove);
                 else {
                     Island islandDest = getIslandById(islandIDs.get(islandIndexCounter));
                     islandDest.addStudent(studentToMove);
@@ -288,6 +288,10 @@ public class Game {
         }
 
         return true;
+    }
+
+    protected void moveStudentsFromLobbyToTable(Player player, Color studentToMove){
+        player.addToBoardTable(studentToMove);
     }
 
     /**

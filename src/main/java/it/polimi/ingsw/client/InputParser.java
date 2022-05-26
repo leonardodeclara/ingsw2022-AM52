@@ -117,10 +117,6 @@ public class InputParser {
         input = input.replaceAll("\s","");
         try{
             chosenDeckID = Integer.parseInt(input);
-            /* Questo controllo si dovrebbe fare lato server, vedere se eventualmente fare qualche controllo lato client. per ora no
-            if(GB.getAvailableWizards().contains(chosenDeckID))
-                data.add(chosenDeckID);
-             */
             data.add(chosenDeckID);
         }catch(NumberFormatException e){
             e.printStackTrace();

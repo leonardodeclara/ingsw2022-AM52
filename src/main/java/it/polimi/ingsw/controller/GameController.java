@@ -323,7 +323,9 @@ public class GameController implements PropertyChangeListener {
             case "NoLongerActivePersonality":
                 toSend = updateMessageBuilder.buildNoLongerActivePersonalityMessage(event);
                 break;
-            case "BankCoins": //vedere se effettivamente è utile
+            case "Coins":
+                toSend = updateMessageBuilder.buildCoinsUpdate(event);
+                break;
             case "Bans": //vedere se effettivamente è utile
             case "SelectedPersonality":
             //dovrebbero mancare listener per gli effetti "istant" delle carte personaggio, vedere quelle a parte

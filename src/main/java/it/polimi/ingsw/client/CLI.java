@@ -169,6 +169,8 @@ public class CLI implements Runnable,UI{
             updateInactivePersonality((InactivePersonalityMessage) updateMessage);
         else if (updateMessage instanceof LastRoundMessage)
             setLastRound((LastRoundMessage) updateMessage);
+        else if (updateMessage instanceof CoinsUpdateMessage)
+            updateCoins((CoinsUpdateMessage) updateMessage);
         else if (updateMessage instanceof EndGameMessage)
             showEndGameMessage((EndGameMessage) updateMessage);
     }
@@ -263,6 +265,9 @@ public class CLI implements Runnable,UI{
         GB.resetActivePersonality(message.getInactiveCardId());
     }
 
+    public void updateCoins(CoinsUpdateMessage message){
+        GB.updateCoins(message.getCoins(), message.getPlayer());
+    }
 
     public void setLastRound(LastRoundMessage message){
         outputStream.println(message.getLastRoundMessage());

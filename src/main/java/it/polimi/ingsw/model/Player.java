@@ -18,17 +18,18 @@ public class Player {
     private ArrayList<Assistant> deck;
     private Tower team;
     private PropertyChangeSupport listeners;
-
+    private int coins;
     /**
      * Constructor creates a Player instance.
      * @param index: unique identification for the player.
      */
-    public Player(int index, String nickname) {
+    public Player(int index, String nickname, boolean isExpert) {
         playerId = index;
         this.nickname=nickname;
         board = new Board();
         deck = new ArrayList<>();
         listeners = new PropertyChangeSupport(this);
+        coins = isExpert ? 1 : 0;
     }
 
     /**
@@ -160,12 +161,19 @@ public class Player {
         return null;
     }
 
+    public int getCoins(){
+        return coins;
+    }
+
+    public void setCoins(int coins){
+        this.coins=coins;
+    }
+
     //vanno cambiati tutti i test
 
     public void setPropertyChangeListener(GameController controller) {
         listeners.addPropertyChangeListener("Deck", controller); //non sono sicuro sia un'informazione visibile a tutti
         listeners.addPropertyChangeListener("Board", controller);
-
     }
 }
 

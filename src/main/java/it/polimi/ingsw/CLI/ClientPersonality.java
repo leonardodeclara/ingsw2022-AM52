@@ -84,7 +84,12 @@ public class ClientPersonality implements Serializable {
         }
     }
 
-
+    public void updateCost(){
+        if(!hasBeenUsed){
+            cost+=1;
+            setHasBeenUsed(true);
+        }
+    }
     public Integer getCardID() {
         return CardID;
     }

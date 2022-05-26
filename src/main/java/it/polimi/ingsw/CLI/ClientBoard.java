@@ -104,6 +104,8 @@ public class ClientBoard implements Serializable {
             System.out.println();
         }
 
+        if (GB.isExpertGame())
+            System.out.println("COINS: "+getCoins());
 
 
         //mancano da stampare: monete (se in expert game)
