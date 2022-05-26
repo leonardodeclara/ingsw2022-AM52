@@ -22,7 +22,6 @@ class ExpertGameTest {
         players.add("frizio");
         game.instantiateGameElements(players);
         assertEquals(17,game.getCoins());
-        //assertEquals(4, game.getBans());
     }
 
     @Test
@@ -339,11 +338,12 @@ class ExpertGameTest {
         players.add("frizio");
         game.instantiateGameElements(players);
         game.setCurrentPlayer("leo");
+        game.getPlayerByName("leo").setCoins(20);
         ArrayList<Personality> playableCards= game.getPersonalities();
         int idOfPlayedCard= playableCards.get(0).getCharacterId();
-        game.setActivePersonality(idOfPlayedCard);
-//        assertEquals(idOfPlayedCard, game.getActivePersonality().getCharacterId());
-     //   assertEquals(2, game.getPersonalities().size());
+        assertTrue(game.setActivePersonality(idOfPlayedCard));
+        assertEquals(idOfPlayedCard, game.getActivePersonality().getCharacterId());
+        assertEquals(2, game.getPersonalities().size());
     }
 
     @Test
@@ -357,8 +357,9 @@ class ExpertGameTest {
         game.instantiateGameElements(players);
 
         game.setCurrentPlayer("leo");
+        game.getPlayerByName("leo").setCoins(20);
         assertFalse(game.setActivePersonality(1));
-        game.setActivePersonality(game.getPersonalities().get(0).getCharacterId());
+        assertTrue(game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
         assertFalse(game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
     }
 
@@ -374,7 +375,8 @@ class ExpertGameTest {
         playableCards.get(0).setHasBeenUsed(true);
         playableCards.get(0).updateCost();
         game.setCurrentPlayer("leo");
-        game.setActivePersonality(game.getPersonalities().get(0).getCharacterId());
+        game.getPlayerByName("leo").setCoins(20);
+        assertTrue(game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
         game.resetActivePersonality();
         assertEquals(3, game.getPersonalities().size());
         for (Personality personality: playableCards){
