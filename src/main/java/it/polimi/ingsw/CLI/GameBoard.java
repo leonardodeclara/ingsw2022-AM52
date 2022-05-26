@@ -19,8 +19,7 @@ public class GameBoard {
     private ArrayList<ClientPersonality> personalities;
     private ClientPersonality activePersonality;
     private PrintStream outputStream;
-    int coins;
-    int bans;
+    private int coins;
 
 //TODO sostituire con ascii art intestazioni "board","islands","clouds"
 
@@ -37,7 +36,6 @@ public class GameBoard {
         availableWizards.add(3);
         availableWizards.add(4);
         this.outputStream = outputStream;
-        bans=4;
     }
 
     //usiamo questo metodo solo per inizializzare le cose che non dipendono dai giocatori in sé ma solo dai parametri di gioco,
@@ -56,7 +54,6 @@ public class GameBoard {
         if(expertGame){
             this.personalities = new ArrayList<>(personalities);
             coins=20-numberOfPlayers;
-            bans=4;
         }
     }
 
@@ -67,7 +64,6 @@ public class GameBoard {
         printClouds();
         printIslands();
         if (isExpertGame()){
-            outputStream.println("UNUSED BANS: " + bans);
             outputStream.println("BANK'S COINS: " + coins);
             printPersonalityCards(); //sistemare, deve stampare solo le carte estratte, non tutte
         }
@@ -177,6 +173,11 @@ public class GameBoard {
         clientBoards.get(player).setCoins(coins);
         this.coins-=(coins-oldCoins);
     }
+
+    public void setIslandBans(int islandId, int bansCount){
+        getIslandByIndex(islandId).setBans(bansCount);
+    }
+
     public int getNumberOfPlayers() {
         return numberOfPlayers;
     }

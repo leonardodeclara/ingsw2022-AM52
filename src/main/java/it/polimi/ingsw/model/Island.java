@@ -179,10 +179,16 @@ public class Island {
 
     public void putBan(){
         bans++;
+        listeners.firePropertyChange("IslandBans", null, this);
     }
 
     public void removeBan(){
         bans--;
+        listeners.firePropertyChange("IslandBans", null, this);
+    }
+
+    public int getBans() {
+        return bans;
     }
 
     public boolean isBanned(){
@@ -197,5 +203,6 @@ public class Island {
     public void setPropertyChangeListener(GameController controller){
         listeners.addPropertyChangeListener("IslandTowers", controller);
         listeners.addPropertyChangeListener("IslandStudents", controller);
+        listeners.addPropertyChangeListener("IslandBans", controller);
     }
 }

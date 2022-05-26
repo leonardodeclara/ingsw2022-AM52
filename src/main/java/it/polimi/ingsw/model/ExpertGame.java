@@ -15,13 +15,9 @@ import java.util.*;
  */
 public class ExpertGame extends Game {
     private ArrayList<Personality> personalities;
-    private static final int NUM_PLAYABLE_PERSONALITY_CARDS = 3;
-    private static final int NUM_EXISTING_PERSONALITY_CARDS = 12;
     private Personality activePersonality; //c'è un solo personaggio attivo per round
     private Player currentPersonalityPlayer; //si può togliere e tenere solo currentPlayer. tanto l'effetto è attivo finché è il turno del giocatore che ha giocato la carta
     private int coins;
-    private int bans;
-
 
 
 
@@ -31,8 +27,7 @@ public class ExpertGame extends Game {
     public ExpertGame(int playersNumber){
         super(playersNumber);
         personalities = new ArrayList<>();
-        coins=20 - numOfPlayers;
-        bans=4;
+        coins=Constants.MAX_COINS_NUMBER - numOfPlayers;
     }
 
     /**
@@ -223,7 +218,7 @@ public class ExpertGame extends Game {
         personalities.add(new Personality(2));
         personalities.add(new Personality(3));
         personalities.add(new Personality(4));
-        listeners.firePropertyChange("ExtractedPersonalities", null, personalities);
+        //listeners.firePropertyChange("ExtractedPersonalities", null, personalities); //in teoria non serve perché i listener vengono settati dopo l'estrazione
 
     }
 
@@ -244,6 +239,8 @@ public class ExpertGame extends Game {
                 playedCardIndex=personalities.indexOf(card);
             }
         }
+        if (playedCardIndex==-1)
+            return false;
         if(currentPlayer.getCoins()<personalities.get(playedCardIndex).getCost())
           return false;
 
@@ -312,9 +309,9 @@ public class ExpertGame extends Game {
 
     public boolean executeCard5Effect(int islandId){
         Island bannedIsland = getIslandById(islandId);
-        if (bannedIsland==null || bans<=0) return false;
+        if (bannedIsland==null || ((BanPersonality) activePersonality).getBans()<=0) return false;
         bannedIsland.putBan();
-        bans--;
+        ((BanPersonality) activePersonality).removeBan();
         return true;
     }
 
@@ -433,21 +430,15 @@ public class ExpertGame extends Game {
         return coins;
     }
 
-    /**
-     * Method that returns the number of bans in the game
-     */
-    public int getBans() {
-        return bans;
-    }
-
     @Override
     public void setPropertyChangeListeners(GameController controller) {
         super.setPropertyChangeListeners(controller);
-        listeners.addPropertyChangeListener("ActivePersonality", controller);
-        listeners.addPropertyChangeListener("BankCoins", controller);
-        listeners.addPropertyChangeListener("Coins", controller);
-        listeners.addPropertyChangeListener("Bans", controller);
+        listeners.addPropertyChangeListener("ActivePersonality", controller); //fatto
+        //listeners.addPropertyChangeListener("ExtractedPersonalities", controller); //in teoria non serve perché i listener vengono settati dopo l'estrazione
+        listeners.addPropertyChangeListener("Coins", controller); //fatto
         listeners.addPropertyChangeListener("SelectedPersonality", controller);
-        listeners.addPropertyChangeListener("NoLongerActivePersonality", controller);
+        for (Personality personality: personalities)
+            personality.setPropertyChangeListener(controller);
+        listeners.addPropertyChangeListener("NoLongerActivePersonality", controller); //fatto
     }
 }

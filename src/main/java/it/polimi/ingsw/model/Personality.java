@@ -1,5 +1,9 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.GameController;
+
+import java.beans.PropertyChangeSupport;
+
 /**
  * This class represents the Personality card
  * Players can use Personality card in expert game mode
@@ -9,6 +13,7 @@ public class Personality {
     private final int characterId;
     private boolean hasBeenUsed;
     private int cost;
+    protected PropertyChangeSupport listeners;
 
     /**
      * Constructor creates a Personality card instance
@@ -18,6 +23,7 @@ public class Personality {
         characterId=id;
         cost=id%3==0? 3: id%3;
         hasBeenUsed=false;
+        listeners= new PropertyChangeSupport(this);
     }
 
     /**
@@ -62,6 +68,10 @@ public class Personality {
         return cost;
     }
 
+    public void setPropertyChangeListener(GameController controller){
+        listeners.addPropertyChangeListener("PersonalityUsage",controller);
+        //mancano tutti i fire di update per le modifiche di monete, studenti in lobbyPersonality e ban in BanPersonality
+    }
 }
 
 

@@ -351,10 +351,15 @@ public class GameHandler implements PropertyChangeListener{
         sendTo(clientName, response);
     }
 
-    /*
-    TODO: finire questo
-     */
-    private void handleCard9Effect(Card9EffectMessage message, ClientHandler client){}
+    private void handleCard9Effect(Card9EffectMessage message, ClientHandler client){
+        String clientName = getNicknameFromClientID(client.getID());
+        gameController.applyEffect9(message.getBanned());
+        System.out.println(clientName + "ha utilizzato l'effetto della carta 9, " +
+                    "ora lo mando nello stato precedente alla invocazione della carta");
+        sendTo(clientName, new ClientStateMessage(client.getCurrentClientState()));
+        //in teoria non ci possono essere errori di invalid input per questo carta perché
+        //eventuali input errati (cioè string che non sono i color) vengono gestiti lato client
+    }
 
     private void handleCard10Effect(Card10EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());

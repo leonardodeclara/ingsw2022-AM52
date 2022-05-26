@@ -8,6 +8,8 @@ import java.util.HashMap;
 public class Constants {
     public static final int MIN_NUMBER_OF_PLAYERS = 2;
     public static final int MAX_NUMBER_OF_PLAYERS = 3;
+    private static final int NUM_PLAYABLE_PERSONALITY_CARDS = 3;
+    private static final int NUM_EXISTING_PERSONALITY_CARDS = 12;
     public static final String DRAW = "isDraw";
     public static final String NO_DRAW = "noDraw";
     public static final String TIE = "tie";
@@ -18,6 +20,8 @@ public class Constants {
     public static final int ISLAND_THRESHOLD_FOR_GAME_OVER = 3;
     public static final int MAX_TOWER_NUMBER = 10;
     public static final int MAX_STUDENTS_FOR_CARD_10_SWITCH = 2;
+    public static final int MAX_BANS_NUMBER = 4;
+    public static final int MAX_COINS_NUMBER = 20;
     public static final String[] fxmlPaths = new String[]{"/fxml/MainMenu.fxml","/fxml/ConnectMenu.fxml","/fxml/NicknameMenu.fxml","/fxml/MatchMakingMenu.fxml","/fxml/LobbyMenu.fxml"};
 
     public static final String RESET = "\033[0m";

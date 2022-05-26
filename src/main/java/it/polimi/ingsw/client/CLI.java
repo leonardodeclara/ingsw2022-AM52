@@ -171,6 +171,8 @@ public class CLI implements Runnable,UI{
             setLastRound((LastRoundMessage) updateMessage);
         else if (updateMessage instanceof CoinsUpdateMessage)
             updateCoins((CoinsUpdateMessage) updateMessage);
+        else if (updateMessage instanceof IslandBanUpdateMessage)
+            updateIslandBans((IslandBanUpdateMessage) updateMessage);
         else if (updateMessage instanceof EndGameMessage)
             showEndGameMessage((EndGameMessage) updateMessage);
     }
@@ -267,6 +269,13 @@ public class CLI implements Runnable,UI{
 
     public void updateCoins(CoinsUpdateMessage message){
         GB.updateCoins(message.getCoins(), message.getPlayer());
+    }
+
+    public void updateIslandBans(IslandBanUpdateMessage message){
+        GB.setIslandBans(message.getIslandId(),message.getBanCount());
+        outputStream.println("È stato inserito/tolto un ban sull'isola " + message.getIslandId());
+        outputStream.println();
+        GB.print();
     }
 
     public void setLastRound(LastRoundMessage message){

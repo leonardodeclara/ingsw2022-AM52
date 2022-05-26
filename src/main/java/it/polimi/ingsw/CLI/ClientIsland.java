@@ -19,13 +19,12 @@ public class ClientIsland implements Serializable {
     private String owner;
 
     public ClientIsland(int islandIndex ) {
-
         this.islandIndex = islandIndex;
         this.towers = new ArrayList<>();
         this.students = new ArrayList<>();
         this.motherNature = false;
         this.numMergedIslands = 0;
-        bans = 0;
+        this.bans = 0;
         this.owner = null;
     }
 
@@ -74,8 +73,8 @@ public class ClientIsland implements Serializable {
         return islandIndex;
     }
 
-    public void setIslandIndex(int islandIndex) {
-        this.islandIndex = islandIndex;
+    public void setBans(int bans){
+        this.bans=bans;
     }
 
     public ArrayList<Tower> getTowers() {

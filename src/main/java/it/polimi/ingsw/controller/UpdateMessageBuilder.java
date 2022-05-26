@@ -4,6 +4,7 @@ import it.polimi.ingsw.CLI.ClientBoard;
 import it.polimi.ingsw.CLI.ClientCloud;
 import it.polimi.ingsw.CLI.ClientIsland;
 import it.polimi.ingsw.CLI.ClientPersonality;
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.*;
@@ -12,6 +13,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 //v1 di UpdateMessageBuilder: la classe si occupa di generare il messaggio di update in base al contenuto dell'evento ricevuto
 //questo messaggio viene restituito al controller, ascoltato da gameHandler che riceverà il messaggio da controller via firePropertyChange e ne gestirà l'invio ai client
@@ -45,6 +47,8 @@ public class UpdateMessageBuilder {
             ArrayList<ClientPersonality> personalities = new ArrayList<>();
             for (Personality personality : ((ExpertGame) game).getPersonalities()) {
                 ClientPersonality clientPersonality = new ClientPersonality(personality.getCharacterId(), false, personality.getCost());
+                if (personality instanceof BanPersonality)
+                    clientPersonality.setBans(Constants.MAX_BANS_NUMBER);
                 personalities.add(clientPersonality);
             }
             for (String player : clientBoards.keySet()) {
@@ -132,7 +136,7 @@ public class UpdateMessageBuilder {
         return new AssistantDeckUpdateMessage(updatedPlayer.getNickname(), availableCards);
     }
 
-    //questo metodo e quello dopo potrebbero essere collassati. rivedere
+    //questo metodo e quello dopo e quello dopo ancora potrebbero essere collassati. rivedere
     public Message buildIslandTowersMessage(PropertyChangeEvent event) {
         Island updatedIsland = (Island) event.getNewValue();
         ArrayList<Tower> towers = updatedIsland.getTowers();
@@ -146,6 +150,13 @@ public class UpdateMessageBuilder {
         ArrayList<Color> students = updatedModelIsland.getStudents();
         int index = updatedModelIsland.getIslandIndex();
         return new IslandStudentsUpdateMessage(index, students);
+    }
+
+    public Message buildIslandBansMessage(PropertyChangeEvent event){
+        Island updatedModelIsland = (Island) event.getNewValue();
+        int index = updatedModelIsland.getIslandIndex();
+        int updatedBans = updatedModelIsland.getBans();
+        return new IslandBanUpdateMessage(index, updatedBans);
     }
 
     public Message buildPickedCloudMessage(PropertyChangeEvent event) {

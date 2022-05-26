@@ -24,6 +24,7 @@ public class GameController implements PropertyChangeListener {
     private BiPredicate<String,Integer> moveMotherNature;
     private BiFunction<Island,Object,HashMap<String,String>> calculateInfluence;
     private Consumer<String> updateTeachersOwnership;
+    private Color bannedColor; //vedere se si può spostare in expertGame, che avrebbe più senso
 
 
     public GameController(boolean isExpert, ArrayList<String> players) {
@@ -106,7 +107,9 @@ public class GameController implements PropertyChangeListener {
         if(moveMotherNature.test(player,steps)){
             if (!game.getCurrentMotherNatureIsland().isBanned()){ //effetto carta 5
                 //qui va aggiunto tutta la gestione del calcolo influenza, spostamento torri, merge isole ecc
-                calculateInfluence.apply(game.getCurrentMotherNatureIsland(),null);
+                calculateInfluence.apply(game.getCurrentMotherNatureIsland(),bannedColor);
+                //calculateInfluence prende a prescindere bannedColor,
+                //ma se non è stata attivata la carta 9 non lo prende in considerazione
                 if (game.checkGameOver())
                     return new EndGameMessage(game.getWinner()==null? Constants.TIE: game.getWinner().getNickname());
             }
@@ -146,6 +149,8 @@ public class GameController implements PropertyChangeListener {
     public void resetPersonalityCard(){
         ((ExpertGame) game).resetActivePersonality();
         changeGameRulesForPersonalityCard(0);
+        if (bannedColor!=null)
+            resetBannedColor(); //inutile ma lo mettiamo comunque perché concettualmente corrretto
     }
 
     private void changeGameRulesForPersonalityCard(int cardID){
@@ -196,8 +201,7 @@ public class GameController implements PropertyChangeListener {
             if (game.checkGameOver())
                 return new EndGameMessage(game.getWinner()==null? Constants.TIE: game.getWinner().getNickname());
             else
-                return null;//bisogna mandare al client un messaggio di clientState che lo faccia tornare
-                            // allo stato precedente all'invocazione della carta
+                return null;
         }
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
@@ -215,6 +219,11 @@ public class GameController implements PropertyChangeListener {
             return null;
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
+    }
+
+    //void perché non possono esserci errore in teoria
+    public void applyEffect9(Color banned){
+        setBannedColor(banned);
     }
 
 
@@ -240,8 +249,6 @@ public class GameController implements PropertyChangeListener {
     }
 
 
-
-
     //return true se la partita è finita, false otherwise
     public Message closeCurrentRound(){
         //bisogna gestire la fine partita nel caso fosse il lastRound
@@ -262,8 +269,7 @@ public class GameController implements PropertyChangeListener {
 
     private String getRandomPlayer(){
         Random rand = new Random();
-        String randomPlayer = players.get(rand.nextInt(players.size()));
-        return randomPlayer;
+        return players.get(rand.nextInt(players.size()));
     }
 
     public ArrayList<Integer> getAvailableWizards() {
@@ -298,7 +304,7 @@ public class GameController implements PropertyChangeListener {
             case "CloudsRefill":
                 toSend = updateMessageBuilder.buildCloudsRefillMessage(event);
                 break;
-            case "CurrentTurnAssistantCards": //vedere cosa mandare effettivamente nel messaggio
+            case "CurrentTurnAssistantCards":
                 toSend = updateMessageBuilder.buildCurrentTurnAssistantCardsMessage(event);
                 break;
             case "Deck": //non se è messaggio broadcast, forse in gameHandler va gestito in maniera diversa
@@ -309,8 +315,9 @@ public class GameController implements PropertyChangeListener {
                 break;
             case "IslandStudents":
                 toSend = updateMessageBuilder.buildIslandStudentsMessage(event);
-                System.out.println("GC: il messaggio di update degli studenti dell'isola è pronto");
                 break;
+            case "IslandBans":
+                toSend = updateMessageBuilder.buildIslandBansMessage(event);
             case "PickedCloud":
                 toSend = updateMessageBuilder.buildPickedCloudMessage(event);
                 break;
@@ -326,8 +333,7 @@ public class GameController implements PropertyChangeListener {
             case "Coins":
                 toSend = updateMessageBuilder.buildCoinsUpdate(event);
                 break;
-            case "Bans": //vedere se effettivamente è utile
-            case "SelectedPersonality":
+            case "PersonalityUsage":
             //dovrebbero mancare listener per gli effetti "istant" delle carte personaggio, vedere quelle a parte
             //si potrebbe mettere come listener in quel caso cardController
         }
@@ -335,7 +341,6 @@ public class GameController implements PropertyChangeListener {
             System.out.println("GC: ho generato un messaggio di update valido: ora lo passo a GH");
             listener.firePropertyChange("UpdateMessage", null, toSend);
         }
-
         //in propertyChange di GameHandler bisogna fare il controllo oldValue-newValue perché se
         // la generazione dei messaggi restituisce null non devo inviare nulla (tipo nel caso LastRound)
 
@@ -348,5 +353,13 @@ public class GameController implements PropertyChangeListener {
     public void setCurrentPlayer(String currentPlayer) {
         this.currentPlayer = currentPlayer;
         game.setCurrentPlayer(currentPlayer);
+    }
+
+    public void setBannedColor(Color color){
+        bannedColor=color;
+    }
+
+    public void resetBannedColor(){
+        bannedColor=null;
     }
 }

@@ -2,6 +2,8 @@ package it.polimi.ingsw.model;
 
 //carta id 4
 
+import it.polimi.ingsw.Constants;
+
 /**
  * This is a subclass of the class Personality
  * This class represents the Personality card with CardID 4
@@ -17,14 +19,14 @@ public class BanPersonality extends Personality{
 
     public BanPersonality(int id){
         super(id);
-        bans=4;
+        bans=Constants.MAX_BANS_NUMBER;
     }
 
     /**
      * This method add bans on the card
      */
     public void addBan(){
-        if(bans<4)
+        if(bans< Constants.MAX_BANS_NUMBER)
             bans+=1;
     }
 

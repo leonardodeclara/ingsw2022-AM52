@@ -1,19 +1,25 @@
 package it.polimi.ingsw.CLI;
 
+import it.polimi.ingsw.model.Color;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class ClientPersonality implements Serializable {
     static final long serialVersionUID = 42L;
     private Integer CardID;
     private Boolean hasBeenUsed;
     private Integer cost;
+    private int bans;
     private String description; //descrizione da visualizzare quando si printa la board
-
+    private ArrayList<Color> students;
 
     public ClientPersonality(Integer cardID, Boolean hasBeenUsed, Integer cost) {
         CardID = cardID;
         this.hasBeenUsed = hasBeenUsed;
         this.cost = cost;
+        students= new ArrayList<>();
+        bans=0;
     }
 
     public void getDescription(Integer cardID){
@@ -113,4 +119,14 @@ public class ClientPersonality implements Serializable {
     public void setCost(Integer cost) {
         this.cost = cost;
     }
+
+    public void setStudents(ArrayList<Color> students){
+        this.students.clear();
+        this.students.addAll(students);
+    }
+
+    public void setBans(int bans) {
+        this.bans = bans;
+    }
 }
+
