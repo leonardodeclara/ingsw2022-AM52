@@ -18,7 +18,7 @@ public class ExpertGame extends Game {
     private Personality activePersonality; //c'è un solo personaggio attivo per round
     private Player currentPersonalityPlayer; //si può togliere e tenere solo currentPlayer. tanto l'effetto è attivo finché è il turno del giocatore che ha giocato la carta
     private int coins;
-
+    private Color bannedColor;
 
 
     /**
@@ -121,7 +121,7 @@ public class ExpertGame extends Game {
      * Method that calculates influence of an island but doesn't consider the towers
      * @param island: instance of the island on which I want to calculate influence
      */
-    public HashMap<String,String> calculateInfluenceForCard6(Island island,Object args){
+    public HashMap<String,String> calculateInfluenceForCard6(Island island){
         HashMap<String,Integer>  influences = calculateStudentsInfluences(island,players);
         return calculateIslandOwner(island,influences);
     }
@@ -130,7 +130,7 @@ public class ExpertGame extends Game {
      * Method that calculates influence of an island and adds 2 additional points
      * @param island: instance of the island on which I want to calculates influence
      */
-    public HashMap<String,String> calculateInfluenceForCard8(Island island,Object args){
+    public HashMap<String,String> calculateInfluenceForCard8(Island island){
         HashMap<String,Integer>  influences = calculateStudentsInfluences(island,players);
         String towersOwnerName = getTowersOwnerName(island,players);
         int incrementedValue = influences.get(currentPlayer.getNickname()) + 2;
@@ -145,10 +145,9 @@ public class ExpertGame extends Game {
     /**
      * Method that calculates influence on an island but doesn't consider the bannedColor students
      * @param island: instance of the island on which I want to calculate influence
-     * @param args: Color that I want to exclude from the influence count
      */
-    public HashMap<String,String> calculateInfluenceForCard9(Island island,Object args){
-        Color bannedColor = (Color) args;
+    public HashMap<String,String> calculateInfluenceForCard9(Island island){
+        Color bannedColor = getBannedColor();
         HashMap<String,Integer> influences = calculateStudentsInfluences(island,players,bannedColor);
         String towersOwnerName = getTowersOwnerName(island,players);
         if(towersOwnerName != null){
@@ -293,6 +292,7 @@ public class ExpertGame extends Game {
        if (student==null || destination==null)
            return false;
        destination.addStudent(student);
+       ((LobbyPersonality) activePersonality).removeStudent(student);
        try{
            ((LobbyPersonality) activePersonality).addStudent(basket.pickStudent());
        }
@@ -378,6 +378,7 @@ public class ExpertGame extends Game {
         if (toBeMoved==null || currentPlayer.getBoard().isTableFull(toBeMoved,0))
             return false;
         currentPlayer.addToBoardTable(toBeMoved);
+        ((LobbyPersonality) activePersonality).removeStudent(toBeMoved);
         try{
             ((LobbyPersonality) activePersonality).addStudent(basket.pickStudent());
         }
@@ -428,6 +429,18 @@ public class ExpertGame extends Game {
      */
     public int getCoins() {
         return coins;
+    }
+
+    public void setBannedColor(Color color){
+        bannedColor=color;
+    }
+
+    public void resetBannedColor(){
+        bannedColor=null;
+    }
+
+    public Color getBannedColor() {
+        return bannedColor;
     }
 
     @Override

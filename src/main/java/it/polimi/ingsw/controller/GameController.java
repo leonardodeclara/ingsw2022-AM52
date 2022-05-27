@@ -22,9 +22,8 @@ public class GameController implements PropertyChangeListener {
     private final ArrayList<Integer> availableWizards; //poi sta cosa va tolta da game
     private final HashMap<String, Integer> playerToWizardMap;
     private BiPredicate<String,Integer> moveMotherNature;
-    private BiFunction<Island,Object,HashMap<String,String>> calculateInfluence;
+    private Function<Island,HashMap<String,String>> calculateInfluence;
     private Consumer<String> updateTeachersOwnership;
-    private Color bannedColor; //vedere se si può spostare in expertGame, che avrebbe più senso
 
 
     public GameController(boolean isExpert, ArrayList<String> players) {
@@ -107,7 +106,7 @@ public class GameController implements PropertyChangeListener {
         if(moveMotherNature.test(player,steps)){
             if (!game.getCurrentMotherNatureIsland().isBanned()){ //effetto carta 5
                 //qui va aggiunto tutta la gestione del calcolo influenza, spostamento torri, merge isole ecc
-                calculateInfluence.apply(game.getCurrentMotherNatureIsland(),bannedColor);
+                calculateInfluence.apply(game.getCurrentMotherNatureIsland());
                 //calculateInfluence prende a prescindere bannedColor,
                 //ma se non è stata attivata la carta 9 non lo prende in considerazione
                 if (game.checkGameOver())
@@ -149,8 +148,8 @@ public class GameController implements PropertyChangeListener {
     public void resetPersonalityCard(){
         ((ExpertGame) game).resetActivePersonality();
         changeGameRulesForPersonalityCard(0);
-        if (bannedColor!=null)
-            resetBannedColor(); //inutile ma lo mettiamo comunque perché concettualmente corrretto
+        if (((ExpertGame)game).getBannedColor()!=null)
+            ((ExpertGame)game).resetBannedColor(); //inutile ma lo mettiamo comunque perché concettualmente corrretto
     }
 
     private void changeGameRulesForPersonalityCard(int cardID){
@@ -197,7 +196,7 @@ public class GameController implements PropertyChangeListener {
 
     public Message applyEffect3(int islandId){
         if (game.getIslandById(islandId)!=null){
-            calculateInfluence.apply(game.getIslandById(islandId),null);
+            calculateInfluence.apply(game.getIslandById(islandId));
             if (game.checkGameOver())
                 return new EndGameMessage(game.getWinner()==null? Constants.TIE: game.getWinner().getNickname());
             else
@@ -223,7 +222,7 @@ public class GameController implements PropertyChangeListener {
 
     //void perché non possono esserci errore in teoria
     public void applyEffect9(Color banned){
-        setBannedColor(banned);
+        ((ExpertGame)game).setBannedColor(banned);
     }
 
 
@@ -355,11 +354,4 @@ public class GameController implements PropertyChangeListener {
         game.setCurrentPlayer(currentPlayer);
     }
 
-    public void setBannedColor(Color color){
-        bannedColor=color;
-    }
-
-    public void resetBannedColor(){
-        bannedColor=null;
-    }
 }

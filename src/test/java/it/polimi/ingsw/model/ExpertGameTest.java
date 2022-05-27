@@ -148,25 +148,25 @@ class ExpertGameTest {
                 oppositeToMN=(i+6)%12;
         }
         HashMap<String,String> result;
-        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN),null);
+        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN));
         assertNull(result.get("Player Name"));
         assertEquals(Constants.DRAW,result.get("Is Draw"));
         game.getPlayerByName("frizio").addTeacherToBoard(Color.BLUE);
         game.getIslands().get(oppositeToMN).addStudent(Color.BLUE);
-        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN),null);
+        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN));
         assertEquals("frizio",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         game.getIslands().get(oppositeToMN).addTower(game.getPlayerByName("frizio").getTeam());
-        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN),null);
+        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN));
         assertEquals("frizio",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         game.getPlayerByName("mari").addTeacherToBoard(Color.GREEN);
         game.getIslands().get(oppositeToMN).addStudent(Color.GREEN);
-        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN),null);
+        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN));
         assertEquals("frizio",result.get("Player Name"));
         assertEquals(Constants.DRAW,result.get("Is Draw"));
         game.getIslands().get(oppositeToMN).addStudent(Color.GREEN);
-        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN),null);
+        result=game.calculateInfluenceForCard6(game.getIslands().get(oppositeToMN));
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
     }
@@ -187,7 +187,7 @@ class ExpertGameTest {
         }
         game.setCurrentPlayer("mari");
         //testo il calcolo dell'influenza su due isole vuote
-        HashMap<String,String> result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);
+        HashMap<String,String> result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
         assertEquals("mari",result.get("Player Name")); //mari 3 (torre + 2 bonus)
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         //riempio le isole e ricalcolo l'influenza
@@ -196,19 +196,19 @@ class ExpertGameTest {
         game.getIslands().get(mnPosition).addStudent(Color.YELLOW);
         game.getPlayerByName("leo").addTeacherToBoard(Color.RED);
         game.getPlayerByName("mari").addTeacherToBoard(Color.PINK);
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null); //mari 4 - leo 1
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition)); //mari 4 - leo 1
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         game.getPlayerByName("leo").addTeacherToBoard(Color.YELLOW);
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);//mari 4 - leo 2
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));//mari 4 - leo 2
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         game.getIslands().get(mnPosition).addStudent(Color.YELLOW); //mari 4 - leo 3
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         game.getIslands().get(mnPosition).addStudent(Color.RED);//mari 4 - leo 4
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.DRAW, result.get("Is Draw"));
     }
@@ -234,15 +234,15 @@ class ExpertGameTest {
         game.getIslands().get(mnPosition).addStudent(Color.GREEN);
         game.getPlayerByName("mari").getBoard().addTeacher(Color.PINK);
         game.getPlayerByName("mari").getBoard().addTeacher(Color.GREEN);
-        HashMap<String,String> result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);
+        HashMap<String,String> result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
         assertEquals("frizio",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
         game.getIslands().get(mnPosition).addStudent(Color.GREEN);
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition),null);
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
         assertEquals("frizio",result.get("Player Name"));
         assertEquals(Constants.DRAW,result.get("Is Draw"));
         game.getIslands().get(mnPosition).addStudent(Color.GREEN);
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition), null);
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
     }
@@ -268,10 +268,12 @@ class ExpertGameTest {
                 mnPosition=i;
         }
         //testo il calcolo dell'influenza su due isole vuote
-        HashMap<String, String> result=game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.GREEN);
+        game.setBannedColor(Color.GREEN);
+        HashMap<String, String> result=game.calculateInfluenceForCard9(game.getIslands().get(mnPosition));
         assertNull(result.get("Player Name"));
         assertEquals( Constants.DRAW, result.get("Is Draw"));
-        result = game.calculateInfluenceForCard9(game.getIslands().get((mnPosition+6)%12), Color.GREEN);
+        game.setBannedColor( Color.GREEN);
+        result = game.calculateInfluenceForCard9(game.getIslands().get((mnPosition+6)%12));
         assertNull(result.get("Player Name"));
         assertEquals( Constants.DRAW,result.get("Is Draw"));//pareggio + proprietario era null, rimane null
         //riempio le isole e ricalcolo l'influenza
@@ -280,15 +282,18 @@ class ExpertGameTest {
         game.getIslands().get(mnPosition).addStudent(Color.YELLOW);
         game.getPlayerByName("frizio").addTeacherToBoard(Color.BLUE);
         game.getPlayerByName("mari").addTeacherToBoard(Color.PINK);
-        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.BLUE);  //mari 1, frizio 0 ->mari mette una torre (2-0)
+        game.setBannedColor(Color.BLUE);
+        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition));  //mari 1, frizio 0 ->mari mette una torre (2-0)
         assertEquals("mari",result.get("Player Name"));
         assertEquals( Constants.NO_DRAW, result.get("Is Draw"));
         game.getIslands().get(mnPosition).addStudent(Color.BLUE);
-        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.PINK); //mari 1, frizio 2 -> mari toglie una torre e la mette frizio (0-3)
+        game.setBannedColor(Color.PINK);
+        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition)); //mari 1, frizio 2 -> mari toglie una torre e la mette frizio (0-3)
         assertEquals("frizio",result.get("Player Name"));
         assertEquals( Constants.NO_DRAW, result.get("Is Draw"));
         game.getPlayerByName("frizio").addTeacherToBoard(Color.YELLOW);
-        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.YELLOW);
+        game.setBannedColor(Color.YELLOW);
+        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition));
         assertEquals("frizio",result.get("Player Name"));
         assertEquals( Constants.NO_DRAW, result.get("Is Draw"));
         //dovrei testare anche con le torri
@@ -311,7 +316,8 @@ class ExpertGameTest {
         }
         game.getIslands().get(mnPosition).setOwner(game.getPlayerByName("leo"));
         game.getIslands().get(mnPosition).addTower(Tower.WHITE);
-        HashMap<String,String> result=game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.BLUE);
+        game.setBannedColor(Color.BLUE);
+        HashMap<String,String> result=game.calculateInfluenceForCard9(game.getIslands().get(mnPosition));
         assertEquals("leo", result.get("Player Name"));
         assertEquals( Constants.NO_DRAW, result.get("Is Draw"));
         //riempio le isole e ricalcolo l'influenza
@@ -320,10 +326,12 @@ class ExpertGameTest {
         game.getIslands().get(mnPosition).addStudent(Color.YELLOW);
         game.getPlayerByName("leo").addTeacherToBoard(Color.BLUE);
         game.getPlayerByName("mari").addTeacherToBoard(Color.PINK);
-        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.BLUE);
+        game.setBannedColor(Color.BLUE);
+        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition));
         assertEquals("leo",result.get("Player Name"));
         assertEquals( Constants.DRAW, result.get("Is Draw"));
-        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition), Color.PINK);
+        game.setBannedColor(Color.PINK);
+        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition));
         assertEquals("leo",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
     }
@@ -385,6 +393,121 @@ class ExpertGameTest {
         assertNull(game.getActivePersonality());
     }
 
+    @Test
+    void card1EffectsTest(){
+        ExpertGame game = new ExpertGame(2);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("leo");
+        players.add("mari");
+        game.instantiateGameElements(players);
+        game.setCurrentPlayer("leo");
+        ArrayList<Integer> selectedPersonalitiesIds= new ArrayList<>();
+        for (Personality personality: game.getPersonalities())
+            selectedPersonalitiesIds.add(personality.getCharacterId());
 
+        if (!selectedPersonalitiesIds.contains(1)){
+            game.getPersonalities().add(new LobbyPersonality(1));
+            for (int i = 0; i<4;i++)
+                ((LobbyPersonality) game.getPersonalities().get(3)).addStudent(game.getBasket().pickStudent());
+                //se non era già tra le carte pescate allora sarà la quarta dell'arraylist
+        }
+        assertTrue(game.setActivePersonality(1));
+        Color selectedStudent = ((LobbyPersonality) game.getActivePersonality()).getStudent(0);
+        int oldIslandStudents = game.getIslandById(1).getStudents().size();
+        assertTrue(game.executeCard1Effect(0,1));
+        assertEquals(4, ((LobbyPersonality) game.getActivePersonality()).getStudents().size());
+        assertEquals(oldIslandStudents+1,game.getIslandById(1).getStudents().size());
+        assertEquals(selectedStudent, game.getIslandById(1).getStudents().get(oldIslandStudents));
+        //si potrebbe controllare che il numero di pedine nel sacchetto sia diminuito di 1
+        //testare casi limite
+    }
+
+    @Test
+    void card5EffectTest(){
+        ExpertGame game = new ExpertGame(2);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("leo");
+        players.add("mari");
+        game.instantiateGameElements(players);
+        game.setCurrentPlayer("leo");
+        game.getPlayerByName("leo").setCoins(10);
+        ArrayList<Integer> selectedPersonalitiesIds= new ArrayList<>();
+        for (Personality personality: game.getPersonalities())
+            selectedPersonalitiesIds.add(personality.getCharacterId());
+
+        if (!selectedPersonalitiesIds.contains(5)){
+            game.getPersonalities().add(new BanPersonality(5));
+        }
+        assertTrue(game.setActivePersonality(5));
+        assertTrue(game.executeCard5Effect(1));
+        assertEquals(1,game.getIslandById(1).getBans());
+        assertEquals(3,((BanPersonality)game.getActivePersonality()).getBans());
+        //testare casi limite
+    }
+
+    @Test
+    void card12EffectTest(){
+        ExpertGame game = new ExpertGame(3);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("leo");
+        players.add("mari");
+        players.add("frizio");
+        game.instantiateGameElements(players);
+        game.setCurrentPlayer("leo");
+        game.getPlayerByName("leo").setCoins(10);
+        ArrayList<Integer> selectedPersonalitiesIds= new ArrayList<>();
+        for (Personality personality: game.getPersonalities())
+            selectedPersonalitiesIds.add(personality.getCharacterId());
+
+        if (!selectedPersonalitiesIds.contains(12)){
+            game.getPersonalities().add(new Personality(12));
+        }
+        assertTrue(game.setActivePersonality(12));
+        for (int i = 0; i<3;i++){
+            game.getPlayerByName("leo").addToBoardTable(Color.RED);
+            game.getPlayerByName("mari").addToBoardTable(Color.RED);
+            game.getPlayerByName("frizio").addToBoardTable(Color.RED);
+        }
+        game.getPlayerByName("leo").addToBoardTable(Color.RED);
+        game.getPlayerByName("mari").addToBoardTable(Color.RED);
+        assertEquals(4, game.getPlayerByName("leo").getBoard().getTableNumberOfStudents(Color.RED));
+        assertEquals(4, game.getPlayerByName("mari").getBoard().getTableNumberOfStudents(Color.RED));
+        assertEquals(3, game.getPlayerByName("frizio").getBoard().getTableNumberOfStudents(Color.RED));
+        game.executeCard12Effect(Color.RED);
+        assertEquals(1, game.getPlayerByName("leo").getBoard().getTableNumberOfStudents(Color.RED));
+        assertEquals(1, game.getPlayerByName("mari").getBoard().getTableNumberOfStudents(Color.RED));
+        assertEquals(0, game.getPlayerByName("frizio").getBoard().getTableNumberOfStudents(Color.RED));
+        //testare casi limite
+    }
+
+    @Test
+    void card11EffectTest(){
+        ExpertGame game = new ExpertGame(2);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("leo");
+        players.add("frizio");
+        game.instantiateGameElements(players);
+        game.setCurrentPlayer("leo");
+        game.getPlayerByName("leo").setCoins(10);
+        ArrayList<Integer> selectedPersonalitiesIds= new ArrayList<>();
+        for (Personality personality: game.getPersonalities())
+            selectedPersonalitiesIds.add(personality.getCharacterId());
+
+        if (!selectedPersonalitiesIds.contains(12)){
+            game.getPersonalities().add(new LobbyPersonality(11));
+            for (int i = 0; i<4;i++)
+                ((LobbyPersonality) game.getPersonalities().get(3)).addStudent(game.getBasket().pickStudent());
+                //se non era già tra le carte pescate allora sarà la quarta dell'arraylist
+        }
+        assertTrue(game.setActivePersonality(11));
+        Color selectedStudent = ((LobbyPersonality) game.getActivePersonality()).getStudent(3);
+        int oldTableSize = game.getPlayerByName("leo").getBoard().getTableNumberOfStudents(selectedStudent);
+        assertFalse(game.executeCard11Effect(5));
+        assertTrue(game.executeCard11Effect(3));
+        assertEquals(oldTableSize+1, game.getPlayerByName("leo").getBoard().getTableNumberOfStudents(selectedStudent));
+        assertEquals(4, ((LobbyPersonality) game.getActivePersonality()).getStudents().size());
+        //si potrebbe controllare che il numero di pedine nel sacchetto sia diminuito di 1
+        //testare casi limite
+    }
 
 }

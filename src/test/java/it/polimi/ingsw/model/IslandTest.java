@@ -105,4 +105,15 @@ class IslandTest {
         assertEquals(2, merger.getNumMergedIslands());
         assertTrue(merger.isMotherNature());
     }
+
+    @Test
+    void islandBanTest(){
+        Island island= new Island(1);
+        assertFalse(island.isBanned());
+        assertEquals(0,island.getBans());
+        island.putBan();
+        assertEquals(1,island.getBans());
+        island.removeBan();
+        assertEquals(0,island.getBans());
+    }
 }

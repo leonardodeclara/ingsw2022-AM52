@@ -433,7 +433,7 @@ public class Game {
      * which tells to the Controller who called the calculateInfluence method if the outcome of the calculation was a draw or not.
      * @param island : reference of the island on which the influence is calculated
      */
-    public HashMap<String,String> calculateInfluence(Island island,Object args){
+    public HashMap<String,String> calculateInfluence(Island island){
         HashMap<String,Integer>  influences = calculateStudentsInfluences(island,players);
         String towersOwnerName = getTowersOwnerName(island,players);
         if(towersOwnerName != null)

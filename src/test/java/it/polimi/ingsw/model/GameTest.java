@@ -535,8 +535,8 @@ class GameTest {
             if(game.getIslands().get(j).isMotherNature())
                 mnIndex=j;
         }
-        assertNull(game.calculateInfluence(game.getIslands().get(mnIndex), null).get("Player Name"));
-        assertEquals(Constants.DRAW, game.calculateInfluence(game.getIslands().get(mnIndex), null).get("Is Draw"));
+        assertNull(game.calculateInfluence(game.getIslands().get(mnIndex)).get("Player Name"));
+        assertEquals(Constants.DRAW, game.calculateInfluence(game.getIslands().get(mnIndex)).get("Is Draw"));
         game.getPlayerByName("leo").addTeacherToBoard(Color.BLUE);
         game.getPlayerByName("leo").addTeacherToBoard(Color.PINK);
         game.getPlayerByName("leo").addTeacherToBoard(Color.RED);
@@ -544,13 +544,13 @@ class GameTest {
         game.getPlayerByName("mari").addTeacherToBoard(Color.GREEN);
         game.getIslands().get(0).addStudent(Color.BLUE);
         game.getIslands().get(0).addStudent(Color.BLUE);
-        assertEquals("leo",game.calculateInfluence(game.getIslands().get(0), null).get("Player Name"));
+        assertEquals("leo",game.calculateInfluence(game.getIslands().get(0)).get("Player Name"));
         game.getIslands().get(0).addStudent(Color.YELLOW);
         game.getIslands().get(0).addStudent(Color.YELLOW);
         game.getIslands().get(0).addStudent(Color.YELLOW);
         game.getIslands().get(0).addStudent(Color.YELLOW);
         game.getIslands().get(0).addStudent(Color.YELLOW);
-        assertEquals("mari",game.calculateInfluence(game.getIslands().get(0), null).get("Player Name"));
+        assertEquals("mari",game.calculateInfluence(game.getIslands().get(0)).get("Player Name"));
     }
 
     //test con torri e senza pareggi
@@ -575,13 +575,13 @@ class GameTest {
         game.getIslands().get(0).setOwner(game.getPlayerByName("leo"));
         game.getIslands().get(0).addTower(Tower.WHITE);
         game.getIslands().get(0).addStudent(Color.BLUE);
-        assertEquals("leo",game.calculateInfluence(game.getIslands().get(0), null).get("Player Name"));
+        assertEquals("leo",game.calculateInfluence(game.getIslands().get(0)).get("Player Name"));
         game.getIslands().get(0).removeTower();
         game.getIslands().get(0).setOwner(game.getPlayerByName("mari"));
         game.getIslands().get(0).addTower(Tower.BLACK);
         game.getIslands().get(0).addStudent(Color.GREEN);
         game.getIslands().get(0).addStudent(Color.GREEN);
-        assertEquals("mari",game.calculateInfluence(game.getIslands().get(0), null).get("Player Name"));
+        assertEquals("mari",game.calculateInfluence(game.getIslands().get(0)).get("Player Name"));
     }
 
     /**
@@ -804,7 +804,7 @@ class GameTest {
         assertEquals((mnIndex+2)%game.getIslands().size(), game.getCurrentMotherNatureIsland().getIslandIndex());
         assertEquals((game.getIslands().indexOf(initialMNIsland)+2)%game.getIslands().size(), game.getIslands().indexOf(game.getCurrentMotherNatureIsland()));
         Island dest = game.getIslands().get((mnIndex+2)%game.getIslands().size());
-        game.calculateInfluence(dest,null);
+        game.calculateInfluence(dest);
         assertEquals("leoviatano", dest.getOwner().getNickname());
         assertEquals(11,game.getIslands().size());
         //Struttura del test: trovo madre natura, nella isola dopo ci piazzo una torre di leo
@@ -812,6 +812,7 @@ class GameTest {
         //poi faccio spostare a frizio madre natura e controllo che sia finita al posto giusto
     }
 
+    //test da sistemare perché ogni tanto fallisce
     @Test
     void influenceAndMergeTest(){
         Game game = new Game(2);
@@ -837,7 +838,7 @@ class GameTest {
         game.getIslands().get((mnIndex+1)%game.getIslands().size()).setOwner(game.getPlayerByName("leoviatano"));
         game.getIslands().get((mnIndex+1)%game.getIslands().size()).addTower(Tower.BLACK);
         Island dest = game.getIslands().get((mnIndex+2)%game.getIslands().size());
-        game.calculateInfluence(dest,null); //qui c'è un merge
+        game.calculateInfluence(dest); //qui c'è un merge
         assertEquals(11, game.getIslands().size());
         game.moveMotherNature("leoviatano", 2);
         assertEquals((mnIndex+2)%game.getIslands().size(),game.getIslands().indexOf(game.getCurrentMotherNatureIsland())); //le isole sono scalate di 1 rispetto all'inizio

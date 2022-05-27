@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-//carta id 4
+//carta id 5
 
 import it.polimi.ingsw.Constants;
 

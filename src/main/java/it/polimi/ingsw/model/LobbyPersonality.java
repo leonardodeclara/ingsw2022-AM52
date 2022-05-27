@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * This is a subclass of the class Personality
- * This class represents the Personality card with CardID 0, 6 and 10
+ * This class represents the Personality card with CardID 1, 7 and 11
  * At the beginning of the game this card has a number of student tiles on it according to the card
  */
 
