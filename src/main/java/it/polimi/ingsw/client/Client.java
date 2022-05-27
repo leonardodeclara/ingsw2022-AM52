@@ -125,13 +125,17 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
         return new Card5EffectMessage((Integer) data.get(0));
     }
 
-    //private Message buildCard7EffectMessage(ArrayList<Object> data){}
+    private Message buildCard7EffectMessage(ArrayList<Object> data){
+        return new Card7EffectMessage((ArrayList<Integer>) data.get(0),(ArrayList<Integer>)data.get(1));
+    }
 
     private Message buildCard9EffectMessage(ArrayList<Object> data){
         return new Card9EffectMessage((Color) data.get(0));
     }
 
-    //private Message buildCard10EffectMessage(ArrayList<Object> data){}
+    private Message buildCard10EffectMessage(ArrayList<Object> data){
+        return new Card10EffectMessage((ArrayList<Color>) data.get(0),(ArrayList<Integer>)data.get(1));
+    }
 
     private Message buildCard11EffectMessage(ArrayList<Object> data){
         return new Card11EffectMessage((Integer)data.get(0));

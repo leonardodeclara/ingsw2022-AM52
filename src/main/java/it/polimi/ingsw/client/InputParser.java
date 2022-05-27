@@ -165,9 +165,10 @@ public class InputParser {
                         String[] destIDs = words[3].split(",");
                         ArrayList<Integer> destIDsInteger = convertStringsToNumberArray(destIDs);
                         if(destIDsInteger!=null){
-                            data.add(studentIDsInteger);
-                            data.add(destIDsInteger);
-                            return;
+                            if(destIDsInteger.size() == studentIDsInteger.size()){
+                                data.add(studentIDsInteger);
+                                data.add(destIDsInteger);
+                            }
                         }
                     }
                 }
@@ -240,7 +241,6 @@ public class InputParser {
                     cardID = Integer.parseInt(words[2]);
                     data.add(hasPlayedPersonality); //serve per segnalare al client che nell'array c'è l'id di una carta
                     data.add(cardID);
-                    return;
                 }catch(NumberFormatException e){
                     e.printStackTrace();
                 }
@@ -274,7 +274,6 @@ public class InputParser {
                 try{
                     islandId = Integer.parseInt(words[2]);
                     data.add(islandId);
-                    return;
                 }
                 catch (NumberFormatException e){
                     e.printStackTrace();
@@ -291,7 +290,6 @@ public class InputParser {
                 try{
                     islandId = Integer.parseInt(words[1]);
                     data.add(islandId);
-                    return;
                 }
                 catch (NumberFormatException e){
                     e.printStackTrace();
@@ -300,10 +298,32 @@ public class InputParser {
         }
     }
 
-    private void parsePersonality7(String input){
-        /*
-        TODO
-         */
+    private void parsePersonality7(String input){ //swap 1,2,3 (card) with 4,5,6 (lobby)
+        String[] words = input.split("\\s+");
+
+        if(words.length==4){
+            if(words[0].equalsIgnoreCase("swap")){
+                String[] cardIDs = words[1].split(",");
+                ArrayList<Integer> cardIDsInteger = convertStringsToNumberArray(cardIDs);
+                if(cardIDsInteger!=null){
+                    if(words[2].equalsIgnoreCase("with")){
+                        String[] lobbyIDs = words[3].split(",");
+                        ArrayList<Integer> lobbyIDsInteger = convertStringsToNumberArray(lobbyIDs);
+                        if(lobbyIDsInteger!=null){
+                            if(cardIDsInteger.size() == lobbyIDsInteger.size()){
+                                for (Integer index: cardIDsInteger)
+                                    index=index-1; //1 per il giocatore è 0 per il server. più human readable
+                                for (Integer index: lobbyIDsInteger)
+                                    index=index-1; //1 per il giocatore è 0 per il server. più human readable
+
+                                data.add(cardIDsInteger);
+                                data.add(lobbyIDsInteger);
+                        }
+                    }
+                }
+            }
+        }
+    }
     }
 
     private void parsePersonality9(String input){
@@ -324,13 +344,50 @@ public class InputParser {
         }
     }
 
-    private void parsePersonality10(String input){
+    private void parsePersonality10(String input){ //swap red,green (table) with 1,2 (lobby)
         String[] words = input.split("\\s+");
-        /*
-        TODO
-         */
+
+        if(words.length==4){
+            if(words[0].equalsIgnoreCase("swap")){
+                String[] colorsString = words[1].split(",");
+                ArrayList<Color> colors = convertStringsToColorArray(colorsString);
+                if(colors!=null){
+                    if(words[2].equalsIgnoreCase("with")){
+                        String[] lobbyIDs = words[3].split(",");
+                        ArrayList<Integer> lobbyIDsInteger = convertStringsToNumberArray(lobbyIDs);
+                        if(lobbyIDsInteger!=null){
+                            if(lobbyIDsInteger.size() == colors.size()){
+                                for (Integer index: lobbyIDsInteger)
+                                    index=index-1; //1 per il giocatore è 0 per il server. più human readable
+                                data.add(colors);
+                                data.add(lobbyIDsInteger);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
+    private ArrayList<Color> convertStringsToColorArray(String[] array){
+        ArrayList<Color> returnArray = new ArrayList<>();
+
+        for(String name : array){
+            if (name.equalsIgnoreCase("pink"))
+                returnArray.add(Color.PINK);
+            else if (name.equalsIgnoreCase("red"))
+                returnArray.add(Color.RED);
+            else if (name.equalsIgnoreCase("blue"))
+                returnArray.add(Color.BLUE);
+            else if (name.equalsIgnoreCase("green"))
+                returnArray.add(Color.GREEN);
+            else if (name.equalsIgnoreCase("yellow"))
+                returnArray.add(Color.YELLOW);
+            else
+                return null;
+        }
+        return returnArray;
+    }
     private void parsePersonality11(String input){
         int studentIndex = 0;
         String[] words = input.split("\\s+");
