@@ -157,10 +157,8 @@ public class InputParser {
         if(words.length==4){
             if(words[0].equalsIgnoreCase("move")){
                 String[] studentIDs = words[1].split(",");
-                ArrayList<Integer> studentIDsInteger = convertStringsToNumberArray(studentIDs);
+                ArrayList<Integer> studentIDsInteger = decrementIndexes(convertStringsToNumberArray(studentIDs));
                 if(studentIDsInteger!=null){
-                    for (Integer index: studentIDsInteger)
-                        index=index-1; //1 per il giocatore è 0 per il server. più human readable
                     if(words[2].equalsIgnoreCase("in")){
                         String[] destIDs = words[3].split(",");
                         ArrayList<Integer> destIDsInteger = convertStringsToNumberArray(destIDs);
@@ -308,7 +306,7 @@ public class InputParser {
                 if(cardIDsInteger!=null){
                     if(words[2].equalsIgnoreCase("with")){
                         String[] lobbyIDs = words[3].split(",");
-                        ArrayList<Integer> lobbyIDsInteger = convertStringsToNumberArray(lobbyIDs);
+                        ArrayList<Integer> lobbyIDsInteger = decrementIndexes(convertStringsToNumberArray(lobbyIDs));
                         if(lobbyIDsInteger!=null){
                             if(cardIDsInteger.size() == lobbyIDsInteger.size()){
                                 for (Integer index: cardIDsInteger)
@@ -455,6 +453,16 @@ public class InputParser {
         }catch(NumberFormatException e){
             return -1;
         }
+    }
+    //utility function per passare da indici human readable (da 1 in poi) a indici computer readable (da 0 in poi)
+    private ArrayList<Integer> decrementIndexes(ArrayList<Integer> indexes){
+        if (indexes==null) return null;
+        ArrayList<Integer> decrementedIndexes = new ArrayList<>();
+        for (int index: indexes){
+            decrementedIndexes.add(index-1);
+            System.out.println("indice aggiornato in modo che lo legga il server: "+ (index-1));
+        }
+        return decrementedIndexes;
     }
 
     private boolean parseQuitInput(String input){

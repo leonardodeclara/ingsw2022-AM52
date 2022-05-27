@@ -47,6 +47,7 @@ class ExpertGameTest {
 
     /**
      * TODO: moveStudentFromLobbyForCard2 va modificato. Andranno modificati correttamente anche i test
+     * IN TEORIA QUESTO METODO NON ESISTE PIÙ
      */
     /**
     @Test
@@ -509,5 +510,7 @@ class ExpertGameTest {
         //si potrebbe controllare che il numero di pedine nel sacchetto sia diminuito di 1
         //testare casi limite
     }
+
+    //TODO: mancano da testare: 3,7,10
 
 }
