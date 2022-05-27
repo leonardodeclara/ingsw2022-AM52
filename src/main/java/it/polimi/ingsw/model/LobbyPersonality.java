@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class LobbyPersonality extends Personality{
     private ArrayList<Color> students;
-    private int lobbySize;
+    private final int lobbySize;
 
     /**
      * Constructor creates a LobbyPersonality card instance
@@ -27,8 +27,10 @@ public class LobbyPersonality extends Personality{
      * @param color: color of the students that player want to add on the card
      */
     public void addStudent(Color color){
-        if (students.size()<lobbySize)
+        if (students.size()<lobbySize){
             students.add(color);
+            listeners.firePropertyChange("PersonalityUsage", null,this);
+        }
     }
 
     /**
@@ -55,8 +57,10 @@ public class LobbyPersonality extends Personality{
     }
 
     public void removeStudent(Color student){
-        if (students.contains(student))
+        if (students.contains(student)){
             students.remove(student);
+            listeners.firePropertyChange("PersonalityUsage", null,this);
+        }
     }
 
     //all'interno di expertGame ci dovrà essere un metodo prende in input la carta LobbyPersonality

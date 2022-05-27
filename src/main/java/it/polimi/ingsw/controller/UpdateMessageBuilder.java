@@ -202,4 +202,16 @@ public class UpdateMessageBuilder {
         }
         return null;
     }
+
+    //in teoria questo messaggio può essere mandato solo quando viene usato una lobbyPersonality o una BanPersonality
+    //quindi costruisco due messaggi con attributi diversi nei due casi
+    public Message buildPersonalityUsageMessage(PropertyChangeEvent event) {
+        Personality modelPersonality = (Personality) event.getNewValue();
+        int cardId = modelPersonality.getCharacterId();
+        if (modelPersonality instanceof LobbyPersonality)
+            return new PersonalityUpdateMessage(cardId, ((LobbyPersonality) modelPersonality).getStudents());
+        else if (modelPersonality instanceof BanPersonality)
+            return new PersonalityUpdateMessage(cardId, ((BanPersonality) modelPersonality).getBans());
+        else return null;
+    }
 }

@@ -15,7 +15,7 @@ public class GameBoard {
     private ArrayList<ClientIsland> islands;
     private ArrayList<String> PlayersNickname;
     private ArrayList<ClientCloud> clouds;
-    private HashMap<String,ClientBoard> clientBoards; //deve diventare una mappa
+    private HashMap<String,ClientBoard> clientBoards;
     private ArrayList<ClientPersonality> personalities;
     private ClientPersonality activePersonality;
     private PrintStream outputStream;
@@ -112,7 +112,7 @@ public class GameBoard {
         clientBoards.get(playerNickname).setTeam(tower);
     }
 
-    //in teoria non viene mai chiamato
+    //in teoria non dovrebbe mai essere chiamato
     public void addClientBoard(String playerName){
         int towerNumber = numberOfPlayers == 2? 8 : 6;
         ClientBoard newBoard = new ClientBoard(towerNumber, playerName);
@@ -245,13 +245,13 @@ public class GameBoard {
         this.nickname = nickname;
     }
 
-    public void setActivePersonality(int activePersonality) {
+    public void setActivePersonality(int activedPersonality) {
         Optional<ClientPersonality> activePers = personalities.stream()
-                                                .filter(clientPersonality -> clientPersonality.getCardID() == activePersonality)
+                                                .filter(clientPersonality -> clientPersonality.getCardID() == activedPersonality)
                                                 .findFirst();
         if(activePers.isPresent()){
-            this.activePersonality = activePers.get();
-            activePers.get().updateCost();
+            activePersonality = activePers.get();
+            activePersonality.updateCost();
         }
         else
             new Throwable().printStackTrace(); //non dovrebbe mai accadere quindi mettiamo eccezione così nel caso in runtime salta fuori un bug
@@ -260,6 +260,15 @@ public class GameBoard {
     public void resetActivePersonality(int inactivePersonality){
         outputStream.println("La carta personaggio "+inactivePersonality+ " non è più attiva!");
         this.activePersonality = null;
+    }
+
+    public void updateActivePersonality(int cardId, ArrayList<Color> students, int bans){
+        if (cardId==activePersonality.getCardID()){
+            if (students!=null)
+                activePersonality.setStudents(students);
+            else if (bans!=-1)
+                activePersonality.setBans(bans);
+        }
     }
 
     public void setNumberOfPlayers(int numberOfPlayers) {

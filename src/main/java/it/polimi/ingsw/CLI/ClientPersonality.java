@@ -7,15 +7,15 @@ import java.util.ArrayList;
 
 public class ClientPersonality implements Serializable {
     static final long serialVersionUID = 42L;
-    private Integer CardID;
-    private Boolean hasBeenUsed;
-    private Integer cost;
+    private int cardId;
+    private boolean hasBeenUsed;
+    private int cost;
     private int bans;
     private String description; //descrizione da visualizzare quando si printa la board
     private ArrayList<Color> students;
 
     public ClientPersonality(Integer cardID, Boolean hasBeenUsed, Integer cost) {
-        CardID = cardID;
+        cardId = cardID;
         this.hasBeenUsed = hasBeenUsed;
         this.cost = cost;
         students= new ArrayList<>();
@@ -96,20 +96,20 @@ public class ClientPersonality implements Serializable {
             setHasBeenUsed(true);
         }
     }
-    public Integer getCardID() {
-        return CardID;
+    public int getCardID() {
+        return cardId;
     }
 
-    public Boolean getHasBeenUsed() {
+    public boolean getHasBeenUsed() {
         return hasBeenUsed;
     }
 
-    public Integer getCost() {
+    public int getCost() {
         return cost;
     }
 
-    public void setCardID(Integer cardID) {
-        CardID = cardID;
+    public void setCardID(int cardID) {
+        cardID = cardID;
     }
 
     public void setHasBeenUsed(Boolean hasBeenUsed) {
@@ -127,6 +127,14 @@ public class ClientPersonality implements Serializable {
 
     public void setBans(int bans) {
         this.bans = bans;
+    }
+
+    public ArrayList<Color> getStudents() {
+        return students;
+    }
+
+    public int getBans() {
+        return bans;
     }
 }
 

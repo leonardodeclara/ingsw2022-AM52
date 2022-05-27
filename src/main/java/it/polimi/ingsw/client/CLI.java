@@ -173,6 +173,8 @@ public class CLI implements Runnable,UI{
             updateCoins((CoinsUpdateMessage) updateMessage);
         else if (updateMessage instanceof IslandBanUpdateMessage)
             updateIslandBans((IslandBanUpdateMessage) updateMessage);
+        else if (updateMessage instanceof PersonalityUpdateMessage)
+            updatePersonalityState((PersonalityUpdateMessage) updateMessage);
         else if (updateMessage instanceof EndGameMessage)
             showEndGameMessage((EndGameMessage) updateMessage);
     }
@@ -265,15 +267,28 @@ public class CLI implements Runnable,UI{
 
     public void updateInactivePersonality(InactivePersonalityMessage message){
         GB.resetActivePersonality(message.getInactiveCardId());
+        System.out.println("La carta personaggio non è più attiva");
+        System.out.println();
+        GB.print();
     }
 
     public void updateCoins(CoinsUpdateMessage message){
         GB.updateCoins(message.getCoins(), message.getPlayer());
+        System.out.println("Sono state scambiate delle monete");
+        System.out.println();
+        GB.print();
     }
 
     public void updateIslandBans(IslandBanUpdateMessage message){
         GB.setIslandBans(message.getIslandId(),message.getBanCount());
         outputStream.println("È stato inserito/tolto un ban sull'isola " + message.getIslandId());
+        outputStream.println();
+        GB.print();
+    }
+
+    public void updatePersonalityState(PersonalityUpdateMessage message){
+        GB.updateActivePersonality(message.getCardId(),message.getStudents(),message.getBans());
+        outputStream.println("È stato aggiornato lo stato di una carta personaggio");
         outputStream.println();
         GB.print();
     }

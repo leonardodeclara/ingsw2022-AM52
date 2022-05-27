@@ -334,8 +334,8 @@ public class GameController implements PropertyChangeListener {
                 toSend = updateMessageBuilder.buildCoinsUpdate(event);
                 break;
             case "PersonalityUsage":
-            //dovrebbero mancare listener per gli effetti "istant" delle carte personaggio, vedere quelle a parte
-            //si potrebbe mettere come listener in quel caso cardController
+                toSend = updateMessageBuilder.buildPersonalityUsageMessage(event);
+                break;
         }
         if (toSend!=null){
             System.out.println("GC: ho generato un messaggio di update valido: ora lo passo a GH");

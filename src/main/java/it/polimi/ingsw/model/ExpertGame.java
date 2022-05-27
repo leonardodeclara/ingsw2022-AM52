@@ -434,9 +434,7 @@ public class ExpertGame extends Game {
     public void setPropertyChangeListeners(GameController controller) {
         super.setPropertyChangeListeners(controller);
         listeners.addPropertyChangeListener("ActivePersonality", controller); //fatto
-        //listeners.addPropertyChangeListener("ExtractedPersonalities", controller); //in teoria non serve perché i listener vengono settati dopo l'estrazione
         listeners.addPropertyChangeListener("Coins", controller); //fatto
-        listeners.addPropertyChangeListener("SelectedPersonality", controller);
         for (Personality personality: personalities)
             personality.setPropertyChangeListener(controller);
         listeners.addPropertyChangeListener("NoLongerActivePersonality", controller); //fatto

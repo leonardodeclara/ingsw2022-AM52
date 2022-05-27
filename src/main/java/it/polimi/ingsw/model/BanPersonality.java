@@ -26,16 +26,20 @@ public class BanPersonality extends Personality{
      * This method add bans on the card
      */
     public void addBan(){
-        if(bans< Constants.MAX_BANS_NUMBER)
+        if(bans< Constants.MAX_BANS_NUMBER){
             bans+=1;
+            listeners.firePropertyChange("PersonalityUsage", null,this);
+        }
     }
 
     /**
      * This method remove bans from the card
      */
     public void removeBan(){
-        if(bans>0)
+        if(bans>0){
             bans-=1;
+            listeners.firePropertyChange("PersonalityUsage", null,this);
+        }
     }
 
     /**
