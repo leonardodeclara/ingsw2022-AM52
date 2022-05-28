@@ -47,10 +47,9 @@ public class ExpertGame extends Game {
             player.setCoins(player.getCoins()+1); //+ 1 al giocatore
             ArrayList<Object> coinsChange = new ArrayList<>();
             coinsChange.add(player.getCoins());
-            coinsChange.add(player);
+            coinsChange.add(player.getNickname());
             listeners.firePropertyChange("Coins", null, coinsChange);
         }
-
     }
 
     /**
@@ -245,11 +244,11 @@ public class ExpertGame extends Game {
 
         try {
             activePersonality=personalities.remove(playedCardIndex);
+            coins = coins + activePersonality.getCost();
+            currentPlayer.setCoins(currentPlayer.getCoins()-activePersonality.getCost());
             activePersonality.updateCost();
             currentPersonalityPlayer = currentPlayer;
             listeners.firePropertyChange("ActivePersonality", null, cardId);
-            coins++;
-            currentPlayer.setCoins(currentPlayer.getCoins()-1);
             ArrayList<Object> coinsChange = new ArrayList<>();
             coinsChange.add(currentPlayer.getCoins());
             coinsChange.add(currentPlayer.getNickname());
