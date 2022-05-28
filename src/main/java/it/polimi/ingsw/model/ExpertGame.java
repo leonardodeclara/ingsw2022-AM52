@@ -315,9 +315,6 @@ public class ExpertGame extends Game {
         return true;
     }
 
-    /*
-    TODO: TESTARLA
-     */
     /**
      * Method executeCard7Effect implements Personality 1's Effect, therefore it swaps up to 3 student tiles
      * from the card with as many student tiles in the active player's lobby.
@@ -343,13 +340,12 @@ public class ExpertGame extends Game {
             else
                 return false;
         }
-        for (Color studentToCard: fromLobby){
-            ((LobbyPersonality)activePersonality).addStudent(studentToCard);
-            currentPlayer.removeFromBoardLobby(studentToCard);
-        }
-        for (Color studentToLobby: fromCard){
-            currentPlayer.addToBoardLobby(studentToLobby);
-            ((LobbyPersonality)activePersonality).removeStudent(studentToLobby);
+        for (int i = 0; i< cardStudentsIndexes.size();i++){
+            if(currentPlayer.removeFromBoardLobby(fromLobby.get(i))){
+                ((LobbyPersonality) activePersonality).removeStudent(fromCard.get(i));
+                currentPlayer.addToBoardLobby(fromCard.get(i));
+                ((LobbyPersonality) activePersonality).addStudent(fromLobby.get(i));
+            }
         }
         return true;
     }
@@ -396,9 +392,9 @@ public class ExpertGame extends Game {
         int removed=0;
         for (Player player: players) {
             removed = Math.min(player.getBoard().getTableNumberOfStudents(chosenColor), 3);
-            for (int i = 0; i<removed; i++)
+            for (int i = 0; i<removed; i++){
                 player.removeFromBoardTable(chosenColor);
-                basket.putStudent(chosenColor);
+                basket.putStudent(chosenColor);}
         }
         return true;
     }
@@ -453,3 +449,9 @@ public class ExpertGame extends Game {
         listeners.addPropertyChangeListener("NoLongerActivePersonality", controller); //fatto
     }
 }
+//questione controllo dei professori
+//carte 10 e 11 permettono di aggiungere togliere pedine alla sala
+// -> come gestisco il calcolo dei professori? va fatto?
+//si potrebbe fare dopo aver applicato l'effetto delle carte nei relativi metodi del controller
+//però per essere precisi il controllo dei professori andrebbe fatto dopo aver INSERITO una pedina nella sala
+//quindi per la carta 11 no problem ma per la 10? è un po' un casino perché in teoria dovresti controllare solo i colori per cui hai inserito una pedina

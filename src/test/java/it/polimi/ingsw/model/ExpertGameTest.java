@@ -413,15 +413,20 @@ class ExpertGameTest {
                 //se non era già tra le carte pescate allora sarà la quarta dell'arraylist
         }
         assertTrue(game.setActivePersonality(1));
+        assertFalse(game.executeCard1Effect(4,1));
+        assertFalse(game.executeCard1Effect(0,15));
         Color selectedStudent = ((LobbyPersonality) game.getActivePersonality()).getStudent(0);
+        int oldBasketSize=game.getBasket().getSize();
         int oldIslandStudents = game.getIslandById(1).getStudents().size();
         assertTrue(game.executeCard1Effect(0,1));
         assertEquals(4, ((LobbyPersonality) game.getActivePersonality()).getStudents().size());
         assertEquals(oldIslandStudents+1,game.getIslandById(1).getStudents().size());
         assertEquals(selectedStudent, game.getIslandById(1).getStudents().get(oldIslandStudents));
-        //si potrebbe controllare che il numero di pedine nel sacchetto sia diminuito di 1
-        //testare casi limite
+        assertEquals(oldBasketSize-1,game.getBasket().getSize());
+        //si potrebbe testare il caso in cui il sacchetto sia vuoto,
+        // quindi il numero di studenti effettivi non è quello stabilito a priori
     }
+
 
     @Test
     void card5EffectTest(){
@@ -444,6 +449,56 @@ class ExpertGameTest {
         assertEquals(1,game.getIslandById(1).getBans());
         assertEquals(3,((BanPersonality)game.getActivePersonality()).getBans());
         //testare casi limite
+    }
+
+    @Test
+    void card7EffectTest(){
+        ExpertGame game = new ExpertGame(2);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("leo");
+        players.add("mari");
+        game.instantiateGameElements(players);
+        game.setCurrentPlayer("leo");
+        game.getPlayerByName("leo").setCoins(10);
+        ArrayList<Integer> selectedPersonalitiesIds= new ArrayList<>();
+        for (Personality personality: game.getPersonalities())
+            selectedPersonalitiesIds.add(personality.getCharacterId());
+        if (!selectedPersonalitiesIds.contains(7)) {
+            game.getPersonalities().add(new LobbyPersonality(7));
+            for (int i = 0; i<6;i++) //lobbySize di 6
+                ((LobbyPersonality) game.getPersonalities().get(3)).addStudent(game.getBasket().pickStudent());
+        }
+        assertTrue(game.setActivePersonality(7));
+        LobbyPersonality activeCard =  (LobbyPersonality) game.getActivePersonality();
+
+        ArrayList<Color> selectedLobbyStudents= new ArrayList<>();
+        ArrayList<Color> selectedCardStudents= new ArrayList<>();
+        //mi salvo gli studenti che andrò a spostare per le assert
+        for (int i = 0; i<3;i++){
+            selectedLobbyStudents.add(i,game.getPlayerByName("leo").getBoard().getLobbyStudent(i));
+            selectedCardStudents.add(i,activeCard.getStudent(i));
+        }
+        int oldLobbySize = game.getPlayerByName("leo").getBoard().getLobby().size();
+        ArrayList<Integer> cardIndexes = new ArrayList<>();
+        for (int i=0; i<3;i++) cardIndexes.add(i);
+        ArrayList<Integer> lobbyIndexes = new ArrayList<>(cardIndexes);
+        lobbyIndexes.set(2,7); //indice di lobby sbagliato
+        assertFalse(game.executeCard7Effect(cardIndexes,lobbyIndexes));
+        lobbyIndexes.set(2,2);
+        cardIndexes.set(2,6);//indice di card sbagliato
+        assertFalse(game.executeCard7Effect(cardIndexes,lobbyIndexes));
+        cardIndexes.set(2,2);
+        cardIndexes.add(3,4); //quattro indici per gli studenti sulla carta
+        assertFalse(game.executeCard7Effect(cardIndexes,lobbyIndexes));
+        cardIndexes.remove(3);
+        assertTrue(game.executeCard7Effect(cardIndexes,lobbyIndexes));
+        int newLobbySize = game.getPlayerByName("leo").getBoard().getLobby().size();
+        assertEquals(oldLobbySize,newLobbySize);
+        assertEquals(activeCard.getLobbySize(),activeCard.getStudents().size());
+        for (int i=0;i<3;i++){ //tutti gli inserimenti sono in coda, sia in lobby sia sulla carta
+            assertTrue(game.getPlayerByName("leo").getBoard().getLobby().contains(selectedCardStudents.get(i)));
+            assertTrue( activeCard.getStudents().contains(selectedLobbyStudents.get(i)));
+        }
     }
 
     @Test
@@ -471,6 +526,7 @@ class ExpertGameTest {
         }
         game.getPlayerByName("leo").addToBoardTable(Color.RED);
         game.getPlayerByName("mari").addToBoardTable(Color.RED);
+        int oldBasketSize = game.getBasket().getSize();
         assertEquals(4, game.getPlayerByName("leo").getBoard().getTableNumberOfStudents(Color.RED));
         assertEquals(4, game.getPlayerByName("mari").getBoard().getTableNumberOfStudents(Color.RED));
         assertEquals(3, game.getPlayerByName("frizio").getBoard().getTableNumberOfStudents(Color.RED));
@@ -478,6 +534,7 @@ class ExpertGameTest {
         assertEquals(1, game.getPlayerByName("leo").getBoard().getTableNumberOfStudents(Color.RED));
         assertEquals(1, game.getPlayerByName("mari").getBoard().getTableNumberOfStudents(Color.RED));
         assertEquals(0, game.getPlayerByName("frizio").getBoard().getTableNumberOfStudents(Color.RED));
+        assertEquals(oldBasketSize+9,game.getBasket().getSize());
         //testare casi limite
     }
 
@@ -501,16 +558,21 @@ class ExpertGameTest {
                 //se non era già tra le carte pescate allora sarà la quarta dell'arraylist
         }
         assertTrue(game.setActivePersonality(11));
+
+        assertFalse(game.executeCard11Effect(5));
+        assertFalse(game.executeCard11Effect(-1));
+        int oldBasketSize=game.getBasket().getSize();
         Color selectedStudent = ((LobbyPersonality) game.getActivePersonality()).getStudent(3);
         int oldTableSize = game.getPlayerByName("leo").getBoard().getTableNumberOfStudents(selectedStudent);
-        assertFalse(game.executeCard11Effect(5));
         assertTrue(game.executeCard11Effect(3));
         assertEquals(oldTableSize+1, game.getPlayerByName("leo").getBoard().getTableNumberOfStudents(selectedStudent));
         assertEquals(4, ((LobbyPersonality) game.getActivePersonality()).getStudents().size());
-        //si potrebbe controllare che il numero di pedine nel sacchetto sia diminuito di 1
-        //testare casi limite
+        assertEquals(oldBasketSize-1,game.getBasket().getSize());
+        //sarebbe da testare anche il caso in cui uno non ha almeno 3 pedine e mette solo quelle che ha
     }
 
-    //TODO: mancano da testare: 3,7,10
+    //TODO: mancano da testare: 3,10
+    //10 già testato in board
+    //3 non si può testare nel model
 
 }

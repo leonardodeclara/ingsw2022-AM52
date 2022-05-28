@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 
 
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
@@ -78,8 +79,94 @@ class BoardTest {
     }
 
     @Test
-    void switchStudentsTest() {
+    void firstSwitchStudentsTest() {
+        Board board = new Board();
+        board.addToLobby(Color.BLUE);
+        board.addToLobby(Color.RED);
+        board.addToLobby(Color.PINK);
+        board.addToTable(Color.GREEN);
+        board.addToTable(Color.YELLOW);
+        ArrayList<Integer> fromLobby  =new ArrayList<>();
+        ArrayList<Color> fromTable = new ArrayList<>();
+        for (int i = 0;i<2; i++){
+            fromLobby.add(i);
+            fromTable.add(Color.GREEN);
+        }
+        assertFalse(board.switchStudents(fromTable,fromLobby)); //voglio togliere 2 green ma ne ho 1
+        for (int i = 0; i<2;i++){
+            fromLobby.set(i,i+3);
+        }
+        assertFalse(board.switchStudents(fromTable,fromLobby)); //indici out of bounds
+        fromLobby.clear();
+        assertFalse(board.switchStudents(fromTable,fromLobby)); //array degli indici vuoto
+        for (int i = 0; i<1;i++){
+            fromLobby.add(i,i);
+        }
+        assertFalse(board.switchStudents(fromTable,fromLobby)); //1 dalla lobby e 2 dalla table
+        fromLobby.clear();
+        fromTable.clear();
+
+        for (int i = 0; i<2;i++){
+            fromTable.add(i==0?Color.GREEN:Color.YELLOW);
+            fromLobby.add(i);
+        }
+        int oldLobbySize = board.getLobby().size();
+        assertEquals(2,fromLobby.size());
+        assertEquals(2,fromTable.size());
+        assertTrue(board.switchStudents(fromTable,fromLobby));
+        assertEquals(0,board.getTableNumberOfStudents(Color.GREEN));
+        assertEquals(1,board.getTableNumberOfStudents(Color.BLUE));
+        assertEquals(1,board.getTableNumberOfStudents(Color.RED));
+        assertEquals(oldLobbySize,board.getLobby().size());
     }
+
+    @Test
+    void secondSwitchStudentsTest(){
+        Board board = new Board();
+        board.addToLobby(Color.BLUE);
+        board.addToLobby(Color.RED);
+        board.addToLobby(Color.PINK);
+        board.addToLobby(Color.PINK);
+        board.addToTable(Color.GREEN);
+        board.addToTable(Color.YELLOW);
+        ArrayList<Integer> fromLobby  =new ArrayList<>();
+        ArrayList<Color> fromTable = new ArrayList<>();
+        for (int i = 0;i<2; i++){
+            fromLobby.add(i);
+            fromTable.add(Color.GREEN);
+        }
+        assertFalse(board.switchStudents(fromTable,fromLobby)); //tolgo 2 green ma ne ho 1
+        fromTable.set(0,Color.BLUE);
+        fromTable.set(1,Color.YELLOW);
+        assertFalse(board.switchStudents(fromTable,fromLobby)); //tolgo 1 blue che non ho
+        fromTable.clear();
+        fromTable.add(Color.GREEN);
+        fromTable.add(Color.YELLOW);
+        for (int i = 0; i< Constants.MAX_TABLE_SIZE;i++){
+            board.addToTable(Color.BLUE);
+        }
+        fromLobby.clear();
+        for (int i = 0; i<2; i++){
+            fromLobby.add(i);
+        }
+        assertFalse(board.switchStudents(fromTable,fromLobby)); //provo a spostare un blue nella table ma è piena
+        fromLobby.clear();
+        fromTable.clear();
+        for (int i = 0; i<2;i++){
+            fromTable.add(Color.BLUE);
+            fromLobby.add(i+1);
+        }
+        int oldLobbySize = board.getLobby().size();
+        assertTrue(board.switchStudents(fromTable,fromLobby)); //sposto due blue dalla table e un red e un pink dalla lobby
+        assertEquals(8,board.getTableNumberOfStudents(Color.BLUE));
+        assertEquals(1,board.getTableNumberOfStudents(Color.PINK));
+        assertEquals(1,board.getTableNumberOfStudents(Color.RED));
+        assertEquals(1,board.getTableNumberOfStudents(Color.YELLOW));
+        assertEquals(1,board.getTableNumberOfStudents(Color.GREEN));
+        assertEquals(oldLobbySize,board.getLobby().size());
+
+    }
+
 
     /**
      * Method addTeacherTest verifies that teachers are correctly added to the board

@@ -101,24 +101,50 @@ public class Board {
                 || tableStudents.size()>Constants.MAX_STUDENTS_FOR_CARD_10_SWITCH
                 || tableStudents.size()!=lobbyStudentsIndexes.size())
             return false;
+
         for (Integer index: lobbyStudentsIndexes)
             if (index<0||index>lobby.size())
                 return false;
+        int numOfMoves=tableStudents.size();
         HashMap<Color, Integer>  fromLobby = new HashMap<>();
         HashMap<Color, Integer>  fromTable = new HashMap<>();
-        for (int i = 0; i< Constants.MAX_STUDENTS_FOR_CARD_10_SWITCH;i++){
-            Color toBeMovedFromLobby = lobby.get(i);
-            fromLobby.put(toBeMovedFromLobby, fromLobby.get(toBeMovedFromLobby)==null? 1 : fromLobby.get(toBeMovedFromLobby)+1);
+        for (Color color: Color.values()){
+            fromTable.put(color,0);
+            fromLobby.put(color,0);
         }
-        for (int i = 0; i< Constants.MAX_STUDENTS_FOR_CARD_10_SWITCH; i++){
+        for (int i = 0; i< numOfMoves;i++){
+            Color toBeMovedFromLobby = lobby.get(lobbyStudentsIndexes.get(i));
+            fromLobby.put(toBeMovedFromLobby, fromLobby.get(toBeMovedFromLobby)+1);
             Color toBeMovedFromTable = tableStudents.get(i);
-            fromTable.put(toBeMovedFromTable, fromLobby.get(toBeMovedFromTable)==null? 1 : fromLobby.get(toBeMovedFromTable)+1);
+            fromTable.put(toBeMovedFromTable, fromTable.get(toBeMovedFromTable)+1);
         }
-        for (Color color: fromLobby.keySet())
-            if (fromLobby.get(color)+studentsTable.get(color) +
-                    (fromTable.get(color)==null?0:fromTable.get(color))>Constants.MAX_TABLE_SIZE)
+
+        //questo controllo si basa sull'idea che non ha senso spostare una pedina dello stesso colore
+        // dalla lobby alla table e viceversa
+        //quindi per controllare se è vuota o piena non tengo conto di eventuali scambi dello stesso colore
+        //si può anche aggiungere volendo, il codice sarebbe
+        /*
+        for (Color color: Color.values())
+            if (fromLobby.get(color)+studentsTable.get(color)-fromTable.get(color)>Constants.MAX_TABLE_SIZE
+                    || studentsTable.get(color)-fromTable.get(color) + fromLobby.get(color)<0)
                 return false;
 
+         */
+        for (Color color: Color.values())
+            if (fromLobby.get(color)+studentsTable.get(color)>Constants.MAX_TABLE_SIZE
+                    || studentsTable.get(color)-fromTable.get(color)<0)
+                return false;
+
+        for (Color color: Color.values()){
+            for (int i = 0; i<fromLobby.get(color);i++){
+                addToTable(color);
+                removeFromLobby(color);
+            }
+            for (int i = 0; i<fromTable.get(color);i++){
+                addToLobby(color);
+                removeFromTable(color);
+            }
+        }
         return true;
     }
 
