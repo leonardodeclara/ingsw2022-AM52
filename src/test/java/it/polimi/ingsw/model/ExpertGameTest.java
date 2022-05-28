@@ -32,7 +32,6 @@ class ExpertGameTest {
         players.add("leo");
         players.add("frizio");
         game.instantiateGameElements(players);
-        //game.extractPersonalityCards();
         assertEquals(3, game.getPersonalities().size());
         for (int i = 0; i< 2; i++){
             for(int j = i+1; j<3; j++){
@@ -45,33 +44,31 @@ class ExpertGameTest {
         }
     }
 
-    /**
-     * TODO: moveStudentFromLobbyForCard2 va modificato. Andranno modificati correttamente anche i test
-     * IN TEORIA QUESTO METODO NON ESISTE PIÙ
-     */
-    /**
     @Test
-    void moveStudentFromLobbyForCard2() {
-        ExpertGame game = new ExpertGame(2);
-        game.addPlayer(new Player(0,"leo",Tower.WHITE),0);
-        game.addPlayer(new Player(1,"frizio",Tower.BLACK),1);
-        game.instantiateGameElements();
-        for (int i = 0; i<7; i++){
-            game.getPlayers().get(0).addToBoardLobby(Color.BLUE);
-            game.getPlayers().get(1).addToBoardLobby(Color.PINK);
+    void moveStudentsWithCoinsTest(){
+        ExpertGame game = new ExpertGame(3);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("mari");
+        players.add("leo");
+        players.add("frizio");
+        game.instantiateGameElements(players);
+        assertEquals(17, game.getCoins());
+        Player leo = game.getPlayerByName("leo");
+        assertEquals(1,leo.getCoins());
+        ArrayList<Integer> studentIndexes = new ArrayList<>();
+        ArrayList<Integer> destinationsIds = new ArrayList<>();
+        ArrayList<Color> movedStudents= new ArrayList<>();
+        for (int i = 0;i<3;i++) leo.addToBoardLobby(Color.BLUE); //mossa illegale, ma è per testare la table
+        for (int i = 0; i< 3;i++){
+            studentIndexes.add(i+9);
+            destinationsIds.add(Constants.ISLAND_ID_NOT_RECEIVED);
         }
-        int tableSizeP0 = game.getPlayers().get(0).getBoard().getStudentsTable().get(Color.BLUE);
-        int tableSizeP1 = game.getPlayers().get(1).getBoard().getStudentsTable().get(Color.PINK);
-        int lobbySizeP0 = game.getPlayers().get(0).getBoard().getLobby().size();
-        int lobbySizeP1 = game.getPlayers().get(1).getBoard().getLobby().size();
-        game.moveStudentFromLobbyForCard2(0,1,-1);
-        game.moveStudentFromLobbyForCard2(1,1,-1);
-        assertEquals(tableSizeP0+1, game.getPlayers().get(0).getBoard().getStudentsTable().get(Color.BLUE));
-        assertEquals(tableSizeP1+1, game.getPlayers().get(1).getBoard().getStudentsTable().get(Color.PINK));
-        assertEquals(lobbySizeP0-1, game.getPlayers().get(0).getBoard().getLobby().size());
-        assertEquals(lobbySizeP1-1, game.getPlayers().get(1).getBoard().getLobby().size());
+        assertTrue(game.moveStudentsFromLobby("leo", studentIndexes,destinationsIds)); //viene chiamato il metodo override di moveStudentFromLobbyToTable
+        assertEquals(3,leo.getBoard().getTableNumberOfStudents(Color.BLUE));
+        assertEquals(2, leo.getCoins());
+        assertEquals(16, game.getCoins());
     }
-     */
+
 
     @Test
     void modifiedTeacherMovementTest() {

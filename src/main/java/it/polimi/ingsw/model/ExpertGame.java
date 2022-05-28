@@ -44,7 +44,7 @@ public class ExpertGame extends Game {
     protected void moveStudentsFromLobbyToTable(Player player, Color studentToMove){
         if(player.addToBoardTable(studentToMove)){
             coins--; //-1 dalla riserva
-            player.setCoins(getCoins()+1); //+ 1 al giocatore
+            player.setCoins(player.getCoins()+1); //+ 1 al giocatore
             ArrayList<Object> coinsChange = new ArrayList<>();
             coinsChange.add(player.getCoins());
             coinsChange.add(player);
@@ -449,9 +449,3 @@ public class ExpertGame extends Game {
         listeners.addPropertyChangeListener("NoLongerActivePersonality", controller); //fatto
     }
 }
-//questione controllo dei professori
-//carte 10 e 11 permettono di aggiungere togliere pedine alla sala
-// -> come gestisco il calcolo dei professori? va fatto?
-//si potrebbe fare dopo aver applicato l'effetto delle carte nei relativi metodi del controller
-//però per essere precisi il controllo dei professori andrebbe fatto dopo aver INSERITO una pedina nella sala
-//quindi per la carta 11 no problem ma per la 10? è un po' un casino perché in teoria dovresti controllare solo i colori per cui hai inserito una pedina

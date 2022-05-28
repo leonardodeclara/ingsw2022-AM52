@@ -268,7 +268,7 @@ public class Game {
         int islandIndexCounter = 0;
 
         for (int i = 0; i < studentIDs.size(); i++) { //controlliamo se la mossa è legit per ogni studente e per ogni destinazione
-            if (!isMoveStudentFromLobbyLegal(player, studentIDs.get(i), islandIDs.get(i), studentsToMove.size()))
+            if (!isMoveStudentFromLobbyLegal(player, studentIDs.get(i), islandIDs.get(i), studentsToMove))
                 return false;
             studentsToMove.add(player.getBoard().getLobbyStudent(studentIDs.get(i)));
         }
@@ -362,15 +362,20 @@ public class Game {
      * @param player : player making the move.
      * @param studentIndex : index of the student in the board's lobby.
      * @param islandId : id of the destination island (or -1 if no island is specified)
-     * @param toBeAdded: number of students' move already validated.
+     * @param studentsToBeAdded: students whose move has already been validated.
      */
-    public boolean isMoveStudentFromLobbyLegal(Player player,int studentIndex,int islandId, int toBeAdded){
+    public boolean isMoveStudentFromLobbyLegal(Player player,int studentIndex,int islandId, ArrayList<Color> studentsToBeAdded){
         //non sono sicuro sia il modo giusto per gestire questo caso
         if (studentIndex >= player.getBoard().getLobby().size() || studentIndex<0)
             return false;
         Color studentToMove = player.getBoard().getLobbyStudent(studentIndex);
         if(studentToMove != null){
             if(islandId == Constants.ISLAND_ID_NOT_RECEIVED){
+                int toBeAdded = 0;
+                if (studentsToBeAdded!=null)
+                    for (Color color: studentsToBeAdded)
+                        if(color.equals(studentToMove))
+                            toBeAdded++;
                 if(!player.getBoard().isTableFull(studentToMove, toBeAdded))
                     return true;
             }
@@ -821,7 +826,6 @@ public class Game {
         listeners.addPropertyChangeListener("MotherNature", controller); //fire fatto, anche in exp
         listeners.addPropertyChangeListener("Merge", controller); //fire fatto
         listeners.addPropertyChangeListener("LastRound", controller); //fire fatto
-        //listeners.addPropertyChangeListener("Gameover", controller); //fire fatto, rivedere un po' cosa viene mandato
         listeners.addPropertyChangeListener("CloudsRefill", controller); //fire fatto
         listeners.addPropertyChangeListener("CurrentTurnAssistantCards", controller); //fire fatto
         for (Cloud cloud: clouds){

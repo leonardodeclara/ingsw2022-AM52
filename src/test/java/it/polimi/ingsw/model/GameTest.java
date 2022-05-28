@@ -296,13 +296,13 @@ class GameTest {
         for(int i = 0;i<10;i++) //riempie completamente la table blu di "mari"
             game.getPlayerByName("mari").addToBoardTable(Color.BLUE);
 
-        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("leo"), 7, 3,0));
-        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("leo"), 7, -1,0));
-        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("leo"), 6, 1,0));
-        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"), 7, 6,0));
-        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"), 6, 6,0));
-        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"), 0, 23,0));
-        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"),-1,10,0));
+        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("leo"), 7, 3,null));
+        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("leo"), 7, -1,null));
+        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("leo"), 6, 1,null));
+        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"), 7, 6,null));
+        assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"), 6, 6,null));
+        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"), 0, 23,null));
+        assertFalse(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("mari"),-1,10,null));
     }
 
     /**
@@ -376,6 +376,33 @@ class GameTest {
         assertEquals(tableSizeP1+1, game.getPlayers().get(1).getBoard().getStudentsTable().get(s1));
         assertEquals(lobbySizeP0-1, game.getPlayers().get(0).getBoard().getLobby().size());
         assertEquals(lobbySizeP1-1, game.getPlayers().get(1).getBoard().getLobby().size());
+    }
+
+    @Test
+    void studentsToFullTableTest(){
+        Game game = new Game(2);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("leo");
+        players.add("mari");
+        game.instantiateGameElements(players);
+        for (int i = 0; i<5;i++){
+            game.getPlayerByName("leo").addToBoardTable(Color.RED);
+        }
+        ArrayList<Integer> destinations= new ArrayList<>();
+        ArrayList<Integer> studentsIndexes= new ArrayList<>();
+        for (int i = 0;i<3;i++){
+            studentsIndexes.add(i+7); //seleziono i tre studenti extra aggiunti alla lobby
+            destinations.add(Constants.ISLAND_ID_NOT_RECEIVED);
+            game.getPlayerByName("leo").addToBoardLobby(Color.RED);
+        }
+        assertEquals(5, game.getPlayerByName("leo").getBoard().getTableNumberOfStudents(Color.RED));
+        assertTrue(game.moveStudentsFromLobby("leo", studentsIndexes,destinations));
+        assertEquals(8, game.getPlayerByName("leo").getBoard().getTableNumberOfStudents(Color.RED));
+        for (int i = 0;i<3;i++){
+            game.getPlayerByName("leo").addToBoardLobby(Color.RED);
+        }
+        assertFalse(game.moveStudentsFromLobby("leo", studentsIndexes,destinations));
+        assertEquals(8, game.getPlayerByName("leo").getBoard().getTableNumberOfStudents(Color.RED));
     }
 
 
@@ -842,6 +869,7 @@ class GameTest {
         assertEquals(11, game.getIslands().size());
         game.moveMotherNature("leoviatano", 2);
         assertEquals((mnIndex+2)%game.getIslands().size(),game.getIslands().indexOf(game.getCurrentMotherNatureIsland())); //le isole sono scalate di 1 rispetto all'inizio
+        //riga sopra ogni tanto da errore rivedere
         game.moveMotherNature("frizio", 1);
         assertEquals((mnIndex+3)%game.getIslands().size(),game.getIslands().indexOf(game.getCurrentMotherNatureIsland()));
     }
@@ -931,6 +959,27 @@ class GameTest {
         assertEquals(3,game.getCurrentTurnAssistantCards().size());
         game.resetCurrentTurnAssistantCards();
         assertEquals(0,game.getCurrentTurnAssistantCards().size());
+    }
+
+    @Test
+    void actionPhaseOrderTest(){
+        Game game = new Game(3);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("mari");
+        players.add("frizio");
+        players.add("leo");
+        game.instantiateGameElements(players);
+        game.giveAssistantDeck("mari", 0);
+        game.giveAssistantDeck("leo", 1);
+        game.giveAssistantDeck("frizio", 2);
+        game.playAssistantCard("mari",1);
+        game.playAssistantCard("leo",2);
+        game.playAssistantCard("frizio",3);
+        ArrayList<String> order = new ArrayList<>();
+        order.add(0,"frizio");
+        order.add(1,"leo");
+        order.add(2, "mari");
+        assertEquals(order,game.getActionPhasePlayerOrder());
     }
     /*
     TODO: aggiungere test che verifichi il corretto merge con una isola a dx
