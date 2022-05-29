@@ -363,7 +363,7 @@ public class GameHandler implements PropertyChangeListener{
 
     private void handleCard10Effect(Card10EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
-        Message response = gameController.applyEffect10(message.getStudentsFromTable(), message.getStudentsFromLobby());
+        Message response = gameController.applyEffect10(clientName,message.getStudentsFromTable(), message.getStudentsFromLobby());
         if (!(response instanceof  ErrorMessage)){
             response= new ClientStateMessage(client.getCurrentClientState());
             System.out.println(clientName + "ha utilizzato l'effetto della carta 10, " +
@@ -374,7 +374,7 @@ public class GameHandler implements PropertyChangeListener{
 
     private void handleCard11Effect(Card11EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
-        Message response = gameController.applyEffect11(message.getSelectedStudentIndex());
+        Message response = gameController.applyEffect11(clientName, message.getSelectedStudentIndex());
 
         if (!(response instanceof  ErrorMessage)){
             response= new ClientStateMessage(client.getCurrentClientState());

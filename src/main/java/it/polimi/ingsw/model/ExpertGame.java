@@ -244,7 +244,8 @@ public class ExpertGame extends Game {
 
         try {
             activePersonality=personalities.remove(playedCardIndex);
-            coins = coins + activePersonality.getCost();
+            int cardCost=activePersonality.getCost();
+            coins += activePersonality.isHasBeenUsed()?cardCost: cardCost-1; //una moneta non torna in casssa ma viene messa sopra la carta
             currentPlayer.setCoins(currentPlayer.getCoins()-activePersonality.getCost());
             activePersonality.updateCost();
             currentPersonalityPlayer = currentPlayer;
@@ -253,7 +254,12 @@ public class ExpertGame extends Game {
             coinsChange.add(currentPlayer.getCoins());
             coinsChange.add(currentPlayer.getNickname());
             listeners.firePropertyChange("Coins", null, coinsChange);
+            //va cambiato il sistema di update delle monete perché è sempre -x al giocatore e +x alla riserva
+            //perché quando una carta viene giocata la prima volta una moneta non va alla riserva
+            // ma virtualmente viene posizionata sopra la carta. poi dalla seconda volta +è -x e +x
+            //lato model ho già sistemato la cosa
             return true;
+
         }
         catch (IndexOutOfBoundsException exception){
             return false;
