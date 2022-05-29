@@ -49,6 +49,8 @@ public class UpdateMessageBuilder {
                 ClientPersonality clientPersonality = new ClientPersonality(personality.getCharacterId(), false, personality.getCost());
                 if (personality instanceof BanPersonality)
                     clientPersonality.setBans(Constants.MAX_BANS_NUMBER);
+                if(personality instanceof LobbyPersonality)
+                    clientPersonality.setStudents(((LobbyPersonality) personality).getStudents());
                 personalities.add(clientPersonality);
             }
             for (String player : clientBoards.keySet()) {

@@ -58,11 +58,11 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
             case CHOOSE_ISLAND_FOR_CARD_5:
                 return buildCard5EffectMessage(data);
             case SWAP_STUDENTS_FOR_CARD_7:
-                //return buildCard7EffectMessage(data);
+                return buildCard7EffectMessage(data);
             case CHOOSE_COLOR_FOR_CARD_9:
                 return buildCard9EffectMessage(data);
             case CHOOSE_STUDENTS_FOR_CARD_10:
-                //return buildCard10EffectMessage(data);
+                return buildCard10EffectMessage(data);
             case CHOOSE_STUDENT_FOR_CARD_11:
                 return buildCard11EffectMessage(data);
             case CHOOSE_COLOR_FOR_CARD_12:

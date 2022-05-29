@@ -99,9 +99,7 @@ public class GameBoard {
    private void printPersonalityCards(){
         outputStream.println("AVAILABLE PERSONALITY CARDS:");
         for(ClientPersonality personality : personalities){
-            outputStream.println("( ID: "+personality.getCardID() + " " +"Costo: "+personality.getCost()+ " " + "EFFETTO: " );
-            personality.getDescription(personality.getCardID());
-            System.out.print("\n");
+            personality.print();
         }
        outputStream.println();
         if(activePersonality!=null)
