@@ -94,13 +94,8 @@ public class ExpertGame extends Game {
         if(!isMoveMNLegalForCard4(nickname,numSteps))
             return false;
 
-        //Island from = islands.get(currentMotherNatureIsland.getIslandIndex());
-        //Island dest = islands.get((from.getIslandIndex() + numSteps) % islands.size());
         Island from = islands.get(islands.indexOf(currentMotherNatureIsland));
-        System.out.println("Posizione iniziale di MN nell'array di isole: " +islands.indexOf(from));
         Island dest = islands.get((islands.indexOf(from)+numSteps) % islands.size());
-        System.out.println("Posizione finale in teoria di MN nell'array di isole: " +islands.indexOf(dest));
-        //currentMotherNatureIsland = islands.get(dest.getIslandIndex()); //firePropertyChange
         currentMotherNatureIsland = dest;
         from.setMotherNature(false);
         dest.setMotherNature(true);
@@ -224,9 +219,6 @@ public class ExpertGame extends Game {
      * Method that sets the Personality card that is active in the round
      * @param cardId: ID of the Personality card that is active in the round
      */
-
-    //in teoria dovrebbe comportarsi come tutti gli altri metodi chiamati dal controller ossia
-    //se può giocare la carta la gioca e returna true altrimenti returna false
     public boolean setActivePersonality(int cardId){
         if (activePersonality!=null){
             return false;
@@ -298,20 +290,17 @@ public class ExpertGame extends Game {
            return false;
        destination.addStudent(student);
        ((LobbyPersonality) activePersonality).removeStudent(student);
-       try{
-           ((LobbyPersonality) activePersonality).addStudent(basket.pickStudent());
-       }
-       catch (EmptyBasketException e){
-           boolean oldLastRound = lastRound;
-           setLastRound(true);
-           listeners.firePropertyChange("LastRound", oldLastRound, lastRound);
-       }
-       finally {
-           return true;
-       }
+        replaceCardStudent();
+        return true;
 
     }
 
+    /**
+     * Implements Personality 5's effect by adding a ban tile placeholder on the chosen island. The ban will
+     * prevent influence's computation and tower placements on the banned island.
+     * @param islandId: the banned island's unique ID.
+     * @return true if parameters are correct and the effect has been correctly applied, false otherwise.
+     */
     public boolean executeCard5Effect(int islandId){
         Island bannedIsland = getIslandById(islandId);
         if (bannedIsland==null || ((BanPersonality) activePersonality).getBans()<=0) return false;
@@ -321,7 +310,7 @@ public class ExpertGame extends Game {
     }
 
     /**
-     * Method executeCard7Effect implements Personality 1's Effect, therefore it swaps up to 3 student tiles
+     * Method executeCard7Effect implements Personality 7's Effect, therefore it swaps up to 3 student tiles
      * from the card with as many student tiles in the active player's lobby.
      * @param cardStudentsIndexes: indexes of the student tiles on the card.
      * @param lobbyStudentsIndexes: indexed of the students tiles int the player's lobby.
@@ -345,14 +334,6 @@ public class ExpertGame extends Game {
             else
                 return false;
         }
-        System.out.println("Studenti da togliere dalla carta: ");
-        for (int i = 0; i<3; i++){
-            System.out.println(fromCard.get(i).toString());
-        }
-        System.out.println("Studenti da togliere dalla lobby: ");
-        for (int i = 0; i<3; i++){
-            System.out.println(fromLobby.get(i).toString());
-        }
         for (int i = 0; i< cardStudentsIndexes.size();i++){
             if(currentPlayer.removeFromBoardLobby(fromLobby.get(i))){
                 ((LobbyPersonality) activePersonality).removeStudent(fromCard.get(i));
@@ -364,6 +345,12 @@ public class ExpertGame extends Game {
         return true;
     }
 
+    /**
+     * Checks if the selected student tile can be moved from the active personality card.
+     * @param personality: the active personality card.
+     * @param cardStudentId: index of the personality's student whose move is checked.
+     * @return true if the move can be performed, false otherwise.
+     */
     public boolean isMoveStudentFromCardLegal(LobbyPersonality personality, int cardStudentId){
         if (cardStudentId>=0 && cardStudentId <personality.getStudents().size())
             return true;
@@ -371,6 +358,11 @@ public class ExpertGame extends Game {
             return false;
     }
 
+    /**
+     * Checks if the selected student tile can be moved from the current player's lobby.
+     * @param lobbyStudentId: index of the lobby's student whose move is checked.
+     * @return true if the move can be performed, false otherwise.
+     */
     public boolean isMoveStudentFromLobbyLegal(int lobbyStudentId){
         if (lobbyStudentId>=0 && lobbyStudentId <currentPlayer.getBoard().getLobby().size())
             return true;
@@ -380,30 +372,38 @@ public class ExpertGame extends Game {
 
     //da finire e poi testare
 
+    /**
+     * Implements Personality 10's effect by swapping up to two students' tiles between the active player's lobby and table.
+     * @param tableStudents: color of the tiles being moved from the board's table.
+     * @param lobbyStudentsIndexes: indexes of the tiles being moved from the board's lobby.
+     * @return true if the parameters are correct and the effect has been correctly applied, false otherwise.
+     */
     public boolean executeCard10Effect(ArrayList<Color> tableStudents, ArrayList<Integer> lobbyStudentsIndexes){
         return currentPlayer.switchStudents(tableStudents,lobbyStudentsIndexes);
     }
 
-
+    /**
+     * Implements Personality's 11 effect by moving the chosen student tile from the personality card to
+     * the active player's lobby.
+     * @param cardStudentIndex: index of the student being moved from the card.
+     * @return true if the move is legal and the effect has been correctly applied, false otherwise.
+     */
     public boolean executeCard11Effect(int cardStudentIndex){
         Color toBeMoved = ((LobbyPersonality)activePersonality).getStudent(cardStudentIndex);
         if (toBeMoved==null || currentPlayer.getBoard().isTableFull(toBeMoved,0))
             return false;
         currentPlayer.addToBoardTable(toBeMoved);
         ((LobbyPersonality) activePersonality).removeStudent(toBeMoved);
-        try{
-            ((LobbyPersonality) activePersonality).addStudent(basket.pickStudent());
-        }
-        catch (EmptyBasketException e){
-            boolean oldLastRound = lastRound;
-            setLastRound(true);
-            listeners.firePropertyChange("LastRound", oldLastRound, lastRound);
-        }
-        finally {
-            return true;
-        }
+        replaceCardStudent();
+        return true;
     }
 
+    /**
+     * Implements Personality 12's effect, therefore moves up to three student tiles of the chosen color from
+     * each player's table.
+     * @param chosenColor: the color of the tiles which are being removed from the players' tables.
+     * @return true if the effect has been correctly applied, false otherwise.
+     */
     public boolean executeCard12Effect(Color chosenColor){
         int removed=0;
         for (Player player: players) {
@@ -421,6 +421,21 @@ public class ExpertGame extends Game {
     //nel caso venga aggiornata dopo che un singolo giocatore ha spostato tutte le pedine si può modificare
     //questo metodo in modo che prenda in input chosenColor e il nome del player e poi il ciclo lo faccio in gameController
     //nel caso venga aggiornata dopo ogni singola pedina mossa mi rifiuto
+
+    /**
+     * Adds a student tile to the lobby personality's arraylist.
+     * In the case of an empty basket lastRound's flag is set to true.
+     */
+    private void replaceCardStudent(){
+        try{
+            ((LobbyPersonality) activePersonality).addStudent(basket.pickStudent());
+        }
+        catch (EmptyBasketException e){
+            boolean oldLastRound = lastRound;
+            setLastRound(true);
+            listeners.firePropertyChange("LastRound", oldLastRound, lastRound);
+        }
+    }
 
     /**
      * Method that returns the list of all personality cards
@@ -443,14 +458,26 @@ public class ExpertGame extends Game {
         return coins;
     }
 
+    /**
+     * Sets the color that will not be considered in the influence's computation,
+     * as is expected by Personality 9's effect.
+     * @param color: the chosen color.
+     */
     public void setBannedColor(Color color){
         bannedColor=color;
     }
 
+    /**
+     * Sets the color not considered in the influence's computation to null.
+     */
     public void resetBannedColor(){
         bannedColor=null;
     }
 
+    /**
+     * Method getBannedColor returns the color chosen by the player who actived card
+     * @return the color not considered in the influence's computation for this round.
+     */
     public Color getBannedColor() {
         return bannedColor;
     }

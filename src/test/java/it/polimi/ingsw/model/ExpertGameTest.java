@@ -364,7 +364,7 @@ class ExpertGameTest {
 
         game.setCurrentPlayer("leo");
         game.getPlayerByName("leo").setCoins(20);
-        assertFalse(game.setActivePersonality(1));
+        assertFalse(game.setActivePersonality(0));
         assertTrue(game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
         assertFalse(game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
     }
@@ -422,8 +422,10 @@ class ExpertGameTest {
         assertEquals(oldBasketSize-1,game.getBasket().getSize());
         //si potrebbe testare il caso in cui il sacchetto sia vuoto,
         // quindi il numero di studenti effettivi non è quello stabilito a priori
+        game.setBasket(new Basket(new int[]{0,0,0,0,0}));
+        assertTrue(game.executeCard1Effect(0,1));
+        assertTrue(game.isLastRound());
     }
-
 
     @Test
     void card5EffectTest(){
@@ -548,7 +550,7 @@ class ExpertGameTest {
         for (Personality personality: game.getPersonalities())
             selectedPersonalitiesIds.add(personality.getCharacterId());
 
-        if (!selectedPersonalitiesIds.contains(12)){
+        if (!selectedPersonalitiesIds.contains(11)){
             game.getPersonalities().add(new LobbyPersonality(11));
             for (int i = 0; i<4;i++)
                 ((LobbyPersonality) game.getPersonalities().get(3)).addStudent(game.getBasket().pickStudent());

@@ -34,9 +34,6 @@ public class Game {
     /**
      * Constructor creates a Game instance
      */
-    //AGGIUNGERE TRY CATCH PER refillClouds()che setta lastRound = true
-    //AGGIUNGERE TRY CATCH PER playAssistantCard() quando viene giocata l'ultima, che setta lastRound = true
-    //AGGIUNGERE TRY CATCH per refillClouds() per quando non ci sono abbastanza studenti per le nuvole => si salta la fase letPlayerPickStudent
     public Game(int playersNumber) {
         numOfPlayers = playersNumber;
         players = new ArrayList<>();
@@ -789,9 +786,7 @@ public class Game {
         return numOfPlayers;
     }
 
-    /*
-    TODO: testarla
-     */
+
     public boolean areCloudsFull(){
         int cloudSize = numOfPlayers+1;
         for (Cloud cloud: clouds)
@@ -825,7 +820,7 @@ public class Game {
 
     /**
      * Method setPropertyChangeListeners sets the listeners of Game's main attributes.
-     * @param controller: object that listens to the game's changes.
+     * @param controller: controller instance listening to the game's changes.
      */
     public void setPropertyChangeListeners(GameController controller){
         listeners.addPropertyChangeListener("MotherNature", controller); //fire fatto, anche in exp
