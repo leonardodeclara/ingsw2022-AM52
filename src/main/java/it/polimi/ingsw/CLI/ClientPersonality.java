@@ -13,7 +13,7 @@ public class ClientPersonality implements Serializable {
     private int cost;
     private int bans;
     private String description; //descrizione da visualizzare quando si printa la board
-    private final ArrayList<Color> students;
+    private ArrayList<Color> students;
 
     public ClientPersonality(Integer cardID, Boolean hasBeenUsed, Integer cost) {
         cardId = cardID;
@@ -95,11 +95,8 @@ public class ClientPersonality implements Serializable {
         System.out.print("ID: "+cardId + " " +"Costo: "+cost+ " ");
         if(students.size() > 0){
             System.out.print("STUDENTI: ");
-            for(Color color : Color.values()) {
-                int numberOfStudentPerColor = (int) getStudents().stream().filter(c -> c == color).count();
-                for (int i = 0; i < numberOfStudentPerColor; i++) {
-                    System.out.print(Constants.getStudentsColor(color) + "■ ");
-                }
+            for (Color student : students) {
+                System.out.print(Constants.getStudentsColor(student) + "■ ");
                 System.out.print(Constants.RESET);
             }
             System.out.println();
@@ -138,8 +135,7 @@ public class ClientPersonality implements Serializable {
     }
 
     public void setStudents(ArrayList<Color> students){
-        this.students.clear();
-        this.students.addAll(students);
+        this.students =students;
     }
 
     public void setBans(int bans) {

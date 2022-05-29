@@ -115,6 +115,14 @@ public class Player {
         return false;
     }
 
+    public boolean switchStudents(ArrayList<Color> tableStudents, ArrayList<Integer> lobbyStudentsIndexes){
+        if (board.switchStudents(tableStudents,lobbyStudentsIndexes)){
+            listeners.firePropertyChange("Board", null, this);
+            return true;
+        }
+        return false;
+    }
+
 
     //in expert game ci sarà moveToTable di game per guadagnare le monete
     public boolean addToBoardTable(Color student){

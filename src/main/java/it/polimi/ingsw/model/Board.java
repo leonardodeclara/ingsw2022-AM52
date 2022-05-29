@@ -145,6 +145,7 @@ public class Board {
                 removeFromTable(color);
             }
         }
+
         return true;
     }
 

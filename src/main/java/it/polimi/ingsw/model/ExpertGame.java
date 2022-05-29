@@ -339,12 +339,21 @@ public class ExpertGame extends Game {
             else
                 return false;
         }
+        System.out.println("Studenti da togliere dalla carta: ");
+        for (int i = 0; i<3; i++){
+            System.out.println(fromCard.get(i).toString());
+        }
+        System.out.println("Studenti da togliere dalla lobby: ");
+        for (int i = 0; i<3; i++){
+            System.out.println(fromLobby.get(i).toString());
+        }
         for (int i = 0; i< cardStudentsIndexes.size();i++){
             if(currentPlayer.removeFromBoardLobby(fromLobby.get(i))){
                 ((LobbyPersonality) activePersonality).removeStudent(fromCard.get(i));
                 currentPlayer.addToBoardLobby(fromCard.get(i));
                 ((LobbyPersonality) activePersonality).addStudent(fromLobby.get(i));
             }
+            else return false;
         }
         return true;
     }
@@ -364,9 +373,11 @@ public class ExpertGame extends Game {
     }
 
     //da finire e poi testare
+
     public boolean executeCard10Effect(ArrayList<Color> tableStudents, ArrayList<Integer> lobbyStudentsIndexes){
-        return currentPlayer.getBoard().switchStudents(tableStudents,lobbyStudentsIndexes);
+        return currentPlayer.switchStudents(tableStudents,lobbyStudentsIndexes);
     }
+
 
     public boolean executeCard11Effect(int cardStudentIndex){
         Color toBeMoved = ((LobbyPersonality)activePersonality).getStudent(cardStudentIndex);

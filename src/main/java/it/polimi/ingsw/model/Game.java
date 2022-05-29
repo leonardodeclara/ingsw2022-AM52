@@ -818,6 +818,11 @@ public class Game {
         return null;
     }
 
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
     /**
      * Method setPropertyChangeListeners sets the listeners of Game's main attributes.
      * @param controller: object that listens to the game's changes.
