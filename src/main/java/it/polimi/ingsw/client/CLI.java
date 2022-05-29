@@ -305,83 +305,9 @@ public class CLI implements Runnable,UI{
     }
 
     private void visualizeContextMessage(){
-        //System.out.println("Vediamo che messaggio ho ricevuto");
-        switch(currentState){
-            case CONNECT_STATE:
-                outputStream.println("Inserisci il tuo nickname:");
-                break;
-            case INSERT_NEW_GAME_PARAMETERS:
-                outputStream.println("Inserisci il numero di giocatori (2/3) e la tipologia di partita (base o expert) per dare via al matchmaking:");
-                break;
-            case WAIT_IN_LOBBY:
-                outputStream.println("Resta in attesa di altri giocatori...");
-                break;
-            case WAIT_TURN:
-                outputStream.println("Resta in attesa del tuo turno");
-                break;
-            case SET_UP_WIZARD_PHASE:
-                outputStream.println("Inserisci il deck che vuoi utilizzare");
-                outputStream.println("Deck disponibili:"+GB.getAvailableWizards()); //prendiamo dalla view le informazioni da stampare a schermo
-                break;
-            case SET_UP_TOWER_PHASE:
-                outputStream.println("Scegli il colore della tua squadra!");
-                outputStream.println("Torri disponibili:"+GB.getAvailableTowers()); //prendiamo dalla view le informazioni da stampare a schermo
-                break;
-            case PLAY_ASSISTANT_CARD:
-                outputStream.println("Scegli una carta da giocare!");
-                break;
-            case MOVE_FROM_LOBBY:
-                outputStream.println("Scegli tre studenti da spostare nella table o su un'isola");
-                outputStream.println("Per esempio digita move studentID1,studentID2,studentID3 in table,2,3 per muovere il primo studente nella table,il secondo sull'isola 2, il terzo sull'isola 3");
-                if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
-                    outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
-                break;
-            case MOVE_MOTHER_NATURE:
-                outputStream.println("Puoi far compiere a Madre Natura fino a X passi"); //prendere X dalla priority della carta giocata
-                outputStream.println("Per esempio digita move mn 5 per spostarla di 5 isole");
-                if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
-                    outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
-                break;
-            case PICK_CLOUD:
-                outputStream.println("Scegli una nuvola! I suoi studenti passeranno sulla tua lobby ");
-                outputStream.println("Per esempio digita empty cloud 3 per scegliere la nuvola 3");
-                if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
-                    outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
-                break;
-            case END_TURN:
-                outputStream.println("Sei alla fine del tuo turno! Per chiudere il turno scrivi end");
-                if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
-                    outputStream.println("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
-                break;
-            case END_GAME:
-                outputStream.println("La partita si è conclusa! Per chiudere il gioco scrivi close");
-                break;
-            case CHOOSE_STUDENT_FOR_CARD_1:
-                outputStream.println("Scegli uno studente! Scrivi move 1 per spostare il primo studente della carta");
-                break;
-            case CHOOSE_ISLAND_FOR_CARD_3:
-                outputStream.println("Scegli un'isola! Scrivi influence on 1 per calcolare l'influenza sull'isola 1");
-                break;
-            case CHOOSE_ISLAND_FOR_CARD_5:
-                outputStream.println("Scegli un'isola! Per imporre il divieto sull'isola 1 scrivi ban 1");
-                break;
-            case SWAP_STUDENTS_FOR_CARD_7:
-                outputStream.println("Scegli un massimo di 3 studenti dalla carta per scambiarli con 3 della lobby");
-                break;
-            case CHOOSE_COLOR_FOR_CARD_9:
-                outputStream.println("Scegli un colore da bandire! Per bandire red scrivi ban red");
-                break;
-            case CHOOSE_STUDENTS_FOR_CARD_10:
-                outputStream.println("Scegli un massimo di 2 studenti da scambiare tra la tua sala e l'ingresso");
-                break;
-            case CHOOSE_STUDENT_FOR_CARD_11:
-                outputStream.println("Scegli uno studente da spostare! Per spostare il primo studente della carta scrivi move 1");
-                break;
-            case CHOOSE_COLOR_FOR_CARD_12:
-                outputStream.println("Scegli un colore da rubare! Scrivi steal pink per togliere 3 pedine rosa a tutti");
-                break;
-        }
-
+        ArrayList<String> texts = currentState.getContextMessage(GB);
+        for(String text : texts)
+            outputStream.println(text);
     }
     private void visualizeServerErrorMessage(){ //messaggi di errore se qualcosa va storto lato server (sarebbe il caso di riscrivere decentemente il metodo)
         switch (currentState){

@@ -7,6 +7,9 @@ import it.polimi.ingsw.exceptions.InvalidMoveException;
 
 import java.util.*;
 
+import static it.polimi.ingsw.Constants.NUM_EXISTING_PERSONALITY_CARDS;
+import static it.polimi.ingsw.Constants.NUM_PLAYABLE_PERSONALITY_CARDS;
+
 /**
  * This is a subclass of game
  * contains the information and the actions that can be performed in the expert game mode
@@ -182,7 +185,6 @@ public class ExpertGame extends Game {
      * This method differentiates the types of card drawn according to the ID
      */
     public void extractPersonalityCards() {
-        /*
         ArrayList<Integer> extractedIndexes = new ArrayList<>();
 
         int randomIndex=0;
@@ -212,10 +214,8 @@ public class ExpertGame extends Game {
                 personalities.add(extractedCard);
             }
         }
-        */
-        personalities.add(new Personality(2));
-        personalities.add(new Personality(3));
-        personalities.add(new Personality(4));
+
+
         //listeners.firePropertyChange("ExtractedPersonalities", null, personalities); //in teoria non serve perché i listener vengono settati dopo l'estrazione
 
     }
