@@ -309,100 +309,16 @@ public class CLI implements Runnable,UI{
         for(String text : texts)
             outputStream.println(text);
     }
-    private void visualizeServerErrorMessage(){ //messaggi di errore se qualcosa va storto lato server (sarebbe il caso di riscrivere decentemente il metodo)
-        switch (currentState){
-            case CONNECT_STATE:
-                outputStream.println("Il nickname scelto è già stato scelto! Scegline un altro");
-                break;
-            case SET_UP_WIZARD_PHASE:
-                outputStream.println("Il wizard scelto appartiene già ad un altro giocatore! Scegline un altro");
-                break;
-            case SET_UP_TOWER_PHASE:
-                outputStream.println("La torre scelta appartiene già ad un altro giocatore! Scegline un'altra");
-                break;
-            case PLAY_ASSISTANT_CARD:
-                outputStream.println("La carta scelta non è disponibile! Scegline un altro");
-                break;
-            case MOVE_FROM_LOBBY:
-                outputStream.println("Scelta non valida! Riprova");
-                break;
-            case MOVE_MOTHER_NATURE: //qui bisogna differenziare i messaggi oppure paracularsi con messaggi generici tipo Scelta non valida!
-                outputStream.println("Non puoi spostare lì Madre Natura!");
-                break;
-            case PICK_CLOUD:
-                outputStream.println("Non puoi scegliere quella nuvola! Riprova");
-                break;
-            case END_TURN:
-                outputStream.println("Errore!"); //si può fare di meglio
-                break;
-            case CHOOSE_STUDENT_FOR_CARD_1:
-                outputStream.println("Non hai scelto uno studente valido");
-                break;
-            case CHOOSE_ISLAND_FOR_CARD_3:
-                outputStream.println("Non hai scelto un'isola valida");
-                break;
-            case CHOOSE_ISLAND_FOR_CARD_5:
-                outputStream.println("Non hai scelto un'isola valida");
-                break;
-            case SWAP_STUDENTS_FOR_CARD_7:
-                outputStream.println("Lo scambio non è valido!");
-                break;
-            case CHOOSE_COLOR_FOR_CARD_9:
-                outputStream.println("Il colore selezionato non può essere scelto");
-                break;
-            case CHOOSE_STUDENTS_FOR_CARD_10:
-                outputStream.println("Lo scambio non è valido!");
-                break;
-            case CHOOSE_STUDENT_FOR_CARD_11:
-                outputStream.println("Lo studente selezionato non è valido!");
-                break;
-            case CHOOSE_COLOR_FOR_CARD_12:
-                outputStream.println("Il colore selezionato non è valido!");
-                break;
-        }
+    private void visualizeServerErrorMessage(){
+        ArrayList<String> texts = currentState.getServerErrorMessage();
+        for(String text : texts)
+            outputStream.println(text);
     }
 
-    private void visualizeInputErrorMessage(){ //messaggi visualizzati quando il giocatore scrive qualcosa che non deve
-        switch (currentState){
-            case CONNECT_STATE:
-                outputStream.println("Il nickname scelto non è valido!");
-                break;
-            case INSERT_NEW_GAME_PARAMETERS:
-                outputStream.println("I parametri inseriti non sono validi!");
-                break;
-            case WAIT_IN_LOBBY:
-                outputStream.println("Non sei ancora in partita! Attendi altri giocatori per iniziare");
-                break;
-            case WAIT_TURN:
-                outputStream.println("Non è il tuo turno!");
-                break;
-            case SET_UP_WIZARD_PHASE:
-                outputStream.println("Non hai inserito un numero da 0 a 4");
-                break;
-            case SET_UP_TOWER_PHASE:
-                outputStream.println("Non hai inserito uno dei 3 colori disponibili");
-                break;
-            case PLAY_ASSISTANT_CARD:
-                outputStream.println("Le carte sono numerate da 1 a 10!");
-                break;
-            case MOVE_FROM_LOBBY:
-                outputStream.println("I parametri inseriti non sono validi!");
-                break;
-            case MOVE_MOTHER_NATURE:
-            case PICK_CLOUD:
-            case END_TURN:
-            case END_GAME:
-            case CHOOSE_STUDENT_FOR_CARD_1:
-            case CHOOSE_ISLAND_FOR_CARD_3:
-            case CHOOSE_ISLAND_FOR_CARD_5:
-            case SWAP_STUDENTS_FOR_CARD_7:
-            case CHOOSE_COLOR_FOR_CARD_9:
-            case CHOOSE_STUDENTS_FOR_CARD_10:
-            case CHOOSE_STUDENT_FOR_CARD_11:
-            case CHOOSE_COLOR_FOR_CARD_12:
-                outputStream.println("Comando non valido!");
-                break;
-        }
+    private void visualizeInputErrorMessage(){
+        ArrayList<String> texts = currentState.getInputErrorMessage();
+        for(String text : texts)
+            outputStream.println(text);
     }
 
     public void visualizeCustomMessage(String customMessage){
