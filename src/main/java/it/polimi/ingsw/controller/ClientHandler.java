@@ -109,10 +109,6 @@ public class ClientHandler implements Runnable {
         return gameHandler;
     }
 
-    //public void sendTo(Message message){
-    //    responseMessage = message;
-    //}
-
     //questo metodo va chiamato in caso di termine/crash partita,
     // chiusura inaspettata della connessione lato client, chiusura volontaria lato client (manca messaggio disconnect)
     public void closeConnection() {

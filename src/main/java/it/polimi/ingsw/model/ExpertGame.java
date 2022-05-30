@@ -42,10 +42,16 @@ public class ExpertGame extends Game {
         extractPersonalityCards();
     }
 
-
+    /**
+     * Moves the selected student tile from the player's lobby to the color's table.
+     * If the tile is placed in position 3,6 or 9 and there are coins left the player is given a coin.
+     * @param player: the player making the move.
+     * @param studentToMove: the chosen student who is being moved.
+     */
     @Override
     protected void moveStudentsFromLobbyToTable(Player player, Color studentToMove){
-        if(player.addToBoardTable(studentToMove)){
+        //da al giocatore una moneta se ha posizionato una pedina in posizione 3,6,9 e ci sono abbastanza monete
+        if(player.addToBoardTable(studentToMove) && coins>0) {
             coins--; //-1 dalla riserva
             player.setCoins(player.getCoins()+1); //+ 1 al giocatore
             ArrayList<Object> coinsChange = new ArrayList<>();
@@ -193,7 +199,7 @@ public class ExpertGame extends Game {
                 LobbyPersonality extractedCard = new LobbyPersonality(randomIndex);
                 int lobbyDimension = randomIndex==7 ? 6 : 4;
                 for (int j = 0; j < lobbyDimension; j++){
-                    //rivedere
+                    //rivedere, in teoria questa situazione non si dovrebbe mai presentare
                     try{
                         extractedCard.addStudent(basket.pickStudent());}
                     catch (EmptyBasketException e){
@@ -209,10 +215,6 @@ public class ExpertGame extends Game {
                 personalities.add(extractedCard);
             }
         }
-
-
-        //listeners.firePropertyChange("ExtractedPersonalities", null, personalities); //in teoria non serve perché i listener vengono settati dopo l'estrazione
-
     }
 
     /**
@@ -415,12 +417,7 @@ public class ExpertGame extends Game {
         return true;
     }
     //IMPORTANTE: capire come si comporta la teacherOwnership in questo caso
-    //nel caso in cui non venga aggiornata non si tocca nulla
-    //nal caso in cui venga aggiornata alla fine basta aggiungere la chiamata fuori dalla chiamata
-    //a game.executeCard12Effect(Color chosenColor) in applyEffect12
-    //nel caso venga aggiornata dopo che un singolo giocatore ha spostato tutte le pedine si può modificare
-    //questo metodo in modo che prenda in input chosenColor e il nome del player e poi il ciclo lo faccio in gameController
-    //nel caso venga aggiornata dopo ogni singola pedina mossa mi rifiuto
+    //non chiamiamo il metodo perché in teoria viene chiamato solo dopo che viene aggiunta una pedina alla sala, non tolta
 
     /**
      * Adds a student tile to the lobby personality's arraylist.
@@ -482,6 +479,10 @@ public class ExpertGame extends Game {
         return bannedColor;
     }
 
+    /**
+     * Method setPropertyChangeListeners sets the listeners of ExpertGame's main attributes.
+     * @param controller: controller instance listening to the game's changes.
+     */
     @Override
     public void setPropertyChangeListeners(GameController controller) {
         super.setPropertyChangeListeners(controller);

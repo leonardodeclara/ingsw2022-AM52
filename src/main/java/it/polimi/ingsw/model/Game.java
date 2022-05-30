@@ -702,11 +702,8 @@ public class Game {
             else if (potentialWinner.getBoard().getTowers()==minTowers)
                 potentialWinners.add(potentialWinner);
         }
-        if (potentialWinners.size() == 1){
+        if (potentialWinners.size() == 1)
             winner = potentialWinners.get(0);
-            return;
-
-        }
         else {
             int maxTeachers = -1;
             for (Player finalPlayer : potentialWinners) {
@@ -714,11 +711,9 @@ public class Game {
                     winner = finalPlayer;
                     maxTeachers= finalPlayer.getBoard().getTeacherTable().size();
                 }
-                else if (finalPlayer.getBoard().getTeacherTable().size()==maxTeachers){
+                else if (finalPlayer.getBoard().getTeacherTable().size()==maxTeachers)
                     winner = null;
-                }
             }
-            return;
         }
     }
 

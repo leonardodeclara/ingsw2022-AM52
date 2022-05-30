@@ -93,17 +93,6 @@ public class UpdateMessageBuilder {
         else return null;
     }
 
-    /*
-        public Message buildGameOverMessage(PropertyChangeEvent event){
-            String winnerName = (String) event.getNewValue();
-            if (winnerName!=null)
-                return new EndGameMessage("Abbiamo un vincitore", winnerName);
-            else
-                return new EndGameMessage("La partita è finita in parità", null);
-            //poi in gameHandler si può gestire il caso di mandare un messaggio di win al vincitore, di lose ai perdenti ecc
-            //per il momento mandiamo in broadcast il nome del vincitore se ce n'è uno
-        }
-    */
     public Message buildCloudsRefillMessage(PropertyChangeEvent event) {
         ArrayList<Cloud> modelClouds = (ArrayList<Cloud>) event.getNewValue();
         ArrayList<ClientCloud> clientClouds = new ArrayList<>();

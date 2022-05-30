@@ -211,6 +211,7 @@ public class InputParser {
                     data.add(cloudIndex);
                     return;
                 } catch (NumberFormatException e){
+                    e.printStackTrace();
                 }
         }
 
