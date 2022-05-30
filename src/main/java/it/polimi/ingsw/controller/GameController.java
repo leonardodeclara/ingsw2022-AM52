@@ -112,7 +112,7 @@ public class GameController implements PropertyChangeListener {
                 if (game.checkGameOver())
                     return new EndGameMessage(game.getWinner()==null? Constants.TIE: game.getWinner().getNickname());
             }
-            if (game.isLastRound() && !game.areCloudsFull()) //trovare un modo alternativo
+            if (game.isLastRound() && !game.areCloudsFull())
                 return new ClientStateMessage(ClientState.END_TURN);
             else
                 return new ClientStateMessage(ClientState.PICK_CLOUD);

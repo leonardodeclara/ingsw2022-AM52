@@ -940,12 +940,13 @@ class GameTest {
         players.add("frizio");
         players.add("leoviatano");
         game.instantiateGameElements(players);
+        Basket almostEmpty = new Basket(new int[]{2,2,2,2,2});
+        game.setBasket(almostEmpty);
         game.refillClouds();
-        assertTrue(game.areCloudsFull());
-        assertEquals(9,game.getPlayerByName("mari").getBoard().getLobby().size());
-        game.moveStudentsToLobby("mari", 0);
         assertFalse(game.areCloudsFull());
-        assertEquals(13,game.getPlayerByName("mari").getBoard().getLobby().size());
+        assertEquals(4, game.getClouds().get(0).getStudents().size());
+        assertEquals(4, game.getClouds().get(1).getStudents().size());
+        assertEquals(2, game.getClouds().get(2).getStudents().size());
     }
 
     @Test

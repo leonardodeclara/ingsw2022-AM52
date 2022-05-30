@@ -399,7 +399,7 @@ public class Game {
      * It's responsible for checking whether a picked student is null, in which case it sets lastRound flag to true.
      */
     public void refillClouds(){
-        int numOfPicks = players.size()+1;
+        int numOfPicks = numOfPlayers+1;
         ArrayList<Color> picks = new ArrayList<>();
         Color pick;
         for (Cloud cloud: clouds){
@@ -412,6 +412,7 @@ public class Game {
                 }
                 catch (EmptyBasketException e){
                     cloud.fillStudents(picks);
+                    cloud.setFilled(false); //se non riesco a riempirla del tutto imposto filled a false in modo da skippare la fase di PICK_CLOUD
                     picks.clear();
                     listeners.firePropertyChange("CloudsRefill", null, new ArrayList<>(clouds));
                     boolean oldLastRound = lastRound;
@@ -421,6 +422,7 @@ public class Game {
                 }
             }
             cloud.fillStudents(picks);
+            cloud.setFilled(true);
             picks.clear();
         }
         //mando l'update dopo averle aggiornate entrambe
@@ -783,9 +785,8 @@ public class Game {
 
 
     public boolean areCloudsFull(){
-        int cloudSize = numOfPlayers+1;
         for (Cloud cloud: clouds)
-            if (cloud.getStudents().size()!=cloudSize)
+            if (!cloud.isFilled())
                 return false;
         return true;
     }
