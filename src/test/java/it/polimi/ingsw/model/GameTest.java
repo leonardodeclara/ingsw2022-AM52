@@ -839,7 +839,10 @@ class GameTest {
         //poi faccio spostare a frizio madre natura e controllo che sia finita al posto giusto
     }
 
-    //test da sistemare perché ogni tanto fallisce
+    /**
+     * The following tests performs an island merge between two islands and moves Mother Nature two times,
+     * in order to assure the correct update of the islands' arraylist.
+     */
     @Test
     void influenceAndMergeTest(){
         Game game = new Game(2);
@@ -862,16 +865,19 @@ class GameTest {
         Island initialMN = game.getIslands().get(mnIndex);
         game.getIslands().get((mnIndex+2)%game.getIslands().size()).addStudent(Color.RED);
         game.getIslands().get((mnIndex+2)%game.getIslands().size()).addStudent(Color.RED);
+        game.getIslands().get((mnIndex+3)%game.getIslands().size()).addStudent(Color.BLUE);
+        game.getIslands().get((mnIndex+3)%game.getIslands().size()).addStudent(Color.BLUE);
         game.getIslands().get((mnIndex+1)%game.getIslands().size()).setOwner(game.getPlayerByName("leoviatano"));
         game.getIslands().get((mnIndex+1)%game.getIslands().size()).addTower(Tower.BLACK);
         Island dest = game.getIslands().get((mnIndex+2)%game.getIslands().size());
         game.calculateInfluence(dest); //qui c'è un merge
         assertEquals(11, game.getIslands().size());
         game.moveMotherNature("leoviatano", 2);
-        assertEquals((mnIndex+2)%game.getIslands().size(),game.getIslands().indexOf(game.getCurrentMotherNatureIsland())); //le isole sono scalate di 1 rispetto all'inizio
-        //riga sopra ogni tanto da errore rivedere
+        assertEquals((game.getIslands().indexOf(initialMN)+2)%game.getIslands().size(),
+                game.getIslands().indexOf(game.getCurrentMotherNatureIsland()));
         game.moveMotherNature("frizio", 1);
-        assertEquals((mnIndex+3)%game.getIslands().size(),game.getIslands().indexOf(game.getCurrentMotherNatureIsland()));
+        assertEquals((game.getIslands().indexOf(initialMN)+3)%game.getIslands().size(),
+                game.getIslands().indexOf(game.getCurrentMotherNatureIsland()));
     }
 
     /**
