@@ -1,10 +1,11 @@
 package it.polimi.ingsw.messages;
 
+import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.model.Color;
 
 import java.util.ArrayList;
 
-public class PersonalityUpdateMessage implements Message{
+public class PersonalityUpdateMessage implements UpdateMessage{
     private int cardId;
     private ArrayList<Color> students;
     private int bans;
@@ -31,5 +32,11 @@ public class PersonalityUpdateMessage implements Message{
 
     public int getBans() {
         return bans;
+    }
+
+    @Override
+    public void update(GameBoard GB) {
+        GB.updateActivePersonality(cardId,students,bans);
+        GB.print();
     }
 }

@@ -1,8 +1,10 @@
 package it.polimi.ingsw.messages;
 
+import it.polimi.ingsw.CLI.GameBoard;
+
 import java.util.HashMap;
 
-public class AssistantDeckUpdateMessage implements Message{
+public class AssistantDeckUpdateMessage implements UpdateMessage{
     private String owner;
     private HashMap<Integer, Integer> cards;
 
@@ -18,5 +20,10 @@ public class AssistantDeckUpdateMessage implements Message{
 
     public HashMap<Integer, Integer> getCards() {
         return cards;
+    }
+
+    @Override
+    public void update(GameBoard GB) {
+        GB.setPlayerDeck(owner, cards);
     }
 }

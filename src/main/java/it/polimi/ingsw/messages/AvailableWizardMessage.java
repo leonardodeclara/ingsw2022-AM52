@@ -1,9 +1,10 @@
 package it.polimi.ingsw.messages;
 
-import java.lang.reflect.Array;
+import it.polimi.ingsw.CLI.GameBoard;
+
 import java.util.ArrayList;
 
-public class AvailableWizardMessage implements Message{
+public class AvailableWizardMessage implements UpdateMessage {
     ArrayList<Integer> remainingWizards;
 
     public AvailableWizardMessage(ArrayList<Integer> remainingWizards) {
@@ -13,4 +14,10 @@ public class AvailableWizardMessage implements Message{
     public ArrayList<Integer> getRemainingWizards(){
         return remainingWizards;
     }
+
+    @Override
+    public void update(GameBoard GB) {
+        GB.setAvailableWizards(remainingWizards);
+    }
+
 }

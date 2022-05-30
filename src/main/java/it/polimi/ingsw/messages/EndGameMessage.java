@@ -1,6 +1,8 @@
 package it.polimi.ingsw.messages;
 
-public class EndGameMessage implements Message{
+import it.polimi.ingsw.CLI.GameBoard;
+
+public class EndGameMessage implements UpdateMessage{
 
     String winnerName;
 
@@ -11,5 +13,10 @@ public class EndGameMessage implements Message{
 
     public String getWinnerName() {
         return winnerName;
+    }
+
+    @Override
+    public void update(GameBoard GB) {
+        GB.visualizeEndGameMessage(winnerName);
     }
 }

@@ -1,6 +1,8 @@
 package it.polimi.ingsw.messages;
 
-public class ActivePersonalityMessage implements Message{
+import it.polimi.ingsw.CLI.GameBoard;
+
+public class ActivePersonalityMessage implements UpdateMessage{
     private int activeCardId;
 
     public ActivePersonalityMessage(int activeCardId){
@@ -9,5 +11,11 @@ public class ActivePersonalityMessage implements Message{
 
     public int getActiveCardId() {
         return activeCardId;
+    }
+
+    @Override
+    public void update(GameBoard GB) {
+        GB.setActivePersonality(activeCardId);
+        GB.print();
     }
 }

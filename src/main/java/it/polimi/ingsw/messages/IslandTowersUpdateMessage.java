@@ -1,10 +1,11 @@
 package it.polimi.ingsw.messages;
 
+import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.model.Tower;
 
 import java.util.ArrayList;
 
-public class IslandTowersUpdateMessage implements Message{
+public class IslandTowersUpdateMessage implements UpdateMessage{
     int islandIndex;
     ArrayList<Tower> towers;
 
@@ -19,5 +20,11 @@ public class IslandTowersUpdateMessage implements Message{
 
     public ArrayList<Tower> getTowers() {
         return new ArrayList<>(towers);
+    }
+
+    @Override
+    public void update(GameBoard GB) {
+        GB.setIslandTowers(islandIndex, new ArrayList<>(towers));
+        GB.print();
     }
 }

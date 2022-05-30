@@ -95,14 +95,11 @@ public class ClientPersonality implements Serializable {
         System.out.print("ID: "+cardId + " " +"Costo: "+cost+ " ");
         if(students.size() > 0){
             System.out.print("STUDENTI: ");
-            for(Color color : Color.values()) {
-                int numberOfStudentPerColor = (int) getStudents().stream().filter(c -> c == color).count();
-                for (int i = 0; i < numberOfStudentPerColor; i++) {
-                    System.out.print(Constants.getStudentsColor(color) + "■ ");
-                }
-                System.out.print(Constants.RESET);
+            for(Color color : students) {
+                System.out.print(Constants.getStudentsColor(color) + "■ ");
             }
             System.out.println();
+            System.out.print(Constants.RESET);
         }
         System.out.println("DESCRIZIONE: ");
         printDescription();

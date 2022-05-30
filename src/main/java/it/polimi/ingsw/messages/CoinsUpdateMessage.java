@@ -1,6 +1,8 @@
 package it.polimi.ingsw.messages;
 
-public class CoinsUpdateMessage implements Message{
+import it.polimi.ingsw.CLI.GameBoard;
+
+public class CoinsUpdateMessage implements UpdateMessage{
     int coins;
     String player;
 
@@ -15,5 +17,11 @@ public class CoinsUpdateMessage implements Message{
 
     public String getPlayer() {
         return player;
+    }
+
+    @Override
+    public void update(GameBoard GB) {
+        GB.updateCoins(coins, player);
+        GB.print();
     }
 }

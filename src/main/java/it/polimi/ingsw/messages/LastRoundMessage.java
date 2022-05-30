@@ -1,6 +1,8 @@
 package it.polimi.ingsw.messages;
 
-public class LastRoundMessage implements Message{
+import it.polimi.ingsw.CLI.GameBoard;
+
+public class LastRoundMessage implements UpdateMessage{
     String lastRoundMessage;
 
     public LastRoundMessage(String lastRoundMessage) {
@@ -9,5 +11,10 @@ public class LastRoundMessage implements Message{
 
     public String getLastRoundMessage() {
         return lastRoundMessage;
+    }
+
+    @Override
+    public void update(GameBoard GB) {
+        GB.visualizeLastRoundMessage(lastRoundMessage);
     }
 }

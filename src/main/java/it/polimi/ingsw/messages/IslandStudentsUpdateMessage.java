@@ -1,11 +1,12 @@
 package it.polimi.ingsw.messages;
 
+import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.model.Color;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class IslandStudentsUpdateMessage implements Message{
+public class IslandStudentsUpdateMessage implements UpdateMessage{
     int islandIndex;
     ArrayList<Color> students;
 
@@ -20,5 +21,11 @@ public class IslandStudentsUpdateMessage implements Message{
 
     public ArrayList<Color> getStudents() {
         return students;
+    }
+
+    @Override
+    public void update(GameBoard GB) {
+        GB.setIslandStudents(islandIndex, students);
+        GB.print();
     }
 }

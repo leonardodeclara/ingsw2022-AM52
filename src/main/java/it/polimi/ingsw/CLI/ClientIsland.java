@@ -31,15 +31,13 @@ public class ClientIsland implements Serializable {
     public void print(){
         System.out.println("ISOLA " + getIslandIndex() + ":");
         System.out.print("STUDENTS ON THE ISLAND: ");
-        for (Color color : Color.values()) {
+        for (Color color : students) {
             try{
-                int numberOfStudentsPerColor = (int) getStudents().stream().filter(c -> c == color).count();
-                for (int i = 0; i < numberOfStudentsPerColor; i++) {
-                    System.out.print(Constants.getStudentsColor(color) + "■ ");
-                }
+                System.out.print(Constants.getStudentsColor(color) + "■ ");
             }
             catch (NullPointerException e){
                 System.out.println("No studenti del colore " + color.toString());
+                e.printStackTrace();
             }
 
             System.out.print(Constants.RESET);

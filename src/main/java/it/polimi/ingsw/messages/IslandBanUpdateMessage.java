@@ -1,6 +1,8 @@
 package it.polimi.ingsw.messages;
 
-public class IslandBanUpdateMessage implements Message{
+import it.polimi.ingsw.CLI.GameBoard;
+
+public class IslandBanUpdateMessage implements UpdateMessage{
     private int islandId;
     private int banCount;
 
@@ -15,5 +17,11 @@ public class IslandBanUpdateMessage implements Message{
 
     public int getBanCount() {
         return banCount;
+    }
+
+    @Override
+    public void update(GameBoard GB) {
+        GB.setIslandBans(islandId,banCount);
+        GB.print();
     }
 }

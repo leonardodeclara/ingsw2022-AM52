@@ -201,7 +201,7 @@ public class InputParser {
     }
 
 
-    private void parseCloudSelection(String input){ //comando empty cloud 3
+    private void parseCloudSelection(String input){
         int cloudIndex = 0;
         String[] words = input.split("\\s+");
         if (words.length==3 ){

@@ -1,6 +1,8 @@
 package it.polimi.ingsw.messages;
 
-public class MotherNatureMovementUpdateMessage implements Message{
+import it.polimi.ingsw.CLI.GameBoard;
+
+public class MotherNatureMovementUpdateMessage implements UpdateMessage{
     int islandIndex;
 
     public MotherNatureMovementUpdateMessage(int islandIndex) {
@@ -9,5 +11,11 @@ public class MotherNatureMovementUpdateMessage implements Message{
 
     public int getIslandIndex() {
         return islandIndex;
+    }
+
+    @Override
+    public void update(GameBoard GB) {
+        GB.changeMNPosition(islandIndex);
+        GB.print();
     }
 }

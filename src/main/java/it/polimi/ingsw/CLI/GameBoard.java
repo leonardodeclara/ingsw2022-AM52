@@ -1,5 +1,6 @@
 package it.polimi.ingsw.CLI;
 
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
 
@@ -253,6 +254,17 @@ public class GameBoard {
         }
         else
             new Throwable().printStackTrace(); //non dovrebbe mai accadere quindi mettiamo eccezione così nel caso in runtime salta fuori un bug
+    }
+
+    public void visualizeLastRoundMessage(String message){
+        outputStream.println(message);
+    }
+
+    public void visualizeEndGameMessage(String winner){
+        if(winner.equals(Constants.TIE))
+            outputStream.println("La partita è terminata in pareggio!");
+        else
+            outputStream.println("Il vincitore è " + winner + "!");
     }
 
     public void resetActivePersonality(int inactivePersonality){

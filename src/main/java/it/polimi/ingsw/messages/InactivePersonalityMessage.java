@@ -1,6 +1,8 @@
 package it.polimi.ingsw.messages;
 
-public class InactivePersonalityMessage implements Message{
+import it.polimi.ingsw.CLI.GameBoard;
+
+public class InactivePersonalityMessage implements UpdateMessage{
     private int inactiveCardId;
 
     public InactivePersonalityMessage(int inactiveCardId){
@@ -9,5 +11,11 @@ public class InactivePersonalityMessage implements Message{
 
     public int getInactiveCardId() {
         return inactiveCardId;
+    }
+
+    @Override
+    public void update(GameBoard GB) {
+        GB.resetActivePersonality(inactiveCardId);
+        GB.print();
     }
 }
