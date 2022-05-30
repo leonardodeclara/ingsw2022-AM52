@@ -187,8 +187,8 @@ public class UpdateMessageBuilder {
             ArrayList<Object> coinsChange = (ArrayList<Object>) event.getNewValue();
             int coins = (int) coinsChange.get(0);
             String player = (String) coinsChange.get(1);
-            boolean hasBeenUsed = (boolean) coinsChange.get(2);
-            return new CoinsUpdateMessage(coins, player,hasBeenUsed);
+            int reserveCoins = (int) coinsChange.get(2);
+            return new CoinsUpdateMessage(coins, player,reserveCoins);
         } catch (Exception e) {
             e.printStackTrace();
         }

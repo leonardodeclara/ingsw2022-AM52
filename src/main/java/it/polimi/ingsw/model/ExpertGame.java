@@ -58,6 +58,7 @@ public class ExpertGame extends Game {
                 ArrayList<Object> coinsChange = new ArrayList<>();
                 coinsChange.add(player.getCoins());
                 coinsChange.add(player.getNickname());
+                coinsChange.add(coins);
                 listeners.firePropertyChange("Coins", null, coinsChange);
             }else{
                 new Exception().printStackTrace(); //se accade lo vediamo (non dovrebbe)
@@ -253,11 +254,8 @@ public class ExpertGame extends Game {
             ArrayList<Object> coinsChange = new ArrayList<>();
             coinsChange.add(currentPlayer.getCoins());
             coinsChange.add(currentPlayer.getNickname());
-            coinsChange.add(hasBeenUsed);
+            coinsChange.add(coins);
             listeners.firePropertyChange("Coins", null, coinsChange);
-            //c'è asincronia con i property change quindi per doppia sicurezza mandiamo hasBeenUsed prima dell'aggiornamento così lato client
-            //non rischiamo che venga considerata activePersonality che magari è già stata aggiornata e risulta hasBeenUsed = True
-            //dato che lo facciamo così non c'è bisogno di invertire d'ordine i due blocchi di attivazione carta e aggiornamento monete
             return true;
 
         }

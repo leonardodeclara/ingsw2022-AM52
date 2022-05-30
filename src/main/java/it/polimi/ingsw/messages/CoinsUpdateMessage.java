@@ -6,12 +6,12 @@ import it.polimi.ingsw.CLI.GameBoard;
 public class CoinsUpdateMessage implements UpdateMessage{
     int coins;
     String player;
-    boolean hasBeenUsed;
+    int reserveCoins;
 
-    public CoinsUpdateMessage(int coins, String player, boolean hasBeenUsed){
+    public CoinsUpdateMessage(int coins, String player, int reserveCoins){
         this.player = player;
         this.coins = coins;
-        this.hasBeenUsed = hasBeenUsed;
+        this.reserveCoins = reserveCoins;
     }
 
     public int getCoins() {
@@ -22,11 +22,11 @@ public class CoinsUpdateMessage implements UpdateMessage{
         return player;
     }
 
-    public boolean isHasBeenUsed() {return hasBeenUsed;}
+    public int getReserveCoins() {return reserveCoins;}
 
     @Override
     public void update(GameBoard GB) {
-        GB.updateCoins(coins, player,hasBeenUsed);
+        GB.updateCoins(coins, player,reserveCoins);
         GB.print();
     }
 }
