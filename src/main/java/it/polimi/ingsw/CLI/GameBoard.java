@@ -167,10 +167,12 @@ public class GameBoard {
         //eventualmente si aggiungono gli altri set
     }
 
-    public void updateCoins(int coins, String player){
+    public void updateCoins(int coins, String player,boolean hasBeenUsed){
         int oldCoins = clientBoards.get(player).getCoins();
         clientBoards.get(player).setCoins(coins);
-        this.coins-=(coins-oldCoins);
+
+        if(hasBeenUsed)
+            this.coins-=(coins-oldCoins);
     }
 
     public void setIslandBans(int islandId, int bansCount){

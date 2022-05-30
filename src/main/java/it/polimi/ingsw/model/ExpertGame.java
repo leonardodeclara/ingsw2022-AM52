@@ -51,13 +51,18 @@ public class ExpertGame extends Game {
     @Override
     protected void moveStudentsFromLobbyToTable(Player player, Color studentToMove){
         //da al giocatore una moneta se ha posizionato una pedina in posizione 3,6,9 e ci sono abbastanza monete
-        if(player.addToBoardTable(studentToMove) && coins>0) {
-            coins--; //-1 dalla riserva
-            player.setCoins(player.getCoins()+1); //+ 1 al giocatore
-            ArrayList<Object> coinsChange = new ArrayList<>();
-            coinsChange.add(player.getCoins());
-            coinsChange.add(player.getNickname());
-            listeners.firePropertyChange("Coins", null, coinsChange);
+        if(player.addToBoardTable(studentToMove)) {
+            if(coins > 0){
+                coins--; //-1 dalla riserva
+                player.setCoins(player.getCoins()+1); //+ 1 al giocatore
+                ArrayList<Object> coinsChange = new ArrayList<>();
+                coinsChange.add(player.getCoins());
+                coinsChange.add(player.getNickname());
+                listeners.firePropertyChange("Coins", null, coinsChange);
+            }else{
+                new Exception().printStackTrace(); //se accade lo vediamo (non dovrebbe)
+            }
+
         }
     }
 
@@ -238,6 +243,7 @@ public class ExpertGame extends Game {
 
         try {
             activePersonality=personalities.remove(playedCardIndex);
+            boolean hasBeenUsed = activePersonality.isHasBeenUsed();
             int cardCost=activePersonality.getCost();
             coins += activePersonality.isHasBeenUsed()?cardCost: cardCost-1; //una moneta non torna in casssa ma viene messa sopra la carta
             currentPlayer.setCoins(currentPlayer.getCoins()-activePersonality.getCost());
@@ -247,22 +253,17 @@ public class ExpertGame extends Game {
             ArrayList<Object> coinsChange = new ArrayList<>();
             coinsChange.add(currentPlayer.getCoins());
             coinsChange.add(currentPlayer.getNickname());
+            coinsChange.add(hasBeenUsed);
             listeners.firePropertyChange("Coins", null, coinsChange);
-            //va cambiato il sistema di update delle monete perché è sempre -x al giocatore e +x alla riserva
-            //perché quando una carta viene giocata la prima volta una moneta non va alla riserva
-            // ma virtualmente viene posizionata sopra la carta. poi dalla seconda volta +è -x e +x
-            //lato model ho già sistemato la cosa
+            //c'è asincronia con i property change quindi per doppia sicurezza mandiamo hasBeenUsed prima dell'aggiornamento così lato client
+            //non rischiamo che venga considerata activePersonality che magari è già stata aggiornata e risulta hasBeenUsed = True
+            //dato che lo facciamo così non c'è bisogno di invertire d'ordine i due blocchi di attivazione carta e aggiornamento monete
             return true;
 
         }
         catch (IndexOutOfBoundsException exception){
             return false;
         }
-        //bisogna creare una classe di eccezioni InvalidMoveException
-
-        //rivedere come gestire questo caso
-
-        //si potrebbe inserire all'interno di un blocco try questa chiamata + le modifiche alle monete ecc
     }
 
     /**
@@ -373,7 +374,7 @@ public class ExpertGame extends Game {
     }
 
     //da finire e poi testare
-
+    //controlla input parser per vedere se con 1,2,3 ecc.. swap funziona
     /**
      * Implements Personality 10's effect by swapping up to two students' tiles between the active player's lobby and table.
      * @param tableStudents: color of the tiles being moved from the board's table.
@@ -493,3 +494,6 @@ public class ExpertGame extends Game {
         listeners.addPropertyChangeListener("NoLongerActivePersonality", controller); //fatto
     }
 }
+
+
+//monete
