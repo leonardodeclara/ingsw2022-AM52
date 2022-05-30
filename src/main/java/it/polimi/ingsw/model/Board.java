@@ -73,9 +73,7 @@ public class Board {
         Integer numOfStudents = studentsTable.get(student);
         numOfStudents++;
         studentsTable.put(student,numOfStudents);
-        if (numOfStudents == 3 || numOfStudents == 6 || numOfStudents == 9)
-            return true;
-        return false;
+        return (numOfStudents == 3 || numOfStudents == 6 || numOfStudents == 9);
     }
 
 
@@ -145,6 +143,7 @@ public class Board {
                 removeFromTable(color);
             }
         }
+
         return true;
     }
 

@@ -226,16 +226,19 @@ public class GameController implements PropertyChangeListener {
     }
 
 
-    public Message applyEffect10(ArrayList<Color> tableStudents, ArrayList<Integer> lobbyStudentsIndexes){
-        if (((ExpertGame) game).executeCard10Effect(tableStudents, lobbyStudentsIndexes))
-            return null;
+    public Message applyEffect10(String player,ArrayList<Color> tableStudents, ArrayList<Integer> lobbyStudentsIndexes){
+        if (((ExpertGame) game).executeCard10Effect(tableStudents, lobbyStudentsIndexes)){
+            updateTeachersOwnership.accept(player);
+            return null;}
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
-    public Message applyEffect11(int cardStudentIndex){
-        if (((ExpertGame) game).executeCard11Effect(cardStudentIndex))
-            return null;
+    public Message applyEffect11(String player, int cardStudentIndex){
+        if (((ExpertGame) game).executeCard11Effect(cardStudentIndex)){
+            updateTeachersOwnership.accept(player);
+            return null;}
+
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }

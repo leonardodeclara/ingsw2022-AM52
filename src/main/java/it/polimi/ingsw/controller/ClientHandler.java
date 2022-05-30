@@ -5,11 +5,9 @@ import it.polimi.ingsw.exceptions.QuitException;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Game;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Scanner;
 
@@ -48,7 +46,8 @@ public class ClientHandler implements Runnable {
                 Message receivedMessage = (Message) in.readObject();
                 readMessage(receivedMessage);
                 }
-            } catch (QuitException | SocketTimeoutException e) {
+            } catch (QuitException | EOFException | SocketTimeoutException e) //capire perché viene lanciata una EOF exception quando chiudo brutalmente il client
+            {
                 System.out.println(ID + " si è disconnesso da solo. Chiudo la connessione e chiudo la partita");
                 if (gameHandler!=null ) gameHandler.removeClientHandler(this);
                 closeConnection();
@@ -56,10 +55,12 @@ public class ClientHandler implements Runnable {
                 //System.err.println(e.getMessage());
             } catch (ClassNotFoundException e) {
                 System.err.println(e.getMessage());
-            } catch (IOException e){
+            } catch (IOException e) //se chiudo da server la connessione viene lanciata una SocketException
+            {
                 System.out.println("Qualcuno si è disconnesso chiudo la connessione con il client " + ID);
+                e.printStackTrace(); //for debugging
                 closeConnection();
-        }
+            }
     }
 
     public void readMessage(Message message){
@@ -96,7 +97,7 @@ public class ClientHandler implements Runnable {
             out.flush();
         }
         catch (IOException e){
-            //chiudo la connessione.
+            e.printStackTrace();
         }
     }
 
@@ -108,10 +109,6 @@ public class ClientHandler implements Runnable {
     public GameHandler getGameHandler() {
         return gameHandler;
     }
-
-    //public void sendTo(Message message){
-    //    responseMessage = message;
-    //}
 
     //questo metodo va chiamato in caso di termine/crash partita,
     // chiusura inaspettata della connessione lato client, chiusura volontaria lato client (manca messaggio disconnect)

@@ -34,9 +34,6 @@ public class Game {
     /**
      * Constructor creates a Game instance
      */
-    //AGGIUNGERE TRY CATCH PER refillClouds()che setta lastRound = true
-    //AGGIUNGERE TRY CATCH PER playAssistantCard() quando viene giocata l'ultima, che setta lastRound = true
-    //AGGIUNGERE TRY CATCH per refillClouds() per quando non ci sono abbastanza studenti per le nuvole => si salta la fase letPlayerPickStudent
     public Game(int playersNumber) {
         numOfPlayers = playersNumber;
         players = new ArrayList<>();
@@ -402,7 +399,7 @@ public class Game {
      * It's responsible for checking whether a picked student is null, in which case it sets lastRound flag to true.
      */
     public void refillClouds(){
-        int numOfPicks = players.size()+1;
+        int numOfPicks = numOfPlayers+1;
         ArrayList<Color> picks = new ArrayList<>();
         Color pick;
         for (Cloud cloud: clouds){
@@ -415,6 +412,7 @@ public class Game {
                 }
                 catch (EmptyBasketException e){
                     cloud.fillStudents(picks);
+                    cloud.setFilled(false); //se non riesco a riempirla del tutto imposto filled a false in modo da skippare la fase di PICK_CLOUD
                     picks.clear();
                     listeners.firePropertyChange("CloudsRefill", null, new ArrayList<>(clouds));
                     boolean oldLastRound = lastRound;
@@ -424,6 +422,7 @@ public class Game {
                 }
             }
             cloud.fillStudents(picks);
+            cloud.setFilled(true);
             picks.clear();
         }
         //mando l'update dopo averle aggiornate entrambe
@@ -705,11 +704,8 @@ public class Game {
             else if (potentialWinner.getBoard().getTowers()==minTowers)
                 potentialWinners.add(potentialWinner);
         }
-        if (potentialWinners.size() == 1){
+        if (potentialWinners.size() == 1)
             winner = potentialWinners.get(0);
-            return;
-
-        }
         else {
             int maxTeachers = -1;
             for (Player finalPlayer : potentialWinners) {
@@ -717,11 +713,9 @@ public class Game {
                     winner = finalPlayer;
                     maxTeachers= finalPlayer.getBoard().getTeacherTable().size();
                 }
-                else if (finalPlayer.getBoard().getTeacherTable().size()==maxTeachers){
+                else if (finalPlayer.getBoard().getTeacherTable().size()==maxTeachers)
                     winner = null;
-                }
             }
-            return;
         }
     }
 
@@ -789,13 +783,10 @@ public class Game {
         return numOfPlayers;
     }
 
-    /*
-    TODO: testarla
-     */
+
     public boolean areCloudsFull(){
-        int cloudSize = numOfPlayers+1;
         for (Cloud cloud: clouds)
-            if (cloud.getStudents().size()!=cloudSize)
+            if (!cloud.isFilled())
                 return false;
         return true;
     }
@@ -818,9 +809,14 @@ public class Game {
         return null;
     }
 
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
     /**
      * Method setPropertyChangeListeners sets the listeners of Game's main attributes.
-     * @param controller: object that listens to the game's changes.
+     * @param controller: controller instance listening to the game's changes.
      */
     public void setPropertyChangeListeners(GameController controller){
         listeners.addPropertyChangeListener("MotherNature", controller); //fire fatto, anche in exp

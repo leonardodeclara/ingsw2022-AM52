@@ -13,6 +13,7 @@ public class Cloud {
     private final int cloudIndex;
     private ArrayList<Color> students;
     private PropertyChangeSupport listeners;
+    private boolean filled;
 
     /**
      * Constructor creates a new cloud instance.
@@ -22,6 +23,7 @@ public class Cloud {
         cloudIndex = index;
         students = new ArrayList<>();
         listeners= new PropertyChangeSupport(this);
+        filled=false;
     }
 
     /**
@@ -58,8 +60,27 @@ public class Cloud {
         return new ArrayList<>(students);
     }
 
+    /**
+     * Checks if the cloud has been correctly filled with student tiles at the last refill Clouds phase.
+     * @return true if it has been correctly filled, false otherwise.
+     */
+    public boolean isFilled() {
+        return filled;
+    }
+
+    /**
+     * Sets the flag filled to true or false according to the last refill Clouds phase.
+     * @param filled: true if the correct amount of student tiles has been put on it, false otherwise.
+     */
+    public void setFilled(boolean filled) {
+        this.filled = filled;
+    }
+
+    /**
+     * Sets the listener of Cloud's state.
+     * @param controller: controller instance listening to the game's changes.
+     */
     public void setPropertyChangeListener(GameController controller){
         listeners.addPropertyChangeListener("PickedCloud", controller);
-
     }
 }

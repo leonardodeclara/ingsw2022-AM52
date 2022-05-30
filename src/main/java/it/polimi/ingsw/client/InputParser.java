@@ -211,6 +211,7 @@ public class InputParser {
                     data.add(cloudIndex);
                     return;
                 } catch (NumberFormatException e){
+                    e.printStackTrace();
                 }
         }
 
@@ -302,18 +303,13 @@ public class InputParser {
         if(words.length==4){
             if(words[0].equalsIgnoreCase("swap")){
                 String[] cardIDs = words[1].split(",");
-                ArrayList<Integer> cardIDsInteger = convertStringsToNumberArray(cardIDs);
+                ArrayList<Integer> cardIDsInteger =  decrementIndexes(convertStringsToNumberArray(cardIDs));
                 if(cardIDsInteger!=null){
                     if(words[2].equalsIgnoreCase("with")){
                         String[] lobbyIDs = words[3].split(",");
                         ArrayList<Integer> lobbyIDsInteger = decrementIndexes(convertStringsToNumberArray(lobbyIDs));
                         if(lobbyIDsInteger!=null){
                             if(cardIDsInteger.size() == lobbyIDsInteger.size()){
-                                for (Integer index: cardIDsInteger)
-                                    index=index-1; //1 per il giocatore è 0 per il server. più human readable
-                                for (Integer index: lobbyIDsInteger)
-                                    index=index-1; //1 per il giocatore è 0 per il server. più human readable
-
                                 data.add(cardIDsInteger);
                                 data.add(lobbyIDsInteger);
                         }
@@ -352,11 +348,9 @@ public class InputParser {
                 if(colors!=null){
                     if(words[2].equalsIgnoreCase("with")){
                         String[] lobbyIDs = words[3].split(",");
-                        ArrayList<Integer> lobbyIDsInteger = convertStringsToNumberArray(lobbyIDs);
+                        ArrayList<Integer> lobbyIDsInteger =  decrementIndexes(convertStringsToNumberArray(lobbyIDs));
                         if(lobbyIDsInteger!=null){
                             if(lobbyIDsInteger.size() == colors.size()){
-                                for (Integer index: lobbyIDsInteger)
-                                    index=index-1; //1 per il giocatore è 0 per il server. più human readable
                                 data.add(colors);
                                 data.add(lobbyIDsInteger);
                             }
