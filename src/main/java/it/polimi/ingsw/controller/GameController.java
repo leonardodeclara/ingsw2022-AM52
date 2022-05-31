@@ -112,6 +112,13 @@ public class GameController implements PropertyChangeListener {
                 if (game.checkGameOver())
                     return new EndGameMessage(game.getWinner()==null? Constants.TIE: game.getWinner().getNickname());
             }
+            else {
+                //si potrebbe mettere in un metodo a parte
+                game.getCurrentMotherNatureIsland().removeBan();
+
+                ((BanPersonality)( (ExpertGame) game).getActivePersonality()).addBan();
+                //rivedere, potrebbe esserci un problema qui
+            }
             if (game.isLastRound() && !game.areCloudsFull())
                 return new ClientStateMessage(ClientState.END_TURN);
             else
@@ -320,6 +327,7 @@ public class GameController implements PropertyChangeListener {
                 break;
             case "IslandBans":
                 toSend = updateMessageBuilder.buildIslandBansMessage(event);
+                break;
             case "PickedCloud":
                 toSend = updateMessageBuilder.buildPickedCloudMessage(event);
                 break;
