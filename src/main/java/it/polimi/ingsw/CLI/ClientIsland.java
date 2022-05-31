@@ -60,10 +60,9 @@ public class ClientIsland implements Serializable {
 
         if (isMotherNature())
             System.out.println("MOTHER NATURE IS HERE!\n");
-        else System.out.println();
 
         if (bans>0)
-            System.out.println("THIS ISLAND HAS " + bans + "BAN" + (bans>1? "S":""));
+            System.out.println("THIS ISLAND HAS " + bans + " BAN" + (bans>1? "S":""));
 
 
     }

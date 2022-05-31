@@ -310,6 +310,7 @@ public class GameHandler implements PropertyChangeListener{
         if (response instanceof EndGameMessage){
             sendAll(response);
             closeMatch();
+            return;
         }
         else if (response==null) {
             //caso in cui non c'è stato un errore o non è finita la partita
@@ -317,7 +318,7 @@ public class GameHandler implements PropertyChangeListener{
             System.out.println(clientName + "ha utilizzato l'effetto della carta 3, " +
                     "ora lo mando nello stato precedente alla invocazione della carta");
         }
-        else sendTo(clientName, response);
+        sendTo(clientName, response);
     }
 
     private void handleCard5Effect(Card5EffectMessage message, ClientHandler client){

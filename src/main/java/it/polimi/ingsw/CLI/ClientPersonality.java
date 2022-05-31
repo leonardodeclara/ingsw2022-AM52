@@ -101,6 +101,9 @@ public class ClientPersonality implements Serializable {
             }
             System.out.println();
         }
+        if (bans>0){
+            System.out.println("BANS: " + bans);
+        }
         System.out.println("DESCRIZIONE: ");
         printDescription();
     }
