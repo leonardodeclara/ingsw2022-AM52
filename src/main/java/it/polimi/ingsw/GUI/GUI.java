@@ -1,11 +1,14 @@
 package it.polimi.ingsw.GUI;
 
+import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.ClientSocket;
 import it.polimi.ingsw.messages.ClientState;
 import it.polimi.ingsw.messages.ClientStateMessage;
 import it.polimi.ingsw.messages.Message;
+import it.polimi.ingsw.messages.UpdateMessage;
+import it.polimi.ingsw.model.Tower;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -20,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -36,28 +40,40 @@ public class GUI extends Application implements UI{
     boolean active;
     Stage stage;
     ArrayList<Scene> scenes;
+    ArrayList<GUIController> controllers;
     String[] fxmlPaths;
     ClientSocket clientSocket;
     Client client;
     ActionParser actionParser;
-    //GUI visualizza la scena
-    //GUIUpdater riceve i messaggi di update da clientsocket (lo farei in GUI ma non si può perchè già estende Applications)
-    //la GUI ha la ref di un ActionParser che trasforma i click in parametri sfusi e li passa a Client (che li trasforma in messaggi e li manda)
-    //la GUI per comunicare con il server ha necessariamente bisogno di currentState
-    //per ge
+    ArrayList<Integer> availableWizards;
+    ArrayList<Tower> availableTowers;
+    GameBoard GB;
+
     public GUI(){
         currentState = ClientState.CONNECT_STATE;
         active = true;
         fxmlPaths = Arrays.copyOf(Constants.fxmlPaths,Constants.fxmlPaths.length);
         scenes = new ArrayList<>();
+        controllers = new ArrayList<>();
         client = new Client(this);
         actionParser = new ActionParser();
+        GB = new GameBoard();
     }
 
-    public void handleMessageFromServer(Message message){ //quando arriva il messaggio viene gestito come sulla CLI e viee cambiata/aggiornata la scena
+    public void handleMessageFromServer(Message message){ //quando arriva il messaggio viene gestito come sulla CLI e viene cambiata/aggiornata la scena
         if(message instanceof ClientStateMessage){
             currentState = ((ClientStateMessage) message).getNewState();
             renderScene(); //update scene in funzione del nuovo stato
+        }else{
+            ((UpdateMessage) message).update(GB);
+            /*
+            GUIController currentController = controllers.get(scenes.indexOf(stage.getScene()));
+            try{
+                ((UpdatableController) currentController).update();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            */
         }
     }
 
@@ -67,7 +83,6 @@ public class GUI extends Application implements UI{
     }
 
     private void renderScene(){
-        //renderBackground(); //il background lo renderizziamo sempre
         switch(currentState){
             case INSERT_NEW_GAME_PARAMETERS:
                 setScene(3);
@@ -75,6 +90,18 @@ public class GUI extends Application implements UI{
             case WAIT_IN_LOBBY:
                 setScene(4);
                 break;
+            case WAIT_TURN:
+                if(scenes.indexOf(stage.getScene()) == 3 || scenes.indexOf(stage.getScene()) == 4) //porcata imbarazzante
+                    setScene(5);
+                disableScene();
+                break;
+            case SET_UP_WIZARD_PHASE:
+                setScene(5);
+                break;
+            case SET_UP_TOWER_PHASE:
+                setScene(6);
+                break;
+
         }
     }
 
@@ -87,6 +114,7 @@ public class GUI extends Application implements UI{
             GUIController controller = fxmlLoader.getController();
             controller.setGUI(this);
             controller.setClient(this.client);
+            controllers.add(controller);
         }
     }
 
@@ -97,6 +125,20 @@ public class GUI extends Application implements UI{
             public void run() {
                 stage.setScene(scenes.get(index));
                 stage.show();
+                GUIController currentController = controllers.get(index);
+                if(currentController instanceof UpdatableController)
+                    ((UpdatableController)currentController).start(); //inizializzazione
+            }
+        });
+    }
+
+    public void disableScene(){ //ingrigisce la GUI dinamicamente (indipendentemente dalla scena renderizzata) e scrive ATTENDI IL TUO TURNO... al centro
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                ImageView greyOverlay = new ImageView();
+                greyOverlay.setImage(new Image("graphics/wait_gray_overlay.png"));
+                ((AnchorPane)stage.getScene().getRoot()).getChildren().add(greyOverlay);
             }
         });
     }
@@ -136,6 +178,45 @@ public class GUI extends Application implements UI{
         } catch (IOException e) {
             e.printStackTrace();
         }    }
+
+    public int getNumOfPlayers(){
+        return GB.getNumberOfPlayers();
+    }
+    public ArrayList<Integer> getAvailableWizards(){
+        return GB.getAvailableWizards();
+    }
+
+    public ArrayList<Tower> getAvailableTowers(){
+        return GB.getAvailableTowers();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public static void main(String[] args) {
         launch(args);

@@ -39,6 +39,20 @@ public class GameBoard {
         this.outputStream = outputStream;
     }
 
+    public GameBoard(){
+        availableWizards = new ArrayList<>();
+        availableTowers = new ArrayList<>();
+        islands = new ArrayList<>();
+        clouds = new ArrayList<>();
+        PlayersNickname = new ArrayList<>();
+        clientBoards = new HashMap<>();
+        personalities = new ArrayList<>();
+        availableWizards.add(1);
+        availableWizards.add(2);
+        availableWizards.add(3);
+        availableWizards.add(4);
+    }
+
     //usiamo questo metodo solo per inizializzare le cose che non dipendono dai giocatori in sé ma solo dai parametri di gioco,
     // quindi numero di giocatori e modalità
     public void instantiateGameElements(ArrayList<ClientIsland> newIslands, HashMap<String,ClientBoard> boards,ArrayList<ClientPersonality> personalities){
@@ -59,16 +73,17 @@ public class GameBoard {
     }
 
     public void print(){
-        outputStream.print("\033[H\033[2J");
-        outputStream.flush();
-        printClientBoards();
-        printClouds();
-        printIslands();
-        if (isExpertGame()){
-            outputStream.println("BANK'S COINS: " + coins);
-            printPersonalityCards(); //sistemare, deve stampare solo le carte estratte, non tutte
+        if(outputStream!=null){ //quando toglieremo GB.print() dagli update messages, questo non servirà più
+            outputStream.print("\033[H\033[2J");
+            outputStream.flush();
+            printClientBoards();
+            printClouds();
+            printIslands();
+            if (isExpertGame()){
+                outputStream.println("BANK'S COINS: " + coins);
+                printPersonalityCards(); //sistemare, deve stampare solo le carte estratte, non tutte
+            }
         }
-
     }
 
     private void printClientBoards(){ //sarebbe meglio se ogni componente avesse un metodo print e qui venisse chiamato solo quello

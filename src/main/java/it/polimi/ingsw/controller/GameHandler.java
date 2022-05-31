@@ -37,7 +37,7 @@ public class GameHandler implements PropertyChangeListener{
         playersOrderIterator = playersOrder.iterator();
     }
 
-    public void handleMessage(Message message,ClientHandler clientHandler){
+    public void handleMessage(Message message,ClientHandler clientHandler){ //visitor pure qua
         if(message instanceof WizardSelectionMessage)
             handleWizardSelectionMessage((WizardSelectionMessage) message, clientHandler);
         else if (message instanceof TowerSelectionMessage)
@@ -77,15 +77,6 @@ public class GameHandler implements PropertyChangeListener{
         this.serverConnection = serverConnection;
     }
 
-
-    //IDEA:
-    //se si volesse fare un'interfaccia della lobby lato client con gli altri giocatori all'interno, basterebbe fare in modo che il client richieda
-    //i giocatori con cui è in lobby così da poterne scrivere i nomi sulla GUI/CLI
-    /*
-    si svuota la lobby inserendo tutto in un game controller (che inizializza il model)
-    si mappano i nickname a degli id player (in ordine di join nella lobby, usando quindi la lista players di lobby)
-    si manda in broadcast a tutti i client il numero di giocatori e il tipo di partita così che possano inizializzare la view
-     */
     public void startGame(){
         System.out.println("GameHandler: ora istanzio GameController");
         updatePlayersOrder(players);
