@@ -11,14 +11,18 @@ public class NicknameController extends GUIController{
     @FXML
     private TextField nickname;
 
+    private boolean alreadyPressed = false;
+
     @FXML
     public void authenticate(){
-        String stringNickname = nickname.getText();
-        if(stringNickname.length() > 0 && !stringNickname.equals("") && !stringNickname.equals(" ")){
-            ArrayList<Object> data = new ArrayList<>();
-            data.add(stringNickname);
-            Message message = client.buildMessageFromPlayerInput(data, ClientState.CONNECT_STATE);
-            gui.passToSocket(message);
+        if(!alreadyPressed){
+            String stringNickname = nickname.getText();
+            if(stringNickname.length() > 0 && !stringNickname.equals(" ")){
+                Message message = client.buildMessageFromPlayerInput(actionParser.parseNickname(stringNickname), ClientState.CONNECT_STATE);
+                gui.passToSocket(message);
+                alreadyPressed = true;
+            }
         }
+
     }
 }

@@ -45,9 +45,8 @@ public class GUI extends Application implements UI{
     ClientSocket clientSocket;
     Client client;
     ActionParser actionParser;
-    ArrayList<Integer> availableWizards;
-    ArrayList<Tower> availableTowers;
     GameBoard GB;
+    ImageView greyOverlay;
 
     public GUI(){
         currentState = ClientState.CONNECT_STATE;
@@ -58,50 +57,46 @@ public class GUI extends Application implements UI{
         client = new Client(this);
         actionParser = new ActionParser();
         GB = new GameBoard();
+        greyOverlay = new ImageView();
+        greyOverlay.setImage(new Image("graphics/wait_gray_overlay.png"));
     }
 
     public void handleMessageFromServer(Message message){ //quando arriva il messaggio viene gestito come sulla CLI e viene cambiata/aggiornata la scena
         if(message instanceof ClientStateMessage){
             currentState = ((ClientStateMessage) message).getNewState();
+            System.out.println("Vado nello stato "+currentState);
             renderScene(); //update scene in funzione del nuovo stato
-        }else{
-            ((UpdateMessage) message).update(GB);
-            /*
+        }else{ //il metodo update dei controller va chiamato manualmente. Si potrebbe pensare a un propertylistener
+            ((UpdateMessage) message).update(GB); //aggiorna la gameboard
             GUIController currentController = controllers.get(scenes.indexOf(stage.getScene()));
-            try{
+            if(currentController instanceof UpdatableController) //Se l'update deve aggiornare anche la scena allora lo fa, altrimenti l'aggiornamento è propagato solo su GB
                 ((UpdatableController) currentController).update();
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            */
         }
     }
 
 
-    public void prepareView(ArrayList<Object> data){ //con questa inizializziamo il render della partita
+    public void prepareView(ArrayList<Object> data){
 
     }
 
-    private void renderScene(){
-        switch(currentState){
-            case INSERT_NEW_GAME_PARAMETERS:
+    private void renderScene(){ //nelle fasi più avanzate si aggiornerà la scena aggiungendo immagini o altro ma non si chiamerà più setScene
+        switch (currentState) {
+            case INSERT_NEW_GAME_PARAMETERS -> {
                 setScene(3);
-                break;
-            case WAIT_IN_LOBBY:
-                setScene(4);
-                break;
-            case WAIT_TURN:
-                if(scenes.indexOf(stage.getScene()) == 3 || scenes.indexOf(stage.getScene()) == 4) //porcata imbarazzante
+            }
+            case WAIT_IN_LOBBY -> setScene(4);
+            case WAIT_TURN -> {
+                if (scenes.indexOf(stage.getScene()) == 3 || scenes.indexOf(stage.getScene()) == 4) //porcata imbarazzante
                     setScene(5);
                 disableScene();
-                break;
-            case SET_UP_WIZARD_PHASE:
+            }
+            case SET_UP_WIZARD_PHASE -> {
                 setScene(5);
-                break;
-            case SET_UP_TOWER_PHASE:
+                enableScene();
+            }
+            case SET_UP_TOWER_PHASE -> {
                 setScene(6);
-                break;
-
+            }
         }
     }
 
@@ -114,6 +109,7 @@ public class GUI extends Application implements UI{
             GUIController controller = fxmlLoader.getController();
             controller.setGUI(this);
             controller.setClient(this.client);
+            controller.setActionParser(this.actionParser);
             controllers.add(controller);
         }
     }
@@ -126,8 +122,8 @@ public class GUI extends Application implements UI{
                 stage.setScene(scenes.get(index));
                 stage.show();
                 GUIController currentController = controllers.get(index);
-                if(currentController instanceof UpdatableController)
-                    ((UpdatableController)currentController).start(); //inizializzazione
+                if(currentController instanceof UpdatableController) //se la scena è aggiornabile con messaggi di update va inizializzata
+                    ((UpdatableController)currentController).start(); //inizializzazione (non può essere fatta altrove)
             }
         });
     }
@@ -136,9 +132,16 @@ public class GUI extends Application implements UI{
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                ImageView greyOverlay = new ImageView();
-                greyOverlay.setImage(new Image("graphics/wait_gray_overlay.png"));
                 ((AnchorPane)stage.getScene().getRoot()).getChildren().add(greyOverlay);
+            }
+        });
+    }
+//versione fancy: si itera su ogni elemento della scena e si fa GRAY = R + G +B / 3 o roba simile
+    public void enableScene(){ //riabilita la GUI
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(greyOverlay);
             }
         });
     }

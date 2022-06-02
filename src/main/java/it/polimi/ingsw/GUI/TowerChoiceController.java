@@ -12,12 +12,13 @@ import java.util.ArrayList;
 
 public class TowerChoiceController extends GUIController implements UpdatableController{
     @FXML
-    ChoiceBox<String> towerChoiceBox;
+    ChoiceBox<Tower> towerChoiceBox;
+    boolean alreadyPressed = false;
 
     public void start(){
-        ObservableList<String> towers = FXCollections.observableArrayList();
+        ObservableList<Tower> towers = FXCollections.observableArrayList();
         ArrayList<Tower> availableTowers = gui.getAvailableTowers();
-        towers.addAll(convertTowersToString(availableTowers));
+        towers.addAll(availableTowers);
         towerChoiceBox.setItems(towers);
     }
 
@@ -35,18 +36,19 @@ public class TowerChoiceController extends GUIController implements UpdatableCon
     }
 
     public void update(){
-        ObservableList<String> towers = FXCollections.observableArrayList();
+        ObservableList<Tower> towers = FXCollections.observableArrayList();
         ArrayList<Tower> availableTowers = gui.getAvailableTowers();
-        towers.addAll(convertTowersToString(availableTowers));
+        towers.addAll(availableTowers);
         towerChoiceBox.setItems(towers);
     }
 
     public void send(){
-        int towerValue = Integer.parseInt(towerChoiceBox.getSelectionModel().getSelectedItem());
-        ArrayList<Object> data = new ArrayList<>();
-        data.add(towerValue);
-        //per ora non serve currentState perchè questo controller non si occupa di altro
-        Message builtMessage = client.buildMessageFromPlayerInput(data, ClientState.SET_UP_TOWER_PHASE);
-        gui.passToSocket(builtMessage);
+        if(!alreadyPressed){
+            Tower towerValue = towerChoiceBox.getSelectionModel().getSelectedItem();
+            //per ora non serve currentState perchè questo controller non si occupa di altro
+            Message builtMessage = client.buildMessageFromPlayerInput(actionParser.parseTowerChoice(towerValue), ClientState.SET_UP_TOWER_PHASE);
+            gui.passToSocket(builtMessage);
+            alreadyPressed = true;
+        }
     }
 }

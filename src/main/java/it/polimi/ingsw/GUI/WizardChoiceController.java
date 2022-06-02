@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class WizardChoiceController extends GUIController implements UpdatableController{
     @FXML
     ChoiceBox<Integer> wizardChoiceBox;
-
+    boolean alreadyPressed = false;
 
     public void start(){
         ObservableList<Integer> wizards = FXCollections.observableArrayList();
@@ -28,12 +28,13 @@ public class WizardChoiceController extends GUIController implements UpdatableCo
     }
 
     public void send(){
-        int wizardValue = wizardChoiceBox.getSelectionModel().getSelectedItem();
-        ArrayList<Object> data = new ArrayList<>();
-        data.add(wizardValue);
-        //per ora non serve currentState perchè questo controller non si occupa di altro
-        Message builtMessage = client.buildMessageFromPlayerInput(data, ClientState.SET_UP_WIZARD_PHASE);
-        gui.passToSocket(builtMessage);
+        if(!alreadyPressed){
+            int wizardValue = wizardChoiceBox.getSelectionModel().getSelectedItem();
+            //per ora non serve currentState perchè questo controller non si occupa di altro
+            Message builtMessage = client.buildMessageFromPlayerInput(actionParser.parseWizardChoice(wizardValue), ClientState.SET_UP_WIZARD_PHASE);
+            gui.passToSocket(builtMessage);
+            alreadyPressed = true;
+        }
     }
 
 }
