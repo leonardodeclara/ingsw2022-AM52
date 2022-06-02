@@ -16,6 +16,7 @@ public class MatchMakingController extends GUIController{
     @FXML
     private ChoiceBox<String> gameType;
 
+    private boolean alreadyPressed = false;
 
     @FXML
     public void initialize(){
@@ -28,15 +29,15 @@ public class MatchMakingController extends GUIController{
     }
 
     public void searchGame(){
-        int numOfPlayersValue = Integer.parseInt(numOfPlayers.getSelectionModel().getSelectedItem());
-        String gameTypeString = gameType.getSelectionModel().getSelectedItem();
-        boolean isExpert = (!gameTypeString.equals("Basic Rules"));
-        ArrayList<Object> data = new ArrayList<>();
-        data.add(numOfPlayersValue);
-        data.add(isExpert);
-        //per ora non serve currentState perchè questo controller non si occupa di altro
-        Message builtMessage = client.buildMessageFromPlayerInput(data, ClientState.INSERT_NEW_GAME_PARAMETERS);
-        gui.passToSocket(builtMessage);
+        if(!alreadyPressed){
+            int numOfPlayersValue = Integer.parseInt(numOfPlayers.getSelectionModel().getSelectedItem());
+            String gameTypeString = gameType.getSelectionModel().getSelectedItem();
+            boolean isExpert = (!gameTypeString.equals("Basic Rules"));
+            //per ora non serve currentState perchè questo controller non si occupa di altro se non questo
+            Message builtMessage = client.buildMessageFromPlayerInput(actionParser.parseNewGameParameters(numOfPlayersValue,isExpert), ClientState.INSERT_NEW_GAME_PARAMETERS);
+            gui.passToSocket(builtMessage);
+            alreadyPressed = true;
+        }
     }
 
 

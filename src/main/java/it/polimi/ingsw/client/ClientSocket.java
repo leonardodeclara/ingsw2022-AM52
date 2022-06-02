@@ -92,37 +92,3 @@ public class ClientSocket implements Runnable{
     }
 
 }
-
-
-
-
-
-
-
-/* public void connect(String nickname) throws IOException, ClassNotFoundException, UnknownHostException { //connectionPhase
-        LoginRequestMessage nicknameMessage = new LoginRequestMessage(nickname);
-        send(nicknameMessage);
-        //System.out.println("Ho mandato il nickname!");
-        //qui il metodo rimane in attesa finchè non gli arriva response
-        //Message response = (Message) in.readObject(); //Deserializza il messaggio del server
-        //System.out.println("Risposta ricevuta");
-        //return response;
-    }
-
-    public void sendGameParameters(ArrayList<Object> parameters) throws IOException, ClassNotFoundException {
-        int numberOfPlayers = (int)parameters.get(0);
-        boolean expertGame = (boolean)parameters.get(1);
-        GameParametersMessage parametersMessage = new GameParametersMessage(numberOfPlayers,expertGame);
-        send(parametersMessage);
-        //System.out.println("Ho mandato i dati per la lobby");
-        //Message response = (Message) in.readObject();
-        //System.out.println("Risposta ricevuta!");
-        //return response;
-    }
-
-    public void sendReadyToPlayConfirmation() throws IOException, ClassNotFoundException {
-        Message confirmationMessage = new ClientConfirmationMessage();
-        send(confirmationMessage);
-        //Message response = (Message) in.readObject();
-        //return response;
-    }*/
