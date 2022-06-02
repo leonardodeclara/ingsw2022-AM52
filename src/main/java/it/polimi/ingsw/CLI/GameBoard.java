@@ -91,7 +91,7 @@ public class GameBoard {
         for(ClientBoard clientBoard : clientBoards.values()){
             clientBoard.print();
         }
-        outputStream.println("\n");
+        outputStream.println();
     }
 
     private void printIslands() {

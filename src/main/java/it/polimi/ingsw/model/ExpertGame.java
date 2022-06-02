@@ -195,8 +195,7 @@ public class ExpertGame extends Game {
         ArrayList<Integer> extractedIndexes = new ArrayList<>();
 
         int randomIndex=0;
-        for(int i = 0; i< 2;i++){
-        //for (int i = 0; i < NUM_PLAYABLE_PERSONALITY_CARDS; i++) {
+        for (int i = 0; i < NUM_PLAYABLE_PERSONALITY_CARDS; i++) {
             Random random = new Random();
             do{
                 randomIndex = random.nextInt(NUM_EXISTING_PERSONALITY_CARDS)+1;
@@ -222,7 +221,6 @@ public class ExpertGame extends Game {
                 personalities.add(extractedCard);
             }
         }
-        personalities.add(new BanPersonality(5));
     }
 
     /**

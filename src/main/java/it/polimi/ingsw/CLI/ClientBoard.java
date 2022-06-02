@@ -42,7 +42,10 @@ public class ClientBoard implements Serializable {
 
     public void print(){
         //stampo il nickname
-        System.out.println("************************************************"+getOwner().toUpperCase() + "'S SCHOOL"+"************************************************");
+        if (owner.equalsIgnoreCase(GB.getNickname()))
+            System.out.println("************************************************"+"YOUR SCHOOL"+"************************************************");
+        else
+            System.out.println("************************************************"+getOwner().toUpperCase() + "'S SCHOOL"+"************************************************");
         //stampo la lobby
         System.out.print("LOBBY: ");
         for(int i=0;i<lobby.size();i++){
@@ -114,10 +117,6 @@ public class ClientBoard implements Serializable {
                 System.out.println("CARTA ASSISTENTE "+entry.getKey()+":"+"(priorità: "+entry.getKey()+",numero mosse: "+entry.getValue()+")");
             }
         }
-
-        System.out.print("\n\n");
-
-
 
 
 

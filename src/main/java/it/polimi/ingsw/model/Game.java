@@ -535,6 +535,8 @@ public class Game {
      */
     protected void changeIslandOwnership(Island island, Player newOwner){
         ArrayList<Tower> oldTowers = island.removeTower();
+        //si potrebbe evitare di chiamare sempre questo metodo perché a prescindere dalla presenza di vecchie torri
+        // scatta un messaggio di propertyChange che, se non ci sono torri, è inutile
         int numOldTowers = oldTowers.size();
         if (numOldTowers!=0)
             for (Player player: players)
