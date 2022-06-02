@@ -287,13 +287,14 @@ public class GameBoard {
         this.activePersonality = null;
     }
 
-    public void updateActivePersonality(int cardId, ArrayList<Color> students, int bans){
-        if (cardId==activePersonality.getCardID()){
-            if (students!=null)
-                activePersonality.setStudents(students);
-            else if (bans!=-1)
-                activePersonality.setBans(bans);
-        }
+    public void updatePersonality(int cardId, ArrayList<Color> students, int bans){
+        for (ClientPersonality card: personalities)
+            if (cardId==card.getCardID()){
+                if (students!=null)
+                    card.setStudents(students);
+                else if (bans!=-1)
+                    card.setBans(bans);
+            }
     }
 
     public void setNumberOfPlayers(int numberOfPlayers) {

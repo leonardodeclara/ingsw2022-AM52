@@ -195,7 +195,8 @@ public class ExpertGame extends Game {
         ArrayList<Integer> extractedIndexes = new ArrayList<>();
 
         int randomIndex=0;
-        for (int i = 0; i < NUM_PLAYABLE_PERSONALITY_CARDS; i++) {
+        for(int i = 0; i< 2;i++){
+        //for (int i = 0; i < NUM_PLAYABLE_PERSONALITY_CARDS; i++) {
             Random random = new Random();
             do{
                 randomIndex = random.nextInt(NUM_EXISTING_PERSONALITY_CARDS)+1;
@@ -221,6 +222,7 @@ public class ExpertGame extends Game {
                 personalities.add(extractedCard);
             }
         }
+        personalities.add(new BanPersonality(5));
     }
 
     /**
@@ -445,6 +447,22 @@ public class ExpertGame extends Game {
      */
     public Personality getActivePersonality() {
         return activePersonality;
+    }
+
+
+    //carta 5 ha un effetto ""prolungato": il ban viene inserito nel turno di chi la gioca,
+    //ma resta sull'isola finché qualcuno non ci finisce sopra
+    //se si finisce sull'isola nel turno in cui la si è giocata allora si usa activePlayer
+    //altrimenti bisogna cercare nell'array personalities
+    public void resetIslandBan(Island island){
+        island.removeBan();
+        if (activePersonality instanceof BanPersonality)
+            ((BanPersonality) activePersonality).addBan();
+        else{
+            for (Personality card: personalities)
+                if (card instanceof BanPersonality)
+                    ((BanPersonality) card).addBan();
+        }
     }
 
     /**

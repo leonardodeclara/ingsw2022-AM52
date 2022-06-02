@@ -113,10 +113,8 @@ public class GameController implements PropertyChangeListener {
                     return new EndGameMessage(game.getWinner()==null? Constants.TIE: game.getWinner().getNickname());
             }
             else {
-                //si potrebbe mettere in un metodo a parte
-                game.getCurrentMotherNatureIsland().removeBan();
 
-                ((BanPersonality)( (ExpertGame) game).getActivePersonality()).addBan();
+                ((ExpertGame)game).resetIslandBan(game.getCurrentMotherNatureIsland());
                 //rivedere, potrebbe esserci un problema qui
             }
             if (game.isLastRound() && !game.areCloudsFull())

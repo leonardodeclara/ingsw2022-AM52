@@ -12,9 +12,10 @@ import it.polimi.ingsw.model.Tower;
 import java.util.ArrayList;
 
 public class InputParser {
-    ArrayList<Object> data;
-    String nickname;
-    boolean isExpert;
+    private ArrayList<Object> data;
+    private String nickname;
+    private boolean isExpert;
+    private int numOfPlayers;
 
     public InputParser(){
     }
@@ -104,6 +105,7 @@ public class InputParser {
             if(words[0].equals("2")|| words[0].equalsIgnoreCase("3")){
                 if(words[1].equalsIgnoreCase("base") || words[1].equalsIgnoreCase("expert")){
                     numberOfPlayers = Integer.parseInt(words[0]);
+                    this.numOfPlayers=numberOfPlayers;
                     expert = words[1].equalsIgnoreCase("expert");
                     data.add(numberOfPlayers);
                     data.add(expert);
@@ -158,11 +160,11 @@ public class InputParser {
             if(words[0].equalsIgnoreCase("move")){
                 String[] studentIDs = words[1].split(",");
                 ArrayList<Integer> studentIDsInteger = decrementIndexes(convertStringsToNumberArray(studentIDs));
-                if(studentIDsInteger!=null){
+                if(studentIDsInteger!=null && studentIDsInteger.size()==numOfPlayers+1){
                     if(words[2].equalsIgnoreCase("in")){
                         String[] destIDs = words[3].split(",");
                         ArrayList<Integer> destIDsInteger = convertStringsToNumberArray(destIDs);
-                        if(destIDsInteger!=null){
+                        if(destIDsInteger!=null && destIDsInteger.size()==numOfPlayers+1){
                             if(destIDsInteger.size() == studentIDsInteger.size()){
                                 data.add(studentIDsInteger);
                                 data.add(destIDsInteger);

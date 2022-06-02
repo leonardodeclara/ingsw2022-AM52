@@ -36,7 +36,7 @@ public class PersonalityUpdateMessage implements UpdateMessage{
 
     @Override
     public void update(GameBoard GB) {
-        GB.updateActivePersonality(cardId,students,bans);
+        GB.updatePersonality(cardId,students,bans);
         GB.print();
     }
 }
