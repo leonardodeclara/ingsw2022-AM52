@@ -47,10 +47,10 @@ public class GameBoard {
         PlayersNickname = new ArrayList<>();
         clientBoards = new HashMap<>();
         personalities = new ArrayList<>();
+        availableWizards.add(0);
         availableWizards.add(1);
         availableWizards.add(2);
         availableWizards.add(3);
-        availableWizards.add(4);
     }
 
     //usiamo questo metodo solo per inizializzare le cose che non dipendono dai giocatori in sé ma solo dai parametri di gioco,

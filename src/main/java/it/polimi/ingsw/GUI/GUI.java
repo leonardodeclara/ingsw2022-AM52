@@ -62,16 +62,25 @@ public class GUI extends Application implements UI{
     }
 
     public void handleMessageFromServer(Message message){ //quando arriva il messaggio viene gestito come sulla CLI e viene cambiata/aggiornata la scena
-        if(message instanceof ClientStateMessage){
-            currentState = ((ClientStateMessage) message).getNewState();
-            System.out.println("Vado nello stato "+currentState);
-            renderScene(); //update scene in funzione del nuovo stato
-        }else{ //il metodo update dei controller va chiamato manualmente. Si potrebbe pensare a un propertylistener
-            ((UpdateMessage) message).update(GB); //aggiorna la gameboard
-            GUIController currentController = controllers.get(scenes.indexOf(stage.getScene()));
-            if(currentController instanceof UpdatableController) //Se l'update deve aggiornare anche la scena allora lo fa, altrimenti l'aggiornamento è propagato solo su GB
-                ((UpdatableController) currentController).update();
-        }
+        Platform.runLater(new Runnable() { //il thread client socket non l'auth per lavorare con javaFX, quindi tutto l'aggiornamento della GUI avviene dopo nel thread ad hoc
+            @Override
+            public void run() {
+                if(message instanceof ClientStateMessage){
+                    currentState = ((ClientStateMessage) message).getNewState();
+                    System.out.println("Vado nello stato "+currentState);
+                    renderScene(); //update scene in funzione del nuovo stato
+                    GUIController currentController = controllers.get(scenes.indexOf(stage.getScene()));
+                    System.out.println("La scena attuale è "+stage.getScene() + " e il controller "+currentController);
+                    if(currentController instanceof UpdatableController){  //Se l'update deve aggiornare anche la scena allora lo fa, altrimenti l'aggiornamento è propagato solo su GB
+                        ((UpdatableController) currentController).update();
+                        System.out.println("Aggiorno il controller "+currentController);
+                    }
+                }else{
+                    ((UpdateMessage) message).update(GB); //aggiorna la gameboard
+                }
+            }
+        });
+
     }
 
 
@@ -116,34 +125,20 @@ public class GUI extends Application implements UI{
 
 
     public void setScene(int index){
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                stage.setScene(scenes.get(index));
-                stage.show();
-                GUIController currentController = controllers.get(index);
-                if(currentController instanceof UpdatableController) //se la scena è aggiornabile con messaggi di update va inizializzata
-                    ((UpdatableController)currentController).start(); //inizializzazione (non può essere fatta altrove)
-            }
-        });
+      stage.setScene(scenes.get(index));
+      stage.show();
+      GUIController currentController = controllers.get(index);
+      if(currentController instanceof UpdatableController) //se la scena è aggiornabile con messaggi di update va inizializzata
+        ((UpdatableController)currentController).start(); //inutilizzato per ora (basta il metodo update) ma non rimuovere finchè non si è sicuri che non serva
     }
 
     public void disableScene(){ //ingrigisce la GUI dinamicamente (indipendentemente dalla scena renderizzata) e scrive ATTENDI IL TUO TURNO... al centro
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                ((AnchorPane)stage.getScene().getRoot()).getChildren().add(greyOverlay);
-            }
-        });
+       ((AnchorPane)stage.getScene().getRoot()).getChildren().add(greyOverlay);
     }
+
 //versione fancy: si itera su ogni elemento della scena e si fa GRAY = R + G +B / 3 o roba simile
     public void enableScene(){ //riabilita la GUI
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(greyOverlay);
-            }
-        });
+       ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(greyOverlay);
     }
 
     @Override

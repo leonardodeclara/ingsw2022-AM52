@@ -7,46 +7,52 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
 
 public class TowerChoiceController extends GUIController implements UpdatableController{
     @FXML
-    ChoiceBox<Tower> towerChoiceBox;
+    public ImageView white,black,grey;
     boolean alreadyPressed = false;
+    Tower selectedTower;
 
     public void start(){
-        ObservableList<Tower> towers = FXCollections.observableArrayList();
-        ArrayList<Tower> availableTowers = gui.getAvailableTowers();
-        towers.addAll(availableTowers);
-        towerChoiceBox.setItems(towers);
     }
 
-    private ArrayList<String> convertTowersToString(ArrayList<Tower> towers){
-        ArrayList<String> stringTowers = new ArrayList<>();
-        for(Tower tower : towers){
-            if(tower.equals(Tower.BLACK))
-                stringTowers.add("Black");
-            else if(tower.equals(Tower.GREY))
-                stringTowers.add("Grey");
-            else
-                stringTowers.add("White");
-        }
-        return stringTowers;
-    }
 
     public void update(){
-        ObservableList<Tower> towers = FXCollections.observableArrayList();
         ArrayList<Tower> availableTowers = gui.getAvailableTowers();
-        towers.addAll(availableTowers);
-        towerChoiceBox.setItems(towers);
+        for(Tower t : availableTowers)
+            System.out.println(t);
+
+        if(!availableTowers.contains(Tower.BLACK))
+            black.setVisible(false);
+        if(!availableTowers.contains(Tower.GREY))
+            grey.setVisible(false);
+        if(!availableTowers.contains(Tower.WHITE))
+            white.setVisible(false);
+    }
+
+    public void setTower(Tower tower){
+        selectedTower = tower;
+    }
+    public void blackOnClick(){
+        setTower(Tower.BLACK);
+    }
+
+    public void whiteOnClick(){
+        setTower(Tower.WHITE);
+    }
+
+    public void greyOnClick(){
+        setTower(Tower.GREY);
     }
 
     public void send(){
-        if(!alreadyPressed){
-            Tower towerValue = towerChoiceBox.getSelectionModel().getSelectedItem();
+        if(!alreadyPressed && selectedTower!=null){
             //per ora non serve currentState perchè questo controller non si occupa di altro
-            Message builtMessage = client.buildMessageFromPlayerInput(actionParser.parseTowerChoice(towerValue), ClientState.SET_UP_TOWER_PHASE);
+            Message builtMessage = client.buildMessageFromPlayerInput(actionParser.parseTowerChoice(selectedTower), ClientState.SET_UP_TOWER_PHASE);
             gui.passToSocket(builtMessage);
             alreadyPressed = true;
         }

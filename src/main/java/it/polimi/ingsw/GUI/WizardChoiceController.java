@@ -7,31 +7,59 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class WizardChoiceController extends GUIController implements UpdatableController{
     @FXML
-    ChoiceBox<Integer> wizardChoiceBox;
+    public ImageView wizard_1,wizard_2,wizard_3,wizard_4;
     boolean alreadyPressed = false;
+    int selectedWizard = -1;
 
     public void start(){
-        ObservableList<Integer> wizards = FXCollections.observableArrayList();
-        wizards.addAll(gui.getAvailableWizards());
-        wizardChoiceBox.setItems(wizards);
     }
 
     public void update(){
-        ObservableList<Integer> wizards = FXCollections.observableArrayList();
-        wizards.addAll(gui.getAvailableWizards());
-        wizardChoiceBox.setItems(wizards);
+        ArrayList<Integer> availableWizards = gui.getAvailableWizards();
+
+        if(!availableWizards.contains(0))
+            wizard_1.setVisible(false);
+        if(!availableWizards.contains(1))
+            wizard_2.setVisible(false);
+        if(!availableWizards.contains(2))
+            wizard_3.setVisible(false);
+        if(!availableWizards.contains(3))
+            wizard_4.setVisible(false);
+    }
+
+    public void setWizard(int wizardID){
+        selectedWizard = wizardID;
+        System.out.println("Selezionato mago"+selectedWizard);
+    }
+
+    public void card1OnClick(){
+        setWizard(0);
+    }
+
+    public void card2OnClick(){
+        setWizard(1);
+    }
+
+    public void card3OnClick(){
+        setWizard(2);
+    }
+
+    public void card4OnClick(){
+        setWizard(3);
     }
 
     public void send(){
-        if(!alreadyPressed){
-            int wizardValue = wizardChoiceBox.getSelectionModel().getSelectedItem();
+        if(!alreadyPressed && selectedWizard!=-1){
             //per ora non serve currentState perchè questo controller non si occupa di altro
-            Message builtMessage = client.buildMessageFromPlayerInput(actionParser.parseWizardChoice(wizardValue), ClientState.SET_UP_WIZARD_PHASE);
+            System.out.println("Mando "+selectedWizard);
+            Message builtMessage = client.buildMessageFromPlayerInput(actionParser.parseWizardChoice(selectedWizard), ClientState.SET_UP_WIZARD_PHASE);
             gui.passToSocket(builtMessage);
             alreadyPressed = true;
         }
