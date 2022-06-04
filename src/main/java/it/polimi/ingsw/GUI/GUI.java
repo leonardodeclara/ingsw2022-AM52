@@ -90,21 +90,27 @@ public class GUI extends Application implements UI{
 
     private void renderScene(){ //nelle fasi più avanzate si aggiornerà la scena aggiungendo immagini o altro ma non si chiamerà più setScene
         switch (currentState) {
-            case INSERT_NEW_GAME_PARAMETERS -> {
+            case INSERT_NEW_GAME_PARAMETERS -> { //vanno usati i pulsanti nella cartella graphics per tutti quelli presenti in game
                 setScene(3);
             }
             case WAIT_IN_LOBBY -> setScene(4);
             case WAIT_TURN -> {
                 if (scenes.indexOf(stage.getScene()) == 3 || scenes.indexOf(stage.getScene()) == 4) //porcata imbarazzante
                     setScene(5);
+                if (scenes.indexOf(stage.getScene()) == 6)
+                    setScene(7);
+
                 disableScene();
             }
-            case SET_UP_WIZARD_PHASE -> {
+            case SET_UP_WIZARD_PHASE -> { //mancano overlay di selezione e cornici intorno alle immagini
                 setScene(5);
                 enableScene();
             }
-            case SET_UP_TOWER_PHASE -> {
+            case SET_UP_TOWER_PHASE -> { //mancano overlay di selezione
                 setScene(6);
+            }
+            case PLAY_ASSISTANT_CARD ->{
+                setScene(7); //ancora non operativa
             }
         }
     }
@@ -133,12 +139,14 @@ public class GUI extends Application implements UI{
     }
 
     public void disableScene(){ //ingrigisce la GUI dinamicamente (indipendentemente dalla scena renderizzata) e scrive ATTENDI IL TUO TURNO... al centro
-       ((AnchorPane)stage.getScene().getRoot()).getChildren().add(greyOverlay);
+       if(!((AnchorPane)stage.getScene().getRoot()).getChildren().contains(greyOverlay))  //sistemare e aggiungere scritta
+           ((AnchorPane)stage.getScene().getRoot()).getChildren().add(greyOverlay);
     }
 
 //versione fancy: si itera su ogni elemento della scena e si fa GRAY = R + G +B / 3 o roba simile
     public void enableScene(){ //riabilita la GUI
-       ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(greyOverlay);
+        if(((AnchorPane)stage.getScene().getRoot()).getChildren().contains(greyOverlay))
+            ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(greyOverlay);
     }
 
     @Override
