@@ -59,11 +59,12 @@ public class GUI extends Application implements UI{
     ImageView greyOverlay;
 
 
-    //TODO renderizzare il wait grey screen sopra tutti gli elementi della GUI
-    //TODO spostare le chiamate di aggiunta/rimozione elementi dinamici da GUI al singolo controller (sfruttare l'interfaccia UpdatableController)
     //TODO aggiungere popolazione isole
     //TODO aggiungere carte planning phase
 
+    //la GUI si occupa dell'aggiunta e rimozione degli elementi dinamici (compreso wait screen). lo facciamo qui per una questione di duplicazione codice
+    //dato che abbiamo almeno 3 controller che sfruttano i metodi di aggiunta e rimozione.
+    //ridichiararli all'interno di ogni singolo controller sarebbe tempo sprecato e non darebbe alcun vantaggio concreto secondo me
     public GUI(){
         currentState = ClientState.CONNECT_STATE;
         active = true;
@@ -159,7 +160,7 @@ public class GUI extends Application implements UI{
 
     }
 
-    private void setSceneShouldWait(boolean value){
+    private void setSceneShouldWait(boolean value){ //si potrebbe chiamare da renderScene direttamente disable ed enable ma così penso sia p
         GUIController controller = controllers.get(stage.getScene());
         try{
             ((UpdatableController) controller).setWaitTurn(value);
@@ -170,9 +171,10 @@ public class GUI extends Application implements UI{
     }
 
     public void disableScene(){ //ingrigisce la GUI dinamicamente (indipendentemente dalla scena renderizzata) e scrive ATTENDI IL TUO TURNO... al centro
-       if(!((AnchorPane)stage.getScene().getRoot()).getChildren().contains(greyOverlay))  //sistemare e aggiungere scritta
+       if(!((AnchorPane)stage.getScene().getRoot()).getChildren().contains(greyOverlay)){
            ((AnchorPane)stage.getScene().getRoot()).getChildren().add(greyOverlay);
-
+       }
+        greyOverlay.toFront();
     }
 
 //versione fancy: si itera su ogni elemento della scena e si fa GRAY = R + G +B / 3 o roba simile
