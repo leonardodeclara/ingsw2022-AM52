@@ -16,8 +16,14 @@ public class TowerChoiceController extends GUIController implements UpdatableCon
     public ImageView white,black,grey;
     boolean alreadyPressed = false;
     Tower selectedTower;
+    boolean waitTurn = false;
 
     public void start(){
+    }
+
+    @Override
+    public void setWaitTurn(boolean value) {
+        waitTurn = value;
     }
 
 
@@ -32,6 +38,11 @@ public class TowerChoiceController extends GUIController implements UpdatableCon
             grey.setVisible(false);
         if(!availableTowers.contains(Tower.WHITE))
             white.setVisible(false);
+
+        if(waitTurn)
+            gui.disableScene();
+        else
+            gui.enableScene();
     }
 
     public void setTower(Tower tower){

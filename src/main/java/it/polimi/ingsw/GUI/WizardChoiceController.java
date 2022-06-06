@@ -17,8 +17,14 @@ public class WizardChoiceController extends GUIController implements UpdatableCo
     public ImageView wizard_1,wizard_2,wizard_3,wizard_4;
     boolean alreadyPressed = false;
     int selectedWizard = -1;
+    boolean waitTurn = false;
 
     public void start(){
+    }
+
+    @Override
+    public void setWaitTurn(boolean value) {
+        waitTurn = value;
     }
 
     public void update(){
@@ -32,6 +38,11 @@ public class WizardChoiceController extends GUIController implements UpdatableCo
             wizard_3.setVisible(false);
         if(!availableWizards.contains(3))
             wizard_4.setVisible(false);
+
+        if(waitTurn)
+            gui.disableScene();
+        else
+            gui.enableScene();
     }
 
     public void setWizard(int wizardID){

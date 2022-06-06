@@ -32,6 +32,12 @@ public class Constants {
     public static final String TOWER_CHOICE_FXML = "/fxml/TowerChoiceMenu.fxml";
     public static final String GAME_TABLE_FXML = "/fxml/GameTable.fxml";
     public static final String RESOLUTION_TEST_FXML = "/fxml/ResolutionTest.fxml";
+    public static double ISLAND_CIRCLE_RADIUS = 250;
+    public static double CLOUD_CIRCLE_RADIUS = 50;
+    public static double ISLAND_IMAGE_WIDTH = 100;
+    public static double ISLAND_IMAGE_HEIGHT = 88.9;
+    public static double CLOUD_IMAGE_WIDTH = 65;
+    public static double CLOUD_IMAGE_HEIGHT = 58.5;
     public static final String RESET = "\033[0m";
 
     public static final String RED = "\033[0;31m";

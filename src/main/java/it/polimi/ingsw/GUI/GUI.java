@@ -1,5 +1,7 @@
 package it.polimi.ingsw.GUI;
 
+import it.polimi.ingsw.CLI.ClientCloud;
+import it.polimi.ingsw.CLI.ClientIsland;
 import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.client.Client;
@@ -17,6 +19,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -24,8 +27,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -35,6 +41,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+
+import static it.polimi.ingsw.Constants.*;
 
 
 public class GUI extends Application implements UI{
@@ -49,6 +57,12 @@ public class GUI extends Application implements UI{
     ActionParser actionParser;
     GameBoard GB;
     ImageView greyOverlay;
+
+
+    //TODO renderizzare il wait grey screen sopra tutti gli elementi della GUI
+    //TODO spostare le chiamate di aggiunta/rimozione elementi dinamici da GUI al singolo controller (sfruttare l'interfaccia UpdatableController)
+    //TODO aggiungere popolazione isole
+    //TODO aggiungere carte planning phase
 
     public GUI(){
         currentState = ClientState.CONNECT_STATE;
@@ -103,17 +117,20 @@ public class GUI extends Application implements UI{
                 if (currentScene.equals(scenes.get(Constants.TOWER_CHOICE_FXML)))
                     setScene(Constants.GAME_TABLE_FXML);
 
-                disableScene();
+                setSceneShouldWait(true); //andiamo a settare una variabile nel controller invece di farlo qui direttamente per una questione di render order
+                // (se lo chiamassimo da qui, dato l'arrivo asincrono dei messaggi, verrebbe renderizzato sotto alcuni elementi dinamici
+
             }
             case SET_UP_WIZARD_PHASE -> { //mancano overlay di selezione e cornici intorno alle immagini
                 setScene(Constants.WIZARD_CHOICE_FXML);
-                enableScene();
+                setSceneShouldWait(false);
             }
             case SET_UP_TOWER_PHASE -> { //mancano overlay di selezione
                 setScene(Constants.TOWER_CHOICE_FXML);
             }
             case PLAY_ASSISTANT_CARD ->{
-                setScene(Constants.GAME_TABLE_FXML); //ancora non operativa
+                setScene(Constants.GAME_TABLE_FXML);
+                setSceneShouldWait(false);
             }
         }
     }
@@ -142,9 +159,20 @@ public class GUI extends Application implements UI{
 
     }
 
+    private void setSceneShouldWait(boolean value){
+        GUIController controller = controllers.get(stage.getScene());
+        try{
+            ((UpdatableController) controller).setWaitTurn(value);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
     public void disableScene(){ //ingrigisce la GUI dinamicamente (indipendentemente dalla scena renderizzata) e scrive ATTENDI IL TUO TURNO... al centro
        if(!((AnchorPane)stage.getScene().getRoot()).getChildren().contains(greyOverlay))  //sistemare e aggiungere scritta
            ((AnchorPane)stage.getScene().getRoot()).getChildren().add(greyOverlay);
+
     }
 
 //versione fancy: si itera su ogni elemento della scena e si fa GRAY = R + G +B / 3 o roba simile
@@ -166,10 +194,16 @@ public class GUI extends Application implements UI{
 
         setupScenes();
 
-        setScene(Constants.MAIN_MENU_FXML);
+        setScene(MAIN_MENU_FXML);
+
+
+
+
 
 
     }
+
+
 
     public void connect(String ip,String portText) throws IOException { //chiamato da ConnectMenuController quando si preme Connect
         int port;
@@ -207,7 +241,29 @@ public class GUI extends Application implements UI{
         return GB.getAvailableTowers();
     }
 
+    public ArrayList<ClientIsland> getIslands(){
+        return GB.getIslands();
+    }
 
+    public ArrayList<ClientCloud> getClouds(){
+        return GB.getClouds();
+    }
+
+    public double getScreenCenterX(){
+        return ((AnchorPane)stage.getScene().getRoot()).getWidth()/2;
+    }
+
+    public double getScreenCenterY(){
+        return ((AnchorPane)stage.getScene().getRoot()).getHeight()/2;
+    }
+
+    public void addElementToScene(Node n){
+        ((AnchorPane)stage.getScene().getRoot()).getChildren().add(n);
+    }
+
+    public void removeElementFromScene(Node n){
+        ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(n);
+    }
 
 
 

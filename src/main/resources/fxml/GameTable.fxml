@@ -11,77 +11,77 @@
             <Image url="@../graphics/background.jpg" />
          </image>
       </ImageView>
-      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="367.0" layoutY="205.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="367.0" layoutY="205.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/island1.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="561.0" layoutY="161.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="561.0" layoutY="161.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/island2.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="467.0" layoutY="161.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="467.0" layoutY="161.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/island3.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="582.0" layoutY="469.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="582.0" layoutY="469.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/island1.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="679.0" layoutY="445.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="679.0" layoutY="445.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/island2.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="467.0" layoutY="469.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="467.0" layoutY="469.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/island3.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="293.0" layoutY="366.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="293.0" layoutY="366.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/island1.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="293.0" layoutY="276.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="293.0" layoutY="276.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/island2.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="367.0" layoutY="425.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="367.0" layoutY="425.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/island3.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="748.0" layoutY="261.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="748.0" layoutY="261.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/island1.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="663.0" layoutY="192.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="663.0" layoutY="192.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/island2.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="736.0" layoutY="366.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="736.0" layoutY="366.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/island3.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="65.0" fitWidth="65.0" layoutX="490.0" layoutY="296.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="65.0" fitWidth="65.0" layoutX="490.0" layoutY="296.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/cloud1.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="65.0" fitWidth="65.0" layoutX="534.0" layoutY="350.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="65.0" fitWidth="65.0" layoutX="534.0" layoutY="350.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/cloud2.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="65.0" fitWidth="65.0" layoutX="579.0" layoutY="298.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="65.0" fitWidth="65.0" layoutX="579.0" layoutY="298.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../graphics/cloud3.png" />
          </image>
