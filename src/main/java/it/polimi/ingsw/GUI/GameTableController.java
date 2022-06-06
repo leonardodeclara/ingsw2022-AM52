@@ -57,8 +57,8 @@ public class GameTableController extends GUIController implements UpdatableContr
         for (ClientIsland island : islands) {
             int i = island.getIslandIndex();
             double angle = 2 * i * Math.PI / numIslands ;
-            double xOffset = ISLAND_CIRCLE_RADIUS * Math.cos(angle);
-            double yOffset = ISLAND_CIRCLE_RADIUS * Math.sin(angle);
+            double xOffset = ISLAND_CIRCLE_RADIUS * Math.cos(angle-Math.PI/2);
+            double yOffset = ISLAND_CIRCLE_RADIUS * Math.sin(angle-Math.PI/2);
             double x = centerX + xOffset ;
             double y = centerY + yOffset ;
             ImageView islandImage = new ImageView("/graphics/island"+((i%3)+1)+".png");
