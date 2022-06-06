@@ -18,6 +18,7 @@ import static it.polimi.ingsw.Constants.*;
 public class GameTableController extends GUIController implements UpdatableController{
     int selectedIslandID = -1;
     int selectedCloud = -1;
+    int selectedStudent = -1; //relative to island
     ArrayList<ImageView> islandsImages;
     ArrayList<ImageView> cloudsImages;
     HashMap<ImageView,ArrayList<ImageView>> islandToStudentsImages;
@@ -128,8 +129,10 @@ public class GameTableController extends GUIController implements UpdatableContr
                 studentImage.setPreserveRatio(true);
                 studentImage.setFitHeight(STUDENT_IMAGE_HEIGHT);
                 studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
-                System.out.println("Printo uno studente "+student+" su isola: "+clientIsland.getIslandIndex());
-                System.out.println("Coordinate:  x=>"+islandCenterX+" y=>"+islandCenterY);
+                studentImage.setOnMouseClicked((MouseEvent e) -> { //questi dati vanno nell'action parser che li trasforma nell'arraylist di objects
+                    setSelectedStudent(clientIsland.getStudents().indexOf(student),clientIsland.getIslandIndex());
+                    System.out.println("Hai cliccato sullo studente "+selectedStudent+" dell'isola "+selectedIslandID);
+                });
                 gui.addElementToScene(studentImage);
 
             }
@@ -156,5 +159,10 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     public void setSelectedCloud(int id){
         selectedCloud = id;
+    }
+
+    public void setSelectedStudent(int studentID,int islandID){
+        selectedStudent = studentID;
+        selectedIslandID = islandID;
     }
 }
