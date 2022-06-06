@@ -1,26 +1,24 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.Constants;
-import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.messages.*;
-import it.polimi.ingsw.model.Game;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/**
+ * Server class is the main class on the server side: it manages the connection's setup phase up to the game's start;
+ * it also handles the registration of clients.
+ */
 public class Server {
-    ServerSocketConnection serverSocket;
-    HashMap<Integer,String> idToNicknameMap;
-    HashMap<String, ClientHandler> nameToHandlerMap;
-    ArrayList<Lobby> lobbies;
-    HashMap<String, GameHandler> playerToGameMap;
-    ArrayList<GameHandler> gameHandlers;
+    private ServerSocketConnection serverSocket;
+    private HashMap<Integer,String> idToNicknameMap;
+    private HashMap<String, ClientHandler> nameToHandlerMap;
+    private ArrayList<Lobby> lobbies;
+    private HashMap<String, GameHandler> playerToGameMap;
+    private ArrayList<GameHandler> gameHandlers;
     int clientHandlerCounter; //assegna gli id ai clientHandler
-    //per le lobby si potrebbe creare una struttura dati tipo hashmap con chiave a due valori < int NumberPlayers, boolean expertOrNot>
 
     public Server(){
         idToNicknameMap= new HashMap<>();
@@ -33,14 +31,27 @@ public class Server {
 
 
     //questo in teoria è l'unico punto d'accesso tra i thread clienthandlers e il server, quindi lo sincronizziamo per gestirne l'uso concorrente da parte di più thread
+    /**
+     * It handles the first messages sent by a player in order to register its name and its choice
+     * for the number of players and game mode.
+     * @param message: message sent by the client.
+     * @param sender: ClientHandler instance of the client sending data.
+     */
     public synchronized void handleMessage(Message message, ClientHandler sender){
         if (message instanceof LoginRequestMessage)
             handleLogin((LoginRequestMessage) message, sender);
         else if (message instanceof GameParametersMessage)
             handleGameParameters((GameParametersMessage)message,sender );
     }
+
+    /**
+     * It handles a client's name choice: if the choice is valid, the server registers it and sends a new message to client,
+     * asking for game parameters, otherwise it sends a error message.
+     * @param message: LoginRequestMessage instance sent by the client.
+     * @param sender: ClientHandler instance of the client sending data.
+     */
     public void handleLogin(LoginRequestMessage message, ClientHandler sender){
-        String nickname = ((LoginRequestMessage) message).getPlayerNickname();
+        String nickname = message.getPlayerNickname();
 
         //questo controllo deve essere a livello server perché in teoria il nome deve essere univoco a livello server, non a livello partita
         if(isNicknameAvailable(nickname)){
@@ -56,7 +67,13 @@ public class Server {
         }
     }
 
-    public void handleGameParameters(GameParametersMessage message,ClientHandler sender){
+    /**
+     * It handles a client's choice for number of players and game mode by adding him to a lobby accordingly
+     * to his game parameters' selection.
+     * @param message: GameParametersMessage instance sent by the client.
+     * @param sender: ClientHandler instance of the client sending data.
+     */
+    public void handleGameParameters(GameParametersMessage message, ClientHandler sender){
         boolean expertGame = message.isExpertGame();
         int numberOfPlayers = message.getNumberPlayers();
         Lobby matchingLobby = joinLobby(sender.getID(),numberOfPlayers,expertGame);
@@ -69,7 +86,15 @@ public class Server {
         }
     }
 
-    public Lobby joinLobby(int playerID,int numberPlayers, boolean expertGame){ //clientHandler id, parametri della lobby
+    /**
+     * It adds a client to a game's lobby: if there's already a lobby matching the chosen game parameters
+     * it allows the client to join it, otherwise it creates a new one and adds the client to it.
+     * @param playerID: identification for the active client's ClientHandler.
+     * @param numberPlayers: client's choice for the game's number of players.
+     * @param expertGame: client's choice for the game mode.
+     * @return the Lobby instance to which the client has been added.
+     */
+    public Lobby joinLobby(int playerID, int numberPlayers, boolean expertGame){
         try{
             Lobby matchingLobby = getMatchingLobby(numberPlayers,expertGame);
             matchingLobby.addToLobby(idToNicknameMap.get(playerID));
@@ -86,6 +111,11 @@ public class Server {
         }
     }
 
+    /**
+     * It creates a new match accordingly to the lobby's parameters: a GameHandler is created and the lobby's
+     * clients are added to it. The now-empty lobby is also removed from the active lobbies list.
+     * @param lobby: Lobby instance to which the clients belong to.
+     */
     private void createMatch(Lobby lobby){ //cancella la lobby, crea la lista giocatori, crea gamehandler e manda i messaggi ai giocatori
         ArrayList<String> players = lobby.getPlayers();
         boolean expert = lobby.isExpertGame();
@@ -110,16 +140,26 @@ public class Server {
         gameHandler.startGame();
     }
 
-    private HashMap<String,ClientHandler> selectLobbyPlayers(ArrayList<String> list){
+    /**
+     * It selects the Nickname-ClientHandler association of the clients that belong to a lobby.
+     * @param lobbyPlayers: names of the clients that belong to a lobby.
+     * @return a hashmap with the association Nickname-ClientHandler for the lobby's players.
+     */
+    private HashMap<String,ClientHandler> selectLobbyPlayers(ArrayList<String> lobbyPlayers){
         HashMap<String, ClientHandler> inGamePlayers = new HashMap<>();
         for (String nickname : nameToHandlerMap.keySet()){
-            if(list.contains(nickname))
+            if(lobbyPlayers.contains(nickname))
                 inGamePlayers.put(nickname, nameToHandlerMap.get(nickname));
         }
         return inGamePlayers;
     }
 
-
+    /**
+     * It selects the active lobby that matches the parameters given as input.
+     * @param numberPlayers: chosen number of players.
+     * @param expertGame: chosen game mode.
+     * @return a Lobby instance matching the parameters.
+     */
     private Lobby getMatchingLobby(int numberPlayers, boolean expertGame){
         return lobbies.stream()
                 .filter(x -> x.getNumberPlayersRequired() == numberPlayers && x.isExpertGame() == expertGame)
@@ -128,6 +168,7 @@ public class Server {
     }
 
     //alla creazione di una nuova partita viene rimossa da lobbies la lobby riferita a quella partita
+    //in teoria si può cancellare
     private void removeLobby(int numberPlayers, boolean expertGame){
         Lobby removedLobby=null;
         for (Lobby lobby: lobbies)
@@ -136,7 +177,11 @@ public class Server {
         lobbies.remove(removedLobby);
     }
 
-    //controllo se il nickname inserito è disponibile oppure no
+    /**
+     * It verifies whether a nickname's choice is valid or not by checking if there's already a client with that nickname.
+     * @param nickname: the client's chosen name.
+     * @return true if the choice is legal, false otherwise.
+     */
     public boolean isNicknameAvailable(String nickname){
         for (Map.Entry<Integer,String> entry: idToNicknameMap.entrySet())
             if (entry.getValue().equals(nickname))
@@ -144,11 +189,20 @@ public class Server {
         return true;
     }
 
-    //aggiungo un giocatore alla mappa che associa l'id al nome
+    /**
+     * It registers a player by adding the association between the ClientHandler's ID and the client's nickname.
+     * @param nickname: name chosen by the client.
+     * @param clientHandlerID: ClientHandler's identification.
+     */
     public void registerPlayer(String nickname,int clientHandlerID){
         idToNicknameMap.put(clientHandlerID, nickname);
     }
 
+    /**
+     * It adds a client's connection by adding the association between the client's nickname and its ClientHandler.
+     * @param nickname: name chosen by the client.
+     * @param clientConnection: client's ClientHandler.
+     */
     public void registerClientConnection(String nickname, ClientHandler clientConnection){
         nameToHandlerMap.put(nickname, clientConnection);
     }
@@ -162,6 +216,10 @@ public class Server {
         return idToNicknameMap;
     }
 
+    /**
+     * It removes the selected ClientHandler from the server's registries.
+     * @param clientHandler: ClientHandler instance that is being removed from the server's maps.
+     */
     public synchronized void removeClientConnection(ClientHandler clientHandler){
         String clientName = idToNicknameMap.get(clientHandler.getID());
         idToNicknameMap.remove(clientHandler.getID());
@@ -181,26 +239,38 @@ public class Server {
 
     }
 
-
+    /**
+     * It removes a player from a waiting lobby by deleting his name from the players' list.
+     * @param nickname: name of the player being removed.
+     */
     public void removeClientFromLobby(String nickname){
         for (Lobby lobby: lobbies)
-            if (lobby.getPlayers().contains(nickname)){
+            if (lobby.getPlayers().contains(nickname))
                 lobby.removePlayer(nickname);
-            }
     }
 
+    /**
+     * It removes the selected GameHandler instance from the list of gameHandlers.
+     * @param gameHandler: GameHandler instance being removed.
+     */
     public void removeGameHandler(GameHandler gameHandler){
         gameHandlers.remove(gameHandler);
     }
 
+    /**
+     * It sets the server's serverSocket attribute to the ServerSocketConnection instance given as attribute.
+     * @param serverSocket: ServerSocketConnection instance handling the server's communication with clients.
+     */
+    public void setServerSocket(ServerSocketConnection serverSocket) {
+        this.serverSocket = serverSocket;
+    }
 
     public static void main(String[] args) {
         Server server = new Server();
         ServerSocketConnection serverSocket = new ServerSocketConnection(1234,server);
-        //gameHandler.setServer(serverSocket);
+        server.setServerSocket(serverSocket);
         serverSocket.run();
     }
-
 }
 
 /*

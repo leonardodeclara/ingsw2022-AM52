@@ -117,24 +117,8 @@ public class ClientPersonality implements Serializable {
         return cardId;
     }
 
-    public boolean getHasBeenUsed() {
-        return hasBeenUsed;
-    }
-
-    public int getCost() {
-        return cost;
-    }
-
-    public void setCardID(int cardID) {
-        cardID = cardID;
-    }
-
     public void setHasBeenUsed(Boolean hasBeenUsed) {
         this.hasBeenUsed = hasBeenUsed;
-    }
-
-    public void setCost(Integer cost) {
-        this.cost = cost;
     }
 
     public void setStudents(ArrayList<Color> students){

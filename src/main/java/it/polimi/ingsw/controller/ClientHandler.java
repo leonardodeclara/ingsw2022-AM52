@@ -1,18 +1,20 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.exceptions.QuitException;
 import it.polimi.ingsw.messages.*;
-import it.polimi.ingsw.model.Game;
 
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.Scanner;
+
 
 //AGGIUNGERE ACTIVE PER DISATTIVARE I CLIENTHANDLER DEI CLIENT IN WAIT STATE (TANTO PER SICUREZZA)
 
+/**
+ * ClientHandler's class handles the communication between a single client and the server by making use of sockets.
+ * Serialized messages are exchanged through this class.
+ */
 public class ClientHandler implements Runnable {
     private final Socket socket;
     private final Server server;
@@ -20,7 +22,6 @@ public class ClientHandler implements Runnable {
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private GameHandler gameHandler;
-    private Message responseMessage;
     private boolean active;
     private ClientState currentClientState;
 
@@ -31,21 +32,17 @@ public class ClientHandler implements Runnable {
         out = new ObjectOutputStream(socket.getOutputStream());
     }
 
-    public void setID(int ID){
-        this.ID = ID;
-    }
-
-    public int getID(){
-        return ID;
-    }
-
+    /**
+     * It loops continuing to read and handle messages sent by the client: as the loop's break it closes the connection
+     * to client and eventually terminates the active match.
+     * see @Runnable
+     */
     public void run() {
         try {
             // Leggo l'input dal player, lo deserializzo, lo mando a gameHandler, mando la rispost al player
             while (true) {
                 Message receivedMessage = (Message) in.readObject();
-                readMessage(receivedMessage);
-                }
+                readMessage(receivedMessage); }
             } catch (QuitException | EOFException | SocketTimeoutException e) //capire perché viene lanciata una EOF exception quando chiudo brutalmente il client
             {
                 System.out.println(ID + " si è disconnesso da solo. Chiudo la connessione e chiudo la partita");
@@ -63,6 +60,11 @@ public class ClientHandler implements Runnable {
             }
     }
 
+    /**
+     * Method responsible for the correct dispatch of client's messages: login and game parameters' messages are handled
+     * the Server instance, while the others are managed by ClientHandler and GameHandler's instances.
+     * @param message: Message instance carrying the information sent by the client.
+     */
     public void readMessage(Message message){
         if (message instanceof Ping){
             //System.out.println("Ricevuto ping da " + ID);
@@ -86,6 +88,10 @@ public class ClientHandler implements Runnable {
     }
 
 
+    /**
+     * It sends a serialized message to the client through socket.
+     * @param message: Message instance that is being sent to the client.
+     */
     public void sendMessage(Message message){
         try{
             System.out.println("Sono CH " + ID + " e sto mandando un messaggio " + (message.getClass().toString()));
@@ -101,17 +107,13 @@ public class ClientHandler implements Runnable {
         }
     }
 
-
-    public void setGameHandler(GameHandler gameHandler) {
-        this.gameHandler = gameHandler;
-    }
-
-    public GameHandler getGameHandler() {
-        return gameHandler;
-    }
-
     //questo metodo va chiamato in caso di termine/crash partita,
     // chiusura inaspettata della connessione lato client, chiusura volontaria lato client (manca messaggio disconnect)
+
+    /**
+     * It terminates the server's connection to client by removing its reference from the associations contained in the Server class.
+     * Ultimately it closes the communication's endpoint.
+     */
     public void closeConnection() {
         System.out.println("ClientHandler "+ ID+ ": tolgo i miei riferimenti dal server e poi chiudo la socket");
         //toglie da tutte le mappe di server questo client, connessioni ecc.
@@ -123,6 +125,23 @@ public class ClientHandler implements Runnable {
             System.err.println(e.getMessage());
         }
         System.out.println("ClientHandler: chiusa la connessione con " + ID);
+    }
+
+
+    public void setID(int ID){
+        this.ID = ID;
+    }
+
+    public int getID(){
+        return ID;
+    }
+
+    public void setGameHandler(GameHandler gameHandler) {
+        this.gameHandler = gameHandler;
+    }
+
+    public GameHandler getGameHandler() {
+        return gameHandler;
     }
 
     public ClientState getCurrentClientState(){
