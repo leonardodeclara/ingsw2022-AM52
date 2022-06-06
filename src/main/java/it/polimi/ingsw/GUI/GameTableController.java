@@ -2,19 +2,25 @@ package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.ClientCloud;
 import it.polimi.ingsw.CLI.ClientIsland;
+import it.polimi.ingsw.model.Color;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Optional;
 
 import static it.polimi.ingsw.Constants.*;
 
+//TODO rendere dinamico il radius e la dimensione degli elementi in funzione della lunghezza degli array (fondamentale per gli studenti)
 public class GameTableController extends GUIController implements UpdatableController{
     int selectedIslandID = -1;
     int selectedCloud = -1;
     ArrayList<ImageView> islandsImages;
     ArrayList<ImageView> cloudsImages;
+    HashMap<ImageView,ArrayList<ImageView>> islandToStudentsImages;
     double centerX = 0;
     double centerY = 0;
     boolean waitTurn = false;
@@ -56,7 +62,6 @@ public class GameTableController extends GUIController implements UpdatableContr
             double x = centerX + xOffset ;
             double y = centerY + yOffset ;
             ImageView islandImage = new ImageView("/graphics/island"+((i%3)+1)+".png");
-            islandsImages.add(islandImage);
             islandImage.setX(x-ISLAND_IMAGE_WIDTH/2);
             islandImage.setY(y-ISLAND_IMAGE_HEIGHT/2);
             islandImage.setFitHeight(ISLAND_IMAGE_HEIGHT);
@@ -65,8 +70,11 @@ public class GameTableController extends GUIController implements UpdatableContr
                 setSelectedIslandID(i);
                 System.out.println("Hai cliccato sull'isola "+selectedIslandID);
             });
+            islandsImages.add(islandImage);
             gui.addElementToScene(islandImage);
         }
+        populateIslands(islands);
+
     }
 
     private void renderClouds(){
@@ -83,7 +91,6 @@ public class GameTableController extends GUIController implements UpdatableContr
             double x = centerX + xOffset ;
             double y = centerY + yOffset ;
             ImageView cloudImage = new ImageView("/graphics/cloud"+((i%3)+1)+".png");
-            cloudsImages.add(cloudImage);
             cloudImage.setX(x-CLOUD_IMAGE_WIDTH/2);
             cloudImage.setY(y-CLOUD_IMAGE_HEIGHT/2);
             cloudImage.setPreserveRatio(true);
@@ -93,10 +100,50 @@ public class GameTableController extends GUIController implements UpdatableContr
                 setSelectedCloud(i);
                 System.out.println("Hai cliccato sulla nuvola "+selectedCloud);
             });
+            cloudsImages.add(cloudImage);
             gui.addElementToScene(cloudImage);
+        }
+
+    }
+
+    private void populateIslands(ArrayList<ClientIsland> islands){
+        islandToStudentsImages = new HashMap<>();
+        double islandCenterX,islandCenterY;
+        int islandCounter = 0;
+        for(ImageView island : islandsImages){
+            islandToStudentsImages.put(island,new ArrayList<>());
+            ClientIsland clientIsland = getClientIslandFromImage(islands,islandCounter);
+            islandCenterX = island.getX()+ISLAND_IMAGE_WIDTH/2;
+            islandCenterY = island.getY()+ISLAND_IMAGE_HEIGHT/2;
+            for(Color student : clientIsland.getStudents()){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
+                double angle = 2 * clientIsland.getStudents().indexOf(student) * Math.PI / clientIsland.getStudents().size();
+                double xOffset = STUDENTS_CIRCLE_RADIUS * Math.cos(angle);
+                double yOffset = STUDENTS_CIRCLE_RADIUS * Math.sin(angle);
+                double x = islandCenterX + xOffset ;
+                double y = islandCenterY + yOffset ;
+                ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
+                islandToStudentsImages.get(island).add(studentImage);
+                studentImage.setX(x-STUDENT_IMAGE_WIDTH/2);
+                studentImage.setY(y-STUDENT_IMAGE_HEIGHT/2);
+                studentImage.setPreserveRatio(true);
+                studentImage.setFitHeight(STUDENT_IMAGE_HEIGHT);
+                studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
+                System.out.println("Printo uno studente "+student+" su isola: "+clientIsland.getIslandIndex());
+                System.out.println("Coordinate:  x=>"+islandCenterX+" y=>"+islandCenterY);
+                gui.addElementToScene(studentImage);
+
+            }
+            islandCounter++;
         }
     }
 
+    private ClientIsland getClientIslandFromImage(ArrayList<ClientIsland> islands,int islandCounter){
+        Optional<ClientIsland> optIsland = islands.stream()
+                .filter(clientIsland -> clientIsland.getIslandIndex() == islandCounter)
+                .findFirst();
+
+        return optIsland.orElse(null);
+    }
     private void renderDeck(){
 
     }

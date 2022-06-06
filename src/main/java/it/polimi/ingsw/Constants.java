@@ -38,6 +38,10 @@ public class Constants {
     public static double ISLAND_IMAGE_HEIGHT = 88.9;
     public static double CLOUD_IMAGE_WIDTH = 65;
     public static double CLOUD_IMAGE_HEIGHT = 58.5;
+    public static double STUDENT_IMAGE_HEIGHT = 16;
+    public static double STUDENT_IMAGE_WIDTH = 16;
+    public static double STUDENTS_CIRCLE_RADIUS = 3;
+
     public static final String RESET = "\033[0m";
 
     public static final String RED = "\033[0;31m";

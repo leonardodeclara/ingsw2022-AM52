@@ -61,6 +61,9 @@ public class GUI extends Application implements UI{
 
     //TODO aggiungere popolazione isole
     //TODO aggiungere carte planning phase
+    //TODO overlay di selezione intorno ai selezionabili
+    //TODO aggiungere pulsanti belli
+    //TODO sistemare wait screen (problemi di render order quando togliamo setSceneShouldWait() e lo sostituiamo con enable e disable)
 
     //la GUI si occupa dell'aggiunta e rimozione degli elementi dinamici (compreso wait screen). lo facciamo qui per una questione di duplicazione codice
     //dato che abbiamo almeno 3 controller che sfruttano i metodi di aggiunta e rimozione.
@@ -118,8 +121,8 @@ public class GUI extends Application implements UI{
                 if (currentScene.equals(scenes.get(Constants.TOWER_CHOICE_FXML)))
                     setScene(Constants.GAME_TABLE_FXML);
 
-                setSceneShouldWait(true); //andiamo a settare una variabile nel controller invece di farlo qui direttamente per una questione di render order
-                // (se lo chiamassimo da qui, dato l'arrivo asincrono dei messaggi, verrebbe renderizzato sotto alcuni elementi dinamici
+                setSceneShouldWait(true); //sarebbe meglio chiamare direttamente enableScene e disableScene ma dava problemi (probabilmente per il render order)
+                //rivedere
 
             }
             case SET_UP_WIZARD_PHASE -> { //mancano overlay di selezione e cornici intorno alle immagini
