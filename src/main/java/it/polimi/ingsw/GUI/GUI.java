@@ -33,14 +33,15 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 
 public class GUI extends Application implements UI{
     ClientState currentState;
     boolean active;
     Stage stage;
-    ArrayList<Scene> scenes;
-    ArrayList<GUIController> controllers;
+    HashMap<String,Scene> scenes;
+    HashMap<Scene,GUIController> controllers;
     String[] fxmlPaths;
     ClientSocket clientSocket;
     Client client;
@@ -52,8 +53,8 @@ public class GUI extends Application implements UI{
         currentState = ClientState.CONNECT_STATE;
         active = true;
         fxmlPaths = Arrays.copyOf(Constants.fxmlPaths,Constants.fxmlPaths.length);
-        scenes = new ArrayList<>();
-        controllers = new ArrayList<>();
+        scenes = new HashMap<>();
+        controllers = new HashMap<>();
         client = new Client(this);
         actionParser = new ActionParser();
         GB = new GameBoard();
@@ -69,7 +70,7 @@ public class GUI extends Application implements UI{
                     currentState = ((ClientStateMessage) message).getNewState();
                     System.out.println("Vado nello stato "+currentState);
                     renderScene(); //update scene in funzione del nuovo stato
-                    GUIController currentController = controllers.get(scenes.indexOf(stage.getScene()));
+                    GUIController currentController = controllers.get(stage.getScene());
                     System.out.println("La scena attuale è "+stage.getScene() + " e il controller "+currentController);
                     if(currentController instanceof UpdatableController){  //Se l'update deve aggiornare anche la scena allora lo fa, altrimenti l'aggiornamento è propagato solo su GB
                         ((UpdatableController) currentController).update();
@@ -91,26 +92,27 @@ public class GUI extends Application implements UI{
     private void renderScene(){ //nelle fasi più avanzate si aggiornerà la scena aggiungendo immagini o altro ma non si chiamerà più setScene
         switch (currentState) {
             case INSERT_NEW_GAME_PARAMETERS -> { //vanno usati i pulsanti nella cartella graphics per tutti quelli presenti in game
-                setScene(3);
+                setScene(Constants.MATCHMAKING_MENU_FXML);
             }
-            case WAIT_IN_LOBBY -> setScene(4);
+            case WAIT_IN_LOBBY -> setScene(Constants.LOBBY_FXML);
             case WAIT_TURN -> {
-                if (scenes.indexOf(stage.getScene()) == 3 || scenes.indexOf(stage.getScene()) == 4) //porcata imbarazzante
-                    setScene(5);
-                if (scenes.indexOf(stage.getScene()) == 6)
-                    setScene(7);
+                Scene currentScene = stage.getScene();
+                if (currentScene.equals(scenes.get(Constants.MATCHMAKING_MENU_FXML)) || currentScene.equals(scenes.get(Constants.LOBBY_FXML)))
+                    setScene(Constants.WIZARD_CHOICE_FXML);
+                if (currentScene.equals(scenes.get(Constants.TOWER_CHOICE_FXML)))
+                    setScene(Constants.GAME_TABLE_FXML);
 
                 disableScene();
             }
             case SET_UP_WIZARD_PHASE -> { //mancano overlay di selezione e cornici intorno alle immagini
-                setScene(5);
+                setScene(Constants.WIZARD_CHOICE_FXML);
                 enableScene();
             }
             case SET_UP_TOWER_PHASE -> { //mancano overlay di selezione
-                setScene(6);
+                setScene(Constants.TOWER_CHOICE_FXML);
             }
             case PLAY_ASSISTANT_CARD ->{
-                setScene(7); //ancora non operativa
+                setScene(Constants.GAME_TABLE_FXML); //ancora non operativa
             }
         }
     }
@@ -120,20 +122,20 @@ public class GUI extends Application implements UI{
         for(String path : fxmlPaths){
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(path));
             Scene scene = new Scene(fxmlLoader.load());
-            scenes.add(scene);
+            scenes.put(path,scene);
             GUIController controller = fxmlLoader.getController();
             controller.setGUI(this);
             controller.setClient(this.client);
             controller.setActionParser(this.actionParser);
-            controllers.add(controller);
+            controllers.put(scene,controller);
         }
     }
 
 
-    public void setScene(int index){
-      stage.setScene(scenes.get(index));
+    public void setScene(String path){
+      stage.setScene(scenes.get(path));
       stage.show();
-      GUIController currentController = controllers.get(index);
+      GUIController currentController = controllers.get(stage.getScene());
       if(currentController instanceof UpdatableController) //se la scena è aggiornabile con messaggi di update va inizializzata
         ((UpdatableController)currentController).start(); //inutilizzato per ora (basta il metodo update) ma non rimuovere finchè non si è sicuri che non serva
     }
@@ -145,8 +147,7 @@ public class GUI extends Application implements UI{
 
 //versione fancy: si itera su ogni elemento della scena e si fa GRAY = R + G +B / 3 o roba simile
     public void enableScene(){ //riabilita la GUI
-        if(((AnchorPane)stage.getScene().getRoot()).getChildren().contains(greyOverlay))
-            ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(greyOverlay);
+        ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(greyOverlay);
     }
 
     @Override
@@ -160,22 +161,29 @@ public class GUI extends Application implements UI{
 
         setupScenes();
 
-        setScene(0);
+        setScene(Constants.MAIN_MENU_FXML);
+        //System.out.println(stage.getScene().getWidth());
+        //System.out.println(stage.getScene().getHeight());
+
 
     }
 
-    public void connect(String ip,String portText) throws IOException {
+    public void connect(String ip,String portText) throws IOException { //chiamato da ConnectMenuController quando si preme Connect
         int port;
         try{
             port = Integer.parseInt(portText);
             clientSocket = new ClientSocket(ip,port,this);
             Thread socketThread = new Thread(clientSocket); //la sposti su un nuovo thread (parte run() in automatico)
             socketThread.start();
-            setScene(2);
+            setScene(Constants.NICKNAME_MENU_FXML);
         }catch(NumberFormatException | UnknownHostException | SocketException e){
             //renderizza qualche messaggio di errore
         }
 
+    }
+
+    public void openConnectMenu(){ //chiamato da MainMenuController quando si preme PLAY
+        setScene(Constants.CONNECT_MENU_FXML);
     }
 
     public void passToSocket(Message message){ //chiamato dai controller

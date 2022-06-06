@@ -23,7 +23,15 @@ public class Constants {
     public static final int MAX_BANS_NUMBER = 4;
     public static final int MAX_COINS_NUMBER = 20;
     public static final String[] fxmlPaths = new String[]{"/fxml/MainMenu.fxml","/fxml/ConnectMenu.fxml","/fxml/NicknameMenu.fxml","/fxml/MatchMakingMenu.fxml","/fxml/LobbyMenu.fxml","/fxml/WizardChoiceMenu.fxml","/fxml/TowerChoiceMenu.fxml","/fxml/GameTable.fxml"};
-
+    public static final String MAIN_MENU_FXML = "/fxml/MainMenu.fxml";
+    public static final String CONNECT_MENU_FXML = "/fxml/ConnectMenu.fxml";
+    public static final String NICKNAME_MENU_FXML = "/fxml/NicknameMenu.fxml";
+    public static final String MATCHMAKING_MENU_FXML = "/fxml/MatchMakingMenu.fxml";
+    public static final String LOBBY_FXML = "/fxml/LobbyMenu.fxml";
+    public static final String WIZARD_CHOICE_FXML = "/fxml/WizardChoiceMenu.fxml";
+    public static final String TOWER_CHOICE_FXML = "/fxml/TowerChoiceMenu.fxml";
+    public static final String GAME_TABLE_FXML = "/fxml/GameTable.fxml";
+    public static final String RESOLUTION_TEST_FXML = "/fxml/ResolutionTest.fxml";
     public static final String RESET = "\033[0m";
 
     public static final String RED = "\033[0;31m";

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.GUI;
 
+import it.polimi.ingsw.Constants;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -11,7 +12,7 @@ public class MainMenuController extends GUIController {
 
     @FXML
     void openConnectionMenu(ActionEvent event) {
-        gui.setScene(1);
+        gui.openConnectMenu();
     }
 
     @FXML
