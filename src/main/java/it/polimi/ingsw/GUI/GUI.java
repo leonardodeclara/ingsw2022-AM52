@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -138,6 +139,7 @@ public class GUI extends Application implements UI{
       GUIController currentController = controllers.get(stage.getScene());
       if(currentController instanceof UpdatableController) //se la scena è aggiornabile con messaggi di update va inizializzata
         ((UpdatableController)currentController).start(); //inutilizzato per ora (basta il metodo update) ma non rimuovere finchè non si è sicuri che non serva
+
     }
 
     public void disableScene(){ //ingrigisce la GUI dinamicamente (indipendentemente dalla scena renderizzata) e scrive ATTENDI IL TUO TURNO... al centro
@@ -152,6 +154,9 @@ public class GUI extends Application implements UI{
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        //game table non viene aperto nè in fullscreen (farlo non darebbe nè vantaggi nè svantaggi, è preferenza personale)
+        // e il resizing automatico non è implementato per questioni di tempo
+        //la risoluzione è settata manualmente con un rateo di 16:9 e una dimensione ottimale per schermi 1920x1080
         stage = primaryStage;
 
         Image icon = new Image("/graphics/logo.png");
@@ -162,8 +167,6 @@ public class GUI extends Application implements UI{
         setupScenes();
 
         setScene(Constants.MAIN_MENU_FXML);
-        //System.out.println(stage.getScene().getWidth());
-        //System.out.println(stage.getScene().getHeight());
 
 
     }
