@@ -7,6 +7,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
@@ -51,18 +53,34 @@ public class WizardChoiceController extends GUIController implements UpdatableCo
     }
 
     public void card1OnClick(){
+        wizard_1.setEffect(new DropShadow());
+        wizard_2.setEffect(new BoxBlur());
+        wizard_3.setEffect(new BoxBlur());
+        wizard_4.setEffect(new BoxBlur());
         setWizard(0);
     }
 
     public void card2OnClick(){
+        wizard_1.setEffect(new BoxBlur());
+        wizard_2.setEffect(new DropShadow());
+        wizard_3.setEffect(new BoxBlur());
+        wizard_4.setEffect(new BoxBlur());
         setWizard(1);
     }
 
     public void card3OnClick(){
+        wizard_1.setEffect(new BoxBlur());
+        wizard_2.setEffect(new BoxBlur());
+        wizard_3.setEffect(new DropShadow());
+        wizard_4.setEffect(new BoxBlur());
         setWizard(2);
     }
 
     public void card4OnClick(){
+        wizard_1.setEffect(new BoxBlur());
+        wizard_2.setEffect(new BoxBlur());
+        wizard_3.setEffect(new BoxBlur());
+        wizard_4.setEffect(new DropShadow());
         setWizard(3);
     }
 

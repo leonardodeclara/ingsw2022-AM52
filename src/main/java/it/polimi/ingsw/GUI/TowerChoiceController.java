@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.effect.*;
 import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
@@ -48,20 +49,31 @@ public class TowerChoiceController extends GUIController implements UpdatableCon
     public void setTower(Tower tower){
         selectedTower = tower;
     }
+
     public void blackOnClick(){
+        white.setEffect(new BoxBlur());
+        grey.setEffect(new BoxBlur());
+        black.setEffect(new DropShadow());
         setTower(Tower.BLACK);
     }
 
     public void whiteOnClick(){
+        black.setEffect(new BoxBlur());
+        grey.setEffect(new BoxBlur());
+        white.setEffect(new DropShadow());
         setTower(Tower.WHITE);
     }
 
     public void greyOnClick(){
+        white.setEffect(new BoxBlur());
+        black.setEffect(new BoxBlur());
+        grey.setEffect(new DropShadow());
         setTower(Tower.GREY);
     }
 
     public void send(){
         if(!alreadyPressed && selectedTower!=null){
+
             //per ora non serve currentState perchè questo controller non si occupa di altro
             Message builtMessage = client.buildMessageFromPlayerInput(actionParser.parseTowerChoice(selectedTower), ClientState.SET_UP_TOWER_PHASE);
             gui.passToSocket(builtMessage);
