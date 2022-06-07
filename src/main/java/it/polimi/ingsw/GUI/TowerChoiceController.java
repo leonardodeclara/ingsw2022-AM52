@@ -73,7 +73,7 @@ public class TowerChoiceController extends GUIController implements UpdatableCon
 
     public void send(){
         if(!alreadyPressed && selectedTower!=null){
-
+            gui.setTeam(selectedTower);
             //per ora non serve currentState perchè questo controller non si occupa di altro
             Message builtMessage = client.buildMessageFromPlayerInput(actionParser.parseTowerChoice(selectedTower), ClientState.SET_UP_TOWER_PHASE);
             gui.passToSocket(builtMessage);

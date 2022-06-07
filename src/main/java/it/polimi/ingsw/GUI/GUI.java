@@ -57,7 +57,9 @@ public class GUI extends Application implements UI{
     ActionParser actionParser;
     GameBoard GB;
     ImageView greyOverlay;
-
+    int wizardID; //andrebbero messe in GameBoard ma è una sbatta
+    String playerNickname; //andrebbero messe in GameBoard ma è una sbatta
+    Tower team; //andrebbero messe in GameBoard ma è una sbatta
 
     //TODO aggiungere popolazione isole
     //TODO aggiungere carte planning phase
@@ -208,9 +210,11 @@ public class GUI extends Application implements UI{
 
     }
 
+    public ClientState getCurrentState() {
+        return currentState;
+    }
 
-
-    public void connect(String ip,String portText) throws IOException { //chiamato da ConnectMenuController quando si preme Connect
+    public void connect(String ip, String portText) throws IOException { //chiamato da ConnectMenuController quando si preme Connect
         int port;
         try{
             port = Integer.parseInt(portText);
@@ -254,20 +258,31 @@ public class GUI extends Application implements UI{
         return GB.getClouds();
     }
 
-    public double getScreenCenterX(){
-        return ((AnchorPane)stage.getScene().getRoot()).getWidth()/2;
+    public void setWizard(int wizard){ //chiamato dal controller quando fa send
+        wizardID = wizard;
+    }
+    public void setTeam(Tower team){ //chiamato dal controller quando fa send
+        this.team = team;
+    }
+    public void setPlayerNickname(String nickname){ //chiamato dal controller quando fa send
+        this.playerNickname = nickname;
     }
 
-    public double getScreenCenterY(){
-        return ((AnchorPane)stage.getScene().getRoot()).getHeight()/2;
+    public HashMap<Integer,Integer> getDeck(){
+        return GB.getClientBoards().get(playerNickname).getDeck();
     }
+    public int getWizard(){return wizardID;}
+
+
+    public double getScreenX(){return ((AnchorPane)stage.getScene().getRoot()).getWidth();}
+    public double getScreenY(){return ((AnchorPane)stage.getScene().getRoot()).getHeight();}
 
     public void addElementToScene(Node n){
         ((AnchorPane)stage.getScene().getRoot()).getChildren().add(n);
     }
 
     public void removeElementFromScene(Node n){
-        ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(n);
+        System.out.println(((AnchorPane)stage.getScene().getRoot()).getChildren().remove(n) ? "Ho rimosso " : "Non ho rimosso "+n);
     }
 
 

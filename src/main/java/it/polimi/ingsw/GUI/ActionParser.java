@@ -1,15 +1,41 @@
 package it.polimi.ingsw.GUI;
 
+import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.messages.ClientState;
 import it.polimi.ingsw.model.Tower;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ActionParser {
-    //a differenza di InputParser non ci serve lo stato perchè le chiamate vengono fatte
-    //Da controller diversi e non ci serve wrappare tutto in un metodo switch
+    HashMap<ClientState,ArrayList<Clickable>> stateToClickableList;
 
-    //riceve oggetti e li elabora per far arrivare a client i parametri con cui costruire i messaggi
-    //avere metodi separati e indipendenti ci permette di passar ein ingresso cose differenti
+    public ActionParser(){
+        stateToClickableList = new HashMap<>();
+        for(ClientState state : ClientState.values()){
+            stateToClickableList.put(state,state.getClickableList());
+        }
+    }
+
+    public boolean canClick(ClientState state,Clickable clickedElement){
+        return stateToClickableList.get(state).contains(clickedElement);
+    }
+
+
+    public ArrayList<Object> parse(ClientState state,ArrayList<Integer> clickedIDs){
+            switch(state){
+                case PLAY_ASSISTANT_CARD -> {
+                    return parseAssistantCard(clickedIDs);
+                }
+            }
+            return null;
+    }
+
+    public ArrayList<Object> parseAssistantCard(ArrayList<Integer> clickedIDs){
+        ArrayList<Object> data = new ArrayList<>();
+        data.add(clickedIDs.get(0));
+        return data;
+    }
 
     public ArrayList<Object> parseNickname(String nickname){
         ArrayList<Object> data = new ArrayList<>();
@@ -35,5 +61,6 @@ public class ActionParser {
         data.add(tower);
         return data;
     }
+
 
 }

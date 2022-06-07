@@ -18,6 +18,7 @@ public class NicknameController extends GUIController{
         if(!alreadyPressed){
             String stringNickname = nickname.getText();
             if(stringNickname.length() > 0 && !stringNickname.equals(" ")){
+                gui.setPlayerNickname(stringNickname);
                 Message message = client.buildMessageFromPlayerInput(actionParser.parseNickname(stringNickname), ClientState.CONNECT_STATE);
                 gui.passToSocket(message);
                 alreadyPressed = true;

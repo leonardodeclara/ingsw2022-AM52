@@ -86,6 +86,7 @@ public class WizardChoiceController extends GUIController implements UpdatableCo
 
     public void send(){
         if(!alreadyPressed && selectedWizard!=-1){
+            gui.setWizard(selectedWizard);
             //per ora non serve currentState perchè questo controller non si occupa di altro
             System.out.println("Mando "+selectedWizard);
             Message builtMessage = client.buildMessageFromPlayerInput(actionParser.parseWizardChoice(selectedWizard), ClientState.SET_UP_WIZARD_PHASE);

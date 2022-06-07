@@ -1,9 +1,11 @@
 package it.polimi.ingsw.messages;
 
 import it.polimi.ingsw.CLI.GameBoard;
+import it.polimi.ingsw.GUI.Clickable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public enum ClientState {
@@ -21,6 +23,11 @@ public enum ClientState {
             texts.add("Il nickname scelto è già stato scelto! Scegline un altro");
             return texts;
         }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
+        }
     },INSERT_NEW_GAME_PARAMETERS(0){
         @Override
         public ArrayList<String> getContextMessage(GameBoard GB){
@@ -34,6 +41,11 @@ public enum ClientState {
             texts.add("Inserisci il tuo nickname:");
             return texts;
         }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
+        }
     },WAIT_IN_LOBBY(0){
         @Override
         public ArrayList<String> getContextMessage(GameBoard GB){
@@ -46,6 +58,11 @@ public enum ClientState {
             ArrayList<String> texts = new ArrayList<>();
             texts.add("Inserisci il tuo nickname:");
             return texts;
+        }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
         }
     }
     ,WAIT_TURN(0){
@@ -61,6 +78,11 @@ public enum ClientState {
             texts.add("Inserisci il tuo nickname:");
             return texts;
         }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
+        }
     },SET_UP_WIZARD_PHASE(0){
         @Override
         public ArrayList<String> getContextMessage(GameBoard GB){
@@ -74,6 +96,11 @@ public enum ClientState {
             ArrayList<String> texts = new ArrayList<>();
             texts.add("Il wizard scelto appartiene già ad un altro giocatore! Scegline un altro");
             return texts;
+        }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
         }
     },SET_UP_TOWER_PHASE(0){
         @Override
@@ -89,6 +116,11 @@ public enum ClientState {
             texts.add("La torre scelta appartiene già ad un altro giocatore! Scegline un'altra");
             return texts;
         }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
+        }
     },PLAY_ASSISTANT_CARD(0){
         @Override
         public ArrayList<String> getContextMessage(GameBoard GB){
@@ -101,6 +133,11 @@ public enum ClientState {
             ArrayList<String> texts = new ArrayList<>();
             texts.add("La carta scelta non è disponibile! Scegline un altro");
             return texts;
+        }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return new ArrayList(List.of(Clickable.ASSISTANT));
         }
     },
     MOVE_FROM_LOBBY(0){
@@ -119,6 +156,11 @@ public enum ClientState {
             texts.add("Scelta non valida! Riprova");
             return texts;
         }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
+        }
     },MOVE_MOTHER_NATURE(0){
         @Override
         public ArrayList<String> getContextMessage(GameBoard GB){
@@ -134,6 +176,11 @@ public enum ClientState {
             ArrayList<String> texts = new ArrayList<>();
             texts.add("Non puoi spostare lì Madre Natura!");
             return texts;
+        }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
         }
     }, PICK_CLOUD(0){
         @Override
@@ -151,6 +198,11 @@ public enum ClientState {
             texts.add("Non puoi scegliere quella nuvola! Riprova");
             return texts;
         }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
+        }
     }, END_TURN(0){
         @Override
         public ArrayList<String> getContextMessage(GameBoard GB){
@@ -166,6 +218,11 @@ public enum ClientState {
             texts.add("Non è stato possibile terminare il turno! Riprova");
             return texts;
         }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
+        }
     },CHOOSE_STUDENT_FOR_CARD_1(1){
         @Override
         public ArrayList<String> getContextMessage(GameBoard GB){
@@ -179,6 +236,11 @@ public enum ClientState {
             texts.add("Non hai scelto uno studente valido");
             return texts;
         }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
+        }
     },CHOOSE_ISLAND_FOR_CARD_3(3){
         @Override
         public ArrayList<String> getContextMessage(GameBoard GB){
@@ -191,6 +253,11 @@ public enum ClientState {
             ArrayList<String> texts = new ArrayList<>();
             texts.add("Non hai scelto un'isola valida");
             return texts;
+        }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
         }
     },
     CHOOSE_ISLAND_FOR_CARD_5(5){
@@ -206,6 +273,11 @@ public enum ClientState {
             texts.add("Non hai scelto un'isola valida");
             return texts;
         }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
+        }
     },SWAP_STUDENTS_FOR_CARD_7(7){
         @Override
         public ArrayList<String> getContextMessage(GameBoard GB){
@@ -218,6 +290,11 @@ public enum ClientState {
             ArrayList<String> texts = new ArrayList<>();
             texts.add("Lo scambio non è valido!");
             return texts;
+        }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
         }
     },CHOOSE_COLOR_FOR_CARD_9(9){
         @Override
@@ -232,6 +309,11 @@ public enum ClientState {
             texts.add("Il colore selezionato non può essere scelto");
             return texts;
         }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
+        }
     },CHOOSE_STUDENTS_FOR_CARD_10(10){
         @Override
         public ArrayList<String> getContextMessage(GameBoard GB){
@@ -244,6 +326,11 @@ public enum ClientState {
             ArrayList<String> texts = new ArrayList<>();
             texts.add("Lo scambio non è valido!");
             return texts;
+        }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
         }
     },
     CHOOSE_STUDENT_FOR_CARD_11(11){
@@ -259,6 +346,11 @@ public enum ClientState {
             texts.add("Lo studente selezionato non è valido!");
             return texts;
         }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
+        }
     },CHOOSE_COLOR_FOR_CARD_12(12){
         @Override
         public ArrayList<String> getContextMessage(GameBoard GB){
@@ -272,6 +364,11 @@ public enum ClientState {
             texts.add("Il colore selezionato non è valido!");
             return texts;
         }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
+            return null;
+        }
     }, END_GAME(0){
         @Override
         public ArrayList<String> getContextMessage(GameBoard GB){
@@ -281,6 +378,11 @@ public enum ClientState {
         }
         @Override
         public ArrayList<String> getServerErrorMessage(){
+            return null;
+        }
+
+        @Override
+        public ArrayList<Clickable> getClickableList() {
             return null;
         }
     };
@@ -318,4 +420,6 @@ public enum ClientState {
         texts.add("I dati inseriti non sono corretti! Riprova di nuovo");
         return texts;
     }
+    public abstract ArrayList<Clickable> getClickableList();
+
 }
