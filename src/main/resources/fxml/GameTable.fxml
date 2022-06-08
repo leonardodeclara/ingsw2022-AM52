@@ -87,7 +87,7 @@
             <Image url="@../graphics/cloud3.png" />
          </image>
       </ImageView>
-      <Button id="sendButton" fx:id="sendButton" onMouseClicked="#send" layoutX="506.0" layoutY="609.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="115.0" text="CONFIRM" />
+      <Button id="sendButton" fx:id="sendButton" layoutX="524.33" layoutY="609.0" mnemonicParsing="false" onMouseClicked="#send" prefHeight="44.0" prefWidth="115.0" text="CONFIRM" />
       <ImageView id="deckButton" fx:id="deckButton" fitHeight="150.0" fitWidth="200.0" layoutX="19.0" layoutY="482.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../graphics/Wizard_1.png" />
