@@ -23,8 +23,8 @@ import java.util.Optional;
 import static it.polimi.ingsw.Constants.*;
 
 //TODO rendere dinamico il radius e la dimensione degli elementi in funzione della lunghezza degli array (fondamentale per gli studenti)
-//TODO far funzionare chiusura/apertura deck
 //TODO aggiungere effetti di selezione
+//TODO sistemare bene sistema di selezione e pulire action parser dei vecchi parseTower, parseWizard ecc... (ora sono inutili)
 //TODO popolazione nuvole
 
 public class GameTableController extends GUIController implements UpdatableController{
@@ -212,15 +212,15 @@ public class GameTableController extends GUIController implements UpdatableContr
         if((deckImages.size() == 0 || deck.size() != deckImages.size())){
             clearDeck();
             int deckCounter = 0;
-            int startY = 11 + (10 - deck.size()) * 46;
+            int startY = ASSISTANT_Y_START + (10 - deck.size()) * ASSISTANT_Y_OFFSET;
             System.out.println("Ci sono " + deck.size() + " carte nel mazzo");
             for (Integer priority : deck.keySet()) {
                 System.out.println("Renderizzo la carta " + priority);
                 ImageView assistantImage = new ImageView("/graphics/assistant_" + priority + ".png");
-                assistantImage.setX(26);
-                assistantImage.setY(startY + deckCounter * 46);
-                assistantImage.setFitWidth(85);
-                assistantImage.setFitHeight(125);
+                assistantImage.setX(ASSISTANT_X);
+                assistantImage.setY(startY + deckCounter * ASSISTANT_Y_OFFSET);
+                assistantImage.setFitWidth(ASSISTANT_IMAGE_WIDTH);
+                assistantImage.setFitHeight(ASSISTANT_IMAGE_HEIGHT);
                 assistantImage.setOnMouseClicked((MouseEvent e) -> {
                     handleClickEvent(priority, Clickable.ASSISTANT);
                     //setSelectedAssistant(priority);
