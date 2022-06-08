@@ -6,12 +6,15 @@ import it.polimi.ingsw.messages.ClientState;
 import it.polimi.ingsw.messages.Message;
 import it.polimi.ingsw.model.Color;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.effect.Bloom;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +24,8 @@ import static it.polimi.ingsw.Constants.*;
 
 //TODO rendere dinamico il radius e la dimensione degli elementi in funzione della lunghezza degli array (fondamentale per gli studenti)
 //TODO far funzionare chiusura/apertura deck
-
+//TODO aggiungere effetti di selezione
+//TODO popolazione nuvole
 
 public class GameTableController extends GUIController implements UpdatableController{
     @FXML
@@ -41,15 +45,21 @@ public class GameTableController extends GUIController implements UpdatableContr
     double bottomRightY = 0;
     boolean waitTurn = false;
     boolean shouldRenderDeck = true;
+    boolean initialized = false;
     ArrayList<Integer> parameters;
 
-    public void start(){
-        centerX = gui.getScreenX()/2;
-        centerY = gui.getScreenY()/2;
-        bottomRightX = gui.getScreenX();
-        bottomRightY = gui.getScreenY();
-        deckButton.setImage(new Image("/graphics/Wizard_"+(gui.getWizard()+1)+".png"));
-        parameters = new ArrayList<>();
+    public void start(){ //metodo di inizializzazione chiamato da GUI. In alcune situazioni viene chiamato due volte ma noi dobbiamo inizializzare una volta sola
+        if(!initialized){ //sarebbe meglio spostare questo controllo sulla GUI e generalizzarlo
+            centerX = gui.getScreenX()/2;
+            centerY = gui.getScreenY()/2;
+            bottomRightX = gui.getScreenX();
+            bottomRightY = gui.getScreenY();
+            deckButton.setImage(new Image("/graphics/Wizard_"+(gui.getWizard()+1)+".png"));
+            parameters = new ArrayList<>();
+            deckImages = new ArrayList<>();
+            initialized = true;
+        }
+
     }
 
     @Override
@@ -85,13 +95,13 @@ public class GameTableController extends GUIController implements UpdatableContr
         renderIslands();
         renderClouds();
         renderDeck();
+        sendButton.toFront();
 
         if(waitTurn)
             gui.disableScene();
         else
             gui.enableScene();
 
-        sendButton.toFront();
     }
 
     private void renderIslands(){
@@ -198,41 +208,54 @@ public class GameTableController extends GUIController implements UpdatableContr
         return optIsland.orElse(null);
     }
     private void renderDeck(){
-        if(shouldRenderDeck){
-            deckImages = new ArrayList<>();
-
-            HashMap<Integer,Integer> deck = gui.getDeck(); //k= priority, v = numMoves
+        HashMap<Integer, Integer> deck = gui.getDeck(); //k= priority, v = numMoves
+        if((deckImages.size() == 0 || deck.size() != deckImages.size())){
+            clearDeck();
             int deckCounter = 0;
-            int startY = 11+(10-deck.size())*46;
-            for(Integer priority : deck.keySet()){
-                ImageView assistantImage = new ImageView("/graphics/assistant_"+priority+".png");
-                deckImages.add(assistantImage);
+            int startY = 11 + (10 - deck.size()) * 46;
+            System.out.println("Ci sono " + deck.size() + " carte nel mazzo");
+            for (Integer priority : deck.keySet()) {
+                System.out.println("Renderizzo la carta " + priority);
+                ImageView assistantImage = new ImageView("/graphics/assistant_" + priority + ".png");
                 assistantImage.setX(26);
-                assistantImage.setY(startY+deckCounter*46);
+                assistantImage.setY(startY + deckCounter * 46);
                 assistantImage.setFitWidth(85);
                 assistantImage.setFitHeight(125);
                 assistantImage.setOnMouseClicked((MouseEvent e) -> {
-                    handleClickEvent(priority,Clickable.ASSISTANT);
+                    handleClickEvent(priority, Clickable.ASSISTANT);
                     //setSelectedAssistant(priority);
                     //System.out.println("Hai cliccato sulla carta "+selectedAssistant);
                 });
+                assistantImage.setOnMouseEntered((MouseEvent e) -> {
+                    handleHoverEvent(assistantImage, Clickable.ASSISTANT);
+                });
+                assistantImage.setOnMouseExited((MouseEvent e) -> {
+                    assistantImage.setEffect(null);
+                });
+                deckImages.add(assistantImage);
                 gui.addElementToScene(assistantImage);
                 deckCounter++;
             }
             deckButton.toFront();
-
-        }else{
-            if(deckImages.size() > 0){
-                for(ImageView image : deckImages){
-                    System.out.println(image);
-                    deckImages.remove(image);
-                    gui.removeElementFromScene(image);
-                }
-            }
         }
 
     }
 
+
+    private void clearDeck(){
+        for(ImageView card : deckImages){
+            gui.removeElementFromScene(card);
+        }
+        deckImages.clear();
+    }
+
+    private void handleHoverEvent(Node n, Clickable hoveredElement){
+        if(actionParser.canClick(gui.getCurrentState(),hoveredElement)){
+            Bloom bloom = new Bloom();
+            bloom.setThreshold(0.1);
+            n.setEffect(bloom);
+        }
+    }
     private void handleClickEvent(int id,Clickable clickedElement){
         if(actionParser.canClick(gui.getCurrentState(),clickedElement)){
             switch(clickedElement){
@@ -244,13 +267,6 @@ public class GameTableController extends GUIController implements UpdatableContr
         }
         else
             System.out.println("Non puoi cliccare "+clickedElement+"se sei in "+gui.getCurrentState());
-    }
-
-    public void onWizardClick(){
-        shouldRenderDeck =!shouldRenderDeck;
-        renderDeck();
-        System.out.println(shouldRenderDeck ? "Espando il deck" : "Chiudo il deck");
-        System.out.println("Hai cliccato sul mago.");
     }
 
     public void setSelectedIslandID(int id){

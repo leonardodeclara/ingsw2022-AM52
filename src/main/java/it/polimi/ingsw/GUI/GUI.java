@@ -127,11 +127,11 @@ public class GUI extends Application implements UI{
                 //rivedere
 
             }
-            case SET_UP_WIZARD_PHASE -> { //mancano overlay di selezione e cornici intorno alle immagini
+            case SET_UP_WIZARD_PHASE -> {
                 setScene(Constants.WIZARD_CHOICE_FXML);
                 setSceneShouldWait(false);
             }
-            case SET_UP_TOWER_PHASE -> { //mancano overlay di selezione
+            case SET_UP_TOWER_PHASE -> {
                 setScene(Constants.TOWER_CHOICE_FXML);
             }
             case PLAY_ASSISTANT_CARD ->{
@@ -160,9 +160,9 @@ public class GUI extends Application implements UI{
       stage.setScene(scenes.get(path));
       stage.show();
       GUIController currentController = controllers.get(stage.getScene());
-      if(currentController instanceof UpdatableController) //se la scena è aggiornabile con messaggi di update va inizializzata
-        ((UpdatableController)currentController).start(); //inutilizzato per ora (basta il metodo update) ma non rimuovere finchè non si è sicuri che non serva
-
+      if(currentController instanceof UpdatableController){
+          ((UpdatableController)currentController).start(); //inutilizzato per ora (basta il metodo update) ma non rimuovere finchè non si è sicuri che non serva
+      }
     }
 
     private void setSceneShouldWait(boolean value){ //si potrebbe chiamare da renderScene direttamente disable ed enable ma così penso sia p
@@ -283,6 +283,11 @@ public class GUI extends Application implements UI{
 
     public void removeElementFromScene(Node n){
         System.out.println(((AnchorPane)stage.getScene().getRoot()).getChildren().remove(n) ? "Ho rimosso " : "Non ho rimosso "+n);
+    }
+
+    public void clearScene(){
+        ((AnchorPane)stage.getScene().getRoot()).getChildren().removeAll();
+        System.out.println("Rimuovo tutto");
     }
 
 
