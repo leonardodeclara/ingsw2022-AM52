@@ -227,6 +227,7 @@ public class GUI extends Application implements UI{
             setScene(Constants.NICKNAME_MENU_FXML);
         }catch(NumberFormatException | UnknownHostException | SocketException e){
             //renderizza qualche messaggio di errore
+            e.printStackTrace();
         }
 
     }

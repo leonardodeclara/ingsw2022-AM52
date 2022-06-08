@@ -6,6 +6,7 @@ import it.polimi.ingsw.messages.ClientState;
 import it.polimi.ingsw.messages.Message;
 import it.polimi.ingsw.model.Color;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.effect.Bloom;
@@ -15,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Screen;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,28 +30,31 @@ import static it.polimi.ingsw.Constants.*;
 //TODO popolazione nuvole
 
 public class GameTableController extends GUIController implements UpdatableController{
-    @FXML
-    public ImageView deckButton;
-    public Button sendButton;
-    int selectedIslandID = -1;
-    int selectedCloud = -1;
-    int selectedStudent = -1; //relative to island
-    int selectedAssistant = -1; //priority
-    ArrayList<ImageView> islandsImages;
-    ArrayList<ImageView> cloudsImages;
-    ArrayList<ImageView> deckImages;
-    HashMap<ImageView,ArrayList<ImageView>> islandToStudentsImages;
-    double centerX = 0;
-    double centerY = 0;
-    double bottomRightX = 0;
-    double bottomRightY = 0;
-    boolean waitTurn = false;
-    boolean shouldRenderDeck = true;
-    boolean initialized = false;
-    ArrayList<Integer> parameters;
+    @FXML private ImageView deckButton;
+    @FXML private Button sendButton;
+    private int selectedIslandID = -1;
+    private int selectedCloud = -1;
+    private int selectedStudent = -1; //relative to island
+    private int selectedAssistant = -1; //priority
+    private ArrayList<ImageView> islandsImages;
+    private ArrayList<ImageView> cloudsImages;
+    private ArrayList<ImageView> deckImages;
+    private HashMap<ImageView,ArrayList<ImageView>> islandToStudentsImages;
+    private double centerX = 0;
+    private double centerY = 0;
+    private double bottomRightX = 0;
+    private double bottomRightY = 0;
+    private boolean waitTurn = false;
+    private boolean shouldRenderDeck = true;
+    private boolean initialized = false;
+    private ArrayList<Integer> parameters;
 
     public void start(){ //metodo di inizializzazione chiamato da GUI. In alcune situazioni viene chiamato due volte ma noi dobbiamo inizializzare una volta sola
         if(!initialized){ //sarebbe meglio spostare questo controllo sulla GUI e generalizzarlo
+            //commentato finché non capisco come centrare la finestra
+            //Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            //centerX = (screenBounds.getWidth()-gui.getScreenX())/2;
+            //centerY = (screenBounds.getHeight()-gui.getScreenY())/2;
             centerX = gui.getScreenX()/2;
             centerY = gui.getScreenY()/2;
             bottomRightX = gui.getScreenX();
@@ -260,13 +265,20 @@ public class GameTableController extends GUIController implements UpdatableContr
         if(actionParser.canClick(gui.getCurrentState(),clickedElement)){
             switch(clickedElement){
                 case ASSISTANT -> {
+                    for (ImageView deckImage: deckImages)
+                        deckImage.setEffect(null);
+
                     setSelectedAssistant(id);
                     System.out.println("Hai cliccato sulla carta "+selectedAssistant);
                 }
+                case STUDENT -> {}
+                case ISLAND -> {}
+                case CLOUD -> {}
+
             }
         }
         else
-            System.out.println("Non puoi cliccare "+clickedElement+"se sei in "+gui.getCurrentState());
+            System.out.println("Non puoi cliccare "+clickedElement+" se sei in "+gui.getCurrentState());
     }
 
     public void setSelectedIslandID(int id){
@@ -283,6 +295,18 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
     public void setSelectedAssistant(int priority){
+        //Volevo aggiungere un effetto DropShadow alla carta clickata ma poi con lo spostamento
+        // del mouse si cancella. Piuttosto sarebbe meglio "estrarla dal mazzo", o comunque evidenziare la scelta in qualche modo
+        /*
+        for (ImageView deckImage: deckImages){
+            String[] urlTokens = deckImage.getImage().getUrl().split("/");
+            System.out.println(deckImage.getImage().getUrl());
+            if (urlTokens[urlTokens.length-1].equals("assistant_" + priority + ".png")){
+                System.out.println("Ho aggiunto l'effetto DropShasow alla carta selezionata");
+                deckImage.setEffect(new DropShadow());
+            }
+        }
+         */
         selectedAssistant = priority;
     }
 }

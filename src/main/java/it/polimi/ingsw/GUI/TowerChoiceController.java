@@ -40,9 +40,11 @@ public class TowerChoiceController extends GUIController implements UpdatableCon
         if(!availableTowers.contains(Tower.WHITE))
             white.setVisible(false);
 
+        /*
         black.setEffect(new DropShadow());
         grey.setEffect(new DropShadow());
         white.setEffect(new DropShadow());
+        */
 
         if(waitTurn)
             gui.disableScene();

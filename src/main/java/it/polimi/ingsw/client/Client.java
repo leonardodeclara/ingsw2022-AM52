@@ -8,10 +8,10 @@ import it.polimi.ingsw.model.Color;
 import java.util.ArrayList;
 
 public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall'altro
-    ClientSocket clientSocket;
-    InputParser inputParser;
-    UI cli;
-    boolean active;
+    private ClientSocket clientSocket;
+    private InputParser inputParser;
+    private UI cli;
+    private boolean active;
 
     public Client(UI cli) {
         this.cli=cli;

@@ -6,19 +6,18 @@ import it.polimi.ingsw.messages.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
-import it.polimi.ingsw.CLI.ClientIsland;
 
 public class ClientSocket implements Runnable{
     private static int PING_PERIOD = 5000;
-    Socket socket;
-    ObjectOutputStream out;
-    ObjectInputStream in;
-    String ip;
-    int port;
-    boolean active;
-    boolean IsClientGUI;
-    UI cli;
-    Thread pinger;
+    private Socket socket;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
+    private String ip;
+    private int port;
+    private boolean active;
+    private boolean IsClientGUI;
+    private UI cli;
+    private Thread pinger;
 
     public ClientSocket(String ip,int port, UI cli) throws IOException, SocketException {
         this.ip = ip;

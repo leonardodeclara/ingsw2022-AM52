@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ActionParser {
-    HashMap<ClientState,ArrayList<Clickable>> stateToClickableList;
+    private HashMap<ClientState,ArrayList<Clickable>> stateToClickableList;
 
     public ActionParser(){
         stateToClickableList = new HashMap<>();
@@ -18,7 +18,12 @@ public class ActionParser {
     }
 
     public boolean canClick(ClientState state,Clickable clickedElement){
-        return stateToClickableList.get(state).contains(clickedElement);
+        try{
+            return stateToClickableList.get(state).contains(clickedElement);
+        }
+        catch(NullPointerException e){
+            return false;
+        }
     }
 
 
