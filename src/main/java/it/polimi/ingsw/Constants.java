@@ -40,7 +40,8 @@ public class Constants {
     public static double CLOUD_IMAGE_HEIGHT = 58.5;
     public static double STUDENT_IMAGE_HEIGHT = 16;
     public static double STUDENT_IMAGE_WIDTH = 16;
-    public static double STUDENTS_CIRCLE_RADIUS = 3;
+    public static double STUDENTS_ISLAND_CIRCLE_RADIUS = 3;
+    public static double STUDENTS_CLOUD_CIRCLE_RADIUS = 12;
     public static double ASSISTANT_X = 26;
     public static int ASSISTANT_Y_START = 11;
     public static int ASSISTANT_Y_OFFSET = 46;

@@ -187,8 +187,8 @@ public class GameTableController extends GUIController implements UpdatableContr
             ArrayList<Color> testStudents = new ArrayList<>(Arrays.asList(Color.BLUE,Color.RED,Color.PINK,Color.YELLOW,Color.GREEN,Color.RED));
             for(Color student : clientIsland.getStudents()){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
                 double angle = 2 * clientIsland.getStudents().indexOf(student) * Math.PI / clientIsland.getStudents().size();
-                double xOffset = STUDENTS_CIRCLE_RADIUS * Math.cos(angle);
-                double yOffset = STUDENTS_CIRCLE_RADIUS * Math.sin(angle);
+                double xOffset = STUDENTS_ISLAND_CIRCLE_RADIUS * Math.cos(angle);
+                double yOffset = STUDENTS_ISLAND_CIRCLE_RADIUS * Math.sin(angle);
                 double x = islandCenterX + xOffset ;
                 double y = islandCenterY + yOffset ;
                 ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
@@ -221,8 +221,8 @@ public class GameTableController extends GUIController implements UpdatableContr
             cloudCenterY = cloud.getY()+CLOUD_IMAGE_HEIGHT/2;
             for(Color student : clientCloud.getStudents()){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
                 double angle = 2 * clientCloud.getStudents().indexOf(student) * Math.PI / clientCloud.getStudents().size();
-                double xOffset = 12 * Math.cos(angle);
-                double yOffset = 12 * Math.sin(angle);
+                double xOffset = STUDENTS_CLOUD_CIRCLE_RADIUS * Math.cos(angle);
+                double yOffset = STUDENTS_CLOUD_CIRCLE_RADIUS * Math.sin(angle);
                 double x = cloudCenterX + xOffset ;
                 double y = cloudCenterY + yOffset ;
                 ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
