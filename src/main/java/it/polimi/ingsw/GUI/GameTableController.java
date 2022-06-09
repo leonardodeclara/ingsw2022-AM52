@@ -25,10 +25,8 @@ import java.util.Optional;
 
 import static it.polimi.ingsw.Constants.*;
 
-//TODO rendere dinamico il radius e la dimensione degli elementi in funzione della lunghezza degli array (fondamentale per gli studenti)
 //TODO aggiungere effetti di selezione
 //TODO sistemare bene sistema di selezione e pulire action parser dei vecchi parseTower, parseWizard ecc... (ora sono inutili)
-//TODO popolazione nuvole
 
 public class GameTableController extends GUIController implements UpdatableController{
     @FXML private ImageView deckButton;
@@ -120,7 +118,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         int numIslands = islands.size();
 
         for (ClientIsland island : islands) {
-            int i = island.getIslandIndex();
+            int i = island.getIslandIndex(); //potrebbe dare problemi quando si avranno isole con id sparsi
             double angle = 2 * i * Math.PI / numIslands ;
             double xOffset = ISLAND_CIRCLE_RADIUS * Math.cos(angle-Math.PI/2);
             double yOffset = ISLAND_CIRCLE_RADIUS * Math.sin(angle-Math.PI/2);
@@ -182,29 +180,29 @@ public class GameTableController extends GUIController implements UpdatableContr
             ClientIsland clientIsland = getClientIslandFromImage(islands,islandCounter);
             islandCenterX = island.getX()+ISLAND_IMAGE_WIDTH/2;
             islandCenterY = island.getY()+ISLAND_IMAGE_HEIGHT/2;
-
+            int studentCounter=0;
             //prova stress test
-            ArrayList<Color> testStudents = new ArrayList<>(Arrays.asList(Color.BLUE,Color.RED,Color.PINK,Color.YELLOW,Color.GREEN,Color.RED));
-            for(Color student : clientIsland.getStudents()){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
-                double angle = 2 * clientIsland.getStudents().indexOf(student) * Math.PI / clientIsland.getStudents().size();
-                double xOffset = STUDENTS_ISLAND_CIRCLE_RADIUS * Math.cos(angle);
-                double yOffset = STUDENTS_ISLAND_CIRCLE_RADIUS * Math.sin(angle);
+            ArrayList<Color> testStudents = new ArrayList<>(Arrays.asList(Color.BLUE,Color.BLUE,Color.RED,Color.YELLOW,Color.GREEN,Color.BLUE,Color.RED,Color.RED,Color.PINK,Color.YELLOW,Color.GREEN,Color.RED));
+            for(Color student : testStudents){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
+                double angle = 2 * studentCounter * Math.PI / testStudents.size();
+                double xOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS*testStudents.size()) * Math.cos(angle);
+                double yOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS*testStudents.size()) * Math.sin(angle);
                 double x = islandCenterX + xOffset ;
                 double y = islandCenterY + yOffset ;
                 ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
-                islandToStudentsImages.get(island).add(studentImage);
                 studentImage.setX(x-STUDENT_IMAGE_WIDTH/2);
                 studentImage.setY(y-STUDENT_IMAGE_HEIGHT/2);
                 studentImage.setPreserveRatio(true);
                 studentImage.setFitHeight(STUDENT_IMAGE_HEIGHT);
                 studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
-                studentImage.setOnMouseClicked((MouseEvent e) -> { //questi dati vanno nell'action parser che li trasforma nell'arraylist di objects
+                studentImage.setOnMouseClicked((MouseEvent e) -> {
                     handleClickEvent(0,Clickable.STUDENT);
                     //setSelectedStudent(clientIsland.getStudents().indexOf(student),clientIsland.getIslandIndex());
                     //System.out.println("Hai cliccato sullo studente "+selectedStudent+" dell'isola "+selectedIslandID);
                 });
+                islandToStudentsImages.get(island).add(studentImage);
                 gui.addElementToScene(studentImage);
-
+                studentCounter++;
             }
             islandCounter++;
         }
@@ -219,26 +217,29 @@ public class GameTableController extends GUIController implements UpdatableContr
             ClientCloud clientCloud = getClientCloudFromImage(clouds,cloudCounter);
             cloudCenterX = cloud.getX()+CLOUD_IMAGE_WIDTH/2;
             cloudCenterY = cloud.getY()+CLOUD_IMAGE_HEIGHT/2;
+            int studentCounter = 0; //va tenuta traccia manualmente, indexOf trovava la prima occurence
             for(Color student : clientCloud.getStudents()){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
-                double angle = 2 * clientCloud.getStudents().indexOf(student) * Math.PI / clientCloud.getStudents().size();
+                double angle = 2 * studentCounter * Math.PI / clientCloud.getStudents().size();
                 double xOffset = STUDENTS_CLOUD_CIRCLE_RADIUS * Math.cos(angle);
                 double yOffset = STUDENTS_CLOUD_CIRCLE_RADIUS * Math.sin(angle);
                 double x = cloudCenterX + xOffset ;
                 double y = cloudCenterY + yOffset ;
+                System.out.println("Metto su una nuvola uno studente "+student);
                 ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
-                cloudToStudentsImages.get(cloud).add(studentImage);
+                System.out.println(cloudToStudentsImages.get(cloud).size());
                 studentImage.setX(x-STUDENT_IMAGE_WIDTH/2);
                 studentImage.setY(y-STUDENT_IMAGE_HEIGHT/2);
                 studentImage.setPreserveRatio(true);
                 studentImage.setFitHeight(STUDENT_IMAGE_HEIGHT);
                 studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
-                studentImage.setOnMouseClicked((MouseEvent e) -> { //questi dati vanno nell'action parser che li trasforma nell'arraylist di objects
+                studentImage.setOnMouseClicked((MouseEvent e) -> {
                     handleClickEvent(0,Clickable.STUDENT);
                     //setSelectedStudent(clientIsland.getStudents().indexOf(student),clientIsland.getIslandIndex());
                     //System.out.println("Hai cliccato sullo studente "+selectedStudent+" dell'isola "+selectedIslandID);
                 });
+                cloudToStudentsImages.get(cloud).add(studentImage);
                 gui.addElementToScene(studentImage);
-
+                studentCounter++;
             }
             cloudCounter++;
         }
