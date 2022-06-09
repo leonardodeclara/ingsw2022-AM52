@@ -19,6 +19,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -40,6 +41,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private ArrayList<ImageView> cloudsImages;
     private ArrayList<ImageView> deckImages;
     private HashMap<ImageView,ArrayList<ImageView>> islandToStudentsImages;
+    private HashMap<ImageView,ArrayList<ImageView>> cloudToStudentsImages;
     private double centerX = 0;
     private double centerY = 0;
     private double bottomRightX = 0;
@@ -168,7 +170,7 @@ public class GameTableController extends GUIController implements UpdatableContr
             cloudsImages.add(cloudImage);
             gui.addElementToScene(cloudImage);
         }
-
+        populateClouds(clouds);
     }
 
     private void populateIslands(ArrayList<ClientIsland> islands){
@@ -180,6 +182,9 @@ public class GameTableController extends GUIController implements UpdatableContr
             ClientIsland clientIsland = getClientIslandFromImage(islands,islandCounter);
             islandCenterX = island.getX()+ISLAND_IMAGE_WIDTH/2;
             islandCenterY = island.getY()+ISLAND_IMAGE_HEIGHT/2;
+
+            //prova stress test
+            ArrayList<Color> testStudents = new ArrayList<>(Arrays.asList(Color.BLUE,Color.RED,Color.PINK,Color.YELLOW,Color.GREEN,Color.RED));
             for(Color student : clientIsland.getStudents()){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
                 double angle = 2 * clientIsland.getStudents().indexOf(student) * Math.PI / clientIsland.getStudents().size();
                 double xOffset = STUDENTS_CIRCLE_RADIUS * Math.cos(angle);
@@ -203,6 +208,48 @@ public class GameTableController extends GUIController implements UpdatableContr
             }
             islandCounter++;
         }
+    }
+
+    private void populateClouds(ArrayList<ClientCloud> clouds){
+        cloudToStudentsImages = new HashMap<>();
+        double cloudCenterX,cloudCenterY;
+        int cloudCounter = 0;
+        for(ImageView cloud : cloudsImages){
+            cloudToStudentsImages.put(cloud,new ArrayList<>());
+            ClientCloud clientCloud = getClientCloudFromImage(clouds,cloudCounter);
+            cloudCenterX = cloud.getX()+CLOUD_IMAGE_WIDTH/2;
+            cloudCenterY = cloud.getY()+CLOUD_IMAGE_HEIGHT/2;
+            for(Color student : clientCloud.getStudents()){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
+                double angle = 2 * clientCloud.getStudents().indexOf(student) * Math.PI / clientCloud.getStudents().size();
+                double xOffset = 12 * Math.cos(angle);
+                double yOffset = 12 * Math.sin(angle);
+                double x = cloudCenterX + xOffset ;
+                double y = cloudCenterY + yOffset ;
+                ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
+                cloudToStudentsImages.get(cloud).add(studentImage);
+                studentImage.setX(x-STUDENT_IMAGE_WIDTH/2);
+                studentImage.setY(y-STUDENT_IMAGE_HEIGHT/2);
+                studentImage.setPreserveRatio(true);
+                studentImage.setFitHeight(STUDENT_IMAGE_HEIGHT);
+                studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
+                studentImage.setOnMouseClicked((MouseEvent e) -> { //questi dati vanno nell'action parser che li trasforma nell'arraylist di objects
+                    handleClickEvent(0,Clickable.STUDENT);
+                    //setSelectedStudent(clientIsland.getStudents().indexOf(student),clientIsland.getIslandIndex());
+                    //System.out.println("Hai cliccato sullo studente "+selectedStudent+" dell'isola "+selectedIslandID);
+                });
+                gui.addElementToScene(studentImage);
+
+            }
+            cloudCounter++;
+        }
+    }
+
+    private ClientCloud getClientCloudFromImage(ArrayList<ClientCloud> clouds, int cloudCounter){
+        Optional<ClientCloud> optCloud = clouds.stream()
+                .filter(clientCloud -> clientCloud.getCloudIndex() == cloudCounter)
+                .findFirst();
+
+        return optCloud.orElse(null);
     }
 
     private ClientIsland getClientIslandFromImage(ArrayList<ClientIsland> islands,int islandCounter){
