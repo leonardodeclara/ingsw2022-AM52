@@ -46,20 +46,20 @@ import static it.polimi.ingsw.Constants.*;
 
 
 public class GUI extends Application implements UI{
-    ClientState currentState;
-    boolean active;
-    Stage stage;
-    HashMap<String,Scene> scenes;
-    HashMap<Scene,GUIController> controllers;
-    String[] fxmlPaths;
-    ClientSocket clientSocket;
-    Client client;
-    ActionParser actionParser;
-    GameBoard GB;
-    ImageView greyOverlay;
-    int wizardID; //andrebbero messe in GameBoard ma è una sbatta
-    String playerNickname; //andrebbero messe in GameBoard ma è una sbatta
-    Tower team; //andrebbero messe in GameBoard ma è una sbatta
+    private ClientState currentState;
+    private boolean active;
+    private Stage stage;
+    private HashMap<String,Scene> scenes;
+    private HashMap<Scene,GUIController> controllers;
+    private String[] fxmlPaths;
+    private ClientSocket clientSocket;
+    private Client client;
+    private ActionParser actionParser;
+    private GameBoard GB;
+    private ImageView greyOverlay;
+    private int wizardID; //andrebbero messe in GameBoard ma è una sbatta
+    private String playerNickname; //andrebbero messe in GameBoard ma è una sbatta
+    private Tower team; //andrebbero messe in GameBoard ma è una sbatta
 
     //TODO aggiungere popolazione isole
     //TODO aggiungere carte planning phase
@@ -120,8 +120,10 @@ public class GUI extends Application implements UI{
                 Scene currentScene = stage.getScene();
                 if (currentScene.equals(scenes.get(Constants.MATCHMAKING_MENU_FXML)) || currentScene.equals(scenes.get(Constants.LOBBY_FXML)))
                     setScene(Constants.WIZARD_CHOICE_FXML);
-                if (currentScene.equals(scenes.get(Constants.TOWER_CHOICE_FXML)))
+                if (currentScene.equals(scenes.get(Constants.TOWER_CHOICE_FXML))){
                     setScene(Constants.GAME_TABLE_FXML);
+                    //stage.centerOnScreen();//vedere se si può fare in maniera diversa
+                }
 
                 setSceneShouldWait(true); //sarebbe meglio chiamare direttamente enableScene e disableScene ma dava problemi (probabilmente per il render order)
                 //rivedere
@@ -136,6 +138,7 @@ public class GUI extends Application implements UI{
             }
             case PLAY_ASSISTANT_CARD ->{
                 setScene(Constants.GAME_TABLE_FXML);
+
                 setSceneShouldWait(false);
             }
             case MOVE_FROM_LOBBY -> {
@@ -265,9 +268,11 @@ public class GUI extends Application implements UI{
     public void setWizard(int wizard){ //chiamato dal controller quando fa send
         wizardID = wizard;
     }
+
     public void setTeam(Tower team){ //chiamato dal controller quando fa send
         this.team = team;
     }
+
     public void setPlayerNickname(String nickname){ //chiamato dal controller quando fa send
         this.playerNickname = nickname;
     }
@@ -275,11 +280,18 @@ public class GUI extends Application implements UI{
     public HashMap<Integer,Integer> getDeck(){
         return GB.getClientBoards().get(playerNickname).getDeck();
     }
-    public int getWizard(){return wizardID;}
 
+    public int getWizard(){
+        return wizardID;
+    }
 
-    public double getScreenX(){return ((AnchorPane)stage.getScene().getRoot()).getWidth();}
-    public double getScreenY(){return ((AnchorPane)stage.getScene().getRoot()).getHeight();}
+    public double getScreenX(){
+        return ((AnchorPane)stage.getScene().getRoot()).getWidth();
+    }
+
+    public double getScreenY(){
+        return ((AnchorPane)stage.getScene().getRoot()).getHeight();
+    }
 
     public void addElementToScene(Node n){
         ((AnchorPane)stage.getScene().getRoot()).getChildren().add(n);

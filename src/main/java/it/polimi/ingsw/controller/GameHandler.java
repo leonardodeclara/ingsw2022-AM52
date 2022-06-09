@@ -1,31 +1,24 @@
 package it.polimi.ingsw.controller;
 
-import com.sun.net.httpserver.Authenticator;
-import it.polimi.ingsw.Constants;
-import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Tower;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-
 
 public class GameHandler implements PropertyChangeListener{
-    GameController gameController;
-    ServerSocketConnection serverConnection;
-    Server server;
-    ArrayList<String> players;
-    HashMap<String, ClientHandler> nameToHandlerMap;
-    boolean expertGame;
-    ArrayList<String> playersOrder;
-    Iterator<String> playersOrderIterator;
+    private GameController gameController;
+    private ServerSocketConnection serverConnection;
+    private Server server;
+    private ArrayList<String> players;
+    private HashMap<String, ClientHandler> nameToHandlerMap;
+    private boolean expertGame;
+    private ArrayList<String> playersOrder;
+    private Iterator<String> playersOrderIterator;
 
     public GameHandler(Server server,HashMap<String, ClientHandler> nameToHandlerMap, boolean expertGame){
         this.server = server;
@@ -134,7 +127,7 @@ public class GameHandler implements PropertyChangeListener{
 
 
     private void updatePlayersOrder(ArrayList<String> players){
-        playersOrder = new ArrayList<String>(players);
+        playersOrder = new ArrayList<>(players);
         playersOrderIterator = playersOrder.iterator();
         System.out.println("Ordine previsto dei giocatori:"+ playersOrderIterator.toString());
         for (int i = 0; i < players.size(); i++){

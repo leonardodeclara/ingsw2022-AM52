@@ -6,14 +6,12 @@ import it.polimi.ingsw.GUI.UI;
 import it.polimi.ingsw.exceptions.EndGameException;
 import it.polimi.ingsw.exceptions.QuitException;
 import it.polimi.ingsw.messages.*;
-import it.polimi.ingsw.model.Tower;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

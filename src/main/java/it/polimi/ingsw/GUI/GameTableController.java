@@ -51,10 +51,6 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     public void start(){ //metodo di inizializzazione chiamato da GUI. In alcune situazioni viene chiamato due volte ma noi dobbiamo inizializzare una volta sola
         if(!initialized){ //sarebbe meglio spostare questo controllo sulla GUI e generalizzarlo
-            //commentato finché non capisco come centrare la finestra
-            //Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-            //centerX = (screenBounds.getWidth()-gui.getScreenX())/2;
-            //centerY = (screenBounds.getHeight()-gui.getScreenY())/2;
             centerX = gui.getScreenX()/2;
             centerY = gui.getScreenY()/2;
             bottomRightX = gui.getScreenX();

@@ -43,21 +43,24 @@ public class ClientHandler implements Runnable {
             while (true) {
                 Message receivedMessage = (Message) in.readObject();
                 readMessage(receivedMessage); }
-            } catch (QuitException | EOFException | SocketTimeoutException e) //capire perché viene lanciata una EOF exception quando chiudo brutalmente il client
-            {
-                System.out.println(ID + " si è disconnesso da solo. Chiudo la connessione e chiudo la partita");
-                if (gameHandler!=null ) gameHandler.removeClientHandler(this);
-                closeConnection();
-                if (gameHandler!=null ) gameHandler.closeMatch();
-                //System.err.println(e.getMessage());
-            } catch (ClassNotFoundException e) {
-                System.err.println(e.getMessage());
-            } catch (IOException e) //se chiudo da server la connessione viene lanciata una SocketException
-            {
-                System.out.println("Qualcuno si è disconnesso chiudo la connessione con il client " + ID);
-                e.printStackTrace(); //for debugging
-                closeConnection();
-            }
+        }
+        catch (QuitException | EOFException | SocketTimeoutException e) //capire perché viene lanciata una EOF exception quando chiudo brutalmente il client
+        {
+            System.out.println(ID + " si è disconnesso da solo. Chiudo la connessione e chiudo la partita");
+            if (gameHandler != null) gameHandler.removeClientHandler(this);
+            closeConnection();
+            if (gameHandler != null) gameHandler.closeMatch();
+        }
+        catch (SocketException e) //se chiudo da server la connessione viene lanciata una SocketException
+        {
+            System.out.println("Qualcuno si è disconnesso chiudo la connessione con il client " + ID);
+            e.printStackTrace(); //for debugging
+            closeConnection();
+        }
+        catch (ClassNotFoundException | IOException e)
+        {
+                e.printStackTrace();
+        }
     }
 
     /**
