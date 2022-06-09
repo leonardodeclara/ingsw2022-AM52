@@ -9,9 +9,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.effect.Bloom;
-import javafx.scene.effect.BoxBlur;
-import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -28,6 +26,7 @@ import static it.polimi.ingsw.Constants.*;
 //TODO aggiungere effetti di selezione
 //TODO sistemare bene sistema di selezione e pulire action parser dei vecchi parseTower, parseWizard ecc... (ora sono inutili)
 //TODO perfezionare il sistema di printing studenti (calibrare raggio del cerchio e dimensioni degli studenti in modo da reggere numeri importanti)
+//TODO spostare in alto isole ecc per fare spazio per il bottone CONFIRM
 
 public class GameTableController extends GUIController implements UpdatableController{
     @FXML private ImageView deckButton;
@@ -60,6 +59,11 @@ public class GameTableController extends GUIController implements UpdatableContr
             parameters = new ArrayList<>();
             deckImages = new ArrayList<>();
             initialized = true;
+
+            sendButton.setOnMouseEntered(e -> sendButton.setEffect(new Bloom()));
+            sendButton.setOnMouseExited(e -> sendButton.setEffect(null));
+
+
         }
 
     }
@@ -70,6 +74,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
     public void send(){ //funziona ma è brutto, lo sistemo quando ho più tempo
+        sendButton.setEffect(new DropShadow());
         if(selectedAssistant!=-1)
             parameters.add(selectedAssistant);
         if(selectedStudent!=-1)
@@ -97,6 +102,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         renderIslands();
         renderClouds();
         renderDeck();
+        sendButton.setEffect(null); //modo temporaneo per resettare l'effetto generato dal click
         sendButton.toFront();
 
         if(waitTurn)
@@ -281,7 +287,9 @@ public class GameTableController extends GUIController implements UpdatableContr
                     handleHoverEvent(assistantImage, Clickable.ASSISTANT);
                 });
                 assistantImage.setOnMouseExited((MouseEvent e) -> {
-                    assistantImage.setEffect(null);
+                    //tolgo l'effetto impostato quando muovo il mouse solo se la carta non è quella clickata
+                    if (!(DropShadow.class).equals(assistantImage.getEffect().getClass()))
+                        assistantImage.setEffect(null);
                 });
                 deckImages.add(assistantImage);
                 gui.addElementToScene(assistantImage);
@@ -302,9 +310,11 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     private void handleHoverEvent(Node n, Clickable hoveredElement){
         if(actionParser.canClick(gui.getCurrentState(),hoveredElement)){
-            Bloom bloom = new Bloom();
-            bloom.setThreshold(0.1);
-            n.setEffect(bloom);
+            //aggiungo il bloom solo se la carta non è stata clickata
+            if (n.getEffect()==null){
+                Bloom bloom = new Bloom();
+                bloom.setThreshold(0.1);
+                n.setEffect(bloom);}
         }
     }
     private void handleClickEvent(int id,Clickable clickedElement){
@@ -341,18 +351,12 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
     public void setSelectedAssistant(int priority){
-        //Volevo aggiungere un effetto DropShadow alla carta clickata ma poi con lo spostamento
-        // del mouse si cancella. Piuttosto sarebbe meglio "estrarla dal mazzo", o comunque evidenziare la scelta in qualche modo
-        /*
+        //deve esistere un modo più semplice per far farlo
         for (ImageView deckImage: deckImages){
             String[] urlTokens = deckImage.getImage().getUrl().split("/");
-            System.out.println(deckImage.getImage().getUrl());
-            if (urlTokens[urlTokens.length-1].equals("assistant_" + priority + ".png")){
-                System.out.println("Ho aggiunto l'effetto DropShasow alla carta selezionata");
+            if (urlTokens[urlTokens.length-1].equals("assistant_" + priority + ".png"))
                 deckImage.setEffect(new DropShadow());
-            }
         }
-         */
         selectedAssistant = priority;
     }
 }

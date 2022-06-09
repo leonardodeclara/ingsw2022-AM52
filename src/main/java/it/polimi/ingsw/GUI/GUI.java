@@ -122,7 +122,7 @@ public class GUI extends Application implements UI{
                     setScene(Constants.WIZARD_CHOICE_FXML);
                 if (currentScene.equals(scenes.get(Constants.TOWER_CHOICE_FXML))){
                     setScene(Constants.GAME_TABLE_FXML);
-                    //stage.centerOnScreen();//vedere se si può fare in maniera diversa
+                    stage.centerOnScreen();//vedere se si può fare in maniera diversa
                 }
 
                 setSceneShouldWait(true); //sarebbe meglio chiamare direttamente enableScene e disableScene ma dava problemi (probabilmente per il render order)
