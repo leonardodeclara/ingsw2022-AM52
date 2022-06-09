@@ -27,6 +27,7 @@ import static it.polimi.ingsw.Constants.*;
 
 //TODO aggiungere effetti di selezione
 //TODO sistemare bene sistema di selezione e pulire action parser dei vecchi parseTower, parseWizard ecc... (ora sono inutili)
+//TODO perfezionare il sistema di printing studenti (calibrare raggio del cerchio e dimensioni degli studenti in modo da reggere numeri importanti)
 
 public class GameTableController extends GUIController implements UpdatableController{
     @FXML private ImageView deckButton;
@@ -171,6 +172,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         populateClouds(clouds);
     }
 
+    //se il giocatore decide come stress test di mettere 35 studenti su una sola isola o mettiamo un counter dopo una certa soglia (esteticamente orrendo ma quando si superano i tot studenti è l'unico modo)
     private void populateIslands(ArrayList<ClientIsland> islands){
         islandToStudentsImages = new HashMap<>();
         double islandCenterX,islandCenterY;
@@ -182,11 +184,11 @@ public class GameTableController extends GUIController implements UpdatableContr
             islandCenterY = island.getY()+ISLAND_IMAGE_HEIGHT/2;
             int studentCounter=0;
             //prova stress test
-            ArrayList<Color> testStudents = new ArrayList<>(Arrays.asList(Color.BLUE,Color.BLUE,Color.RED,Color.YELLOW,Color.GREEN,Color.BLUE,Color.RED,Color.RED,Color.PINK,Color.YELLOW,Color.GREEN,Color.RED));
-            for(Color student : testStudents){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
-                double angle = 2 * studentCounter * Math.PI / testStudents.size();
-                double xOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS*testStudents.size()) * Math.cos(angle);
-                double yOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS*testStudents.size()) * Math.sin(angle);
+            //ArrayList<Color> testStudents = new ArrayList<>(Arrays.asList(Color.BLUE,Color.BLUE,Color.RED,Color.YELLOW,Color.GREEN,Color.BLUE,Color.RED,Color.RED,Color.PINK,Color.YELLOW,Color.GREEN,Color.RED));
+            for(Color student : clientIsland.getStudents()){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
+                double angle = 2 * studentCounter * Math.PI / clientIsland.getStudents().size();
+                double xOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS*clientIsland.getStudents().size()) * Math.cos(angle);
+                double yOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS*clientIsland.getStudents().size()) * Math.sin(angle);
                 double x = islandCenterX + xOffset ;
                 double y = islandCenterY + yOffset ;
                 ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
