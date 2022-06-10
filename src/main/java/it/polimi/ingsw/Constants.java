@@ -47,6 +47,10 @@ public class Constants {
     public static int ASSISTANT_Y_OFFSET = 46;
     public static double ASSISTANT_IMAGE_HEIGHT = 125;
     public static double ASSISTANT_IMAGE_WIDTH = 85;
+    public static double PERSONALITY_IMAGE_HEIGHT = 125;
+    public static double PERSONALITY_IMAGE_WIDTH = 85;
+    public static double COIN_IMAGE_HEIGHT = 16;
+    public static double COIN_IMAGE_WIDTH = 16;
     public static final String RESET = "\033[0m";
 
     public static final String RED = "\033[0;31m";

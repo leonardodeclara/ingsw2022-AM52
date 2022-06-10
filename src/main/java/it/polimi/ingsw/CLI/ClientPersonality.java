@@ -136,5 +136,9 @@ public class ClientPersonality implements Serializable {
     public int getBans() {
         return bans;
     }
+
+    public boolean isHasBeenUsed() {
+        return hasBeenUsed;
+    }
 }
 

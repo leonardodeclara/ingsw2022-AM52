@@ -2,6 +2,7 @@ package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.ClientCloud;
 import it.polimi.ingsw.CLI.ClientIsland;
+import it.polimi.ingsw.CLI.ClientPersonality;
 import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.client.Client;
@@ -107,7 +108,8 @@ public class GUI extends Application implements UI{
 
 
     public void prepareView(ArrayList<Object> data){
-
+        GB.setNumberOfPlayers((Integer)data.get(0));
+        GB.setExpertGame((Boolean)data.get(1));
     }
 
     private void renderScene(){ //nelle fasi più avanzate si aggiornerà la scena aggiungendo immagini o altro ma non si chiamerà più setScene
@@ -249,6 +251,7 @@ public class GUI extends Application implements UI{
     public int getNumOfPlayers(){
         return GB.getNumberOfPlayers();
     }
+
     public ArrayList<Integer> getAvailableWizards(){
         return GB.getAvailableWizards();
     }
@@ -283,6 +286,14 @@ public class GUI extends Application implements UI{
 
     public int getWizard(){
         return wizardID;
+    }
+
+    public GameBoard getGB() {
+        return GB;
+    }
+
+    public ArrayList<ClientPersonality> getPersonalityCards(){
+        return GB.getPersonalities();
     }
 
     public double getScreenX(){

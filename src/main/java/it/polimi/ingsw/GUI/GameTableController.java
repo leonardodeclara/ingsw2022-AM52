@@ -2,6 +2,7 @@ package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.ClientCloud;
 import it.polimi.ingsw.CLI.ClientIsland;
+import it.polimi.ingsw.CLI.ClientPersonality;
 import it.polimi.ingsw.messages.ClientState;
 import it.polimi.ingsw.messages.Message;
 import it.polimi.ingsw.model.Color;
@@ -31,6 +32,7 @@ import static it.polimi.ingsw.Constants.*;
 //TODO carte pesrsonaggio sotto le nuvole
 //TODO centrare bene gli studenti sulle isole (ruotando il cerchio di una costante)
 
+
 public class GameTableController extends GUIController implements UpdatableController{
     @FXML private ImageView deckButton;
     @FXML private Button sendButton;
@@ -41,8 +43,10 @@ public class GameTableController extends GUIController implements UpdatableContr
     private ArrayList<ImageView> islandsImages;
     private ArrayList<ImageView> cloudsImages;
     private ArrayList<ImageView> deckImages;
+    private ArrayList<ImageView> personalitiesImages;
     private HashMap<ImageView,ArrayList<ImageView>> islandToStudentsImages;
     private HashMap<ImageView,ArrayList<ImageView>> cloudToStudentsImages;
+    private HashMap <ImageView, ArrayList<ImageView>> personalityToStudentImages;
     private double centerX = 0;
     private double centerY = 0;
     private boolean waitTurn = false;
@@ -100,6 +104,9 @@ public class GameTableController extends GUIController implements UpdatableContr
         renderIslands();
         renderClouds();
         renderDeck();
+        if (gui.getGB().isExpertGame())
+            renderPersonalityCards();
+
         sendButton.setEffect(null); //modo temporaneo per resettare l'effetto generato dal click
         sendButton.toFront();
 
@@ -170,6 +177,51 @@ public class GameTableController extends GUIController implements UpdatableContr
             gui.addElementToScene(cloudImage);
         }
         populateClouds(clouds);
+    }
+
+    private void renderPersonalityCards(){
+        ArrayList<ClientPersonality> cards = gui.getPersonalityCards();
+        personalitiesImages = new ArrayList<>();
+        double cardY,cardX;
+        int i = 0;
+        for (ClientPersonality card: cards){
+            int cardId = card.getCardID();
+            System.out.println("GameTableController: renderizzo la carta personaggio "+cardId);
+            cardY = centerY + ISLAND_IMAGE_HEIGHT; //scelta a caso
+            cardX= centerX -PERSONALITY_IMAGE_WIDTH + i*PERSONALITY_IMAGE_WIDTH;
+            ImageView cardImage = new ImageView("/graphics/personality_"+cardId+".jpg");
+            cardImage.setX(cardX-PERSONALITY_IMAGE_WIDTH/2);
+            cardImage.setY(cardY-PERSONALITY_IMAGE_HEIGHT/2);
+            cardImage.setFitHeight(PERSONALITY_IMAGE_HEIGHT);
+            cardImage.setFitWidth(PERSONALITY_IMAGE_WIDTH);
+            cardImage.setPreserveRatio(true);
+            if (card.getStudents()!=null && card.getStudents().size()>0)
+                System.out.println("aggiungere immagini degli studenti alla carta "+cardId);
+            else if (card.getBans()!=0)
+                System.out.println("aggiungere immagini dei ban alla carta " +cardId);
+            cardImage.setOnMouseClicked((MouseEvent e)-> handleClickEvent(cardId,Clickable.PERSONALITY));
+            personalitiesImages.add(cardImage);
+            gui.addElementToScene(cardImage);
+            if (card.isHasBeenUsed()){
+                ImageView coinImage = new ImageView("graphics/coin.png");
+                double coinX = cardImage.getX()+PERSONALITY_IMAGE_WIDTH/2;
+                double coinY = cardImage.getY()+PERSONALITY_IMAGE_HEIGHT/2;
+                coinImage.setX(coinX-COIN_IMAGE_WIDTH/2);
+                coinImage.setY(coinY-COIN_IMAGE_HEIGHT/2);
+                coinImage.setFitWidth(COIN_IMAGE_WIDTH);
+                coinImage.setFitHeight(COIN_IMAGE_HEIGHT);
+                coinImage.setPreserveRatio(true);
+            }
+            i++;
+
+        }
+
+    }
+
+    private void populateLobbyPersonality(ClientPersonality personality){
+    }
+
+    private void populateBanPersonality(ClientPersonality personality){
     }
 
     //se il giocatore decide come stress test di mettere 35 studenti su una sola isola o mettiamo un counter dopo una certa soglia (esteticamente orrendo ma quando si superano i tot studenti è l'unico modo)
@@ -286,7 +338,7 @@ public class GameTableController extends GUIController implements UpdatableContr
                 });
                 assistantImage.setOnMouseExited((MouseEvent e) -> {
                     //tolgo l'effetto impostato quando muovo il mouse solo se la carta non è quella clickata
-                    if (!(DropShadow.class).equals(assistantImage.getEffect().getClass()))
+                    if (assistantImage.getEffect()==null || !(DropShadow.class).equals(assistantImage.getEffect().getClass()))
                         assistantImage.setEffect(null);
                 });
                 deckImages.add(assistantImage);
@@ -336,6 +388,7 @@ public class GameTableController extends GUIController implements UpdatableContr
                 case STUDENT -> {}
                 case ISLAND -> {}
                 case CLOUD -> {}
+                case PERSONALITY -> {}
 
             }
         }

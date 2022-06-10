@@ -69,6 +69,8 @@ public class GameBoard {
 
         if(expertGame){
             this.personalities = new ArrayList<>(personalities);
+            for (ClientPersonality card: this.personalities)
+                System.out.println("GameBoard: una delle carte personaggio è "+card.getCardID());
             coins=20-numberOfPlayers;
         }
     }
