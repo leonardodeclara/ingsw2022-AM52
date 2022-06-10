@@ -29,8 +29,9 @@ import static it.polimi.ingsw.Constants.*;
 
 //TODO gridpanel per la table così da non dover mettere un controllo (altrimenti si potranno mettere 150 studenti nella table)
 //TODO drag n drop per gli studenti (semplifica la costruzione del messaggio)
-//TODO carte pesrsonaggio sotto le nuvole
 //TODO centrare bene gli studenti sulle isole (ruotando il cerchio di una costante)
+//TODO centrare bene gli studenti sulle carte lobbyPersonality
+//TODO popolare banPersonality (basta simbolo ban con numero di ban che esce quando ti fermi sopra)
 
 
 public class GameTableController extends GUIController implements UpdatableController{
@@ -46,7 +47,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private ArrayList<ImageView> personalitiesImages;
     private HashMap<ImageView,ArrayList<ImageView>> islandToStudentsImages;
     private HashMap<ImageView,ArrayList<ImageView>> cloudToStudentsImages;
-    private HashMap <ImageView, ArrayList<ImageView>> personalityToStudentImages;
+    private HashMap<ImageView, ArrayList<ImageView>> personalityToStudentsImages;
     private double centerX = 0;
     private double centerY = 0;
     private boolean waitTurn = false;
@@ -187,7 +188,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         for (ClientPersonality card: cards){
             int cardId = card.getCardID();
             System.out.println("GameTableController: renderizzo la carta personaggio "+cardId);
-            cardY = centerY + ISLAND_IMAGE_HEIGHT; //scelta a caso
+            cardY = centerY + ISLAND_IMAGE_HEIGHT*1.1; //scelta a caso
             cardX= centerX -PERSONALITY_IMAGE_WIDTH + i*PERSONALITY_IMAGE_WIDTH;
             ImageView cardImage = new ImageView("/graphics/personality_"+cardId+".jpg");
             cardImage.setX(cardX-PERSONALITY_IMAGE_WIDTH/2);
@@ -195,10 +196,6 @@ public class GameTableController extends GUIController implements UpdatableContr
             cardImage.setFitHeight(PERSONALITY_IMAGE_HEIGHT);
             cardImage.setFitWidth(PERSONALITY_IMAGE_WIDTH);
             cardImage.setPreserveRatio(true);
-            if (card.getStudents()!=null && card.getStudents().size()>0)
-                System.out.println("aggiungere immagini degli studenti alla carta "+cardId);
-            else if (card.getBans()!=0)
-                System.out.println("aggiungere immagini dei ban alla carta " +cardId);
             cardImage.setOnMouseClicked((MouseEvent e)-> handleClickEvent(cardId,Clickable.PERSONALITY));
             personalitiesImages.add(cardImage);
             gui.addElementToScene(cardImage);
@@ -211,14 +208,51 @@ public class GameTableController extends GUIController implements UpdatableContr
                 coinImage.setFitWidth(COIN_IMAGE_WIDTH);
                 coinImage.setFitHeight(COIN_IMAGE_HEIGHT);
                 coinImage.setPreserveRatio(true);
+                gui.addElementToScene(coinImage);
             }
+            if (card.getStudents()!=null && card.getStudents().size()>0){
+                System.out.println("aggiungere immagini degli studenti alla carta "+cardId);
+                populateLobbyPersonality(card,cardImage);
+            }
+            else if (card.getBans()!=0)
+                System.out.println("aggiungere immagini dei ban alla carta " +cardId);
             i++;
 
         }
 
     }
 
-    private void populateLobbyPersonality(ClientPersonality personality){
+    private void populateLobbyPersonality(ClientPersonality personality, ImageView clientCard){
+        if (personalityToStudentsImages==null)
+            personalityToStudentsImages= new HashMap<>();
+        ArrayList<Color> cardStudents = personality.getStudents();
+        ArrayList<ImageView> cardStudentsImages = new ArrayList<>();
+        int halfAmountOfStudents=cardStudents.size()/2;
+        double offsetX=STUDENT_IMAGE_WIDTH;
+        double offsetY;
+        double startY = clientCard.getY()+PERSONALITY_IMAGE_HEIGHT*0.7;
+        double startX = clientCard.getX()+PERSONALITY_IMAGE_WIDTH/2-STUDENT_IMAGE_WIDTH;
+        if (halfAmountOfStudents==3)
+            startX=startX-STUDENT_IMAGE_WIDTH*1.5;
+
+        for (int i = 0; i<cardStudents.size();i++){
+            Color student = cardStudents.get(i);
+            ImageView studentImage = new ImageView("/graphics/" + student.toString().toLowerCase() + "_student.png");
+            studentImage.setX(startX + (i%halfAmountOfStudents)*offsetX);
+            offsetY= i>=halfAmountOfStudents? STUDENT_IMAGE_HEIGHT*1.5: 0;
+            studentImage.setY(startY-STUDENT_IMAGE_HEIGHT/2+offsetY);
+            studentImage.setPreserveRatio(true);
+            studentImage.setFitHeight(STUDENT_IMAGE_HEIGHT);
+            studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
+            studentImage.setOnMouseClicked((MouseEvent e) -> {
+                handleClickEvent(personality.getStudents().indexOf(student),Clickable.STUDENT); //come id passa il primo studente di quel colore che trova nell'isola
+            });
+            gui.addElementToScene(studentImage);
+            studentImage.toFront();
+            System.out.println("Aggiunto studente "+student.toString());
+            cardStudentsImages.add(studentImage);
+        }
+        personalityToStudentsImages.put(clientCard,cardStudentsImages);
     }
 
     private void populateBanPersonality(ClientPersonality personality){
