@@ -6,27 +6,30 @@ import it.polimi.ingsw.messages.ClientState;
 import it.polimi.ingsw.messages.Message;
 import it.polimi.ingsw.model.Color;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 import static it.polimi.ingsw.Constants.*;
 
 //TODO aggiungere effetti di selezione
 //TODO sistemare bene sistema di selezione e pulire action parser dei vecchi parseTower, parseWizard ecc... (ora sono inutili)
-//TODO perfezionare il sistema di printing studenti (calibrare raggio del cerchio e dimensioni degli studenti in modo da reggere numeri importanti)
-//TODO spostare in alto isole ecc per fare spazio per il bottone CONFIRM
+
+//TODO gridpanel per la table così da non dover mettere un controllo (altrimenti si potranno mettere 150 studenti nella table)
+//TODO drag n drop per gli studenti (semplifica la costruzione del messaggio)
+//TODO carte pesrsonaggio sotto le nuvole
+//TODO centrare bene gli studenti sulle isole (ruotando il cerchio di una costante)
 
 public class GameTableController extends GUIController implements UpdatableController{
     @FXML private ImageView deckButton;
@@ -45,14 +48,13 @@ public class GameTableController extends GUIController implements UpdatableContr
     private double bottomRightX = 0;
     private double bottomRightY = 0;
     private boolean waitTurn = false;
-    private boolean shouldRenderDeck = true;
     private boolean initialized = false;
     private ArrayList<Integer> parameters;
 
     public void start(){ //metodo di inizializzazione chiamato da GUI. In alcune situazioni viene chiamato due volte ma noi dobbiamo inizializzare una volta sola
         if(!initialized){ //sarebbe meglio spostare questo controllo sulla GUI e generalizzarlo
             centerX = gui.getScreenX()/2;
-            centerY = gui.getScreenY()/2;
+            centerY = gui.getScreenY()/2 - 15;
             bottomRightX = gui.getScreenX();
             bottomRightY = gui.getScreenY();
             deckButton.setImage(new Image("/graphics/Wizard_"+(gui.getWizard()+1)+".png"));
@@ -184,13 +186,14 @@ public class GameTableController extends GUIController implements UpdatableContr
             ClientIsland clientIsland = getClientIslandFromImage(islands,islandCounter);
             islandCenterX = island.getX()+ISLAND_IMAGE_WIDTH/2;
             islandCenterY = island.getY()+ISLAND_IMAGE_HEIGHT/2;
-            int studentCounter=0;
-            //prova stress test
-            //ArrayList<Color> testStudents = new ArrayList<>(Arrays.asList(Color.BLUE,Color.BLUE,Color.RED,Color.YELLOW,Color.GREEN,Color.BLUE,Color.RED,Color.RED,Color.PINK,Color.YELLOW,Color.GREEN,Color.RED));
-            for(Color student : clientIsland.getStudents()){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
-                double angle = 2 * studentCounter * Math.PI / clientIsland.getStudents().size();
-                double xOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS*clientIsland.getStudents().size()) * Math.cos(angle);
-                double yOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS*clientIsland.getStudents().size()) * Math.sin(angle);
+            List<Color> distinctStudents = clientIsland.getStudents().stream().distinct().toList();
+            for(Color student : distinctStudents){
+                long numberOfStudents = clientIsland.getStudents()
+                        .stream()
+                        .filter(color -> color.equals(student)).count();
+                double angle = 2 * distinctStudents.indexOf(student) * Math.PI / Color.values().length;
+                double xOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS * distinctStudents.size() * 1.5) * Math.cos(angle);
+                double yOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS * distinctStudents.size() * 1.5) * Math.sin(angle);
                 double x = islandCenterX + xOffset ;
                 double y = islandCenterY + yOffset ;
                 ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
@@ -200,13 +203,13 @@ public class GameTableController extends GUIController implements UpdatableContr
                 studentImage.setFitHeight(STUDENT_IMAGE_HEIGHT);
                 studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
                 studentImage.setOnMouseClicked((MouseEvent e) -> {
-                    handleClickEvent(0,Clickable.STUDENT);
-                    //setSelectedStudent(clientIsland.getStudents().indexOf(student),clientIsland.getIslandIndex());
-                    //System.out.println("Hai cliccato sullo studente "+selectedStudent+" dell'isola "+selectedIslandID);
+                    handleClickEvent(clientIsland.getStudents().indexOf(student),Clickable.STUDENT); //come id passa il primo studente di quel colore che trova nell'isola
                 });
+                Tooltip numOfStudents = new Tooltip(Long.toString(numberOfStudents));
+                numOfStudents.setShowDelay(Duration.seconds(0.1));
+                Tooltip.install(studentImage, numOfStudents);
                 islandToStudentsImages.get(island).add(studentImage);
                 gui.addElementToScene(studentImage);
-                studentCounter++;
             }
             islandCounter++;
         }
