@@ -45,8 +45,6 @@ public class GameTableController extends GUIController implements UpdatableContr
     private HashMap<ImageView,ArrayList<ImageView>> cloudToStudentsImages;
     private double centerX = 0;
     private double centerY = 0;
-    private double bottomRightX = 0;
-    private double bottomRightY = 0;
     private boolean waitTurn = false;
     private boolean initialized = false;
     private ArrayList<Integer> parameters;
@@ -55,8 +53,6 @@ public class GameTableController extends GUIController implements UpdatableContr
         if(!initialized){ //sarebbe meglio spostare questo controllo sulla GUI e generalizzarlo
             centerX = gui.getScreenX()/2;
             centerY = gui.getScreenY()/2 - 15;
-            bottomRightX = gui.getScreenX();
-            bottomRightY = gui.getScreenY();
             deckButton.setImage(new Image("/graphics/Wizard_"+(gui.getWizard()+1)+".png"));
             parameters = new ArrayList<>();
             deckImages = new ArrayList<>();
@@ -283,8 +279,7 @@ public class GameTableController extends GUIController implements UpdatableContr
                 assistantImage.setFitHeight(ASSISTANT_IMAGE_HEIGHT);
                 assistantImage.setOnMouseClicked((MouseEvent e) -> {
                     handleClickEvent(priority, Clickable.ASSISTANT);
-                    //setSelectedAssistant(priority);
-                    //System.out.println("Hai cliccato sulla carta "+selectedAssistant);
+                    handleSelectionEffect(assistantImage,Clickable.ASSISTANT);
                 });
                 assistantImage.setOnMouseEntered((MouseEvent e) -> {
                     handleHoverEvent(assistantImage, Clickable.ASSISTANT);
@@ -311,7 +306,18 @@ public class GameTableController extends GUIController implements UpdatableContr
         deckImages.clear();
     }
 
-    private void handleHoverEvent(Node n, Clickable hoveredElement){
+    private void handleSelectionEffect(Node n, Clickable type){ //gestisce gli effetti di selezione per ogni clickable (vedremo in futuro se avrà senso averlo così generalizzato)
+        switch(type){
+            case ASSISTANT -> {
+                for(ImageView card : deckImages){
+                    card.setEffect(null);
+                }
+                n.setEffect(new DropShadow());
+            }
+        }
+    }
+
+    private void handleHoverEvent(Node n, Clickable hoveredElement){ //gestisce l'hover per ogni clickable (vedremo in futuro se avrà senso averlo generalizzato)
         if(actionParser.canClick(gui.getCurrentState(),hoveredElement)){
             //aggiungo il bloom solo se la carta non è stata clickata
             if (n.getEffect()==null){
@@ -324,9 +330,6 @@ public class GameTableController extends GUIController implements UpdatableContr
         if(actionParser.canClick(gui.getCurrentState(),clickedElement)){
             switch(clickedElement){
                 case ASSISTANT -> {
-                    for (ImageView deckImage: deckImages)
-                        deckImage.setEffect(null);
-
                     setSelectedAssistant(id);
                     System.out.println("Hai cliccato sulla carta "+selectedAssistant);
                 }
@@ -354,12 +357,6 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
     public void setSelectedAssistant(int priority){
-        //deve esistere un modo più semplice per far farlo
-        for (ImageView deckImage: deckImages){
-            String[] urlTokens = deckImage.getImage().getUrl().split("/");
-            if (urlTokens[urlTokens.length-1].equals("assistant_" + priority + ".png"))
-                deckImage.setEffect(new DropShadow());
-        }
         selectedAssistant = priority;
     }
 }
