@@ -228,12 +228,14 @@ public class GameTableController extends GUIController implements UpdatableContr
         ArrayList<Color> cardStudents = personality.getStudents();
         ArrayList<ImageView> cardStudentsImages = new ArrayList<>();
         int halfAmountOfStudents=cardStudents.size()/2;
-        double offsetX=STUDENT_IMAGE_WIDTH;
+        double offsetX=STUDENT_IMAGE_WIDTH*2;
         double offsetY;
         double startY = clientCard.getY()+PERSONALITY_IMAGE_HEIGHT*0.7;
-        double startX = clientCard.getX()+PERSONALITY_IMAGE_WIDTH/2-STUDENT_IMAGE_WIDTH;
-        if (halfAmountOfStudents==3)
-            startX=startX-STUDENT_IMAGE_WIDTH*1.5;
+        double startX = clientCard.getX()+PERSONALITY_IMAGE_WIDTH/2-STUDENT_IMAGE_WIDTH*1.5;
+        if (halfAmountOfStudents==3){
+            startX=startX-STUDENT_IMAGE_WIDTH;
+            offsetX=STUDENT_IMAGE_WIDTH*1.5;
+        }
 
         for (int i = 0; i<cardStudents.size();i++){
             Color student = cardStudents.get(i);

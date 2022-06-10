@@ -147,6 +147,7 @@ public class GUI extends Application implements UI{
             case MOVE_FROM_LOBBY -> {
                 setSceneShouldWait(false);
             }
+            case END_GAME -> {}
         }
     }
 
@@ -202,6 +203,8 @@ public class GUI extends Application implements UI{
         // e il resizing automatico non è implementato per questioni di tempo
         //la risoluzione è settata manualmente con un rateo di 16:9 e una dimensione ottimale per schermi 1920x1080
         stage = primaryStage;
+        stage.setOnCloseRequest(event->System.exit(0));
+        //equivalente della chiusura forzata da cli, poi bisogna gestire per gli altri client il messaggio di fine partita
 
         Image icon = new Image("/graphics/logo.png");
         stage.getIcons().add(icon);

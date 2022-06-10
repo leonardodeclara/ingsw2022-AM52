@@ -398,6 +398,12 @@ public class GameHandler implements PropertyChangeListener{
     public synchronized void closeMatch(){
         System.out.println("Qui muore il gameHandler");
         sendAll(new ClientStateMessage(ClientState.END_GAME));
+        //rivedere questo genere di chiusura perché per come è gestita ora si chiude la connessione ai client non disconnessi due volte
+        //la prima qui con clientHandler.closeConnection
+        //la seconda dentro il run di clientHandler perché scatta una SocketExcpetion
+        //provare a tenere una delle due cose (magari si fa uscire dal while del run e si chiude separatamente
+        //oppure se si catcha la SocketException in run non si chiama closeConnection
+        //provare entrambe le versioni
         for (ClientHandler clientHandler: nameToHandlerMap.values()){
             clientHandler.closeConnection();
         }

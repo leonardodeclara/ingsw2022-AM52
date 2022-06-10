@@ -54,7 +54,7 @@ public class ClientHandler implements Runnable {
         catch (SocketException e) //se chiudo da server la connessione viene lanciata una SocketException
         {
             System.out.println("Qualcuno si è disconnesso chiudo la connessione con il client " + ID);
-            e.printStackTrace(); //for debugging
+            //e.printStackTrace(); //for debugging
             closeConnection();
         }
         catch (ClassNotFoundException | IOException e)
@@ -121,13 +121,14 @@ public class ClientHandler implements Runnable {
         System.out.println("ClientHandler "+ ID+ ": tolgo i miei riferimenti dal server e poi chiudo la socket");
         //toglie da tutte le mappe di server questo client, connessioni ecc.
         server.removeClientConnection(this);
+        //rivedere se
         try {
             socket.close();
         }
         catch (IOException e){
             System.err.println(e.getMessage());
         }
-        System.out.println("ClientHandler: chiusa la connessione con " + ID);
+        System.out.println("ClientHandler, closeConnection: chiusa la connessione con " + ID);
     }
 
 
