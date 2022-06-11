@@ -30,7 +30,7 @@ import static it.polimi.ingsw.Constants.*;
 //TODO centrare bene gli studenti sulle isole (ruotando il cerchio di una costante)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
 //TODO popolare banPersonality (basta simbolo ban con numero di ban che esce quando ti fermi sopra)
-//TODO sistemare offset shifting per la popolazione table (per riprodurre settare numOfStudents = 10 in populateTables)
+//TODO popolazione torri
 
 //per gli spostamenti si avranno dei click/drag n drop che modificano lato client la GUI. Quando poi si fa CONFIRM le modifiche avvengono su server
 //le modifiche lato client non sono tutte lecite lato server, perchè lato client avvengono solo controlli strutturali, non di logica di gioco.
@@ -222,10 +222,10 @@ public class GameTableController extends GUIController implements UpdatableContr
         for(Color teacher : tableColors){
             if(clientBoard.getTeacherTable().contains(teacher)){
                 ImageView teachersImage = new ImageView("/graphics/"+teacher.toString().toLowerCase()+"_teacher.png");
-                teachersImage.setFitWidth(27);
-                teachersImage.setFitHeight(23);
-                teachersImage.setX(940+teacherCounter*STUDENT_TABLE_HGAP);
-                teachersImage.setY(431);
+                teachersImage.setFitWidth(TEACHER_BOARD_WIDTH);
+                teachersImage.setFitHeight(TEACHER_BOARD_HEIGHT);
+                teachersImage.setX(TEACHER_BOARD_START_X+teacherCounter*STUDENT_TABLE_HGAP);
+                teachersImage.setY(TEACHER_BOARD_START_Y);
                 boardTeachers.add(teachersImage);
                 gui.addElementToScene(teachersImage);
             }
@@ -263,6 +263,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));
         for(Color color : tableColors){
             int numOfStudents = clientBoard.getStudentsTable().get(color);
+            //int numOfStudents = 10; test
             String studentImagePath = "/graphics/"+color.toString().toLowerCase()+"_student.png";
             for(int i = 0; i< numOfStudents;i++){
                 ImageView studentImage = new ImageView(studentImagePath);

@@ -52,14 +52,18 @@ public class Constants {
     public static double PERSONALITY_IMAGE_WIDTH = 85;
     public static double COIN_IMAGE_HEIGHT = 16;
     public static double COIN_IMAGE_WIDTH = 16;
-    public static double STUDENT_BOARD_START_X = 947;
-    public static double STUDENT_TABLE_START_Y = 150;
-    public static double STUDENT_LOBBY_START_Y = 65;
-    public static double STUDENT_TABLE_VGAP = 27;
+    public static double STUDENT_BOARD_START_X = 942.6;
+    public static double STUDENT_TABLE_START_Y = 146;
+    public static double STUDENT_LOBBY_START_Y = 62;
+    public static double STUDENT_TABLE_VGAP = 26;
     public static double STUDENT_TABLE_HGAP = 39;
-    public static double STUDENT_LOBBY_VGAP = 34;
-    public static double STUDENT_TABLE_WIDTH = 13;
-    public static double STUDENT_TABLE_HEIGHT = 13;
+    public static double STUDENT_LOBBY_VGAP = 32;
+    public static double STUDENT_TABLE_WIDTH = 22;
+    public static double STUDENT_TABLE_HEIGHT = 22;
+    public static double TEACHER_BOARD_WIDTH = 27.57;
+    public static double TEACHER_BOARD_HEIGHT = 24;
+    public static double TEACHER_BOARD_START_X = 939.7;
+    public static double TEACHER_BOARD_START_Y = 431;
     public static final String RESET = "\033[0m";
 
     public static final String RED = "\033[0;31m";
