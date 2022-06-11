@@ -55,6 +55,9 @@ public class GameTableController extends GUIController implements UpdatableContr
     private HashMap<ImageView,ArrayList<ImageView>> islandToStudentsImages;
     private HashMap<ImageView,ArrayList<ImageView>> cloudToStudentsImages;
     private HashMap<ImageView, ArrayList<ImageView>> personalityToStudentsImages;
+    private ArrayList<ImageView> tablesStudents;
+    private ArrayList<ImageView> lobbyStudents;
+    private ArrayList<ImageView> boardTeachers;
     private HashMap<Integer,String> localIDToPlayer; //1 sempre giocatore,2 giocatore in alto,3 giocatore in mezzo (associa all'icona ingame, il nickname)
     private double centerX = 0;
     private double centerY = 0;
@@ -69,6 +72,9 @@ public class GameTableController extends GUIController implements UpdatableContr
             deckButton.setImage(new Image("/graphics/Wizard_"+(gui.getWizard()+1)+".png"));
             parameters = new ArrayList<>();
             deckImages = new ArrayList<>();
+            tablesStudents = new ArrayList<>();
+            lobbyStudents = new ArrayList<>();
+            boardTeachers = new ArrayList<>();
             initialized = true;
 
             sendButton.setOnMouseEntered(e -> sendButton.setEffect(new Bloom()));
@@ -142,7 +148,7 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     private void renderIslands(){
 
-        islandsImages = new ArrayList<>();
+        islandsImages = new ArrayList<>(); //andrà cambiato (vogliamo avere sempre a portata le isole da togliere dalla GUI)
 
         ArrayList<ClientIsland> islands = gui.getIslands();
 
@@ -206,11 +212,26 @@ public class GameTableController extends GUIController implements UpdatableContr
         ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard));
         populateTables(clientBoard);
         populateLobby(clientBoard);
-
+        populateTeachers(clientBoard);
 
 
     }
-
+    private void populateTeachers(ClientBoard clientBoard){
+        int teacherCounter = 0;
+        ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));
+        for(Color teacher : tableColors){
+            if(clientBoard.getTeacherTable().contains(teacher)){
+                ImageView teachersImage = new ImageView("/graphics/"+teacher.toString().toLowerCase()+"_teacher.png");
+                teachersImage.setFitWidth(27);
+                teachersImage.setFitHeight(23);
+                teachersImage.setX(940+teacherCounter*STUDENT_TABLE_HGAP);
+                teachersImage.setY(431);
+                boardTeachers.add(teachersImage);
+                gui.addElementToScene(teachersImage);
+            }
+            teacherCounter++;
+        }
+    }
     private void populateLobby(ClientBoard clientBoard){
         int studentRowCounter = 0;
         int studentColumnCounter = 0;
@@ -225,6 +246,7 @@ public class GameTableController extends GUIController implements UpdatableContr
             studentImage.setOnMouseClicked((MouseEvent e) -> {
                 handleClickEvent(finalStudentIDCounter,Clickable.STUDENT);
             });
+            lobbyStudents.add(studentImage);
             gui.addElementToScene(studentImage);
             if(studentColumnCounter==4 && studentRowCounter == 0){ //fa abbastanza schifo, miglioro appena ho tempo
                 studentColumnCounter=0;
@@ -252,6 +274,7 @@ public class GameTableController extends GUIController implements UpdatableContr
                 studentImage.setOnMouseClicked((MouseEvent e) -> {
                     handleClickEvent(color.getIndex(),Clickable.STUDENT); //come id passa l'index del colore della board
                 });
+                tablesStudents.add(studentImage);
                 gui.addElementToScene(studentImage);
             }
             tableCounter++;
