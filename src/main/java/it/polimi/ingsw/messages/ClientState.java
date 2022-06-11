@@ -144,10 +144,10 @@ public enum ClientState {
         @Override
         public ArrayList<String> getContextMessage(GameBoard GB){
             ArrayList<String> texts = new ArrayList<>();
-            texts.add("Scegli tre studenti da spostare nella table o su un'isola");
-            texts.add("Per esempio digita move studentID1,studentID2,studentID3 in table,2,3 per muovere il primo studente nella table,il secondo sull'isola 2, il terzo sull'isola 3");
+            texts.add("Scegli tre studenti da spostare nella table o su un'isola.");
+            texts.add("Per esempio digita move studentID1,studentID2,studentID3 in table,2,3 per muovere il primo studente nella table,il secondo sull'isola 2, il terzo sull'isola 3.");
             if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
-                texts.add("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
+                texts.add("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio.");
             return texts;
         }
         @Override

@@ -88,6 +88,7 @@ public class GUI extends Application implements UI{
                     System.out.println("Vado nello stato "+currentState);
                     renderScene(); //update scene in funzione del nuovo stato
                     GUIController currentController = controllers.get(stage.getScene());
+                    //forse sarebbe comodo mettere currentController come attributo di gui
                     System.out.println("La scena attuale è "+stage.getScene() + " e il controller "+currentController);
                     if(currentController instanceof UpdatableController){  //Se l'update deve aggiornare anche la scena allora lo fa, altrimenti l'aggiornamento è propagato solo su GB
                         ((UpdatableController) currentController).update();
@@ -96,7 +97,8 @@ public class GUI extends Application implements UI{
                 }
                 else if (message instanceof ErrorMessage){
                     System.out.println("Errore! ");
-                    //gestire errori
+                    //si potrebbe aggiungere all'interfaccia GUIController un metodo handleErrorMessage
+                    // che permette di gestire in maniera diverso il messaggio di errore
                 }
                 else {
                     ((UpdateMessage) message).update(GB); //aggiorna la gameboard

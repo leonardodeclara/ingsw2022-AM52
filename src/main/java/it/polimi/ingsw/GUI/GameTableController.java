@@ -1,15 +1,13 @@
 package it.polimi.ingsw.GUI;
 
-import it.polimi.ingsw.CLI.ClientBoard;
-import it.polimi.ingsw.CLI.ClientCloud;
-import it.polimi.ingsw.CLI.ClientIsland;
-import it.polimi.ingsw.CLI.ClientPersonality;
+import it.polimi.ingsw.CLI.*;
 import it.polimi.ingsw.messages.Message;
 import it.polimi.ingsw.model.Color;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.*;
 import javafx.scene.image.Image;
@@ -31,8 +29,8 @@ import static it.polimi.ingsw.Constants.*;
 //TODO drag n drop per gli studenti (semplifica la costruzione del messaggio)
 //TODO centrare bene gli studenti sulle isole (ruotando il cerchio di una costante)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
-//TODO popolare banPersonality (basta simbolo ban con numero di ban che esce quando ti fermi sopra)
 //TODO centrare bene torri sulla board
+//TODO popolare banPersonality (basta simbolo ban con numero di ban che esce quando ti fermi sopra)
 //TODO "nascondere" board sottostante quando ne mostro un'altra
 
 //per gli spostamenti si avranno dei click/drag n drop che modificano lato client la GUI. Quando poi si fa CONFIRM le modifiche avvengono su server
@@ -47,6 +45,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private int renderedDashboard;
     @FXML private Button sendButton;
     @FXML private TilePane blueTable;
+    @FXML private Label contextMessage;
     private int selectedIslandID = -1;
     private int selectedCloud = -1;
     private int selectedStudent = -1; //relative to island
@@ -142,6 +141,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         if (gui.getGB().isExpertGame())
             renderPersonalityCards();
         populateDashboard();
+        visualizeContextMessage();
         sendButton.setEffect(null); //modo temporaneo per resettare l'effetto generato dal click
         sendButton.toFront();
 
@@ -528,7 +528,11 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     private void renderPlayerButtonName(ImageView playerIcon, String playerName){
         if (playerName==null) return;
-        Text name = new Text(playerName.toUpperCase()+"'S BOARD");
+        Text name;
+        if (playerName.equals(gui.getGB().getNickname()))
+            name = new Text("YOUR BOARD");
+        else
+            name = new Text(playerName.toUpperCase()+"'S BOARD");
         name.setLayoutX(playerIcon.getLayoutX());
         System.out.println("Posizione x del buttone di " + playerName + "è " + playerIcon.getLayoutX());
         name.setLayoutY(playerIcon.getLayoutY()+NAME_TO_BUTTON_VGAP);
@@ -538,6 +542,20 @@ public class GameTableController extends GUIController implements UpdatableContr
         Tooltip message = new Tooltip("CLICK ON THE CIRCLE TO SHOW\n"+playerName.toUpperCase()+"'S BOARD");
         message.setShowDelay(Duration.seconds(0.3));
         Tooltip.install(playerIcon, message);
+    }
+
+    private void visualizeContextMessage(){
+        String messageToShow ="";
+        String messageForToolTip="";
+        List<String> texts= gui.getCurrentState().getContextMessage(gui.getGB());
+        for (String text: texts){
+            messageToShow+=text+" ";
+            messageForToolTip+=text+"\n";
+        }
+        contextMessage.setText(messageToShow);
+        Tooltip fullMessage = new Tooltip(messageForToolTip);
+        fullMessage.setShowDelay(Duration.seconds(0.3));
+        Tooltip.install(contextMessage, fullMessage);
     }
 
     private void handleSelectionEffect(Node n, Clickable type){ //gestisce gli effetti di selezione per ogni clickable (vedremo in futuro se avrà senso averlo così generalizzato)
