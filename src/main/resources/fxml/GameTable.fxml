@@ -37,7 +37,7 @@
       <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="486.0" layoutY="57.0" pickOnBounds="true" preserveRatio="true" />
       <ImageView fitHeight="336.0" fitWidth="548.0" layoutX="757.0" layoutY="198.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
          <image>
-            <Image url="@../graphics/Dashboard.png" />
+            <Image url="@../graphics/board.png" />
          </image>
       </ImageView>
       <TilePane id="blueTable" fx:id="blueTable" layoutX="938.0" layoutY="145.0" prefColumns="1" prefHeight="261.0" prefRows="10" prefWidth="31.0" vgap="15.0" />

@@ -42,6 +42,7 @@ public class Constants {
     public static double STUDENT_IMAGE_WIDTH = 16;
     public static double STUDENTS_ISLAND_CIRCLE_RADIUS = 3;
     public static double STUDENTS_CLOUD_CIRCLE_RADIUS = 12;
+    public static int CLOUD_PERSONALITY_OFFSET = 25;
     public static double ASSISTANT_X = 26;
     public static int ASSISTANT_Y_START = 11;
     public static int ASSISTANT_Y_OFFSET = 46;
@@ -51,8 +52,12 @@ public class Constants {
     public static double PERSONALITY_IMAGE_WIDTH = 85;
     public static double COIN_IMAGE_HEIGHT = 16;
     public static double COIN_IMAGE_WIDTH = 16;
+    public static double STUDENT_BOARD_START_X = 947;
+    public static double STUDENT_TABLE_START_Y = 150;
+    public static double STUDENT_LOBBY_START_Y = 65;
     public static double STUDENT_TABLE_VGAP = 27;
     public static double STUDENT_TABLE_HGAP = 39;
+    public static double STUDENT_LOBBY_VGAP = 34;
     public static double STUDENT_TABLE_WIDTH = 13;
     public static double STUDENT_TABLE_HEIGHT = 13;
     public static final String RESET = "\033[0m";

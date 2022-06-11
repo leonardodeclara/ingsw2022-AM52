@@ -30,7 +30,7 @@ import static it.polimi.ingsw.Constants.*;
 //TODO centrare bene gli studenti sulle isole (ruotando il cerchio di una costante)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
 //TODO popolare banPersonality (basta simbolo ban con numero di ban che esce quando ti fermi sopra)
-//TODO sistemare offset shifting per la popolazione table
+//TODO sistemare offset shifting per la popolazione table (per riprodurre settare numOfStudents = 10 in populateTables)
 
 //per gli spostamenti si avranno dei click/drag n drop che modificano lato client la GUI. Quando poi si fa CONFIRM le modifiche avvengono su server
 //le modifiche lato client non sono tutte lecite lato server, perchè lato client avvengono solo controlli strutturali, non di logica di gioco.
@@ -55,7 +55,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private HashMap<ImageView,ArrayList<ImageView>> islandToStudentsImages;
     private HashMap<ImageView,ArrayList<ImageView>> cloudToStudentsImages;
     private HashMap<ImageView, ArrayList<ImageView>> personalityToStudentsImages;
-    private HashMap<Integer,String> localIDToPlayer; //1 sempre giocatore,2 giocatore in alto,3 giocatore in mezzo
+    private HashMap<Integer,String> localIDToPlayer; //1 sempre giocatore,2 giocatore in alto,3 giocatore in mezzo (associa all'icona ingame, il nickname)
     private double centerX = 0;
     private double centerY = 0;
     private boolean waitTurn = false;
@@ -79,13 +79,16 @@ public class GameTableController extends GUIController implements UpdatableContr
 
             localIDToPlayer = new HashMap<>();
             localIDToPlayer.put(1,gui.getPlayerNickname());
-            int i = 0;
+            System.out.println("Bottone 1 è "+localIDToPlayer.get(1));
+            int i = 2;
             for(String otherPlayer : gui.getOtherPlayers()){
                 localIDToPlayer.put(i,otherPlayer);
                 i++;
             }
+            System.out.println("Bottone 2 è "+localIDToPlayer.get(2));
+            System.out.println("Bottone 3 è "+localIDToPlayer.get(3));
 
-            renderedDashboard = 1;
+            renderedDashboard = 1; //Di default renderizziamo la nostra board
         }
 
     }
@@ -174,14 +177,14 @@ public class GameTableController extends GUIController implements UpdatableContr
         ArrayList<ClientCloud> clouds = gui.getClouds();
         int numClouds = clouds.size();
 
-
+        int personalitiesYOffset = ((gui.getGB().isExpertGame() && gui.getNumOfPlayers()==3) ? CLOUD_PERSONALITY_OFFSET : 0);
         for(ClientCloud cloud : clouds) {
             int i = cloud.getCloudIndex();
             double angle = 2 * i * Math.PI / numClouds ;
             double xOffset = CLOUD_CIRCLE_RADIUS * Math.cos(angle);
             double yOffset = CLOUD_CIRCLE_RADIUS * Math.sin(angle);
             double x = centerX + xOffset ;
-            double y = centerY + yOffset ;
+            double y = centerY + yOffset - personalitiesYOffset;
             ImageView cloudImage = new ImageView("/graphics/cloud"+((i%3)+1)+".png");
             cloudImage.setX(x-CLOUD_IMAGE_WIDTH/2);
             cloudImage.setY(y-CLOUD_IMAGE_HEIGHT/2);
@@ -201,19 +204,51 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     private void populateDashboard(){
         ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard));
+        populateTables(clientBoard);
+        populateLobby(clientBoard);
+
+
+
+    }
+
+    private void populateLobby(ClientBoard clientBoard){
+        int studentRowCounter = 0;
+        int studentColumnCounter = 0;
+        int studentIDCounter = 0; //identificativo studente lobby
+        for(Color student : clientBoard.getLobby()){
+            ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
+            studentImage.setFitWidth(STUDENT_TABLE_WIDTH);
+            studentImage.setFitHeight(STUDENT_TABLE_HEIGHT);
+            studentImage.setX(STUDENT_BOARD_START_X+studentColumnCounter*STUDENT_TABLE_HGAP);
+            studentImage.setY(STUDENT_LOBBY_START_Y+studentRowCounter*STUDENT_LOBBY_VGAP);
+            int finalStudentIDCounter = studentIDCounter; //event handler accetta solo variabili final (lol)
+            studentImage.setOnMouseClicked((MouseEvent e) -> {
+                handleClickEvent(finalStudentIDCounter,Clickable.STUDENT);
+            });
+            gui.addElementToScene(studentImage);
+            if(studentColumnCounter==4 && studentRowCounter == 0){ //fa abbastanza schifo, miglioro appena ho tempo
+                studentColumnCounter=0;
+                studentRowCounter++;
+            }else{
+                studentColumnCounter++;
+            }
+            studentIDCounter++;
+        }
+    }
+
+    private void populateTables(ClientBoard clientBoard){
         int tableCounter = 0;
         ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));
         for(Color color : tableColors){
-            //int numOfStudents = clientBoard.getStudentsTable().get(color);
-            int numOfStudents = 9;
+            int numOfStudents = clientBoard.getStudentsTable().get(color);
             String studentImagePath = "/graphics/"+color.toString().toLowerCase()+"_student.png";
             for(int i = 0; i< numOfStudents;i++){
                 ImageView studentImage = new ImageView(studentImagePath);
                 studentImage.setFitWidth(STUDENT_TABLE_WIDTH);
                 studentImage.setFitHeight(STUDENT_TABLE_HEIGHT);
                 System.out.println("Printo studente nella table"+color+" su (X,Y): "+(947+tableCounter*STUDENT_TABLE_HGAP)+(148+i*STUDENT_TABLE_VGAP));
-                studentImage.setX(947+tableCounter*STUDENT_TABLE_HGAP);
-                studentImage.setY(148+i*STUDENT_TABLE_VGAP);
+                studentImage.setX(STUDENT_BOARD_START_X+tableCounter*STUDENT_TABLE_HGAP);
+                studentImage.setY(STUDENT_TABLE_START_Y+i*STUDENT_TABLE_VGAP);
                 studentImage.setOnMouseClicked((MouseEvent e) -> {
                     handleClickEvent(color.getIndex(),Clickable.STUDENT); //come id passa l'index del colore della board
                 });
@@ -221,10 +256,7 @@ public class GameTableController extends GUIController implements UpdatableContr
             }
             tableCounter++;
         }
-
-
     }
-
     private void renderPersonalityCards(){
         ArrayList<ClientPersonality> cards = gui.getPersonalityCards();
         personalitiesImages = new ArrayList<>();
