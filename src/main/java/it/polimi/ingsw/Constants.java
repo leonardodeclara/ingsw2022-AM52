@@ -64,6 +64,14 @@ public class Constants {
     public static double TEACHER_BOARD_HEIGHT = 24;
     public static double TEACHER_BOARD_START_X = 939.7;
     public static double TEACHER_BOARD_START_Y = 431;
+    public static double TOWER_IMAGE_START_X = 971.6;
+    public static double TOWER_IMAGE_START_Y = 480;
+    public static double TOWER_TABLE_HGAP = 39;
+    public static double TOWER_TABLE_VGAP = 36;
+    public static double NAME_TO_BUTTON_VGAP = 110;
+
+    public static double TOWER_IMAGE_HEIGHT = 40;
+    public static double TOWER_IMAGE_WIDTH = 40;
     public static final String RESET = "\033[0m";
 
     public static final String RED = "\033[0;31m";

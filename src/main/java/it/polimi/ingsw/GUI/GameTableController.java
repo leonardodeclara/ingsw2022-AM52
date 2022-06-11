@@ -16,6 +16,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.TilePane;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.*;
@@ -30,7 +32,8 @@ import static it.polimi.ingsw.Constants.*;
 //TODO centrare bene gli studenti sulle isole (ruotando il cerchio di una costante)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
 //TODO popolare banPersonality (basta simbolo ban con numero di ban che esce quando ti fermi sopra)
-//TODO popolazione torri
+//TODO centrare bene torri sulla board
+//TODO "nascondere" board sottostante quando ne mostro un'altra
 
 //per gli spostamenti si avranno dei click/drag n drop che modificano lato client la GUI. Quando poi si fa CONFIRM le modifiche avvengono su server
 //le modifiche lato client non sono tutte lecite lato server, perchè lato client avvengono solo controlli strutturali, non di logica di gioco.
@@ -93,6 +96,9 @@ public class GameTableController extends GUIController implements UpdatableContr
             }
             System.out.println("Bottone 2 è "+localIDToPlayer.get(2));
             System.out.println("Bottone 3 è "+localIDToPlayer.get(3));
+            renderPlayerButtonName(player1Icon, localIDToPlayer.get(1));
+            renderPlayerButtonName(player2Icon,localIDToPlayer.get(2));
+            renderPlayerButtonName(player3Icon, localIDToPlayer.get(3));
 
             renderedDashboard = 1; //Di default renderizziamo la nostra board
         }
@@ -212,10 +218,10 @@ public class GameTableController extends GUIController implements UpdatableContr
         ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard));
         populateTables(clientBoard);
         populateLobby(clientBoard);
+        populateTowers(clientBoard);
         populateTeachers(clientBoard);
-
-
     }
+
     private void populateTeachers(ClientBoard clientBoard){
         int teacherCounter = 0;
         ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));
@@ -280,6 +286,32 @@ public class GameTableController extends GUIController implements UpdatableContr
             }
             tableCounter++;
         }
+
+    }
+
+    private void populateTowers(ClientBoard clientBoard){
+        int towersCounter = clientBoard.getTowers();
+        int halfTowersCounter = towersCounter/2;
+        double offsetY,offsetX;
+        if (gui.getNumOfPlayers()==3)
+            offsetX=TOWER_TABLE_HGAP;
+        else
+            offsetX=TOWER_TABLE_HGAP*0.75;
+        String towerColor = clientBoard.getTeam().toString().toLowerCase();
+        System.out.println("Il colore della torre è "+ towerColor);
+        for (int i = 0; i<towersCounter;i++){
+            ImageView towerImage = new ImageView("graphics/"+towerColor+"_board_tower.png");
+            towerImage.setFitHeight(TOWER_IMAGE_HEIGHT);
+            towerImage.setFitWidth(TOWER_IMAGE_WIDTH);
+            towerImage.setX(TOWER_IMAGE_START_X +(i%(halfTowersCounter))*offsetX);
+            offsetY= i>=halfTowersCounter? TOWER_TABLE_VGAP: 0;
+            towerImage.setY(TOWER_IMAGE_START_Y + offsetY);
+            towerImage.setPreserveRatio(true);
+            gui.addElementToScene(towerImage); //in teoria le torri non sono clickable perché è tutto automatico
+
+        }
+
+
     }
     private void renderPersonalityCards(){
         ArrayList<ClientPersonality> cards = gui.getPersonalityCards();
@@ -492,6 +524,20 @@ public class GameTableController extends GUIController implements UpdatableContr
             gui.removeElementFromScene(card);
         }
         deckImages.clear();
+    }
+
+    private void renderPlayerButtonName(ImageView playerIcon, String playerName){
+        if (playerName==null) return;
+        Text name = new Text(playerName.toUpperCase()+"'S BOARD");
+        name.setLayoutX(playerIcon.getLayoutX());
+        System.out.println("Posizione x del buttone di " + playerName + "è " + playerIcon.getLayoutX());
+        name.setLayoutY(playerIcon.getLayoutY()+NAME_TO_BUTTON_VGAP);
+        System.out.println("Posizione y del buttone di " + playerName + "è " + playerIcon.getLayoutY());
+        name.setFont(Font.font(15));
+        gui.addElementToScene(name);
+        Tooltip message = new Tooltip("CLICK ON THE CIRCLE TO SHOW\n"+playerName.toUpperCase()+"'S BOARD");
+        message.setShowDelay(Duration.seconds(0.3));
+        Tooltip.install(playerIcon, message);
     }
 
     private void handleSelectionEffect(Node n, Clickable type){ //gestisce gli effetti di selezione per ogni clickable (vedremo in futuro se avrà senso averlo così generalizzato)

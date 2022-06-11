@@ -4,10 +4,7 @@ import it.polimi.ingsw.CLI.*;
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.ClientSocket;
-import it.polimi.ingsw.messages.ClientState;
-import it.polimi.ingsw.messages.ClientStateMessage;
-import it.polimi.ingsw.messages.Message;
-import it.polimi.ingsw.messages.UpdateMessage;
+import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.Tower;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -96,7 +93,12 @@ public class GUI extends Application implements UI{
                         ((UpdatableController) currentController).update();
                         System.out.println("Aggiorno il controller "+currentController);
                     }
-                }else{
+                }
+                else if (message instanceof ErrorMessage){
+                    System.out.println("Errore! ");
+                    //gestire errori
+                }
+                else {
                     ((UpdateMessage) message).update(GB); //aggiorna la gameboard
                 }
             }
