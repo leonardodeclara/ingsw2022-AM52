@@ -1,14 +1,13 @@
 package it.polimi.ingsw.GUI;
 
+import it.polimi.ingsw.CLI.ClientBoard;
 import it.polimi.ingsw.CLI.ClientCloud;
 import it.polimi.ingsw.CLI.ClientIsland;
 import it.polimi.ingsw.CLI.ClientPersonality;
-import it.polimi.ingsw.messages.ClientState;
 import it.polimi.ingsw.messages.Message;
 import it.polimi.ingsw.model.Color;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
@@ -16,8 +15,7 @@ import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Screen;
+import javafx.scene.layout.TilePane;
 import javafx.util.Duration;
 
 import java.util.*;
@@ -32,11 +30,20 @@ import static it.polimi.ingsw.Constants.*;
 //TODO centrare bene gli studenti sulle isole (ruotando il cerchio di una costante)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
 //TODO popolare banPersonality (basta simbolo ban con numero di ban che esce quando ti fermi sopra)
+//TODO sistemare offset shifting per la popolazione table
 
-
+//per gli spostamenti si avranno dei click/drag n drop che modificano lato client la GUI. Quando poi si fa CONFIRM le modifiche avvengono su server
+//le modifiche lato client non sono tutte lecite lato server, perchè lato client avvengono solo controlli strutturali, non di logica di gioco.
+//Questo significa che se si vanno a posizionare degli studenti su un'isola dove non si possono posizionare e si preme CONFIRM, apparirà un messaggio di errore
+//e la board tornerà allo stato precedente all'azione errata dal player (Dato che c'è l'update e lato server non è avvenuta modifica)
 public class GameTableController extends GUIController implements UpdatableController{
+    @FXML public ImageView player2Icon;
+    @FXML public ImageView player3Icon;
+    @FXML public ImageView player1Icon;
     @FXML private ImageView deckButton;
+    private int renderedDashboard;
     @FXML private Button sendButton;
+    @FXML private TilePane blueTable;
     private int selectedIslandID = -1;
     private int selectedCloud = -1;
     private int selectedStudent = -1; //relative to island
@@ -48,6 +55,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private HashMap<ImageView,ArrayList<ImageView>> islandToStudentsImages;
     private HashMap<ImageView,ArrayList<ImageView>> cloudToStudentsImages;
     private HashMap<ImageView, ArrayList<ImageView>> personalityToStudentsImages;
+    private HashMap<Integer,String> localIDToPlayer; //1 sempre giocatore,2 giocatore in alto,3 giocatore in mezzo
     private double centerX = 0;
     private double centerY = 0;
     private boolean waitTurn = false;
@@ -66,7 +74,18 @@ public class GameTableController extends GUIController implements UpdatableContr
             sendButton.setOnMouseEntered(e -> sendButton.setEffect(new Bloom()));
             sendButton.setOnMouseExited(e -> sendButton.setEffect(null));
 
+            if(gui.getNumOfPlayers()==2)
+                player3Icon.setVisible(false);
 
+            localIDToPlayer = new HashMap<>();
+            localIDToPlayer.put(1,gui.getPlayerNickname());
+            int i = 0;
+            for(String otherPlayer : gui.getOtherPlayers()){
+                localIDToPlayer.put(i,otherPlayer);
+                i++;
+            }
+
+            renderedDashboard = 1;
         }
 
     }
@@ -107,7 +126,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         renderDeck();
         if (gui.getGB().isExpertGame())
             renderPersonalityCards();
-
+        populateDashboard();
         sendButton.setEffect(null); //modo temporaneo per resettare l'effetto generato dal click
         sendButton.toFront();
 
@@ -178,6 +197,32 @@ public class GameTableController extends GUIController implements UpdatableContr
             gui.addElementToScene(cloudImage);
         }
         populateClouds(clouds);
+    }
+
+    private void populateDashboard(){
+        ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard));
+        int tableCounter = 0;
+        ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));
+        for(Color color : tableColors){
+            //int numOfStudents = clientBoard.getStudentsTable().get(color);
+            int numOfStudents = 9;
+            String studentImagePath = "/graphics/"+color.toString().toLowerCase()+"_student.png";
+            for(int i = 0; i< numOfStudents;i++){
+                ImageView studentImage = new ImageView(studentImagePath);
+                studentImage.setFitWidth(STUDENT_TABLE_WIDTH);
+                studentImage.setFitHeight(STUDENT_TABLE_HEIGHT);
+                System.out.println("Printo studente nella table"+color+" su (X,Y): "+(947+tableCounter*STUDENT_TABLE_HGAP)+(148+i*STUDENT_TABLE_VGAP));
+                studentImage.setX(947+tableCounter*STUDENT_TABLE_HGAP);
+                studentImage.setY(148+i*STUDENT_TABLE_VGAP);
+                studentImage.setOnMouseClicked((MouseEvent e) -> {
+                    handleClickEvent(color.getIndex(),Clickable.STUDENT); //come id passa l'index del colore della board
+                });
+                gui.addElementToScene(studentImage);
+            }
+            tableCounter++;
+        }
+
+
     }
 
     private void renderPersonalityCards(){
@@ -260,7 +305,6 @@ public class GameTableController extends GUIController implements UpdatableContr
     private void populateBanPersonality(ClientPersonality personality){
     }
 
-    //se il giocatore decide come stress test di mettere 35 studenti su una sola isola o mettiamo un counter dopo una certa soglia (esteticamente orrendo ma quando si superano i tot studenti è l'unico modo)
     private void populateIslands(ArrayList<ClientIsland> islands){
         islandToStudentsImages = new HashMap<>();
         double islandCenterX,islandCenterY;
@@ -430,6 +474,22 @@ public class GameTableController extends GUIController implements UpdatableContr
         }
         else
             System.out.println("Non puoi cliccare "+clickedElement+" se sei in "+gui.getCurrentState());
+    }
+
+
+    public void onPlayer1Click(){
+        renderedDashboard = 1;
+        populateDashboard(); //richiama il render della board
+    }
+
+
+    public void onPlayer2Click(){
+        renderedDashboard = 2;
+        populateDashboard();
+    }
+    public void onPlayer3Click(){
+        renderedDashboard = 3;
+        populateDashboard();
     }
 
     public void setSelectedIslandID(int id){

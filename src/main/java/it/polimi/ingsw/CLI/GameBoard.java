@@ -4,7 +4,6 @@ import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
 
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
 
@@ -15,7 +14,6 @@ public class GameBoard {
     private ArrayList<Integer> availableWizards; //sono 4 e a ogni propagazione diminuiscono
     private ArrayList<Tower> availableTowers;
     private ArrayList<ClientIsland> islands;
-    private ArrayList<String> PlayersNickname;
     private ArrayList<ClientCloud> clouds;
     private HashMap<String,ClientBoard> clientBoards;
     private ArrayList<ClientPersonality> personalities;
@@ -30,7 +28,6 @@ public class GameBoard {
         availableTowers = new ArrayList<>();
         islands = new ArrayList<>();
         clouds = new ArrayList<>();
-        PlayersNickname = new ArrayList<>();
         clientBoards = new HashMap<>();
         personalities = new ArrayList<>();
         availableWizards.add(1);
@@ -45,7 +42,6 @@ public class GameBoard {
         availableTowers = new ArrayList<>();
         islands = new ArrayList<>();
         clouds = new ArrayList<>();
-        PlayersNickname = new ArrayList<>();
         clientBoards = new HashMap<>();
         personalities = new ArrayList<>();
         availableWizards.add(0);
@@ -231,8 +227,10 @@ public class GameBoard {
         return islands;
     }
 
-    public ArrayList<String> getPlayersNickname() {
-        return PlayersNickname;
+    public List<String> getPlayersNicknames() {
+        List<String> players = new ArrayList<String>();
+        players.addAll(clientBoards.keySet());
+        return players;
     }
 
     public ArrayList<ClientCloud> getClouds() {
@@ -318,10 +316,6 @@ public class GameBoard {
 
     public void setIslands(ArrayList<ClientIsland> islands) {
         this.islands = islands;
-    }
-
-    public void setPlayersNickname(ArrayList<String> playersNickname) {
-        PlayersNickname = playersNickname;
     }
 
     public void setClouds(ArrayList<ClientCloud> clouds) {

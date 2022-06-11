@@ -51,6 +51,10 @@ public class Constants {
     public static double PERSONALITY_IMAGE_WIDTH = 85;
     public static double COIN_IMAGE_HEIGHT = 16;
     public static double COIN_IMAGE_WIDTH = 16;
+    public static double STUDENT_TABLE_VGAP = 27;
+    public static double STUDENT_TABLE_HGAP = 39;
+    public static double STUDENT_TABLE_WIDTH = 13;
+    public static double STUDENT_TABLE_HEIGHT = 13;
     public static final String RESET = "\033[0m";
 
     public static final String RED = "\033[0;31m";

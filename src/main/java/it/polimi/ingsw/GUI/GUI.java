@@ -1,9 +1,6 @@
 package it.polimi.ingsw.GUI;
 
-import it.polimi.ingsw.CLI.ClientCloud;
-import it.polimi.ingsw.CLI.ClientIsland;
-import it.polimi.ingsw.CLI.ClientPersonality;
-import it.polimi.ingsw.CLI.GameBoard;
+import it.polimi.ingsw.CLI.*;
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.ClientSocket;
@@ -42,6 +39,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static it.polimi.ingsw.Constants.*;
 
@@ -59,7 +57,6 @@ public class GUI extends Application implements UI{
     private GameBoard GB;
     private ImageView greyOverlay;
     private int wizardID; //andrebbero messe in GameBoard ma è una sbatta
-    private String playerNickname; //andrebbero messe in GameBoard ma è una sbatta
     private Tower team; //andrebbero messe in GameBoard ma è una sbatta
 
     //TODO aggiungere popolazione isole
@@ -280,11 +277,8 @@ public class GUI extends Application implements UI{
         this.team = team;
     }
 
-    public void setPlayerNickname(String nickname){ //chiamato dal controller quando fa send
-        this.playerNickname = nickname;
-    }
-
     public HashMap<Integer,Integer> getDeck(){
+        String playerNickname = GB.getNickname();
         return GB.getClientBoards().get(playerNickname).getDeck();
     }
 
@@ -292,10 +286,25 @@ public class GUI extends Application implements UI{
         return wizardID;
     }
 
+    public String getPlayerNickname(){return GB.getNickname();}
+
+    public void setPlayerNickname(String stringNickname) {
+        GB.setNickname(stringNickname);
+    }
+
+    public List<String> getOtherPlayers(){
+        List<String> players = GB.getPlayersNicknames();
+        players.remove(GB.getNickname());
+        return players;
+    }
+
     public GameBoard getGB() {
         return GB;
     }
 
+    public ClientBoard getPlayerBoard(String playerNickname){
+        return GB.getClientBoards().get(playerNickname);
+    }
     public ArrayList<ClientPersonality> getPersonalityCards(){
         return GB.getPersonalities();
     }
@@ -350,5 +359,6 @@ public class GUI extends Application implements UI{
     public static void main(String[] args) {
         launch(args);
     }
+
 
 }
