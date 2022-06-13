@@ -183,16 +183,14 @@ public class GameHandler implements PropertyChangeListener{
         String clientName = getNicknameFromClientID(client.getID());
         System.out.println("GameHandler:è arrivato un messaggio di playAssistantCard da " + clientName);
         Message response = gameController.updateAssistantCards(clientName, chosenCard); //se il messaggio andava bene il model si è aggiornato dopo questa riga
-        sendTo(clientName, response);
-        //mandiamo il wait turn due volte se per esempio il secondo giocatore gioca una carta con minor priorità
-        //sistemare da qualche parte qui
 
         if (!(response instanceof ErrorMessage)){
             //Message currentTurnCards = gameController.
             //bisogna mandare in broadcast un messaggio con le carte giocate fino ad ora (CurrentTurnAssistantCard)
             // ->cambiarei da come sono state pensate e farei l'aggiornamento carta per carta,si potrebbe usare AssistantDeckUpdate. boh rivedere
-            System.out.println(clientName+ " ha scelto la sua carta, ora lo sto mandando in WAIT_TURN");
+            System.out.println(clientName+ " ha scelto la sua carta, ora lo mando in WAIT_TURN o in MOVE FROM LOBBY");
             if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
+                sendTo(clientName, response);
                 String nextPlayer = playersOrderIterator.next();
                 Message playAssistantCardMessage = new ClientStateMessage(ClientState.PLAY_ASSISTANT_CARD);
                 System.out.println("Siccome " + clientName + " ha finito la sua selezione ora è il turno di " + nextPlayer);
@@ -202,6 +200,7 @@ public class GameHandler implements PropertyChangeListener{
                 startActionPhase();
             }
         }
+        else sendTo(clientName, response);
     }
 
 

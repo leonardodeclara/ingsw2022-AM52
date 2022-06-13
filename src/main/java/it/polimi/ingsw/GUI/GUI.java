@@ -56,12 +56,12 @@ public class GUI extends Application implements UI{
     private int wizardID; //andrebbero messe in GameBoard ma è una sbatta
     private Tower team; //andrebbero messe in GameBoard ma è una sbatta
 
-    //TODO aggiungere popolazione isole
     //TODO aggiungere carte planning phase
     //TODO overlay di selezione intorno ai selezionabili
     //TODO aggiungere pulsanti belli
     //TODO sistemare wait screen (problemi di render order quando togliamo setSceneShouldWait() e lo sostituiamo con enable e disable)
     //TODO aggiungere send di messaggio di Disconnect quando si chiude la finestra
+    //TODO aggiungere schermata ENDGAME
 
     //la GUI si occupa dell'aggiunta e rimozione degli elementi dinamici (compreso wait screen). lo facciamo qui per una questione di duplicazione codice
     //dato che abbiamo almeno 3 controller che sfruttano i metodi di aggiunta e rimozione.

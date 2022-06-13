@@ -24,7 +24,7 @@ import static it.polimi.ingsw.Constants.*;
 
 //TODO aggiungere effetti di selezione
 //TODO sistemare bene sistema di selezione e pulire action parser dei vecchi parseTower, parseWizard ecc... (ora sono inutili)
-
+//TODO aggiungere associazione giocatore-carta assistente
 //TODO gridpanel per la table così da non dover mettere un controllo (altrimenti si potranno mettere 150 studenti nella table)
 //TODO drag n drop per gli studenti (semplifica la costruzione del messaggio)
 //TODO centrare bene gli studenti sulle isole (ruotando il cerchio di una costante)
@@ -38,9 +38,9 @@ import static it.polimi.ingsw.Constants.*;
 //Questo significa che se si vanno a posizionare degli studenti su un'isola dove non si possono posizionare e si preme CONFIRM, apparirà un messaggio di errore
 //e la board tornerà allo stato precedente all'azione errata dal player (Dato che c'è l'update e lato server non è avvenuta modifica)
 public class GameTableController extends GUIController implements UpdatableController{
+    @FXML public ImageView player1Icon;
     @FXML public ImageView player2Icon;
     @FXML public ImageView player3Icon;
-    @FXML public ImageView player1Icon;
     @FXML private ImageView deckButton;
     private int renderedDashboard;
     @FXML private Button sendButton;
@@ -50,6 +50,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private int selectedCloud = -1;
     private int selectedStudent = -1; //relative to island
     private int selectedAssistant = -1; //priority
+    private int selectedPersonality = -1;
     private ArrayList<ImageView> islandsImages;
     private ArrayList<ImageView> cloudsImages;
     private ArrayList<ImageView> deckImages;
@@ -119,6 +120,8 @@ public class GameTableController extends GUIController implements UpdatableContr
             parameters.add(selectedIslandID);
         if(selectedCloud!=-1)
             parameters.add(selectedCloud);
+        if (selectedPersonality!=-1)
+            parameters.add(selectedPersonality);
 
         if(parameters.size() > 0){ //se qualcosa è stato selezionato
             Message message = client.buildMessageFromPlayerInput(actionParser.parse(gui.getCurrentState(),parameters), gui.getCurrentState());
@@ -177,6 +180,13 @@ public class GameTableController extends GUIController implements UpdatableContr
                 //setSelectedIslandID(i);
                 //System.out.println("Hai cliccato sull'isola "+selectedIslandID);
             });
+            islandImage.setOnMouseEntered((MouseEvent e) -> {
+                handleHoverEvent(islandImage, Clickable.ISLAND);
+            });
+            islandImage.setOnMouseExited((MouseEvent e) -> {
+                if (islandImage.getEffect()==null || !(DropShadow.class).equals(islandImage.getEffect().getClass())) //rivedere, qui il comportamento è lo stesso delle carte personaggio
+                    islandImage.setEffect(null);
+            });
             islandsImages.add(islandImage);
             gui.addElementToScene(islandImage);
         }
@@ -207,6 +217,13 @@ public class GameTableController extends GUIController implements UpdatableContr
                 handleClickEvent(i,Clickable.CLOUD);
                 //setSelectedCloud(i);
                 //System.out.println("Hai cliccato sulla nuvola "+selectedCloud);
+            });
+            cloudImage.setOnMouseEntered((MouseEvent e) -> {
+                handleHoverEvent(cloudImage, Clickable.CLOUD);
+            });
+            cloudImage.setOnMouseExited((MouseEvent e) -> {
+                if (cloudImage.getEffect()==null || !(DropShadow.class).equals(cloudImage.getEffect().getClass())) //rivedere, qui il comportamento è lo stesso delle carte personaggio
+                    cloudImage.setEffect(null);
             });
             cloudsImages.add(cloudImage);
             gui.addElementToScene(cloudImage);
@@ -249,8 +266,16 @@ public class GameTableController extends GUIController implements UpdatableContr
             studentImage.setX(STUDENT_BOARD_START_X+studentColumnCounter*STUDENT_TABLE_HGAP);
             studentImage.setY(STUDENT_LOBBY_START_Y+studentRowCounter*STUDENT_LOBBY_VGAP);
             int finalStudentIDCounter = studentIDCounter; //event handler accetta solo variabili final (lol)
+            //se si mantiene la stessa scelta di effetti per tutti gli oggetti clickable questi tre metodi possono finire in un unico metodo
             studentImage.setOnMouseClicked((MouseEvent e) -> {
                 handleClickEvent(finalStudentIDCounter,Clickable.STUDENT);
+            });
+            studentImage.setOnMouseEntered((MouseEvent e) -> {
+                handleHoverEvent(studentImage, Clickable.STUDENT);
+            });
+            studentImage.setOnMouseExited((MouseEvent e) -> {
+                if (studentImage.getEffect()==null || !(DropShadow.class).equals(studentImage.getEffect().getClass())) //rivedere, qui il comportamento è lo stesso delle carte personaggio
+                    studentImage.setEffect(null);
             });
             lobbyStudents.add(studentImage);
             gui.addElementToScene(studentImage);
@@ -403,7 +428,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         banImage.setPreserveRatio(true);
         banImage.setFitHeight(BAN_IMAGE_HEIGHT);
         banImage.setFitWidth(BAN_IMAGE_WIDTH);
-        Tooltip numOfBanTiles = new Tooltip((banCount+" BAN AVAILABLE"));
+        Tooltip numOfBanTiles = new Tooltip(("AVAILABLE BANS: "+banCount));
         numOfBanTiles.setShowDelay(Duration.seconds(0.3));
         Tooltip.install(banImage, numOfBanTiles);
         gui.addElementToScene(banImage);
@@ -555,7 +580,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         System.out.println("Posizione y del buttone di " + playerName + "è " + playerIcon.getLayoutY());
         name.setFont(Font.font(15));
         gui.addElementToScene(name);
-        Tooltip message = new Tooltip("CLICK ON THE CIRCLE TO SHOW\n"+playerName.toUpperCase()+"'S BOARD");
+        Tooltip message = new Tooltip("CLICK ON THE CIRCLE TO SHOW "+playerName.toUpperCase()+"'S BOARD");
         message.setShowDelay(Duration.seconds(0.3));
         Tooltip.install(playerIcon, message);
     }
@@ -602,16 +627,24 @@ public class GameTableController extends GUIController implements UpdatableContr
                     System.out.println("Hai cliccato sulla carta "+selectedAssistant);
                 }
                 case STUDENT -> {}
-                case ISLAND -> {}
-                case CLOUD -> {}
-                case PERSONALITY -> {}
+                case ISLAND -> {
+                    setSelectedIslandID(id);
+                    System.out.println("Hai cliccato sull'isola "+selectedIslandID);
+                }
+                case CLOUD -> {
+                    setSelectedCloud(id);
+                    System.out.println("Hai cliccato sull'isola "+selectedIslandID);
+                }
+                case PERSONALITY -> {
+                    setSelectedPersonality(id);
+                    System.out.println("Hai cliccato sulla carta personaggio ");
+                }
 
             }
         }
         else
             System.out.println("Non puoi cliccare "+clickedElement+" se sei in "+gui.getCurrentState());
     }
-
 
     public void onPlayer1Click(){
         renderedDashboard = 1;
@@ -643,5 +676,8 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     public void setSelectedAssistant(int priority){
         selectedAssistant = priority;
+    }
+    private void setSelectedPersonality(int personalityId) {
+        selectedPersonality = personalityId;
     }
 }
