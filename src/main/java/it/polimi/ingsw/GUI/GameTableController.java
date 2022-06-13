@@ -30,8 +30,8 @@ import static it.polimi.ingsw.Constants.*;
 //TODO centrare bene gli studenti sulle isole (ruotando il cerchio di una costante)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
 //TODO centrare bene torri sulla board
-//TODO popolare banPersonality (basta simbolo ban con numero di ban che esce quando ti fermi sopra)
 //TODO "nascondere" board sottostante quando ne mostro un'altra
+//TODO popolare isole con torri e MN
 
 //per gli spostamenti si avranno dei click/drag n drop che modificano lato client la GUI. Quando poi si fa CONFIRM le modifiche avvengono su server
 //le modifiche lato client non sono tutte lecite lato server, perchè lato client avvengono solo controlli strutturali, non di logica di gioco.
@@ -344,11 +344,13 @@ public class GameTableController extends GUIController implements UpdatableContr
                 gui.addElementToScene(coinImage);
             }
             if (card.getStudents()!=null && card.getStudents().size()>0){
-                System.out.println("aggiungere immagini degli studenti alla carta "+cardId);
+                System.out.println("aggiungo immagini degli studenti alla carta "+cardId);
                 populateLobbyPersonality(card,cardImage);
             }
-            else if (card.getBans()!=0)
-                System.out.println("aggiungere immagini dei ban alla carta " +cardId);
+            else if (card.getBans()!=0){
+                System.out.println("aggiungo immagini dei ban alla carta " +cardId);
+                populateBanPersonality(card,cardImage);
+            }
             i++;
 
         }
@@ -384,13 +386,27 @@ public class GameTableController extends GUIController implements UpdatableContr
             });
             gui.addElementToScene(studentImage);
             studentImage.toFront();
-            System.out.println("Aggiunto studente "+student.toString());
+            System.out.println("Aggiunto studente "+student);
             cardStudentsImages.add(studentImage);
         }
         personalityToStudentsImages.put(clientCard,cardStudentsImages);
+
     }
 
-    private void populateBanPersonality(ClientPersonality personality){
+    private void populateBanPersonality(ClientPersonality personality, ImageView clientCard){
+        double startY = clientCard.getY()+PERSONALITY_IMAGE_HEIGHT*0.65;
+        double startX = clientCard.getX()+PERSONALITY_IMAGE_WIDTH/2;
+        int banCount = personality.getBans();
+        ImageView banImage = new ImageView("/graphics/deny_island_icon.png");
+        banImage.setX(startX-BAN_IMAGE_WIDTH/2);
+        banImage.setY(startY);
+        banImage.setPreserveRatio(true);
+        banImage.setFitHeight(BAN_IMAGE_HEIGHT);
+        banImage.setFitWidth(BAN_IMAGE_WIDTH);
+        Tooltip numOfBanTiles = new Tooltip((banCount+" BAN AVAILABLE"));
+        numOfBanTiles.setShowDelay(Duration.seconds(0.3));
+        Tooltip.install(banImage, numOfBanTiles);
+        gui.addElementToScene(banImage);
     }
 
     private void populateIslands(ArrayList<ClientIsland> islands){

@@ -69,9 +69,10 @@ public class Constants {
     public static double TOWER_TABLE_HGAP = 39;
     public static double TOWER_TABLE_VGAP = 36;
     public static double NAME_TO_BUTTON_VGAP = 110;
-
     public static double TOWER_IMAGE_HEIGHT = 40;
     public static double TOWER_IMAGE_WIDTH = 40;
+    public static double BAN_IMAGE_HEIGHT = 30;
+    public static double BAN_IMAGE_WIDTH = 30;
     public static final String RESET = "\033[0m";
 
     public static final String RED = "\033[0;31m";

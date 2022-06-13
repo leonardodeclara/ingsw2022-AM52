@@ -180,7 +180,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return null;
+            return new ArrayList(List.of(Clickable.ISLAND));
         }
     }, PICK_CLOUD(0){
         @Override
@@ -201,7 +201,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return null;
+            return new ArrayList(List.of(Clickable.CLOUD));
         }
     }, END_TURN(0){
         @Override
@@ -257,7 +257,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return null;
+            return new ArrayList(List.of(Clickable.ISLAND));
         }
     },
     CHOOSE_ISLAND_FOR_CARD_5(5){
@@ -276,7 +276,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return null;
+            return new ArrayList(List.of(Clickable.ISLAND));
         }
     },SWAP_STUDENTS_FOR_CARD_7(7){
         @Override
@@ -312,7 +312,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return null;
+            return new ArrayList(List.of(Clickable.STUDENT)); //TODO: rivedere come selezionare colore
         }
     },CHOOSE_STUDENTS_FOR_CARD_10(10){
         @Override
@@ -330,7 +330,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return null;
+            return new ArrayList(List.of(Clickable.STUDENT));
         }
     },
     CHOOSE_STUDENT_FOR_CARD_11(11){
@@ -349,7 +349,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return null;
+            return new ArrayList(List.of(Clickable.STUDENT));
         }
     },CHOOSE_COLOR_FOR_CARD_12(12){
         @Override
@@ -367,7 +367,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return null;
+            return new ArrayList(List.of(Clickable.STUDENT)); //TODO: rivedere come selezionare colore
         }
     }, END_GAME(0){
         @Override

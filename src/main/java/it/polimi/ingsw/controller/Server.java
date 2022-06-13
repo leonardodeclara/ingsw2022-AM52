@@ -2,10 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.messages.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * Server class is the main class on the server side: it manages the connection's setup phase up to the game's start;
@@ -18,7 +15,7 @@ public class Server {
     private ArrayList<Lobby> lobbies;
     private HashMap<String, GameHandler> playerToGameMap;
     private ArrayList<GameHandler> gameHandlers;
-    int clientHandlerCounter; //assegna gli id ai clientHandler
+    private int clientHandlerCounter; //assegna gli id ai clientHandler
 
     public Server(){
         idToNicknameMap= new HashMap<>();
@@ -184,7 +181,7 @@ public class Server {
      */
     public boolean isNicknameAvailable(String nickname){
         for (Map.Entry<Integer,String> entry: idToNicknameMap.entrySet())
-            if (entry.getValue().equals(nickname))
+            if (entry.getValue().equalsIgnoreCase(nickname))
                 return false;
         return true;
     }
