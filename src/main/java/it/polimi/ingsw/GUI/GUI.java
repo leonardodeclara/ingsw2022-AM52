@@ -309,6 +309,7 @@ public class GUI extends Application implements UI{
     public ClientBoard getPlayerBoard(String playerNickname){
         return GB.getClientBoards().get(playerNickname);
     }
+    public ClientBoard getOwningPlayerBoard(){return GB.getOwningPlayerClientBoard();}
     public ArrayList<ClientPersonality> getPersonalityCards(){
         return GB.getPersonalities();
     }

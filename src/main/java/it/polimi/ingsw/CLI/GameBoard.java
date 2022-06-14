@@ -240,6 +240,7 @@ public class GameBoard {
     public HashMap<String,ClientBoard> getClientBoards() {
         return clientBoards;
     }
+    public ClientBoard getOwningPlayerClientBoard(){return clientBoards.get(nickname);}
 
     public ArrayList<ClientPersonality> getPersonalities() {
         return personalities;
