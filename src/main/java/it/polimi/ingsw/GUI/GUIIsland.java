@@ -31,6 +31,8 @@ public class GUIIsland{
     private HashMap<Color,Long> numOfStudents;
     private HashMap<Color,Tooltip> tooltips;
 
+//TODO sistemare range cerchio quando si aggiungono studenti lato client
+
     public GUIIsland(int index,double x,double y,double width,double height,GameTableController controller,GUI gui){
         islandImage = new ImageView("/graphics/island"+((index%3)+1)+".png");
         this.index = index;

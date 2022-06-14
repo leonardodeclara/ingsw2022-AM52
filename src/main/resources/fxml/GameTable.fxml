@@ -34,12 +34,12 @@
             <Image url="@../graphics/cerchi.png" />
          </image>
       </ImageView>
-      <ImageView id="tableButton" fx:id="tableButton" fitHeight="266.0" fitWidth="185.0" layoutX="939.0" layoutY="139.0" pickOnBounds="true" preserveRatio="true" />
       <ImageView fitHeight="336.0" fitWidth="548.0" layoutX="757.0" layoutY="198.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
          <image>
             <Image url="@../graphics/board.png" />
          </image>
       </ImageView>
       <Label id="contextMessage" fx:id="contextMessage" layoutX="670.0" layoutY="595.0" prefHeight="51.0" prefWidth="466.0" />
+      <ImageView id="tableBounds" fx:id="tableBounds" fitHeight="285.0" fitWidth="223.0" layoutX="920.0" layoutY="132.0" pickOnBounds="true" preserveRatio="true" />
    </children>
 </AnchorPane>

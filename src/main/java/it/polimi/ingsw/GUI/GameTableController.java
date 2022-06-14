@@ -23,26 +23,19 @@ import java.util.*;
 
 import static it.polimi.ingsw.Constants.*;
 
-//TODO aggiungere effetti di selezione
 //TODO sistemare bene sistema di selezione e pulire action parser dei vecchi parseTower, parseWizard ecc... (ora sono inutili)
 //TODO aggiungere associazione giocatore-carta assistente
 //TODO drag n drop per gli studenti (semplifica la costruzione del messaggio)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
 //TODO popolare banPersonality (basta simbolo ban con numero di ban che esce quando ti fermi sopra)
-
-//TODO "nascondere" board sottostante quando ne mostro un'altra
-//TODO popolare isole con torri e MN
-
-//i drag event devono chiamare un handleDragEvent che si assicura che le condizioni del drag siano verificate ossia:
-//si devono poter spostare solo x studenti
-//si devono salvare le eventuali informazioni dello spostamento
-//inoltre serve un piccolo utility method per aggiungere uno studente a un'isola graficamente da chiamare quando il drop è rilasciato
-
+//TODO drag a vuoto non deve far nulla
+//TODO move from lobby per la table
 
 public class GameTableController extends GUIController implements UpdatableController{
     @FXML public ImageView player1Icon;
     @FXML public ImageView player2Icon;
     @FXML public ImageView player3Icon;
+    @FXML public ImageView tableBounds;
     @FXML private ImageView deckButton;
     private int renderedDashboard;
     @FXML private Button sendButton;
@@ -334,7 +327,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         int tableCounter = 0;
         ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));
         for(Color color : tableColors){
-            int numOfStudents = clientBoard.getStudentsTable().get(color);
+            int numOfStudents = clientBoard.getStudentsTable().get(color); //sostituire con array modificabile client side
             //int numOfStudents = 10; test
             String studentImagePath = "/graphics/"+color.toString().toLowerCase()+"_student.png";
             for(int i = 0; i< numOfStudents;i++){
