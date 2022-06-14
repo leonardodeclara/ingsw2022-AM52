@@ -93,10 +93,12 @@ public class GUIIsland{
                 if (db.hasString()) { //per generalizzarlo avremo una variabile draggedElement così che qui sappiamo cosa sta venendo rilasciato
                     //per ora creiamo solo il caso specifico di move from lobby
                     ClientBoard clientBoard = gui.getOwningPlayerBoard();
-                    Color student  = clientBoard.getLobby().get(Integer.parseInt(db.getString())); //prendo il colore
+                    int studentID = Integer.parseInt(db.getString());
+                    Color student  = clientBoard.getLobby().get(studentID); //prendo il colore
                     addStudentToIsland(student);
                     success = true;
                     System.out.println("Drop sull'isola "+index);
+                    controller.addSelectedStudent(studentID,index);
                 }
                 event.setDropCompleted(success);
 

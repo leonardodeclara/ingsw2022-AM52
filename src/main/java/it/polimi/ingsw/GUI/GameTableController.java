@@ -26,11 +26,8 @@ import static it.polimi.ingsw.Constants.*;
 //TODO aggiungere effetti di selezione
 //TODO sistemare bene sistema di selezione e pulire action parser dei vecchi parseTower, parseWizard ecc... (ora sono inutili)
 //TODO aggiungere associazione giocatore-carta assistente
-//TODO gridpanel per la table così da non dover mettere un controllo (altrimenti si potranno mettere 150 studenti nella table)
 //TODO drag n drop per gli studenti (semplifica la costruzione del messaggio)
-//TODO centrare bene gli studenti sulle isole (ruotando il cerchio di una costante)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
-//TODO centrare bene torri sulla board
 //TODO popolare banPersonality (basta simbolo ban con numero di ban che esce quando ti fermi sopra)
 
 //TODO "nascondere" board sottostante quando ne mostro un'altra
@@ -53,7 +50,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     @FXML private Label contextMessage;
     private int selectedCloud = -1;
     private ArrayList<Integer> selectedLobbyStudents;
-    private ArrayList<Integer> selectedIslands;
+    private ArrayList<Integer> selectedStudentsDestinations;
     private int selectedAssistant = -1; //priority
     private int selectedPersonality = -1;
     private ArrayList<ImageView> islandsImages;
@@ -72,7 +69,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private double centerY = 0;
     private boolean waitTurn = false;
     private boolean initialized = false;
-    private ArrayList<Integer> parameters;
+    private ArrayList<Object> parameters;
 
     public void start(){ //metodo di inizializzazione chiamato da GUI. In alcune situazioni viene chiamato due volte ma noi dobbiamo inizializzare una volta sola
         if(!initialized){ //sarebbe meglio spostare questo controllo sulla GUI e generalizzarlo
@@ -86,6 +83,7 @@ public class GameTableController extends GUIController implements UpdatableContr
             boardTeachers = new ArrayList<>();
             boardTowers = new ArrayList<>();
             selectedLobbyStudents = new ArrayList<>();
+            selectedStudentsDestinations = new ArrayList<>();
             initialized = true;
 
             sendButton.setOnMouseEntered(e -> sendButton.setEffect(new Bloom()));
@@ -126,17 +124,17 @@ public class GameTableController extends GUIController implements UpdatableContr
         sendButton.setEffect(new DropShadow());
         if(selectedAssistant!=-1)
             parameters.add(selectedAssistant);
-        //if(selectedLobbyStudents.size() > 0)
-            //parameters.add(selectedLobbyStudents);
-        //if(selectedIslandID!=-1)
-          //  parameters.add(selectedIslandID);
+        if(selectedLobbyStudents.size() > 0)
+            parameters.add(selectedLobbyStudents);
+        if(selectedStudentsDestinations.size() > 0)
+            parameters.add(selectedStudentsDestinations);
         if(selectedCloud!=-1)
             parameters.add(selectedCloud);
         if (selectedPersonality!=-1)
             parameters.add(selectedPersonality);
 
         if(parameters.size() > 0){ //se qualcosa è stato selezionato
-            Message message = client.buildMessageFromPlayerInput(actionParser.parse(gui.getCurrentState(),parameters), gui.getCurrentState());
+            Message message = client.buildMessageFromPlayerInput(parameters, gui.getCurrentState());
             gui.passToSocket(message);
             //dopo send deseleziona tutto
             setSelectedAssistant(-1);
@@ -291,13 +289,15 @@ public class GameTableController extends GUIController implements UpdatableContr
             */
             if(clientBoard.equals(gui.getOwningPlayerBoard())){
                 studentImage.setOnDragDetected((MouseEvent e) -> {
-                    Dragboard db = studentImage.startDragAndDrop(TransferMode.MOVE);
+                    if(actionParser.canClick(gui.getCurrentState(),Clickable.LOBBY_STUDENT)){
+                        Dragboard db = studentImage.startDragAndDrop(TransferMode.MOVE);
 
-                    ClipboardContent content = new ClipboardContent();
-                    content.putString(Integer.toString(finalStudentIDCounter));
-                    db.setContent(content);
-                    System.out.println("Inizio il drag event per "+finalStudentIDCounter);
-                    e.consume();
+                        ClipboardContent content = new ClipboardContent();
+                        content.putString(Integer.toString(finalStudentIDCounter));
+                        db.setContent(content);
+                        System.out.println("Inizio il drag event per "+finalStudentIDCounter);
+                        e.consume();
+                    }
                 });
                 studentImage.setOnDragDone(new EventHandler<DragEvent>() {
                     public void handle(DragEvent event) {
@@ -683,6 +683,7 @@ public class GameTableController extends GUIController implements UpdatableContr
                 n.setEffect(bloom);}
         }
     }
+
     public void handleClickEvent(int id,Clickable clickedElement){
         if(actionParser.canClick(gui.getCurrentState(),clickedElement)){
             switch(clickedElement){
@@ -744,5 +745,10 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
     private void setSelectedPersonality(int personalityId) {
         selectedPersonality = personalityId;
+    }
+
+    public void addSelectedStudent(int studentID,int destID){
+        selectedLobbyStudents.add(studentID);
+        selectedStudentsDestinations.add(destID);
     }
 }
