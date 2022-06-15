@@ -246,6 +246,13 @@ public class GameBoard {
         return personalities;
     }
 
+    public ClientPersonality getPersonalityById(int cardId){
+        for (ClientPersonality personality: personalities)
+            if (personality.getCardID()==cardId)
+                return personality;
+        return null;
+    }
+
     public int getCoins() {
         return coins;
     }

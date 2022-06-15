@@ -14,17 +14,17 @@ import java.util.HashMap;
 import static it.polimi.ingsw.Constants.*;
 
 public class GUIBoard {
-    ClientBoard clientBoard;
-    GUI gui;
-    GameTableController controller;
-    String playerName;
-    ArrayList<ImageView> teachersImages;
-    ArrayList<ImageView> towersImages;
-    ArrayList<ImageView> tableStudentsImages;
-    ArrayList<ImageView> lobbyStudentsImages;
-    ImageView tableBounds;
-    HashMap<Color,Integer> numOfStudentsOnTable;
-    ArrayList<Color> studentsInLobby;
+    private ClientBoard clientBoard;
+    private GUI gui;
+    private GameTableController controller;
+    private String playerName;
+    private ArrayList<ImageView> teachersImages;
+    private ArrayList<ImageView> towersImages;
+    private ArrayList<ImageView> tableStudentsImages;
+    private ArrayList<ImageView> lobbyStudentsImages;
+    private ImageView tableBounds;
+    private HashMap<Color,Integer> numOfStudentsOnTable;
+    private ArrayList<Color> studentsInLobby;
 
     public GUIBoard(ClientBoard clientBoard,GUI gui,GameTableController controller,ImageView tableBounds){
         this.clientBoard = clientBoard;

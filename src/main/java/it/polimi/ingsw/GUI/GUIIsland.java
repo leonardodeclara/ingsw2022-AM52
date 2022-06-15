@@ -59,6 +59,7 @@ public class GUIIsland{
     public void setSize(double width, double height){
         islandImage.setFitHeight(height);
         islandImage.setFitWidth(width);
+        islandImage.setPreserveRatio(true);
     }
 
     private void setCenter(){
@@ -67,6 +68,7 @@ public class GUIIsland{
             centerY = islandImage.getY()+ISLAND_IMAGE_HEIGHT/2;
         }
     }
+
     public void setEvents(){
         islandImage.setOnMouseClicked((MouseEvent e) -> {
             controller.handleClickEvent(index,Clickable.ISLAND);
@@ -107,6 +109,7 @@ public class GUIIsland{
                 event.consume();
             }
         });
+
     }
 
     private void addStudentToIsland(Color student){
@@ -121,8 +124,7 @@ public class GUIIsland{
 
     }
     private void initializeNumOfStudents(){
-        ArrayList<ClientIsland> islands = gui.getIslands();
-        ClientIsland clientIsland = islands.get(index);
+        ClientIsland clientIsland = gui.getGB().getIslandByIndex(index);
         List<Color> distinctStudents = clientIsland.getStudents().stream().distinct().toList();
         for(Color student : distinctStudents){
             long numberOfStudents = clientIsland.getStudents()

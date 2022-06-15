@@ -27,7 +27,6 @@ import static it.polimi.ingsw.Constants.*;
 //TODO aggiungere associazione giocatore-carta assistente
 //TODO drag n drop per gli studenti (semplifica la costruzione del messaggio)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
-//TODO popolare banPersonality (basta simbolo ban con numero di ban che esce quando ti fermi sopra)
 //TODO sistemare visualizzazione sulle isole quando si hanno 2 colori (angle va cambiato)
 //TODO creare un sistema che sappia quanti elementi puoi toccare e ti impedisca di toccarne di più (move from lobby 3 studenti fisso, alcune carte min 1 max 3)
 
@@ -45,10 +44,10 @@ public class GameTableController extends GUIController implements UpdatableContr
     private ArrayList<Integer> selectedStudentsDestinations;
     private int selectedAssistant = -1; //priority
     private int selectedPersonality = -1;
-    private ArrayList<ImageView> cloudsImages;
+    //private ArrayList<ImageView> cloudsImages;
     private ArrayList<ImageView> deckImages;
     private ArrayList<ImageView> personalitiesImages;
-    private HashMap<ImageView,ArrayList<ImageView>> cloudToStudentsImages;
+    //private HashMap<ImageView,ArrayList<ImageView>> cloudToStudentsImages;
     private HashMap<ImageView, ArrayList<ImageView>> personalityToStudentsImages;
     private GUIBoard currentBoard;
     private HashMap<Integer,String> localIDToPlayer; //1 sempre giocatore,2 giocatore in alto,3 giocatore in mezzo (associa all'icona ingame, il nickname)
@@ -191,40 +190,20 @@ public class GameTableController extends GUIController implements UpdatableContr
     */
 
     private void renderClouds(){
-        cloudsImages = new ArrayList<>();
         ArrayList<ClientCloud> clouds = gui.getClouds();
         int numClouds = clouds.size();
-
         int personalitiesYOffset = ((gui.getGB().isExpertGame() && gui.getNumOfPlayers()==3) ? CLOUD_PERSONALITY_OFFSET : 0);
-        for(ClientCloud cloud : clouds) {
+        for (ClientCloud cloud : clouds) {
             int i = cloud.getCloudIndex();
             double angle = 2 * i * Math.PI / numClouds ;
             double xOffset = CLOUD_CIRCLE_RADIUS * Math.cos(angle);
             double yOffset = CLOUD_CIRCLE_RADIUS * Math.sin(angle);
             double x = centerX + xOffset ;
             double y = centerY + yOffset - personalitiesYOffset;
-            ImageView cloudImage = new ImageView("/graphics/cloud"+((i%3)+1)+".png");
-            cloudImage.setX(x-CLOUD_IMAGE_WIDTH/2);
-            cloudImage.setY(y-CLOUD_IMAGE_HEIGHT/2);
-            cloudImage.setPreserveRatio(true);
-            cloudImage.setFitHeight(CLOUD_IMAGE_HEIGHT);
-            cloudImage.setFitWidth(CLOUD_IMAGE_WIDTH);
-            cloudImage.setOnMouseClicked((MouseEvent e) -> {
-                handleClickEvent(i,Clickable.CLOUD);
-                //setSelectedCloud(i);
-                //System.out.println("Hai cliccato sulla nuvola "+selectedCloud);
-            });
-            cloudImage.setOnMouseEntered((MouseEvent e) -> {
-                handleHoverEvent(cloudImage, Clickable.CLOUD);
-            });
-            cloudImage.setOnMouseExited((MouseEvent e) -> {
-                if (cloudImage.getEffect()==null || !(DropShadow.class).equals(cloudImage.getEffect().getClass())) //rivedere, qui il comportamento è lo stesso delle carte personaggio
-                    cloudImage.setEffect(null);
-            });
-            cloudsImages.add(cloudImage);
-            gui.addElementToScene(cloudImage);
+            GUICloud guiCloud = new GUICloud(i, x-CLOUD_IMAGE_WIDTH/2,y-CLOUD_IMAGE_HEIGHT/2,CLOUD_IMAGE_WIDTH,CLOUD_IMAGE_HEIGHT,this,gui);
+            guiCloud.setEvents();
+            guiCloud.render();
         }
-        populateClouds(clouds);
     }
 
     private void populateDashboard(){
@@ -252,129 +231,11 @@ public class GameTableController extends GUIController implements UpdatableContr
             int cardId = card.getCardID();
             System.out.println("GameTableController: renderizzo la carta personaggio "+cardId);
             cardY = centerY + ISLAND_IMAGE_HEIGHT*1.1; //scelta a caso
-            cardX= centerX -PERSONALITY_IMAGE_WIDTH + i*PERSONALITY_IMAGE_WIDTH;
-            ImageView cardImage = new ImageView("/graphics/personality_"+cardId+".jpg");
-            cardImage.setX(cardX-PERSONALITY_IMAGE_WIDTH/2);
-            cardImage.setY(cardY-PERSONALITY_IMAGE_HEIGHT/2);
-            cardImage.setFitHeight(PERSONALITY_IMAGE_HEIGHT);
-            cardImage.setFitWidth(PERSONALITY_IMAGE_WIDTH);
-            cardImage.setPreserveRatio(true);
-            cardImage.setOnMouseClicked((MouseEvent e)-> handleClickEvent(cardId,Clickable.PERSONALITY));
-            personalitiesImages.add(cardImage);
-            gui.addElementToScene(cardImage);
-            if (card.isHasBeenUsed()){
-                ImageView coinImage = new ImageView("graphics/coin.png");
-                double coinX = cardImage.getX()+PERSONALITY_IMAGE_WIDTH/2;
-                double coinY = cardImage.getY()+PERSONALITY_IMAGE_HEIGHT/2;
-                coinImage.setX(coinX-COIN_IMAGE_WIDTH/2);
-                coinImage.setY(coinY-COIN_IMAGE_HEIGHT/2);
-                coinImage.setFitWidth(COIN_IMAGE_WIDTH);
-                coinImage.setFitHeight(COIN_IMAGE_HEIGHT);
-                coinImage.setPreserveRatio(true);
-                gui.addElementToScene(coinImage);
-            }
-            if (card.getStudents()!=null && card.getStudents().size()>0){
-                System.out.println("aggiungo immagini degli studenti alla carta "+cardId);
-                populateLobbyPersonality(card,cardImage);
-            }
-            else if (card.getBans()!=0){
-                System.out.println("aggiungo immagini dei ban alla carta " +cardId);
-                populateBanPersonality(card,cardImage);
-            }
+            cardX= centerX - PERSONALITY_IMAGE_WIDTH + i*PERSONALITY_IMAGE_WIDTH;
+            GUIPersonality personality = new GUIPersonality(cardId,cardX-PERSONALITY_IMAGE_WIDTH/2,cardY-PERSONALITY_IMAGE_HEIGHT/2,PERSONALITY_IMAGE_WIDTH,PERSONALITY_IMAGE_HEIGHT,this,gui);
+            personality.render();
+            personality.setEvents();
             i++;
-
-        }
-
-    }
-
-    private void populateLobbyPersonality(ClientPersonality personality, ImageView clientCard){
-        if (personalityToStudentsImages==null)
-            personalityToStudentsImages= new HashMap<>();
-        ArrayList<Color> cardStudents = personality.getStudents();
-        ArrayList<ImageView> cardStudentsImages = new ArrayList<>();
-        int halfAmountOfStudents=cardStudents.size()/2;
-        double offsetX=STUDENT_IMAGE_WIDTH*2;
-        double offsetY;
-        double startY = clientCard.getY()+PERSONALITY_IMAGE_HEIGHT*0.7;
-        double startX = clientCard.getX()+PERSONALITY_IMAGE_WIDTH/2-STUDENT_IMAGE_WIDTH*1.5;
-        if (halfAmountOfStudents==3){
-            startX=startX-STUDENT_IMAGE_WIDTH;
-            offsetX=STUDENT_IMAGE_WIDTH*1.5;
-        }
-
-        for (int i = 0; i<cardStudents.size();i++){
-            Color student = cardStudents.get(i);
-            ImageView studentImage = new ImageView("/graphics/" + student.toString().toLowerCase() + "_student.png");
-            studentImage.setX(startX + (i%halfAmountOfStudents)*offsetX);
-            offsetY= i>=halfAmountOfStudents? STUDENT_IMAGE_HEIGHT*1.5: 0;
-            studentImage.setY(startY-STUDENT_IMAGE_HEIGHT/2+offsetY);
-            studentImage.setPreserveRatio(true);
-            studentImage.setFitHeight(STUDENT_IMAGE_HEIGHT);
-            studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
-            studentImage.setOnMouseClicked((MouseEvent e) -> {
-                handleClickEvent(personality.getStudents().indexOf(student),Clickable.PERSONALITY_STUDENT); //come id passa il primo studente di quel colore che trova nell'isola
-            });
-            gui.addElementToScene(studentImage);
-            studentImage.toFront();
-            System.out.println("Aggiunto studente "+student);
-            cardStudentsImages.add(studentImage);
-        }
-        personalityToStudentsImages.put(clientCard,cardStudentsImages);
-
-    }
-
-    private void populateBanPersonality(ClientPersonality personality, ImageView clientCard){
-        double startY = clientCard.getY()+PERSONALITY_IMAGE_HEIGHT*0.65;
-        double startX = clientCard.getX()+PERSONALITY_IMAGE_WIDTH/2;
-        int banCount = personality.getBans();
-        ImageView banImage = new ImageView("/graphics/deny_island_icon.png");
-        banImage.setX(startX-BAN_IMAGE_WIDTH/2);
-        banImage.setY(startY);
-        banImage.setPreserveRatio(true);
-        banImage.setFitHeight(BAN_IMAGE_HEIGHT);
-        banImage.setFitWidth(BAN_IMAGE_WIDTH);
-        Tooltip numOfBanTiles = new Tooltip(("AVAILABLE BANS: "+banCount));
-        numOfBanTiles.setShowDelay(Duration.seconds(0.3));
-        Tooltip.install(banImage, numOfBanTiles);
-        gui.addElementToScene(banImage);
-    }
-
-
-
-    private void populateClouds(ArrayList<ClientCloud> clouds){
-        cloudToStudentsImages = new HashMap<>();
-        double cloudCenterX,cloudCenterY;
-        int cloudCounter = 0;
-        for(ImageView cloud : cloudsImages){
-            cloudToStudentsImages.put(cloud,new ArrayList<>());
-            ClientCloud clientCloud = getClientCloudFromImage(clouds,cloudCounter);
-            cloudCenterX = cloud.getX()+CLOUD_IMAGE_WIDTH/2;
-            cloudCenterY = cloud.getY()+CLOUD_IMAGE_HEIGHT/2;
-            int studentCounter = 0; //va tenuta traccia manualmente, indexOf trovava la prima occurence
-            for(Color student : clientCloud.getStudents()){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
-                double angle = 2 * studentCounter * Math.PI / clientCloud.getStudents().size();
-                double xOffset = STUDENTS_CLOUD_CIRCLE_RADIUS * Math.cos(angle);
-                double yOffset = STUDENTS_CLOUD_CIRCLE_RADIUS * Math.sin(angle);
-                double x = cloudCenterX + xOffset ;
-                double y = cloudCenterY + yOffset ;
-                System.out.println("Metto su una nuvola uno studente "+student);
-                ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
-                System.out.println(cloudToStudentsImages.get(cloud).size());
-                studentImage.setX(x-STUDENT_IMAGE_WIDTH/2);
-                studentImage.setY(y-STUDENT_IMAGE_HEIGHT/2);
-                studentImage.setPreserveRatio(true);
-                studentImage.setFitHeight(STUDENT_IMAGE_HEIGHT);
-                studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
-                studentImage.setOnMouseClicked((MouseEvent e) -> {
-                    handleClickEvent(0,Clickable.CLOUD_STUDENT);
-                    //setSelectedStudent(clientIsland.getStudents().indexOf(student),clientIsland.getIslandIndex());
-                    //System.out.println("Hai cliccato sullo studente "+selectedStudent+" dell'isola "+selectedIslandID);
-                });
-                cloudToStudentsImages.get(cloud).add(studentImage);
-                gui.addElementToScene(studentImage);
-                studentCounter++;
-            }
-            cloudCounter++;
         }
     }
 
@@ -543,7 +404,6 @@ public class GameTableController extends GUIController implements UpdatableContr
     public void setSelectedCloud(int id){
         selectedCloud = id;
     }
-
 
     public void setSelectedAssistant(int priority){
         selectedAssistant = priority;
