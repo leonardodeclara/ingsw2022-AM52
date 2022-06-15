@@ -39,7 +39,6 @@ public class GameTableController extends GUIController implements UpdatableContr
     @FXML private ImageView deckButton;
     private int renderedDashboard;
     @FXML private Button sendButton;
-    @FXML private TilePane blueTable;
     @FXML private Label contextMessage;
     private int selectedCloud = -1;
     private ArrayList<Integer> selectedLobbyStudents;
@@ -53,6 +52,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private HashMap<ImageView,ArrayList<ImageView>> islandToStudentsImages;
     private HashMap<ImageView,ArrayList<ImageView>> cloudToStudentsImages;
     private HashMap<ImageView, ArrayList<ImageView>> personalityToStudentsImages;
+    private GUIBoard currentBoard;
     private ArrayList<ImageView> tablesStudents;
     private ArrayList<ImageView> lobbyStudents;
     private ArrayList<ImageView> boardTeachers;
@@ -100,6 +100,7 @@ public class GameTableController extends GUIController implements UpdatableContr
             renderPlayerButtonName(player3Icon, localIDToPlayer.get(3));
 
             renderedDashboard = 1; //Di default renderizziamo la nostra board
+
         }
 
     }
@@ -240,13 +241,22 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
     private void populateDashboard(){
+        if(currentBoard != null){ //se c'è già qualcosa renderizzato pulisci prima quello
+            currentBoard.clearBoard();
+        }
         ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard));
+        currentBoard = new GUIBoard(clientBoard,gui,this,tableBounds);
+        currentBoard.populate(); //poi renderizzi quello nuovo
+        /*
         populateTables(clientBoard);
         populateLobby(clientBoard);
         populateTowers(clientBoard);
         populateTeachers(clientBoard);
+        */
+
     }
 
+    /*
     private void populateTeachers(ClientBoard clientBoard){
         int teacherCounter = 0;
         ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));
@@ -263,6 +273,10 @@ public class GameTableController extends GUIController implements UpdatableContr
             teacherCounter++;
         }
     }
+
+     */
+
+    /*
     private void populateLobby(ClientBoard clientBoard){
         int studentRowCounter = 0;
         int studentColumnCounter = 0;
@@ -275,11 +289,8 @@ public class GameTableController extends GUIController implements UpdatableContr
             studentImage.setY(STUDENT_LOBBY_START_Y+studentRowCounter*STUDENT_LOBBY_VGAP);
             int finalStudentIDCounter = studentIDCounter; //event handler accetta solo variabili final
             //se si mantiene la stessa scelta di effetti per tutti gli oggetti clickable questi tre metodi possono finire in un unico metodo
-            /*
-            studentImage.setOnMouseClicked((MouseEvent e) -> {
-                handleClickEvent(finalStudentIDCounter,Clickable.LOBBY_STUDENT);
-            });
-            */
+
+
             if(clientBoard.equals(gui.getOwningPlayerBoard())){
                 studentImage.setOnDragDetected((MouseEvent e) -> {
                     if(actionParser.canClick(gui.getCurrentState(),Clickable.LOBBY_STUDENT)){
@@ -373,6 +384,8 @@ public class GameTableController extends GUIController implements UpdatableContr
 
 
     }
+
+    */
     private void renderPersonalityCards(){
         ArrayList<ClientPersonality> cards = gui.getPersonalityCards();
         personalitiesImages = new ArrayList<>();
@@ -613,6 +626,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
 
+    /*
     private void clearBoard(){
         for(ImageView student : lobbyStudents)
             gui.removeElementFromScene(student);
@@ -623,7 +637,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         for(ImageView tower : boardTowers)
             gui.removeElementFromScene(tower);
     }
-
+*/
     private void renderPlayerButtonName(ImageView playerIcon, String playerName){
         if (playerName==null) return;
         Text name;
@@ -706,7 +720,7 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     public void onPlayer1Click(){
         if(renderedDashboard!=1){
-            clearBoard();
+            //clearBoard();
             renderedDashboard = 1;
             populateDashboard();
         }
@@ -715,14 +729,14 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     public void onPlayer2Click(){
         if(renderedDashboard!=2){
-            clearBoard();
+            //clearBoard();
             renderedDashboard = 2;
             populateDashboard();
         }
     }
     public void onPlayer3Click(){
         if(renderedDashboard!=3){
-            clearBoard();
+            //clearBoard();
             renderedDashboard = 3;
             populateDashboard();
         }
