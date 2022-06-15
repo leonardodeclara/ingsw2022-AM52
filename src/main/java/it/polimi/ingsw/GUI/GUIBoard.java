@@ -3,9 +3,11 @@ package it.polimi.ingsw.GUI;
 import it.polimi.ingsw.CLI.ClientBoard;
 import it.polimi.ingsw.model.Color;
 import javafx.event.EventHandler;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,6 +93,9 @@ public class GUIBoard {
         populateLobby();
         populateTowers();
         populateTeachers();
+        if (gui.getGB().isExpertGame()){
+            populateCoins();
+        }
     }
 
     private void populateTeachers(){
@@ -223,7 +228,23 @@ public class GUIBoard {
 
         }
 
+    }
 
+    private void populateCoins(){
+        int coinCount = clientBoard.getCoins();
+        if (coinCount>0){
+            ImageView coinImage = new ImageView("/graphics/coin.png");
+            coinImage.setX(COIN_BOARD_START_X);
+            coinImage.setY(COIN_BOARD_START_Y);
+            coinImage.setFitWidth(COIN_IMAGE_WIDTH);
+            coinImage.setFitHeight(COIN_IMAGE_HEIGHT);
+            coinImage.setPreserveRatio(true);
+            Tooltip numOfCoins = new Tooltip(("AVAILABLE COINS: "+coinCount));
+            numOfCoins.setShowDelay(Duration.seconds(0.3));
+            Tooltip.install(coinImage, numOfCoins);
+            gui.addElementToScene(coinImage);
+            coinImage.toFront();
+        }
     }
 
     public void clearBoard(){

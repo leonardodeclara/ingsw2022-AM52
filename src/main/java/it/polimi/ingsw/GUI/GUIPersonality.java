@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import static it.polimi.ingsw.Constants.*;
 
 //TODO: aggiungere effetti on mouse exit ecc
+//TODO: aggiungere tooltip per descrizione dell'effetto della carta
 
 public class GUIPersonality {
     private ImageView cardImage;

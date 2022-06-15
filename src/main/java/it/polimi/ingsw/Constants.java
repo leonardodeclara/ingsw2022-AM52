@@ -50,8 +50,10 @@ public class Constants {
     public static double ASSISTANT_IMAGE_WIDTH = 85;
     public static double PERSONALITY_IMAGE_HEIGHT = 125;
     public static double PERSONALITY_IMAGE_WIDTH = 85;
-    public static double COIN_IMAGE_HEIGHT = 16;
-    public static double COIN_IMAGE_WIDTH = 16;
+    public static double COIN_IMAGE_HEIGHT = 56;
+    public static double COIN_IMAGE_WIDTH = 49;
+    public static double COIN_BOARD_START_X = 921;
+    public static double COIN_BOARD_START_Y = 516;
     public static double STUDENT_BOARD_START_X = 942.6;
     public static double STUDENT_TABLE_START_Y = 146;
     public static double STUDENT_LOBBY_START_Y = 62;
