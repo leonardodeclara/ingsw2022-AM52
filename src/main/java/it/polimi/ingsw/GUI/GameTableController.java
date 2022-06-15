@@ -28,8 +28,8 @@ import static it.polimi.ingsw.Constants.*;
 //TODO drag n drop per gli studenti (semplifica la costruzione del messaggio)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
 //TODO popolare banPersonality (basta simbolo ban con numero di ban che esce quando ti fermi sopra)
-//TODO drag a vuoto non deve far nulla
-//TODO move from lobby per la table
+//TODO sistemare visualizzazione sulle isole quando si hanno 2 colori (angle va cambiato)
+//TODO creare un sistema che sappia quanti elementi puoi toccare e ti impedisca di toccarne di più (move from lobby 3 studenti fisso, alcune carte min 1 max 3)
 
 public class GameTableController extends GUIController implements UpdatableController{
     @FXML public ImageView player1Icon;
@@ -45,18 +45,12 @@ public class GameTableController extends GUIController implements UpdatableContr
     private ArrayList<Integer> selectedStudentsDestinations;
     private int selectedAssistant = -1; //priority
     private int selectedPersonality = -1;
-    private ArrayList<ImageView> islandsImages;
     private ArrayList<ImageView> cloudsImages;
     private ArrayList<ImageView> deckImages;
     private ArrayList<ImageView> personalitiesImages;
-    private HashMap<ImageView,ArrayList<ImageView>> islandToStudentsImages;
     private HashMap<ImageView,ArrayList<ImageView>> cloudToStudentsImages;
     private HashMap<ImageView, ArrayList<ImageView>> personalityToStudentsImages;
     private GUIBoard currentBoard;
-    private ArrayList<ImageView> tablesStudents;
-    private ArrayList<ImageView> lobbyStudents;
-    private ArrayList<ImageView> boardTeachers;
-    private ArrayList<ImageView> boardTowers;
     private HashMap<Integer,String> localIDToPlayer; //1 sempre giocatore,2 giocatore in alto,3 giocatore in mezzo (associa all'icona ingame, il nickname)
     private double centerX = 0;
     private double centerY = 0;
@@ -71,10 +65,6 @@ public class GameTableController extends GUIController implements UpdatableContr
             deckButton.setImage(new Image("/graphics/Wizard_"+(gui.getWizard()+1)+".png"));
             parameters = new ArrayList<>();
             deckImages = new ArrayList<>();
-            tablesStudents = new ArrayList<>();
-            lobbyStudents = new ArrayList<>();
-            boardTeachers = new ArrayList<>();
-            boardTowers = new ArrayList<>();
             selectedLobbyStudents = new ArrayList<>();
             selectedStudentsDestinations = new ArrayList<>();
             initialized = true;
@@ -160,9 +150,6 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
     private void renderIslands(){
-
-        islandsImages = new ArrayList<>(); //andrà cambiato (vogliamo avere sempre a portata le isole da togliere dalla GUI)
-
         ArrayList<ClientIsland> islands = gui.getIslands();
 
         int numIslands = islands.size();
@@ -256,136 +243,6 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     }
 
-    /*
-    private void populateTeachers(ClientBoard clientBoard){
-        int teacherCounter = 0;
-        ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));
-        for(Color teacher : tableColors){
-            if(clientBoard.getTeacherTable().contains(teacher)){
-                ImageView teachersImage = new ImageView("/graphics/"+teacher.toString().toLowerCase()+"_teacher.png");
-                teachersImage.setFitWidth(TEACHER_BOARD_WIDTH);
-                teachersImage.setFitHeight(TEACHER_BOARD_HEIGHT);
-                teachersImage.setX(TEACHER_BOARD_START_X+teacherCounter*STUDENT_TABLE_HGAP);
-                teachersImage.setY(TEACHER_BOARD_START_Y);
-                boardTeachers.add(teachersImage);
-                gui.addElementToScene(teachersImage);
-            }
-            teacherCounter++;
-        }
-    }
-
-     */
-
-    /*
-    private void populateLobby(ClientBoard clientBoard){
-        int studentRowCounter = 0;
-        int studentColumnCounter = 0;
-        int studentIDCounter = 0; //identificativo studente lobby
-        for(Color student : clientBoard.getLobby()){
-            ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
-            studentImage.setFitWidth(STUDENT_TABLE_WIDTH);
-            studentImage.setFitHeight(STUDENT_TABLE_HEIGHT);
-            studentImage.setX(STUDENT_BOARD_START_X+studentColumnCounter*STUDENT_TABLE_HGAP);
-            studentImage.setY(STUDENT_LOBBY_START_Y+studentRowCounter*STUDENT_LOBBY_VGAP);
-            int finalStudentIDCounter = studentIDCounter; //event handler accetta solo variabili final
-            //se si mantiene la stessa scelta di effetti per tutti gli oggetti clickable questi tre metodi possono finire in un unico metodo
-
-
-            if(clientBoard.equals(gui.getOwningPlayerBoard())){
-                studentImage.setOnDragDetected((MouseEvent e) -> {
-                    if(actionParser.canClick(gui.getCurrentState(),Clickable.LOBBY_STUDENT)){
-                        Dragboard db = studentImage.startDragAndDrop(TransferMode.MOVE);
-
-                        ClipboardContent content = new ClipboardContent();
-                        content.putString(Integer.toString(finalStudentIDCounter));
-                        db.setContent(content);
-                        System.out.println("Inizio il drag event per "+finalStudentIDCounter);
-                        e.consume();
-                    }
-                });
-                studentImage.setOnDragDone(new EventHandler<DragEvent>() {
-                    public void handle(DragEvent event) {
-                        System.out.println("Drag completato, tolgo lo studente dalla lobby");
-                        if (event.getTransferMode() == TransferMode.MOVE) {
-                            lobbyStudents.remove(studentImage);
-                            gui.removeElementFromScene(studentImage);
-                        }
-                        event.consume();
-                    }
-                });
-                studentImage.setOnMouseEntered((MouseEvent e) -> {
-                    handleHoverEvent(studentImage, Clickable.LOBBY_STUDENT);
-                });
-                studentImage.setOnMouseExited((MouseEvent e) -> {
-                    if (studentImage.getEffect()==null || !(DropShadow.class).equals(studentImage.getEffect().getClass())) //rivedere, qui il comportamento è lo stesso delle carte personaggio
-                        studentImage.setEffect(null);
-                });
-            }
-
-            lobbyStudents.add(studentImage);
-            gui.addElementToScene(studentImage);
-            if(studentColumnCounter==4 && studentRowCounter == 0){ //fa abbastanza schifo, miglioro appena ho tempo
-                studentColumnCounter=0;
-                studentRowCounter++;
-            }else{
-                studentColumnCounter++;
-            }
-            studentIDCounter++;
-        }
-    }
-
-    private void populateTables(ClientBoard clientBoard){
-        int tableCounter = 0;
-        ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));
-        for(Color color : tableColors){
-            int numOfStudents = clientBoard.getStudentsTable().get(color); //sostituire con array modificabile client side
-            //int numOfStudents = 10; test
-            String studentImagePath = "/graphics/"+color.toString().toLowerCase()+"_student.png";
-            for(int i = 0; i< numOfStudents;i++){
-                ImageView studentImage = new ImageView(studentImagePath);
-                studentImage.setFitWidth(STUDENT_TABLE_WIDTH);
-                studentImage.setFitHeight(STUDENT_TABLE_HEIGHT);
-                System.out.println("Printo studente nella table"+color+" su (X,Y): "+(947+tableCounter*STUDENT_TABLE_HGAP)+(148+i*STUDENT_TABLE_VGAP));
-                studentImage.setX(STUDENT_BOARD_START_X+tableCounter*STUDENT_TABLE_HGAP);
-                studentImage.setY(STUDENT_TABLE_START_Y+i*STUDENT_TABLE_VGAP);
-                studentImage.setOnMouseClicked((MouseEvent e) -> {
-                    handleClickEvent(color.getIndex(),Clickable.TABLE_STUDENT); //come id passa l'index del colore della board
-                });
-                tablesStudents.add(studentImage);
-                gui.addElementToScene(studentImage);
-            }
-            tableCounter++;
-        }
-
-    }
-
-    private void populateTowers(ClientBoard clientBoard){
-        int towersCounter = clientBoard.getTowers();
-        int halfTowersCounter = towersCounter/2;
-        double offsetY,offsetX;
-        if (gui.getNumOfPlayers()==3)
-            offsetX=TOWER_TABLE_HGAP;
-        else
-            offsetX=TOWER_TABLE_HGAP*0.75;
-        String towerColor = clientBoard.getTeam().toString().toLowerCase();
-        System.out.println("Il colore della torre è "+ towerColor);
-        for (int i = 0; i<towersCounter;i++){
-            ImageView towerImage = new ImageView("graphics/"+towerColor+"_board_tower.png");
-            towerImage.setFitHeight(TOWER_IMAGE_HEIGHT);
-            towerImage.setFitWidth(TOWER_IMAGE_WIDTH);
-            towerImage.setX(TOWER_IMAGE_START_X +(i%(halfTowersCounter))*offsetX);
-            offsetY= i>=halfTowersCounter? TOWER_TABLE_VGAP: 0;
-            towerImage.setY(TOWER_IMAGE_START_Y + offsetY);
-            towerImage.setPreserveRatio(true);
-            boardTowers.add(towerImage);
-            gui.addElementToScene(towerImage); //in teoria le torri non sono clickable perché è tutto automatico
-
-        }
-
-
-    }
-
-    */
     private void renderPersonalityCards(){
         ArrayList<ClientPersonality> cards = gui.getPersonalityCards();
         personalitiesImages = new ArrayList<>();
@@ -482,53 +339,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         gui.addElementToScene(banImage);
     }
 
-    /*
-    private void populateIslands(ArrayList<ClientIsland> islands){
-        islandToStudentsImages = new HashMap<>();
-        double islandCenterX,islandCenterY;
-        int islandCounter = 0;
-        for(ImageView island : islandsImages){
-            ClientIsland clientIsland = getClientIslandFromImage(islands,islandCounter);
-            List<Color> distinctStudents = clientIsland.getStudents().stream().distinct().toList();
-            populateIsland(island,islands,islandCounter,distinctStudents);
-            islandCounter++;
-        }
-    }
-*/
-    /*
-    private void populateIsland(ImageView island,ArrayList<ClientIsland> islands,int islandCounter,List<Color> distinctStudents){
-        islandToStudentsImages.put(island,new ArrayList<>());
-        ClientIsland clientIsland = getClientIslandFromImage(islands,islandCounter);
-        double islandCenterX = island.getX()+ISLAND_IMAGE_WIDTH/2;
-        double islandCenterY = island.getY()+ISLAND_IMAGE_HEIGHT/2;
-        for(Color student : distinctStudents){
-            System.out.println("[PopulateIsland]Printiamo gli studenti "+student);
-            long numberOfStudents = clientIsland.getStudents()
-                    .stream()
-                    .filter(color -> color.equals(student)).count();
-            System.out.println("[populateIsland]Ce ne sono "+numberOfStudents);
-            double angle = 2 * distinctStudents.indexOf(student) * Math.PI / Color.values().length;
-            double xOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS * distinctStudents.size() * 1.5) * Math.cos(angle);
-            double yOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS * distinctStudents.size() * 1.5) * Math.sin(angle);
-            double x = islandCenterX + xOffset ;
-            double y = islandCenterY + yOffset ;
-            ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
-            studentImage.setX(x-STUDENT_IMAGE_WIDTH/2);
-            studentImage.setY(y-STUDENT_IMAGE_HEIGHT/2);
-            studentImage.setPreserveRatio(true);
-            studentImage.setFitHeight(STUDENT_IMAGE_HEIGHT);
-            studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
-            studentImage.setOnMouseClicked((MouseEvent e) -> {
-                handleClickEvent(clientIsland.getStudents().indexOf(student),Clickable.ISLAND_STUDENT); //come id passa il primo studente di quel colore che trova nell'isola
-            });
-            Tooltip numOfStudents = new Tooltip(Long.toString(numberOfStudents));
-            numOfStudents.setShowDelay(Duration.seconds(0.1));
-            Tooltip.install(studentImage, numOfStudents);
-            islandToStudentsImages.get(island).add(studentImage);
-            gui.addElementToScene(studentImage);
-        }
-    }
-    */
+
 
     private void populateClouds(ArrayList<ClientCloud> clouds){
         cloudToStudentsImages = new HashMap<>();
@@ -625,19 +436,6 @@ public class GameTableController extends GUIController implements UpdatableContr
         deckImages.clear();
     }
 
-
-    /*
-    private void clearBoard(){
-        for(ImageView student : lobbyStudents)
-            gui.removeElementFromScene(student);
-        for(ImageView student : tablesStudents)
-            gui.removeElementFromScene(student);
-        for(ImageView teacher : boardTeachers)
-            gui.removeElementFromScene(teacher);
-        for(ImageView tower : boardTowers)
-            gui.removeElementFromScene(tower);
-    }
-*/
     private void renderPlayerButtonName(ImageView playerIcon, String playerName){
         if (playerName==null) return;
         Text name;

@@ -142,7 +142,7 @@ public class GUIBoard {
                     public void handle(DragEvent event) {
                         System.out.println("Drag completato, tolgo lo studente dalla lobby");
                         if (event.getTransferMode() == TransferMode.MOVE) {
-                            studentsInLobby.remove(finalStudentIDCounter);
+                            studentsInLobby.remove(student);
                             lobbyStudentsImages.remove(studentImage);
                             gui.removeElementFromScene(studentImage);
                         }
