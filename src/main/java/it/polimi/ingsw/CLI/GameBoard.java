@@ -306,6 +306,20 @@ public class GameBoard {
             }
     }
 
+    public int getMotherNatureDistance(int islandId){
+        int destinationIndex = islands.indexOf(getIslandByIndex(islandId));
+        int fromIndex;
+        for (ClientIsland island: islands)
+            if (island.isMotherNature()){
+                fromIndex =islands.indexOf(island);
+                if (fromIndex<destinationIndex)
+                    return destinationIndex-fromIndex;
+                else if (fromIndex>destinationIndex)
+                    return (islands.size()-(fromIndex-destinationIndex));
+            }
+        return -1; //non dovrebbe succedere, sistemare
+    }
+
     public void setNumberOfPlayers(int numberOfPlayers) {
         this.numberOfPlayers = numberOfPlayers;
     }

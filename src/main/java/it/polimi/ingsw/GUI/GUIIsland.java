@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.Color;
 import javafx.event.EventHandler;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -23,6 +24,8 @@ import static it.polimi.ingsw.Constants.*;
 public class GUIIsland{
     private ImageView islandImage;
     private ArrayList<ImageView> students;
+    private ImageView motherNature;
+    private ImageView tower;
     private int index;
     private double centerX;
     private double centerY;
@@ -32,6 +35,7 @@ public class GUIIsland{
     private HashMap<Color,Tooltip> tooltips;
 
 //TODO sistemare range cerchio quando si aggiungono studenti lato client
+//TODO sfruttare attributo motherNature in modo che se è qui in MOVE_MN non metto l'effetto bloom
 
     public GUIIsland(int index,double x,double y,double width,double height,GameTableController controller,GUI gui){
         islandImage = new ImageView("/graphics/island"+((index%3)+1)+".png");
@@ -49,6 +53,7 @@ public class GUIIsland{
 
     public void render(){
         gui.addElementToScene(islandImage);
+        islandImage.setEffect(null); //rivedere se il posto giusto dove metterlo, in teoria ora non funziona
         populate();
     }
     public void setPos(double x,double y){
@@ -72,6 +77,7 @@ public class GUIIsland{
     public void setEvents(){
         islandImage.setOnMouseClicked((MouseEvent e) -> {
             controller.handleClickEvent(index,Clickable.ISLAND);
+            controller.handleSelectionEffect(islandImage,Clickable.ISLAND);
             //setSelectedIslandID(i);
             //System.out.println("Hai cliccato sull'isola "+selectedIslandID);
         });
@@ -178,5 +184,10 @@ public class GUIIsland{
             Tooltip.install(studentImage, numOfStudents);
         }
     }
+
+    public void setImageEffect(Effect effect){
+        islandImage.setEffect(effect);
+    }
+
 
 }

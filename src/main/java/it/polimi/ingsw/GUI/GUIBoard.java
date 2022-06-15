@@ -197,12 +197,17 @@ public class GUIBoard {
 
     private void populateTowers(){
         int towersCounter = clientBoard.getTowers();
-        int halfTowersCounter = towersCounter/2;
+        System.out.println("CI SONO " + towersCounter + " DEL COLORE "+clientBoard.getTeam());
+        int halfTowersCounter;
         double offsetY,offsetX;
-        if (gui.getNumOfPlayers()==3)
+        if (gui.getNumOfPlayers()==3){
             offsetX=TOWER_TABLE_HGAP;
-        else
+            halfTowersCounter=3;
+        }
+        else{
             offsetX=TOWER_TABLE_HGAP*0.75;
+            halfTowersCounter=4;
+        }
         String towerColor = clientBoard.getTeam().toString().toLowerCase();
         System.out.println("Il colore della torre è "+ towerColor);
         for (int i = 0; i<towersCounter;i++){

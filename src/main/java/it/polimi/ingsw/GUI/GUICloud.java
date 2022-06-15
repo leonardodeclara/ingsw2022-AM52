@@ -3,6 +3,7 @@ package it.polimi.ingsw.GUI;
 import it.polimi.ingsw.CLI.ClientCloud;
 import it.polimi.ingsw.model.Color;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 
@@ -82,7 +83,8 @@ public class GUICloud {
 
     public void setEvents(){
         cloudImage.setOnMouseClicked((MouseEvent e) -> {
-            controller.handleClickEvent(index,Clickable.CLOUD_STUDENT);
+            controller.handleClickEvent(index,Clickable.CLOUD);
+            controller.handleSelectionEffect(cloudImage,Clickable.CLOUD);
         });
         cloudImage.setOnMouseEntered((MouseEvent e) -> {
             controller.handleHoverEvent(cloudImage, Clickable.CLOUD);
@@ -106,4 +108,7 @@ public class GUICloud {
     }
 
 
+    public void setImageEffect(Effect effect) {
+        cloudImage.setEffect(effect);
+    }
 }

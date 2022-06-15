@@ -3,6 +3,8 @@ package it.polimi.ingsw.GUI;
 import it.polimi.ingsw.CLI.ClientPersonality;
 import it.polimi.ingsw.model.Color;
 import javafx.scene.control.Tooltip;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
@@ -10,6 +12,8 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 
 import static it.polimi.ingsw.Constants.*;
+
+//TODO: aggiungere effetti on mouse exit ecc
 
 public class GUIPersonality {
     private ImageView cardImage;
@@ -149,7 +153,20 @@ public class GUIPersonality {
     }
 
     public void setEvents(){
-        cardImage.setOnMouseClicked((MouseEvent e) -> controller.handleClickEvent(cardId,Clickable.PERSONALITY));
+        cardImage.setOnMouseClicked((MouseEvent e) ->{
+            controller.handleClickEvent(cardId,Clickable.PERSONALITY);
+            controller.handleSelectionEffect(cardImage,Clickable.PERSONALITY);
+        });
+        cardImage.setOnMouseEntered((MouseEvent e) -> {
+            controller.handleHoverEvent(cardImage, Clickable.PERSONALITY);
+        });
+        cardImage.setOnMouseExited((MouseEvent e) -> {
+            if (cardImage.getEffect()==null || !(DropShadow.class).equals(cardImage.getEffect().getClass())) //rivedere, qui il comportamento è lo stesso delle carte personaggio
+                cardImage.setEffect(null);
+        });
     }
 
+    public void setImageEffect(Effect effect) {
+        cardImage.setEffect(effect);
+    }
 }

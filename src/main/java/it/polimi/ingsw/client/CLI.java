@@ -142,7 +142,7 @@ public class CLI implements Runnable,UI{
 
 
     private void visualizeContextMessage(){
-        ArrayList<String> texts = currentState.getContextMessage(GB);
+        ArrayList<String> texts = currentState.getCLIContextMessage(GB);
         for(String text : texts)
             outputStream.println(text);
     }

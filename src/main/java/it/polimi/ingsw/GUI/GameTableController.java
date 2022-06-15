@@ -29,6 +29,8 @@ import static it.polimi.ingsw.Constants.*;
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
 //TODO sistemare visualizzazione sulle isole quando si hanno 2 colori (angle va cambiato)
 //TODO creare un sistema che sappia quanti elementi puoi toccare e ti impedisca di toccarne di più (move from lobby 3 studenti fisso, alcune carte min 1 max 3)
+//TODO visualizzazione messaggio last round
+//TODO gestire click isola per move_mn in modo che venga passato a build_message il numero di steps e non l'id dell'isola
 
 public class GameTableController extends GUIController implements UpdatableController{
     @FXML public ImageView player1Icon;
@@ -36,19 +38,19 @@ public class GameTableController extends GUIController implements UpdatableContr
     @FXML public ImageView player3Icon;
     @FXML public ImageView tableBounds;
     @FXML private ImageView deckButton;
-    private int renderedDashboard;
     @FXML private Button sendButton;
     @FXML private Label contextMessage;
+    private int renderedDashboard;
     private int selectedCloud = -1;
+    private int selectedMNmove = -1;
     private ArrayList<Integer> selectedLobbyStudents;
     private ArrayList<Integer> selectedStudentsDestinations;
     private int selectedAssistant = -1; //priority
     private int selectedPersonality = -1;
-    //private ArrayList<ImageView> cloudsImages;
     private ArrayList<ImageView> deckImages;
-    private ArrayList<ImageView> personalitiesImages;
-    //private HashMap<ImageView,ArrayList<ImageView>> cloudToStudentsImages;
-    private HashMap<ImageView, ArrayList<ImageView>> personalityToStudentsImages;
+    private ArrayList<GUIIsland> islands;
+    private ArrayList<GUICloud> clouds;
+    private ArrayList<GUIPersonality> personalities;
     private GUIBoard currentBoard;
     private HashMap<Integer,String> localIDToPlayer; //1 sempre giocatore,2 giocatore in alto,3 giocatore in mezzo (associa all'icona ingame, il nickname)
     private double centerX = 0;
@@ -115,6 +117,8 @@ public class GameTableController extends GUIController implements UpdatableContr
             parameters.add(selectedCloud);
         if (selectedPersonality!=-1)
             parameters.add(selectedPersonality);
+        if (selectedMNmove!=-1)
+            parameters.add(selectedMNmove);
 
         if(parameters.size() > 0){ //se qualcosa è stato selezionato
             Message message = client.buildMessageFromPlayerInput(parameters, gui.getCurrentState());
@@ -122,8 +126,10 @@ public class GameTableController extends GUIController implements UpdatableContr
             //dopo send deseleziona tutto
             setSelectedAssistant(-1);
             setSelectedCloud(-1);
-            //setSelectedIslandID(-1);
-            //setSelectedStudent(-1,-1);
+            setSelectedMNmove(-1);
+            selectedLobbyStudents.clear();
+            selectedStudentsDestinations.clear();
+
             parameters.clear();
         }
 
@@ -149,11 +155,11 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
     private void renderIslands(){
-        ArrayList<ClientIsland> islands = gui.getIslands();
+        ArrayList<ClientIsland> clientIslands = gui.getIslands();
+        ArrayList<GUIIsland> newIslands = new ArrayList<>();
+        int numIslands = clientIslands.size();
 
-        int numIslands = islands.size();
-
-        for (ClientIsland island : islands) {
+        for (ClientIsland island : clientIslands) {
             int i = island.getIslandIndex(); //potrebbe dare problemi quando si avranno isole con id sparsi
             double angle = 2 * i * Math.PI / numIslands ;
             double xOffset = ISLAND_CIRCLE_RADIUS * Math.cos(angle-Math.PI/2);
@@ -163,8 +169,9 @@ public class GameTableController extends GUIController implements UpdatableContr
             GUIIsland guiIsland = new GUIIsland(i,x-ISLAND_IMAGE_WIDTH/2,y-ISLAND_IMAGE_HEIGHT/2,ISLAND_IMAGE_WIDTH,ISLAND_IMAGE_HEIGHT,this,gui);
             guiIsland.setEvents();
             guiIsland.render();
-
+            newIslands.add(guiIsland);
         }
+        islands=newIslands;
     }
     /*
     private void addStudentToIsland(ImageView islandImage,int islandCounter,ClientIsland island,Color student){
@@ -190,10 +197,11 @@ public class GameTableController extends GUIController implements UpdatableContr
     */
 
     private void renderClouds(){
-        ArrayList<ClientCloud> clouds = gui.getClouds();
-        int numClouds = clouds.size();
+        ArrayList<GUICloud> newClouds = new ArrayList<>();
+        ArrayList<ClientCloud> clientClouds = gui.getClouds();
+        int numClouds = clientClouds.size();
         int personalitiesYOffset = ((gui.getGB().isExpertGame() && gui.getNumOfPlayers()==3) ? CLOUD_PERSONALITY_OFFSET : 0);
-        for (ClientCloud cloud : clouds) {
+        for (ClientCloud cloud : clientClouds) {
             int i = cloud.getCloudIndex();
             double angle = 2 * i * Math.PI / numClouds ;
             double xOffset = CLOUD_CIRCLE_RADIUS * Math.cos(angle);
@@ -203,7 +211,9 @@ public class GameTableController extends GUIController implements UpdatableContr
             GUICloud guiCloud = new GUICloud(i, x-CLOUD_IMAGE_WIDTH/2,y-CLOUD_IMAGE_HEIGHT/2,CLOUD_IMAGE_WIDTH,CLOUD_IMAGE_HEIGHT,this,gui);
             guiCloud.setEvents();
             guiCloud.render();
+            newClouds.add(guiCloud);
         }
+        clouds=newClouds;
     }
 
     private void populateDashboard(){
@@ -224,7 +234,7 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     private void renderPersonalityCards(){
         ArrayList<ClientPersonality> cards = gui.getPersonalityCards();
-        personalitiesImages = new ArrayList<>();
+        ArrayList<GUIPersonality> newPersonalities = new ArrayList<>();
         double cardY,cardX;
         int i = 0;
         for (ClientPersonality card: cards){
@@ -232,11 +242,13 @@ public class GameTableController extends GUIController implements UpdatableContr
             System.out.println("GameTableController: renderizzo la carta personaggio "+cardId);
             cardY = centerY + ISLAND_IMAGE_HEIGHT*1.1; //scelta a caso
             cardX= centerX - PERSONALITY_IMAGE_WIDTH + i*PERSONALITY_IMAGE_WIDTH;
-            GUIPersonality personality = new GUIPersonality(cardId,cardX-PERSONALITY_IMAGE_WIDTH/2,cardY-PERSONALITY_IMAGE_HEIGHT/2,PERSONALITY_IMAGE_WIDTH,PERSONALITY_IMAGE_HEIGHT,this,gui);
-            personality.render();
-            personality.setEvents();
+            GUIPersonality guiPersonality = new GUIPersonality(cardId,cardX-PERSONALITY_IMAGE_WIDTH/2,cardY-PERSONALITY_IMAGE_HEIGHT/2,PERSONALITY_IMAGE_WIDTH,PERSONALITY_IMAGE_HEIGHT,this,gui);
+            guiPersonality.render();
+            guiPersonality.setEvents();
+            newPersonalities.add(guiPersonality);
             i++;
         }
+        personalities=newPersonalities;
     }
 
     private ClientCloud getClientCloudFromImage(ArrayList<ClientCloud> clouds, int cloudCounter){
@@ -318,7 +330,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private void visualizeContextMessage(){
         String messageToShow ="";
         String messageForToolTip="";
-        List<String> texts= gui.getCurrentState().getContextMessage(gui.getGB());
+        List<String> texts= gui.getCurrentState().getGUIContextMessage(gui.getGB());
         for (String text: texts){
             messageToShow+=text+" ";
             messageForToolTip+=text+"\n";
@@ -329,13 +341,33 @@ public class GameTableController extends GUIController implements UpdatableContr
         Tooltip.install(contextMessage, fullMessage);
     }
 
-    private void handleSelectionEffect(Node n, Clickable type){ //gestisce gli effetti di selezione per ogni clickable (vedremo in futuro se avrà senso averlo così generalizzato)
-        switch(type){
-            case ASSISTANT -> {
-                for(ImageView card : deckImages){
-                    card.setEffect(null);
+    public void handleSelectionEffect(Node n, Clickable type){ //gestisce gli effetti di selezione per ogni clickable (vedremo in futuro se avrà senso averlo così generalizzato)
+        if(actionParser.canClick(gui.getCurrentState(),type)){
+            switch(type){
+                case ASSISTANT -> {
+                    for(ImageView card : deckImages){
+                        card.setEffect(null);
+                    }
+                    n.setEffect(new DropShadow());
                 }
-                n.setEffect(new DropShadow());
+                case ISLAND -> {
+                    for(GUIIsland island : islands){
+                        island.setImageEffect(null);
+                    }
+                    n.setEffect(new DropShadow());
+                }
+                case CLOUD -> {
+                    for(GUICloud cloud : clouds){
+                        cloud.setImageEffect(null);
+                    }
+                    n.setEffect(new DropShadow());
+                }
+                case PERSONALITY -> {
+                    for(GUIPersonality card : personalities){
+                        card.setImageEffect(null);
+                    }
+                    n.setEffect(new DropShadow());
+                }
             }
         }
     }
@@ -361,6 +393,9 @@ public class GameTableController extends GUIController implements UpdatableContr
                     setSelectedCloud(id);
                 }
                 case PERSONALITY -> {
+                    //si potrebbe aggiungere un controllo qui in modo che se sono
+                    //in move from lobby, ho spostato due studenti e poi clicco una carta questo click non viene contato
+                    //altrimenti si modifica actionParser.canClick
                     setSelectedPersonality(id);
                     System.out.println("Hai cliccato sulla carta personaggio ");
                 }
@@ -368,7 +403,8 @@ public class GameTableController extends GUIController implements UpdatableContr
                     selectedLobbyStudents.add(id);
                 }
                 case ISLAND -> {
-
+                    setSelectedMNmove(extractMNsteps(id));
+                    System.out.println("Hai cliccato su un'isola");
                 }
 
             }
@@ -412,8 +448,17 @@ public class GameTableController extends GUIController implements UpdatableContr
         selectedPersonality = personalityId;
     }
 
+    public void setSelectedMNmove(int numOfSteps) {
+        selectedMNmove = numOfSteps;
+    }
+
+
     public void addSelectedStudent(int studentID,int destID){
         selectedLobbyStudents.add(studentID);
         selectedStudentsDestinations.add(destID);
+    }
+
+    public int extractMNsteps(int islandId){
+        return gui.getGB().getMotherNatureDistance(islandId);
     }
 }
