@@ -1,4 +1,4 @@
-package it.polimi.ingsw.messages;
+package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.GUI.Clickable;
@@ -218,8 +218,8 @@ public enum ClientState {
         @Override
         public ArrayList<String> getCLIContextMessage(GameBoard GB){
             ArrayList<String> texts = new ArrayList<>();
-            texts.add("Puoi far compiere a Madre Natura fino a X passi");
-            texts.add("Per esempio digita move mn 5 per spostarla di 5 isole");
+            texts.add("Puoi far compiere a Madre Natura fino a X passi.");
+            texts.add("Per esempio digita move mn 5 per spostarla di 5 isole.");
             if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
                 texts.add("Puoi anche scegliere di giocare una carta personalità! Digita play personality 5 per giocare la carta 5 ad esempio");
             return texts;
@@ -228,7 +228,7 @@ public enum ClientState {
         @Override
         public ArrayList<String> getGUIContextMessage(GameBoard GB) {
             ArrayList<String> texts = new ArrayList<>();
-            texts.add("Muovi Madre Natura facendo click sull'isola di destinazione e poi CONFIRM");
+            texts.add("Muovi Madre Natura facendo click sull'isola di destinazione e poi CONFIRM.");
             if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
                 texts.add("Puoi anche scegliere di giocare una carta personalità! Fai click sulla carta che vuoi giocare e premi CONFIRM.");
             return texts;
@@ -259,7 +259,7 @@ public enum ClientState {
         @Override
         public ArrayList<String> getGUIContextMessage(GameBoard GB) {
             ArrayList<String> texts = new ArrayList<>();
-            texts.add("Scegli una nuvola! I suoi studenti passeranno sulla tua lobby ");
+            texts.add("Scegli una nuvola! I suoi studenti passeranno sulla tua lobby.");
             texts.add("Fai click sull'isola scelta e poi CONFIRM");
             if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
                 texts.add("Puoi anche scegliere di giocare una carta personalità! Fai click sulla carta che vuoi giocare e premi CONFIRM.");
@@ -319,7 +319,7 @@ public enum ClientState {
         @Override
         public ArrayList<String> getGUIContextMessage(GameBoard GB) {
             ArrayList<String> texts = new ArrayList<>();
-            texts.add("Scegli uno studente da spostare! Fai drag and drop sull'isola di destinazione e premi CONFIRM");
+            texts.add("Scegli uno studente da spostare! Fai drag and drop sull'isola di destinazione e premi CONFIRM.");
             return texts;
         }
 

@@ -1,11 +1,9 @@
 package it.polimi.ingsw.GUI;
 
-import it.polimi.ingsw.messages.ClientState;
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.Message;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-
-import java.util.ArrayList;
 
 public class NicknameController extends GUIController{
     @FXML

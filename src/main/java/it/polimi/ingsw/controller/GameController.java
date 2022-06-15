@@ -1,7 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.Constants;
-import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.*;
 

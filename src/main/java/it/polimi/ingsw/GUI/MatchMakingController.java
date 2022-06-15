@@ -1,13 +1,12 @@
 package it.polimi.ingsw.GUI;
 
-import it.polimi.ingsw.messages.ClientState;
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.Message;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MatchMakingController extends GUIController{

@@ -1,11 +1,8 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.CLI.GameBoard;
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.exceptions.EndGameException;
 import it.polimi.ingsw.exceptions.QuitException;
-import it.polimi.ingsw.messages.ClientState;
-import it.polimi.ingsw.messages.EndGameMessage;
 import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
 

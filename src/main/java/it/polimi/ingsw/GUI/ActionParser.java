@@ -1,7 +1,6 @@
 package it.polimi.ingsw.GUI;
 
-import it.polimi.ingsw.client.Client;
-import it.polimi.ingsw.messages.ClientState;
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.model.Tower;
 
 import java.util.ArrayList;

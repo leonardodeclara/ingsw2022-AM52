@@ -25,6 +25,7 @@ public class GUIBoard {
     private ArrayList<ImageView> tableStudentsImages;
     private ArrayList<ImageView> lobbyStudentsImages;
     private ImageView tableBounds;
+    private ImageView coinImage;
     private HashMap<Color,Integer> numOfStudentsOnTable;
     private ArrayList<Color> studentsInLobby;
 
@@ -233,7 +234,7 @@ public class GUIBoard {
     private void populateCoins(){
         int coinCount = clientBoard.getCoins();
         if (coinCount>0){
-            ImageView coinImage = new ImageView("/graphics/coin.png");
+            coinImage = new ImageView("/graphics/coin.png");
             coinImage.setX(COIN_BOARD_START_X);
             coinImage.setY(COIN_BOARD_START_Y);
             coinImage.setFitWidth(COIN_IMAGE_WIDTH);
@@ -256,6 +257,7 @@ public class GUIBoard {
             gui.removeElementFromScene(teacher);
         for(ImageView tower : towersImages)
             gui.removeElementFromScene(tower);
+        gui.removeElementFromScene(coinImage);
 
         lobbyStudentsImages.clear();
         tableStudentsImages.clear();

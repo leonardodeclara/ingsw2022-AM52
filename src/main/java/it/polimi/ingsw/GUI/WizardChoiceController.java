@@ -1,18 +1,13 @@
 package it.polimi.ingsw.GUI;
 
-import it.polimi.ingsw.messages.ClientState;
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.Message;
-import it.polimi.ingsw.model.Tower;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class WizardChoiceController extends GUIController implements UpdatableController{
     @FXML
