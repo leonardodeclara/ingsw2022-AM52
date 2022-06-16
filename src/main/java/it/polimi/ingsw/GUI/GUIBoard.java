@@ -136,6 +136,7 @@ public class GUIBoard {
                 studentImage.setOnDragDetected((MouseEvent e) -> {
                     if(controller.actionParser.canClick(gui.getCurrentState(),Clickable.LOBBY_STUDENT)){
                         Dragboard db = studentImage.startDragAndDrop(TransferMode.MOVE);
+                        db.setDragView(studentImage.getImage());
 
                         ClipboardContent content = new ClipboardContent();
                         content.putString(Integer.toString(finalStudentIDCounter));

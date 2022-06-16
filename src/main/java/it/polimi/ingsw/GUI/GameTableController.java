@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import static it.polimi.ingsw.Constants.*;
 
 //TODO sistemare bene sistema di selezione e pulire action parser dei vecchi parseTower, parseWizard ecc... (ora sono inutili)
-//TODO aggiungere associazione giocatore-carta assistente
 //TODO drag n drop per gli studenti (semplifica la costruzione del messaggio)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
 //TODO sistemare visualizzazione sulle isole quando si hanno 2 colori (angle va cambiato)
@@ -35,10 +34,10 @@ import static it.polimi.ingsw.Constants.*;
 //TODO gestire click isola per move_mn in modo che venga passato a build_message il numero di steps e non l'id dell'isola
 
 public class GameTableController extends GUIController implements UpdatableController{
-    @FXML public ImageView player1Icon;
-    @FXML public ImageView player2Icon;
-    @FXML public ImageView player3Icon;
-    @FXML public ImageView tableBounds;
+    @FXML private ImageView player1Icon;
+    @FXML private ImageView player2Icon;
+    @FXML private ImageView player3Icon;
+    @FXML private ImageView tableBounds;
     @FXML private ImageView deckButton;
     @FXML private Button sendButton;
     @FXML private Label contextMessage;
@@ -174,6 +173,7 @@ public class GameTableController extends GUIController implements UpdatableContr
             double x = centerX + xOffset ;
             double y = centerY + yOffset ;
             GUIIsland guiIsland = new GUIIsland(i,x-ISLAND_IMAGE_WIDTH/2,y-ISLAND_IMAGE_HEIGHT/2,ISLAND_IMAGE_WIDTH,ISLAND_IMAGE_HEIGHT,this,gui);
+            guiIsland.setClientIsland(island);
             guiIsland.setEvents();
             guiIsland.render();
             newIslands.add(guiIsland);

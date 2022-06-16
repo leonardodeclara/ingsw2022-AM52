@@ -22,6 +22,7 @@ import java.util.List;
 import static it.polimi.ingsw.Constants.*;
 
 public class GUIIsland{
+    private ClientIsland clientIsland;
     private ImageView islandImage;
     private ArrayList<ImageView> students;
     private ImageView motherNature;
@@ -54,7 +55,9 @@ public class GUIIsland{
     public void render(){
         gui.addElementToScene(islandImage);
         islandImage.setEffect(null); //rivedere se il posto giusto dove metterlo, in teoria ora non funziona
-        populate();
+        populateStudents();
+        populateMotherNature();
+        populateTowers();
     }
     public void setPos(double x,double y){
         islandImage.setX(x);
@@ -82,7 +85,8 @@ public class GUIIsland{
             //System.out.println("Hai cliccato sull'isola "+selectedIslandID);
         });
         islandImage.setOnMouseEntered((MouseEvent e) -> {
-            controller.handleHoverEvent(islandImage, Clickable.ISLAND);
+            if (!clientIsland.isMotherNature())
+                controller.handleHoverEvent(islandImage, Clickable.ISLAND);
         });
         islandImage.setOnMouseExited((MouseEvent e) -> {
             if (islandImage.getEffect()==null || !(DropShadow.class).equals(islandImage.getEffect().getClass())) //rivedere, qui il comportamento è lo stesso delle carte personaggio
@@ -125,7 +129,7 @@ public class GUIIsland{
         if(numberOfStudents > 1){
             setTooltip(student,studentImage);
         }else{
-            populate();
+            populateStudents();
         }
 
     }
@@ -140,7 +144,8 @@ public class GUIIsland{
         }
 
     }
-    public void populate(){
+
+    public void populateStudents(){
         clearStudents();
         for(Color student : numOfStudents.keySet()){
             System.out.println("[PopulateIsland]Printiamo gli studenti "+student);
@@ -171,6 +176,47 @@ public class GUIIsland{
         }
     }
 
+    public void populateMotherNature(){
+        clearMotherNature();
+        if (clientIsland.isMotherNature()){
+            ImageView motherNatureImage = new ImageView("/graphics/mother_nature.png");
+            motherNatureImage.setX(centerX-MOTHER_NATURE_WIDTH/2);
+            motherNatureImage.setY(centerY-MOTHER_NATURE_HEIGHT/2);
+            motherNatureImage.setFitWidth(MOTHER_NATURE_WIDTH);
+            motherNatureImage.setFitHeight(MOTHER_NATURE_HEIGHT);
+            motherNatureImage.setPreserveRatio(true);
+            motherNatureImage.toFront();
+            motherNature=motherNatureImage;
+            gui.addElementToScene(motherNatureImage);
+        }
+    }
+
+    private void clearMotherNature(){
+        gui.removeElementFromScene(motherNature);
+        motherNature=null;
+    }
+
+    public void populateTowers(){
+        clearTowers();
+        if (clientIsland.getTowers()!=null && clientIsland.getTowers().size()>0){
+            String towerColor= clientIsland.getTowers().get(0).toString().toLowerCase();
+            ImageView towerImage = new ImageView("/graphics/"+towerColor+"board_tower.png");
+            towerImage.setX(centerX-TOWER_IMAGE_WIDTH/2);
+            towerImage.setY(centerY-TOWER_IMAGE_HEIGHT/2);
+            towerImage.setFitWidth(TOWER_IMAGE_WIDTH);
+            towerImage.setFitHeight(TOWER_IMAGE_HEIGHT);
+            towerImage.setPreserveRatio(true);
+            towerImage.toFront();
+            tower=towerImage;
+            gui.addElementToScene(tower);
+        }
+    }
+
+    private void clearTowers(){
+        gui.removeElementFromScene(tower);
+        tower=null;
+    }
+
     private void setTooltip(Color color,ImageView studentImage){
         Tooltip tooltip = tooltips.get(color);
         long num = numOfStudents.get(color);
@@ -189,5 +235,8 @@ public class GUIIsland{
         islandImage.setEffect(effect);
     }
 
+    public void setClientIsland(ClientIsland clientIsland){
+        this.clientIsland=clientIsland;
+    }
 
 }
