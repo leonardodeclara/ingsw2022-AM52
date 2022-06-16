@@ -332,7 +332,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return null;
+            return new ArrayList(List.of(Clickable.CARD_STUDENT));
         }
     },CHOOSE_ISLAND_FOR_CARD_3(3){
         @Override

@@ -126,6 +126,8 @@ public class GameTableController extends GUIController implements UpdatableContr
             parameters.add(selectedMNmove);
 
         if(parameters.size() > 0){ //se qualcosa è stato selezionato
+            //da modificare, non funzione se provo a giocare una carta personaggio ad esempio in moveFromLobby
+            //perché da per scontato che io stia muovendo le pedine e non giochi una carta
             Message message = client.buildMessageFromPlayerInput(parameters, gui.getCurrentState());
             gui.passToSocket(message);
             //dopo send deseleziona tutto
@@ -413,6 +415,8 @@ public class GameTableController extends GUIController implements UpdatableContr
                     selectedLobbyStudents.add(id);
                 }
                 case ISLAND -> {
+                    //rivedere, per certe carte personaggio bisogna fare click sull'isola per selezionarla,
+                    //quindi bisogna distinguere i casi in cui memorizzare il numero di passi o l'indice
                     setSelectedMNmove(extractMNsteps(id));
                     System.out.println("Hai cliccato su un'isola");
                 }

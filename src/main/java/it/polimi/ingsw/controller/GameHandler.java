@@ -300,7 +300,7 @@ public class GameHandler implements PropertyChangeListener{
     }
 
     /**
-     * It manages a player's turn end: he is communicated he needs to wait for the other players to play,
+     * It manages a player's turn end: he is told he needs to wait for the other players to play,
      * while the next player is sent a message notifying him his status.
      * @param message: CloseTurnMessage instance communicating the choice sent by the player.
      * @param client: ClientHandler instance handling the player's connection.
@@ -326,6 +326,11 @@ public class GameHandler implements PropertyChangeListener{
 
     }
 
+    /**
+     * It manages player's personality card's selection: the choice is communicated to the GameController, whose response is sent back to the client.
+     * @param message: PlayPersonalityCardMessage instance carrying the personality choice.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handlePlayPersonalityCard(PlayPersonalityCardMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
         if(expertGame){
@@ -344,6 +349,12 @@ public class GameHandler implements PropertyChangeListener{
         }
     }
 
+    /**
+     * This method is responsible for the sequence of events related to the effect of Personality 1:
+     * the player's choice is communicated to the GameController, whose response is sent back to the client.
+     * @param message: Card1EffectMessage instance carrying the student and island choice made by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handleCard1Effect(Card1EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
         Message response = gameController.applyEffect1(message.getStudentIndex(),message.getIslandID());
@@ -355,6 +366,12 @@ public class GameHandler implements PropertyChangeListener{
         sendTo(clientName, response);
     }
 
+    /**
+     * This method is responsible for the sequence of events related to the effect of Personality 3:
+     * the player's choice is communicated to the GameController, whose response is sent back to the client.
+     * @param message: Card3EffectMessage instance carrying the island choice made by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handleCard3Effect(Card3EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
         Message response = gameController.applyEffect3(message.getIslandID());
@@ -372,6 +389,12 @@ public class GameHandler implements PropertyChangeListener{
         sendTo(clientName, response);
     }
 
+    /**
+     * This method is responsible for the sequence of events related to the effect of Personality 5:
+     * the player's choice is communicated to the GameController, whose response is sent back to the client.
+     * @param message: Card5EffectMessage instance carrying the island choice made by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handleCard5Effect(Card5EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
         Message response = gameController.applyEffect5(message.getIslandID());
@@ -383,6 +406,12 @@ public class GameHandler implements PropertyChangeListener{
         sendTo(clientName, response);
     }
 
+    /**
+     * This method is responsible for the sequence of events related to the effect of Personality 7:
+     * the player's choice is communicated to the GameController, whose response is sent back to the client.
+     * @param message: Card7EffectMessage instance carrying the students choice made by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handleCard7Effect(Card7EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
         Message response = gameController.applyEffect7(message.getStudentsFromCard(), message.getStudentsFromLobby());
@@ -394,6 +423,12 @@ public class GameHandler implements PropertyChangeListener{
         sendTo(clientName, response);
     }
 
+    /**
+     * This method is responsible for the sequence of events related to the effect of Personality 9:
+     * the player's choice is communicated to the GameController, whose response is sent back to the client.
+     * @param message: Card9EffectMessage instance carrying the color choice made by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handleCard9Effect(Card9EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
         gameController.applyEffect9(message.getBanned());
@@ -404,6 +439,12 @@ public class GameHandler implements PropertyChangeListener{
         //eventuali input errati (cioè string che non sono i color) vengono gestiti lato client
     }
 
+    /**
+     * This method is responsible for the sequence of events related to the effect of Personality 10:
+     * the player's choice is communicated to the GameController, whose response is sent back to the client.
+     * @param message: Card10EffectMessage instance carrying the students choice made by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handleCard10Effect(Card10EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
         Message response = gameController.applyEffect10(clientName,message.getStudentsFromTable(), message.getStudentsFromLobby());
@@ -415,6 +456,12 @@ public class GameHandler implements PropertyChangeListener{
         sendTo(clientName, response);
     }
 
+    /**
+     * It handles the sequence of events related to the effect of Personality 11:
+     * the player's choice is communicated to the GameController, whose response is sent back to the client.
+     * @param message: Card11EffectMessage instance carrying the student choice made by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handleCard11Effect(Card11EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
         Message response = gameController.applyEffect11(clientName, message.getSelectedStudentIndex());
@@ -426,6 +473,13 @@ public class GameHandler implements PropertyChangeListener{
         }
         sendTo(clientName, response);
     }
+
+    /**
+     * It handles the sequence of events related to the effect of Personality 12:
+     * the player's choice is communicated to the GameController, whose response is sent back to the client.
+     * @param message: Card12EffectMessage instance carrying the student choice made by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handleCard12Effect(Card12EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
         Message response = gameController.applyEffect12(message.getChosenColor());
@@ -438,11 +492,11 @@ public class GameHandler implements PropertyChangeListener{
         sendTo(clientName, response);
     }
 
+    /**
+     * It manages the end of current round: based on the game conditions, if it was the last one it communicates
+     * the game result to all players and proceeds to close the match. Otherwise, a new planning phase takes place.
+     */
     private void handleEndRound(){
-        //in caso di expert game ci saranno un po' di magheggi da fare
-        //se non siamo in expert basta chiamare startPlanningPhase() e poi da lì il resto va a oltranza
-        //poi non mi ricordo sinceramente
-        //ad es bisogna resettare le carte assistente
         Message endRound = gameController.closeCurrentRound();
         if (endRound instanceof EndGameMessage){ //magari cambiare nome a questo metodo e mettere qualcosa tipo isThisLastRound
             sendAll(endRound);
@@ -453,6 +507,10 @@ public class GameHandler implements PropertyChangeListener{
         }
     }
 
+    /**
+     * It closes a match by communicating to all clients the game has ended. Then it proceeds to close socket
+     * connections to all clients and to remove the GameHandler's instance from the server registry.
+     */
     public synchronized void closeMatch(){
         System.out.println("Qui muore il gameHandler");
         sendAll(new ClientStateMessage(ClientState.END_GAME));
@@ -469,12 +527,21 @@ public class GameHandler implements PropertyChangeListener{
         //poi lato server bisogna cancellare la partita e tutto il resto
     }
 
+    /**
+     * It sends a serialized message to a single client through socket connection.
+     * @param nickname: name of the player whom the message is being sent.
+     * @param message: Message instance being sent to the player.
+     */
     private void sendTo(String nickname,Message message){
         ClientHandler clientHandler = nameToHandlerMap.get(nickname);
         System.out.println("Mando a "+nickname+" su client handler " +clientHandler.getID() + " un messaggio di tipo " + (message.getClass().toString()) );
         clientHandler.sendMessage(message);
     }
 
+    /**
+     * It sends a serialized message to all clients involved in the game.
+     * @param message: Message instance being sent to the players.
+     */
     private void sendAll(Message message){
         System.out.println("Mando in broadcast messaggio di " + (message.getClass().toString()));
         ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
@@ -482,6 +549,12 @@ public class GameHandler implements PropertyChangeListener{
             clientHandler.sendMessage(message);
         }
     }
+
+    /**
+     * It sends a serialized message to all clients except the one linked to the ClientHandler's except instance.
+     * @param except: ClientHandler's instance of the player who is being excluded from the message.
+     * @param message: Message instance being sent to all players bar one.
+     */
     private void sendAllExcept(ClientHandler except, Message message){
         ArrayList<ClientHandler> clientHandlers = new ArrayList<>(nameToHandlerMap.values());
         for( ClientHandler clientHandler : clientHandlers){
@@ -490,14 +563,18 @@ public class GameHandler implements PropertyChangeListener{
         }
     }
 
+    /**
+     * It sets the class serverConnection attribute referencing the object responsible for the socket Connection.
+     * @param serverConnection: ServerSocketConnection's instance handling the socket.
+     */
     public void setServer(ServerSocketConnection serverConnection) {
         this.serverConnection = serverConnection;
     }
 
-    public GameController getGameController() {
-        return gameController;
-    }
-
+    /**
+     * It removes a ClientHandler's instance from the clientHandler's registry.
+     * @param clientHandler: ClientHandler istance that is being removed from the registry.
+     */
     public synchronized void removeClientHandler(ClientHandler clientHandler){
         System.out.println("GameHandler: ora rimuovo dalla mia lista di CH " + clientHandler.getID());
         for (Map.Entry<String,ClientHandler> client: nameToHandlerMap.entrySet()){
