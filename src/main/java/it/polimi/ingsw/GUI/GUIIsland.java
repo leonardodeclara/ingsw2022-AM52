@@ -36,7 +36,7 @@ public class GUIIsland{
     private HashMap<Color,Tooltip> tooltips;
 
 //TODO sistemare range cerchio quando si aggiungono studenti lato client
-//TODO sfruttare attributo motherNature in modo che se è qui in MOVE_MN non metto l'effetto bloom
+//TODO sistemare posizioni di madre natura e torri
 
     public GUIIsland(int index,double x,double y,double width,double height,GameTableController controller,GUI gui){
         islandImage = new ImageView("/graphics/island"+((index%3)+1)+".png");
@@ -127,7 +127,7 @@ public class GUIIsland{
         long numberOfStudents = numOfStudents.containsKey(student) ? numOfStudents.get(student) : 0;
         numOfStudents.put(student,numberOfStudents+1);
         if(numberOfStudents > 1){
-            setTooltip(student,studentImage);
+            setStudentsTooltip(student,studentImage);
         }else{
             populateStudents();
         }
@@ -164,7 +164,7 @@ public class GUIIsland{
               //  controller.handleClickEvent(clientIsland.getStudents().indexOf(student),Clickable.ISLAND_STUDENT); //come id passa il primo studente di quel colore che trova nell'isola
            // });
             students.add(studentImage);
-            setTooltip(student,studentImage);
+            setStudentsTooltip(student,studentImage);
             System.out.println("[ISOLA] renderizzo uno studente");
             gui.addElementToScene(studentImage);
         }
@@ -217,7 +217,7 @@ public class GUIIsland{
         tower=null;
     }
 
-    private void setTooltip(Color color,ImageView studentImage){
+    private void setStudentsTooltip(Color color,ImageView studentImage){
         Tooltip tooltip = tooltips.get(color);
         long num = numOfStudents.get(color);
         if(tooltip!=null){
@@ -229,6 +229,14 @@ public class GUIIsland{
             tooltips.put(color,numOfStudents);
             Tooltip.install(studentImage, numOfStudents);
         }
+    }
+
+    //soluzione temporanea, dipende da come gestiamo la renderizzazione delle torri con i merge
+    private void setTowersTooltip(){
+        int towerNumber = clientIsland.getTowers().size();
+        Tooltip towersMessage = new Tooltip("TOWERS NUMBER: "+towerNumber);
+        towersMessage.setShowDelay(Duration.seconds(0.3));
+        Tooltip.install(tower,towersMessage);
     }
 
     public void setImageEffect(Effect effect){

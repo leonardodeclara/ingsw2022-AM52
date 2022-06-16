@@ -11,6 +11,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * GameHandler's class receives messages from clients through ClientHandler class and propagates them
+ * to GameController, in order to change the model's state.
+ */
 public class GameHandler implements PropertyChangeListener{
     private GameController gameController;
     private ServerSocketConnection serverConnection;
@@ -31,6 +35,11 @@ public class GameHandler implements PropertyChangeListener{
         playersOrderIterator = playersOrder.iterator();
     }
 
+    /**
+     * It manages messages from the client by calling the proper method according the message instance.
+     * @param message: instance of the client's message
+     * @param clientHandler: ClientHandler instance of the player sending messages.
+     */
     public void handleMessage(Message message,ClientHandler clientHandler){ //visitor pure qua
         if(message instanceof WizardSelectionMessage)
             handleWizardSelectionMessage((WizardSelectionMessage) message, clientHandler);
@@ -67,10 +76,10 @@ public class GameHandler implements PropertyChangeListener{
     }
 
 
-    public void setServer(ServerSocketConnection serverConnection) {
-        this.serverConnection = serverConnection;
-    }
-
+    /**
+     * It starts a new game by instantiating a new GameController and by setting the listener system.
+     * It also communicates to the players the model's initial status.
+     */
     public void startGame(){
         System.out.println("GameHandler: ora istanzio GameController");
         updatePlayersOrder(players);
@@ -80,7 +89,6 @@ public class GameHandler implements PropertyChangeListener{
         //mando a tutti le isole istanziate
         Message gameInstantiationMessage = gameController.handleGameInstantiation();
         sendAll(gameInstantiationMessage);
-
 
         //System.out.println("GameHandler: ho istanziato Controller che ha istanziato game con i listener");
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
@@ -97,6 +105,10 @@ public class GameHandler implements PropertyChangeListener{
         System.out.println("GameHandler: finito startGame");
     }
 
+    /**
+     * It manages the beginning of the planning phase of a new round: the first player is required to choose a new assistant card which will decide the action's order for the next phase.
+     * The other players are sent a message telling them to wait for their turn.
+     */
     private void startPlanningPhase(){
 
         gameController.updateCloudsStudents(); //all'inizio della planning phase vengono riempite le clouds
@@ -114,6 +126,10 @@ public class GameHandler implements PropertyChangeListener{
         // e dall seconda si usa l'ordine stabilito dalle carte del round precedente finché non hanno scelto tutti le carte
     }
 
+    /**
+     * It manages the beginning of a new action phase by sending the highest priority's player a message notifying his status.
+     * The other players are sent a message telling them to wait for their turn.
+     */
     private void startActionPhase(){
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         Message moveFromLobbyMessage = new ClientStateMessage(ClientState.MOVE_FROM_LOBBY);
@@ -126,7 +142,10 @@ public class GameHandler implements PropertyChangeListener{
         updatePlayersOrder(currentTurnOrder);
     }
 
-
+    /**
+     * It updates the order by which players are required to take action in the game.
+     * @param players: names of the active players.
+     */
     private void updatePlayersOrder(ArrayList<String> players){
         playersOrder = new ArrayList<>(players);
         playersOrderIterator = playersOrder.iterator();
@@ -137,6 +156,12 @@ public class GameHandler implements PropertyChangeListener{
         playersOrderIterator.next();
     }
 
+    /**
+     * It manages the selection of a wizard card by a player: the choice is communicated to the GameController,
+     * whose response is sent back to the client.
+     * @param message: WizardSelectionMessage instance carrying the choice sent by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handleWizardSelectionMessage(WizardSelectionMessage message, ClientHandler client){
         int chosenWizard = message.getWizard();
         String clientName = getNicknameFromClientID(client.getID());
@@ -146,15 +171,24 @@ public class GameHandler implements PropertyChangeListener{
         if (!(response instanceof ErrorMessage)){
             System.out.println(clientName+ " ha scelto il suo wizard, ora gi chiederò che torre vuole");
             sendTo(clientName, new ClientStateMessage(ClientState.SET_UP_TOWER_PHASE));
-            //sendTo(clientName, new AvailableTowerMessage(gameController.getAvailableTowers()));
-            //mandiamo due volte le availableTowers
         }
     }
 
+    /**
+     * It extracts a player's name by its clientHandler's identification number.
+     * @param clientID: ClientHandler's identification number.
+     * @return the name of the player linked to the ClientHandler's clientId.
+     */
     private String getNicknameFromClientID(int clientID){
         return server.getIdToNicknameMap().get(clientID);
     }
 
+    /**
+     * It manages the selection of a tower color by a player: the choice is communicated to the GameController,
+     * whose response is sent back to the client.
+     * @param message: TowerSelectionMessage instance carrying the choice sent by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handleTowerSelectionMessage(TowerSelectionMessage message, ClientHandler client){
         Tower chosenTower = message.getTower();
         String clientName = getNicknameFromClientID(client.getID());
@@ -176,9 +210,14 @@ public class GameHandler implements PropertyChangeListener{
                 System.out.println("Adesso faccio partire la partita con la scelta delle carte assistente. comunque la fase dopo");
             }
         }
-
     }
 
+    /**
+     * It manages the selection of an assistant card by a player: the choice is communicated to the GameController,
+     * whose response is sent back to the client.
+     * @param message: PlayAssistantCardMessage instance carrying the choice sent by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handlePlayAssistantCardMessage(PlayAssistantCardMessage message, ClientHandler client){
         int chosenCard = message.getPriority();
         String clientName = getNicknameFromClientID(client.getID());
@@ -186,9 +225,6 @@ public class GameHandler implements PropertyChangeListener{
         Message response = gameController.updateAssistantCards(clientName, chosenCard); //se il messaggio andava bene il model si è aggiornato dopo questa riga
 
         if (!(response instanceof ErrorMessage)){
-            //Message currentTurnCards = gameController.
-            //bisogna mandare in broadcast un messaggio con le carte giocate fino ad ora (CurrentTurnAssistantCard)
-            // ->cambiarei da come sono state pensate e farei l'aggiornamento carta per carta,si potrebbe usare AssistantDeckUpdate. boh rivedere
             System.out.println(clientName+ " ha scelto la sua carta, ora lo mando in WAIT_TURN o in MOVE FROM LOBBY");
             if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
                 sendTo(clientName, response);
@@ -204,7 +240,12 @@ public class GameHandler implements PropertyChangeListener{
         else sendTo(clientName, response);
     }
 
-
+    /**
+     * It manages the students' movement from the board's lobby by a player: the choice is communicated to the GameController,
+     * whose response is sent back to the client.
+     * @param message: MoveStudentsFromLobbyMessage instance carrying the choice sent by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handleMoveStudentMessage(MoveStudentsFromLobbyMessage message, ClientHandler client){
         ArrayList<Integer> studentIDs = message.getStudentIndex();
         ArrayList<Integer> destIDs = message.getDestinationIndex();
@@ -217,6 +258,12 @@ public class GameHandler implements PropertyChangeListener{
         }
     }
 
+    /**
+     * It manages Mother Nature tile's number of steps chose by a player: the choice is communicated to the GameController,
+     * whose response is sent back to the client. If the resulting move brings the game to an end all players are commmunicated the state and the match is closed.
+     * @param message: MotherNatureMoveMessage instance carrying the choice sent by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handleMoveMotherNatureMessage(MotherNatureMoveMessage message, ClientHandler client){
         int steps = message.getSteps();
         String clientName = getNicknameFromClientID(client.getID());
@@ -236,6 +283,11 @@ public class GameHandler implements PropertyChangeListener{
         }
     }
 
+    /**
+     * It manages a cloud's selection by a player: the choice is communicated to the GameController,whose response is sent back to the client.
+     * @param message: CloudSelectionMessage instance carrying the choice sent by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handleCloudPick(CloudSelectionMessage message, ClientHandler client){
         int cloudIndex = message.getCloudIndex();
         String clientName = getNicknameFromClientID(client.getID());
@@ -247,6 +299,12 @@ public class GameHandler implements PropertyChangeListener{
         }
     }
 
+    /**
+     * It manages a player's turn end: he is communicated he needs to wait for the other players to play,
+     * while the next player is sent a message notifying him his status.
+     * @param message: CloseTurnMessage instance communicating the choice sent by the player.
+     * @param client: ClientHandler instance handling the player's connection.
+     */
     private void handleEndTurn(CloseTurnMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
         if(expertGame)
@@ -430,6 +488,10 @@ public class GameHandler implements PropertyChangeListener{
             if(!clientHandler.equals(except))
                 clientHandler.sendMessage(message);
         }
+    }
+
+    public void setServer(ServerSocketConnection serverConnection) {
+        this.serverConnection = serverConnection;
     }
 
     public GameController getGameController() {

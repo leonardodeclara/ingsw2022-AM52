@@ -31,7 +31,7 @@ import static it.polimi.ingsw.Constants.*;
 //TODO sistemare visualizzazione sulle isole quando si hanno 2 colori (angle va cambiato)
 //TODO creare un sistema che sappia quanti elementi puoi toccare e ti impedisca di toccarne di più (move from lobby 3 studenti fisso, alcune carte min 1 max 3)
 //TODO visualizzazione messaggio last round
-//TODO gestire click isola per move_mn in modo che venga passato a build_message il numero di steps e non l'id dell'isola
+
 
 public class GameTableController extends GUIController implements UpdatableController{
     @FXML private ImageView player1Icon;
