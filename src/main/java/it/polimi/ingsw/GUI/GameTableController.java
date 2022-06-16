@@ -2,10 +2,10 @@ package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.*;
 import it.polimi.ingsw.messages.Message;
-import it.polimi.ingsw.model.Color;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -15,11 +15,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.TilePane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.Constants.*;
 
@@ -48,6 +50,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private int selectedAssistant = -1; //priority
     private int selectedPersonality = -1;
     private ArrayList<ImageView> deckImages;
+    private HashMap<ImageView,Text> currentTurnCardsImages;
     private ArrayList<GUIIsland> islands;
     private ArrayList<GUICloud> clouds;
     private ArrayList<GUIPersonality> personalities;
@@ -57,6 +60,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private double centerY = 0;
     private boolean waitTurn = false;
     private boolean initialized = false;
+    private boolean showDeck;
     private ArrayList<Object> parameters;
 
     public void start(){ //metodo di inizializzazione chiamato da GUI. In alcune situazioni viene chiamato due volte ma noi dobbiamo inizializzare una volta sola
@@ -66,9 +70,11 @@ public class GameTableController extends GUIController implements UpdatableContr
             deckButton.setImage(new Image("/graphics/Wizard_"+(gui.getWizard()+1)+".png"));
             parameters = new ArrayList<>();
             deckImages = new ArrayList<>();
+            currentTurnCardsImages = new HashMap<>();
             selectedLobbyStudents = new ArrayList<>();
             selectedStudentsDestinations = new ArrayList<>();
             initialized = true;
+            showDeck=true;
 
             sendButton.setOnMouseEntered(e -> sendButton.setEffect(new Bloom()));
             sendButton.setOnMouseExited(e -> sendButton.setEffect(null));
@@ -140,6 +146,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         renderIslands();
         renderClouds();
         renderDeck();
+        renderCurrentTurnCards();
         if (gui.getGB().isExpertGame())
             renderPersonalityCards();
         populateDashboard();
@@ -266,6 +273,7 @@ public class GameTableController extends GUIController implements UpdatableContr
 
         return optIsland.orElse(null);
     }
+
     private void renderDeck(){
         HashMap<Integer, Integer> deck = gui.getDeck(); //k= priority, v = numMoves
         if((deckImages.size() == 0 || deck.size() != deckImages.size())){
@@ -280,6 +288,7 @@ public class GameTableController extends GUIController implements UpdatableContr
                 assistantImage.setY(startY + deckCounter * ASSISTANT_Y_OFFSET);
                 assistantImage.setFitWidth(ASSISTANT_IMAGE_WIDTH);
                 assistantImage.setFitHeight(ASSISTANT_IMAGE_HEIGHT);
+                assistantImage.setPreserveRatio(true);
                 assistantImage.setOnMouseClicked((MouseEvent e) -> {
                     handleClickEvent(priority, Clickable.ASSISTANT);
                     handleSelectionEffect(assistantImage,Clickable.ASSISTANT);
@@ -294,6 +303,7 @@ public class GameTableController extends GUIController implements UpdatableContr
                 });
                 deckImages.add(assistantImage);
                 gui.addElementToScene(assistantImage);
+                assistantImage.setVisible(showDeck);
                 deckCounter++;
             }
             deckButton.toFront();
@@ -461,4 +471,85 @@ public class GameTableController extends GUIController implements UpdatableContr
     public int extractMNsteps(int islandId){
         return gui.getGB().getMotherNatureDistance(islandId);
     }
+
+    public void changeShowedCards(MouseEvent mouseEvent) {
+        System.out.println("Ho cliccato per cambiare le carte da mostrare");
+        if(showDeck) {
+            System.out.println("ora mostro le currentAssistantCards");
+            for (ImageView deckCardImage : deckImages)
+                deckCardImage.setVisible(false);
+            for (Map.Entry<ImageView,Text> turnCardImage: currentTurnCardsImages.entrySet()){
+                turnCardImage.getKey().setVisible(true);
+                turnCardImage.getValue().setVisible(true);
+            }
+            showDeck=false;
+        }
+        else{
+            System.out.println("ora mostro le deckImages");
+            for (Map.Entry<ImageView,Text> turnCardImage: currentTurnCardsImages.entrySet()){
+                turnCardImage.getKey().setVisible(false);
+                turnCardImage.getValue().setVisible(false);
+            }
+            for (ImageView deckCardImage : deckImages)
+                deckCardImage.setVisible(true);
+            showDeck=true;
+        }
+    }
+
+    public void renderCurrentTurnCards(){
+        HashMap<String,Integer> playerToCard = gui.getTurnCards();
+        HashMap<String,Integer> cardsToRender=
+                new HashMap<>(playerToCard.entrySet().
+                stream().filter(entry->entry.getValue()!=0).
+                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+        //se qualcuno non ha ancora giocato la sua carta assistente viene settato in GameBoard che il valore della sua carta è 0
+
+        if (currentTurnCardsImages.size()==0 || currentTurnCardsImages.size()!=cardsToRender.size()){
+            clearCurrentTurnCards();
+            int cardCounter = 0;
+            double startY = deckButton.getLayoutY()-CURRENT_ASSISTANT_VGAP;
+            System.out.println("Start y per le current assistant: "+startY);
+
+            for (Map.Entry<String,Integer> cardChoice: cardsToRender.entrySet()) {
+                System.out.println("Renderizzo la carta "+cardChoice.getValue()+" di " + cardChoice.getKey());
+                ImageView assistantImage = new ImageView("/graphics/assistant_" + cardChoice.getValue() + ".png");
+                assistantImage.setX(ASSISTANT_X);
+                assistantImage.setY(startY - cardCounter * CURRENT_ASSISTANT_VGAP);
+                System.out.println("Carta di "+cardChoice.getKey()+" in posizione x "+assistantImage.getX());
+                System.out.println("Carta di "+cardChoice.getKey()+" in posizione y "+assistantImage.getY());
+                assistantImage.setFitWidth(ASSISTANT_IMAGE_WIDTH);
+                assistantImage.setFitHeight(ASSISTANT_IMAGE_HEIGHT);
+                assistantImage.setPreserveRatio(true);
+                String text = cardChoice.getKey().equals(gui.getPlayerNickname())?
+                        "YOUR CARD": cardChoice.getKey().toUpperCase()+"'S CARD";
+                Text cardLabel = new Text(text);
+                cardLabel.setX(ASSISTANT_X);
+                cardLabel.setY(assistantImage.getY()+ASSISTANT_IMAGE_HEIGHT*0.9);//test
+                cardLabel.setFont(Font.font(13));
+                cardLabel.setFill(Color.WHITE); //si potrebbe mettere nel css
+                currentTurnCardsImages.put(assistantImage,cardLabel);
+                gui.addElementToScene(assistantImage);
+                gui.addElementToScene(cardLabel);
+                //per centrare il testo, una variante di questo
+                //Bounds textBounds = cardLabel.getBoundsInLocal();
+                //double scalex = ASSISTANT_IMAGE_WIDTH/textBounds.getWidth();
+                //cardLabel.setScaleX( scalex );
+
+                assistantImage.setVisible(!showDeck);
+                cardLabel.setVisible(!showDeck);
+                cardLabel.toFront();
+                cardCounter++;
+            }
+        }
+        System.out.println("Numero di immagini di carte assistente del turno: "+currentTurnCardsImages.size());
+    }
+
+    private void clearCurrentTurnCards(){
+        for(Map.Entry<ImageView,Text> card : currentTurnCardsImages.entrySet()){
+            gui.removeElementFromScene(card.getKey());
+            gui.removeElementFromScene(card.getValue());
+        }
+        currentTurnCardsImages.clear();
+    }
+
 }

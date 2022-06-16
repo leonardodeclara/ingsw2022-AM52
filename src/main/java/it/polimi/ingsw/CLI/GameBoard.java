@@ -320,6 +320,13 @@ public class GameBoard {
         return -1; //non dovrebbe succedere, sistemare
     }
 
+    public HashMap<String, Integer> getTurnCards(){
+        HashMap<String,Integer> playerToCards =new HashMap<>();
+        for (Map.Entry<String,ClientBoard> playerToBoard: clientBoards.entrySet())
+            playerToCards.put(playerToBoard.getKey(), playerToBoard.getValue().getCurrentCard());
+        return playerToCards;
+    }
+
     public void setNumberOfPlayers(int numberOfPlayers) {
         this.numberOfPlayers = numberOfPlayers;
     }

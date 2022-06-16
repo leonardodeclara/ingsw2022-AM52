@@ -48,6 +48,8 @@ public class Constants {
     public static int ASSISTANT_Y_OFFSET = 46;
     public static double ASSISTANT_IMAGE_HEIGHT = 125;
     public static double ASSISTANT_IMAGE_WIDTH = 85;
+    public static int CURRENT_ASSISTANT_VGAP = 150;
+
     public static double PERSONALITY_IMAGE_HEIGHT = 125;
     public static double PERSONALITY_IMAGE_WIDTH = 85;
     public static double COIN_IMAGE_HEIGHT = 56;

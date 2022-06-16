@@ -293,6 +293,10 @@ public class GUI extends Application implements UI{
         return GB;
     }
 
+    public HashMap<String,Integer> getTurnCards(){
+        return GB.getTurnCards();
+    }
+
     public ClientBoard getPlayerBoard(String playerNickname){
         return GB.getClientBoards().get(playerNickname);
     }
