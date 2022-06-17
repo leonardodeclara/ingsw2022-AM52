@@ -25,7 +25,6 @@ import static it.polimi.ingsw.Constants.*;
 
 //TODO sistemare bene sistema di selezione e pulire action parser dei vecchi parseTower, parseWizard ecc... (ora sono inutili)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
-//TODO sistemare visualizzazione sulle isole quando si hanno 2 colori (angle va cambiato)
 //TODO visualizzazione messaggio last round
 
 
