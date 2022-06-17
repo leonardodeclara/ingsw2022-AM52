@@ -311,7 +311,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         for (ClientPersonality card: cards){
             int cardId = card.getCardID();
             System.out.println("GameTableController: renderizzo la carta personaggio "+cardId);
-            cardY = centerY + ISLAND_IMAGE_HEIGHT*1.1; //scelta a caso
+            cardY = centerY - PERSONALITY_OFFSET_Y + ISLAND_IMAGE_HEIGHT*1.1; //scelta a caso
             cardX= centerX - PERSONALITY_IMAGE_WIDTH + i*PERSONALITY_IMAGE_WIDTH;
             GUIPersonality guiPersonality = new GUIPersonality(cardId,cardX-PERSONALITY_IMAGE_WIDTH/2,cardY-PERSONALITY_IMAGE_HEIGHT/2,PERSONALITY_IMAGE_WIDTH,PERSONALITY_IMAGE_HEIGHT,this,gui);
             guiPersonality.render();

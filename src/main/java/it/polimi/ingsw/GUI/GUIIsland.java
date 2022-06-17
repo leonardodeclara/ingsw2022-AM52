@@ -3,6 +3,7 @@ package it.polimi.ingsw.GUI;
 import it.polimi.ingsw.CLI.ClientBoard;
 import it.polimi.ingsw.CLI.ClientIsland;
 import it.polimi.ingsw.model.Color;
+import it.polimi.ingsw.model.Tower;
 import javafx.event.EventHandler;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
@@ -156,7 +157,7 @@ public class GUIIsland{
         clearStudents();
         int colorCounter = 0;
         for(Color student : Color.values()){
-            if(numOfStudents.keySet().contains(student)){
+            if(numOfStudents.containsKey(student)){
                 double angle = 2 * colorCounter * Math.PI / Color.values().length;
                 double xOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS) * Math.cos(angle);
                 double yOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS) * Math.sin(angle);
@@ -214,6 +215,7 @@ public class GUIIsland{
             towerImage.setPreserveRatio(true);
             towerImage.toFront();
             tower=towerImage;
+            setTowersTooltip();
             gui.addElementToScene(tower);
         }
     }
@@ -227,10 +229,10 @@ public class GUIIsland{
         Tooltip tooltip = tooltips.get(color);
         long num = numOfStudents.get(color);
         if(tooltip!=null){
-            tooltip.setText(Long.toString(num));
+            tooltip.setText("Ci sono: "+Long.toString(num)+" studenti "+color.translateToItalian().toLowerCase());
             Tooltip.install(studentImage,tooltip);
         }else{
-            Tooltip numOfStudents = new Tooltip(Long.toString(num));
+            Tooltip numOfStudents = new Tooltip("Ci sono: "+Long.toString(num)+" studenti "+color.translateToItalian().toLowerCase());
             numOfStudents.setShowDelay(Duration.seconds(0.1));
             tooltips.put(color,numOfStudents);
             Tooltip.install(studentImage, numOfStudents);
@@ -240,7 +242,8 @@ public class GUIIsland{
     //soluzione temporanea, dipende da come gestiamo la renderizzazione delle torri con i merge
     private void setTowersTooltip(){
         int towerNumber = clientIsland.getTowers().size();
-        Tooltip towersMessage = new Tooltip("TOWERS NUMBER: "+towerNumber);
+        Tower towerType = clientIsland.getTowers().get(0);
+        Tooltip towersMessage = new Tooltip("Ci sono "+towerNumber+" torri "+towerType.getTranslation().toLowerCase());
         towersMessage.setShowDelay(Duration.seconds(0.3));
         Tooltip.install(tower,towersMessage);
     }

@@ -35,8 +35,9 @@ public class Constants {
     public static final String RESOLUTION_TEST_FXML = "/fxml/ResolutionTest.fxml";
     public static double ISLAND_CIRCLE_RADIUS = 250;
     public static double CLOUD_CIRCLE_RADIUS = 50;
-    public static double ISLAND_IMAGE_WIDTH = 100;
-    public static double ISLAND_IMAGE_HEIGHT = 88.9;
+    public static double ISLAND_IMAGE_WIDTH = 100*1.15;
+    public static double ISLAND_IMAGE_HEIGHT = 88.9*1.15;
+    public static double PERSONALITY_OFFSET_Y = 10;
     public static double CLOUD_IMAGE_WIDTH = 65;
     public static double CLOUD_IMAGE_HEIGHT = 58.5;
     public static double STUDENT_IMAGE_HEIGHT = 16;
