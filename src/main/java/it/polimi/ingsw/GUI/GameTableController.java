@@ -2,15 +2,9 @@ package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.*;
 import it.polimi.ingsw.client.ClientState;
-import it.polimi.ingsw.messages.ClientStateMessage;
-import it.polimi.ingsw.messages.ErrorMessage;
 import it.polimi.ingsw.messages.Message;
-import it.polimi.ingsw.messages.UpdateMessage;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,7 +13,6 @@ import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
-import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -60,6 +53,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private ArrayList<GUIIsland> islands;
     private ArrayList<GUICloud> clouds;
     private ArrayList<GUIPersonality> personalities;
+    private HashMap<ClientBoard,GUIBoard> GUIBoards;
     private GUIBoard currentBoard;
     private HashMap<Integer,String> localIDToPlayer; //1 sempre giocatore,2 giocatore in alto,3 giocatore in mezzo (associa all'icona ingame, il nickname)
     private double centerX = 0;
@@ -80,13 +74,13 @@ public class GameTableController extends GUIController implements UpdatableContr
             currentTurnCardsImages = new HashMap<>();
             selectedLobbyStudents = new ArrayList<>();
             selectedStudentsDestinations = new ArrayList<>();
+            GUIBoards = new HashMap<>();
             selectedImages = new ArrayList<>();
             initialized = true;
             showDeck=true;
 
             sendButton.setOnMouseEntered(e -> sendButton.setEffect(new Bloom()));
             sendButton.setOnMouseExited(e -> sendButton.setEffect(null));
-            //contextMessage.setFont(Font.loadFont("/fonts/Cute And Active.ttf", 12));
 
             if(gui.getNumOfPlayers()==2)
                 player3Icon.setVisible(false);
@@ -105,6 +99,9 @@ public class GameTableController extends GUIController implements UpdatableContr
             renderPlayerButtonName(player2Icon,localIDToPlayer.get(2));
             renderPlayerButtonName(player3Icon, localIDToPlayer.get(3));
 
+            for(ClientBoard clientBoard : gui.getClientBoards()){
+                GUIBoards.put(clientBoard,new GUIBoard(clientBoard,gui,this,tableBounds)); //Crea tutte le GUIBoards
+            }
             renderedDashboard = 1; //Di default renderizziamo la nostra board
 
         }
@@ -214,6 +211,9 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
     private void renderIslands(){
+        for(GUIIsland guiIsland : islands){
+            guiIsland.clearIsland();
+        }
         ArrayList<ClientIsland> clientIslands = gui.getIslands();
         ArrayList<GUIIsland> newIslands = new ArrayList<>();
         int numIslands = clientIslands.size();
@@ -277,12 +277,19 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
     private void populateDashboard(boolean fromClick){ //from click ci dice se è arrivato un update o se il metodo è stato chiamato dalla chiusura di una board
+        //se fromClick == true la vecchia board viene pulita MA non resettata
+        //se fromClick == false la vecchia board viene pulita e resettata
+
+        //in ogni caso dopo rirenderizziamo la board nuovamente
+
         if(currentBoard != null){ //se c'è già qualcosa renderizzato pulisci prima quello
             currentBoard.clearBoard(fromClick);
         }
+
         ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard));
-        currentBoard = new GUIBoard(clientBoard,gui,this,tableBounds);
-        currentBoard.populate(); //poi renderizzi quello nuovo
+        currentBoard = GUIBoards.get(clientBoard);
+
+        currentBoard.populate(); //in ogni caso si ripopola la currentBoard
         /*
         populateTables(clientBoard);
         populateLobby(clientBoard);
@@ -383,7 +390,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         System.out.println("Posizione x del buttone di " + playerName + "è " + playerIcon.getLayoutX());
         name.setLayoutY(playerIcon.getLayoutY()+NAME_TO_BUTTON_VGAP);
         System.out.println("Posizione y del buttone di " + playerName + "è " + playerIcon.getLayoutY());
-        name.setFont(Font.font(15));
+        name.setFont(gui.getGameFont());
         gui.addElementToScene(name);
         Tooltip message = new Tooltip("CLICK ON THE CIRCLE TO SHOW "+playerName.toUpperCase()+"'S BOARD");
         message.setShowDelay(Duration.seconds(0.3));

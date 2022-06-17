@@ -78,6 +78,11 @@ public class GUIIsland{
         }
     }
 
+    public void clearIsland(){
+        clearStudents();
+        clearTowers();
+        clearMotherNature();
+    }
     public void setEvents(){
         islandImage.setOnMouseClicked((MouseEvent e) -> {
             controller.handleClickEvent(index,Clickable.ISLAND);

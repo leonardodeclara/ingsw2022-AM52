@@ -15,6 +15,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -42,6 +44,7 @@ public class GUI extends Application implements UI{
     private ImageView greyOverlay;
     private int wizardID; //andrebbero messe in GameBoard ma è una sbatta
     private Tower team; //andrebbero messe in GameBoard ma è una sbatta
+    private Font gameFont;
 
 
     //TODO aggiungere pulsanti belli
@@ -204,7 +207,7 @@ public class GUI extends Application implements UI{
 
         setScene(MAIN_MENU_FXML);
 
-
+        gameFont = Font.loadFont(getClass().getResourceAsStream("/fonts/Hey Comic.ttf"), 14);
 
 
 
@@ -298,6 +301,9 @@ public class GUI extends Application implements UI{
         return GB.getTurnCards();
     }
 
+    public ArrayList<ClientBoard> getClientBoards(){
+        return new ArrayList<ClientBoard>(GB.getClientBoards().values());
+    }
     public ClientBoard getPlayerBoard(String playerNickname){
         return GB.getClientBoards().get(playerNickname);
     }
@@ -318,6 +324,9 @@ public class GUI extends Application implements UI{
         ((AnchorPane)stage.getScene().getRoot()).getChildren().add(n);
     }
 
+    public Font getGameFont(){
+        return gameFont;
+    }
     public void removeElementFromScene(Node n){
         System.out.println(((AnchorPane)stage.getScene().getRoot()).getChildren().remove(n) ? "Ho rimosso " : "Non ho rimosso "+n);
     }

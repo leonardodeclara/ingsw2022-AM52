@@ -212,7 +212,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return new ArrayList<>(List.of(Clickable.LOBBY_STUDENT,Clickable.ISLAND));
+            return new ArrayList<>(List.of(Clickable.LOBBY_STUDENT));
         }
     },MOVE_MOTHER_NATURE(0){
         @Override

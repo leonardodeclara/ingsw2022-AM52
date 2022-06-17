@@ -2,4 +2,17 @@
     -fx-background-image: url("../graphics/button1.png");
     -fx-background-size: stretch;
     -fx-background-color: transparent;
+    -fx-font-family: "Hey Comic";
+
+}
+
+.contextMessage {
+   -fx-font-family: "Hey Comic";
+   -fx-font-size: 12;
+}
+
+.contextMessage.label .text {
+    -fx-fill: white;
+    -fx-stroke: black;
+    -fx-stroke-width: 0.5px;
 }

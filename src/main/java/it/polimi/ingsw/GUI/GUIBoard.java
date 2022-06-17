@@ -269,6 +269,7 @@ public class GUIBoard {
         if(!fromClick){
             numOfStudentsOnTable.clear();
             studentsInLobby.clear();
+            initializeBoard();
         }
 
     }
