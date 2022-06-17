@@ -76,6 +76,7 @@ public class GameTableController extends GUIController implements UpdatableContr
             selectedStudentsDestinations = new ArrayList<>();
             GUIBoards = new HashMap<>();
             selectedImages = new ArrayList<>();
+            islands = new ArrayList<>();
             initialized = true;
             showDeck=true;
 
@@ -212,26 +213,29 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     private void renderIslands(){
         for(GUIIsland guiIsland : islands){
-            guiIsland.clearIsland();
+            guiIsland.clearIsland(); //cancella tutte le isole e relativo contenuto
         }
+
+        islands.clear(); //rimuovi le reference dall'array islands
+
+        //procedi a renderizzare le isole da capo
         ArrayList<ClientIsland> clientIslands = gui.getIslands();
-        ArrayList<GUIIsland> newIslands = new ArrayList<>();
         int numIslands = clientIslands.size();
 
+        int islandCounter = 0;
         for (ClientIsland island : clientIslands) {
-            int i = island.getIslandIndex(); //potrebbe dare problemi quando si avranno isole con id sparsi
-            double angle = 2 * i * Math.PI / numIslands ;
+            double angle = 2 * islandCounter * Math.PI / numIslands ;
             double xOffset = ISLAND_CIRCLE_RADIUS * Math.cos(angle-Math.PI/2);
             double yOffset = ISLAND_CIRCLE_RADIUS * Math.sin(angle-Math.PI/2);
             double x = centerX + xOffset ;
             double y = centerY + yOffset ;
-            GUIIsland guiIsland = new GUIIsland(i,x-ISLAND_IMAGE_WIDTH/2,y-ISLAND_IMAGE_HEIGHT/2,ISLAND_IMAGE_WIDTH,ISLAND_IMAGE_HEIGHT,this,gui);
+            GUIIsland guiIsland = new GUIIsland(island.getIslandIndex(),x-ISLAND_IMAGE_WIDTH/2,y-ISLAND_IMAGE_HEIGHT/2,ISLAND_IMAGE_WIDTH,ISLAND_IMAGE_HEIGHT,this,gui);
             guiIsland.setClientIsland(island);
             guiIsland.setEvents();
             guiIsland.render();
-            newIslands.add(guiIsland);
+            islands.add(guiIsland);
+            islandCounter++;
         }
-        islands=newIslands;
     }
     /*
     private void addStudentToIsland(ImageView islandImage,int islandCounter,ClientIsland island,Color student){
@@ -391,6 +395,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         name.setLayoutY(playerIcon.getLayoutY()+NAME_TO_BUTTON_VGAP);
         System.out.println("Posizione y del buttone di " + playerName + "è " + playerIcon.getLayoutY());
         name.setFont(gui.getGameFont());
+        name.setFill(Color.WHITE);
         gui.addElementToScene(name);
         Tooltip message = new Tooltip("CLICK ON THE CIRCLE TO SHOW "+playerName.toUpperCase()+"'S BOARD");
         message.setShowDelay(Duration.seconds(0.3));

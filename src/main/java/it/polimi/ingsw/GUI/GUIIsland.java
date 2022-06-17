@@ -78,10 +78,11 @@ public class GUIIsland{
         }
     }
 
-    public void clearIsland(){
+    public void clearIsland(){ //cancella l'isola
         clearStudents();
         clearTowers();
         clearMotherNature();
+        gui.removeElementFromScene(islandImage);
     }
     public void setEvents(){
         islandImage.setOnMouseClicked((MouseEvent e) -> {
