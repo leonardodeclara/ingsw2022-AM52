@@ -57,7 +57,7 @@ public class GUIIsland{
         numOfStudents.clear();
         initializeNumOfStudents();
         populateStudents();
-        populateMotherNature();
+        //populateMotherNature();
         populateTowers();
     }
     public void setPos(double x,double y){
@@ -154,26 +154,25 @@ public class GUIIsland{
 
     public void populateStudents(){
         clearStudents();
-        for(Color student : numOfStudents.keySet()){
-            System.out.println("[PopulateIsland]Printiamo gli studenti "+student);
-            double angle = 2 * student.getIndex() * Math.PI / Color.values().length;
-            double xOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS * numOfStudents.keySet().size() * 2) * Math.cos(angle);
-            double yOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS * numOfStudents.keySet().size() * 2) * Math.sin(angle);
-            double x = centerX + xOffset ;
-            double y = centerY + yOffset ;
-            ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
-            studentImage.setX(x-STUDENT_IMAGE_WIDTH/2);
-            studentImage.setY(y-STUDENT_IMAGE_HEIGHT/2);
-            studentImage.setPreserveRatio(true);
-            studentImage.setFitHeight(STUDENT_IMAGE_HEIGHT);
-            studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
-            //studentImage.setOnMouseClicked((MouseEvent e) -> {
-              //  controller.handleClickEvent(clientIsland.getStudents().indexOf(student),Clickable.ISLAND_STUDENT); //come id passa il primo studente di quel colore che trova nell'isola
-           // });
-            students.add(studentImage);
-            setStudentsTooltip(student,studentImage);
-            System.out.println("[ISOLA] renderizzo uno studente");
-            gui.addElementToScene(studentImage);
+        int colorCounter = 0;
+        for(Color student : Color.values()){
+            if(numOfStudents.keySet().contains(student)){
+                double angle = 2 * colorCounter * Math.PI / Color.values().length;
+                double xOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS) * Math.cos(angle);
+                double yOffset = (STUDENTS_ISLAND_CIRCLE_RADIUS) * Math.sin(angle);
+                double x = centerX + xOffset ;
+                double y = centerY + yOffset ;
+                ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
+                studentImage.setX(x-STUDENT_IMAGE_WIDTH/2);
+                studentImage.setY(y-STUDENT_IMAGE_HEIGHT/2);
+                studentImage.setPreserveRatio(true);
+                studentImage.setFitHeight(STUDENT_IMAGE_HEIGHT);
+                studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
+                students.add(studentImage);
+                setStudentsTooltip(student,studentImage);
+                gui.addElementToScene(studentImage);
+            }
+            colorCounter++;
         }
     }
 
@@ -208,10 +207,10 @@ public class GUIIsland{
         if (clientIsland.getTowers()!=null && clientIsland.getTowers().size()>0){
             String towerColor= clientIsland.getTowers().get(0).toString().toLowerCase();
             ImageView towerImage = new ImageView("/graphics/"+towerColor+"_board_tower.png");
-            towerImage.setX(centerX-TOWER_IMAGE_WIDTH/2);
-            towerImage.setY(centerY-TOWER_IMAGE_HEIGHT/2);
-            towerImage.setFitWidth(TOWER_IMAGE_WIDTH);
-            towerImage.setFitHeight(TOWER_IMAGE_HEIGHT);
+            towerImage.setX(centerX-TOWER_IMAGE_WIDTH/3);
+            towerImage.setY(centerY-TOWER_IMAGE_HEIGHT/3);
+            towerImage.setFitWidth(TOWER_IMAGE_WIDTH/1.5);
+            towerImage.setFitHeight(TOWER_IMAGE_HEIGHT/1.5);
             towerImage.setPreserveRatio(true);
             towerImage.toFront();
             tower=towerImage;
