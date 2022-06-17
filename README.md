@@ -9,7 +9,7 @@ Marianna Dragonetti marianna.dragonetti@mail.polimi.it
 | Basic rules      | 🟡 |
 | Complete rules   | 🟡 |
 | Socket           | 🟡 |
-| GUI              | 🔴 |
+| GUI              | 🟡 |
 | CLI              | 🟡 |
 | Character cards  | 🟡 |
 | Multiple games   | 🟡 |
