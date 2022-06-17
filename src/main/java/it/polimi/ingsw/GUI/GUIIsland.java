@@ -58,7 +58,7 @@ public class GUIIsland{
         numOfStudents.clear();
         initializeNumOfStudents();
         populateStudents();
-        //populateMotherNature();
+        populateMotherNature();
         populateTowers();
     }
     public void setPos(double x,double y){
