@@ -396,6 +396,8 @@ public class GameTableController extends GUIController implements UpdatableContr
         System.out.println("Posizione y del buttone di " + playerName + "è " + playerIcon.getLayoutY());
         name.setFont(gui.getGameFont());
         name.setFill(Color.WHITE);
+        name.setStrokeWidth(.5);
+        name.setStroke(Color.BLACK);
         gui.addElementToScene(name);
         Tooltip message = new Tooltip("CLICK ON THE CIRCLE TO SHOW "+playerName.toUpperCase()+"'S BOARD");
         message.setShowDelay(Duration.seconds(0.3));
