@@ -43,8 +43,7 @@ public class GUI extends Application implements UI{
     private int wizardID; //andrebbero messe in GameBoard ma è una sbatta
     private Tower team; //andrebbero messe in GameBoard ma è una sbatta
 
-    //TODO aggiungere carte planning phase
-    //TODO overlay di selezione intorno ai selezionabili
+
     //TODO aggiungere pulsanti belli
     //TODO sistemare wait screen (problemi di render order quando togliamo setSceneShouldWait() e lo sostituiamo con enable e disable)
     //TODO aggiungere send di messaggio di Disconnect quando si chiude la finestra
@@ -84,6 +83,8 @@ public class GUI extends Application implements UI{
                 }
                 else if (message instanceof ErrorMessage){
                     System.out.println("Errore! ");
+                    GUIController currentController = controllers.get(stage.getScene());
+                    currentController.handleErrorMessage(true);
                     //si potrebbe aggiungere all'interfaccia GUIController un metodo handleErrorMessage
                     // che permette di gestire in maniera diverso il messaggio di errore
                 }

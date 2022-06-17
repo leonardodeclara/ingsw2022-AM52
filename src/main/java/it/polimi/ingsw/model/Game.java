@@ -264,6 +264,9 @@ public class Game {
         Player player = getPlayerByName(nickname);
         int islandIndexCounter = 0;
 
+        if(studentIDs.size() != 3)
+            return false;
+
         for (int i = 0; i < studentIDs.size(); i++) { //controlliamo se la mossa è legit per ogni studente e per ogni destinazione
             if (!isMoveStudentFromLobbyLegal(player, studentIDs.get(i), islandIDs.get(i), studentsToMove))
                 return false;

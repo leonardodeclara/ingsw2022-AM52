@@ -291,9 +291,9 @@ public enum ClientState {
         @Override
         public ArrayList<String> getGUIContextMessage(GameBoard GB) {
             ArrayList<String> texts = new ArrayList<>();
-            texts.add("Sei alla fine del tuo turno! Fai click su CONFIRM per chiudere il turno");
+            texts.add("Sei alla fine del tuo turno! Fai click su END TURN per chiudere il turno");
             if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
-                texts.add("Sei ancora in tempo per scegliere di giocare una carta personalità! Fai click sulla carta che vuoi giocare e premi CONFIRM.");
+                texts.add("Sei ancora in tempo per scegliere di giocare una carta personalità! Fai click sulla carta che vuoi giocare e premi END TURN.");
             return texts;
         }
 

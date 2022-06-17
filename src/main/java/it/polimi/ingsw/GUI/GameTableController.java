@@ -1,7 +1,12 @@
 package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.*;
+import it.polimi.ingsw.client.ClientState;
+import it.polimi.ingsw.messages.ClientStateMessage;
+import it.polimi.ingsw.messages.ErrorMessage;
 import it.polimi.ingsw.messages.Message;
+import it.polimi.ingsw.messages.UpdateMessage;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -26,13 +31,18 @@ import java.util.stream.Collectors;
 import static it.polimi.ingsw.Constants.*;
 
 //TODO sistemare bene sistema di selezione e pulire action parser dei vecchi parseTower, parseWizard ecc... (ora sono inutili)
-//TODO drag n drop per gli studenti (semplifica la costruzione del messaggio)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
 //TODO sistemare visualizzazione sulle isole quando si hanno 2 colori (angle va cambiato)
 //TODO creare un sistema che sappia quanti elementi puoi toccare e ti impedisca di toccarne di più (move from lobby 3 studenti fisso, alcune carte min 1 max 3)
 //TODO visualizzazione messaggio last round
 
 
+//non ci sono controlli lato server su quanti studenti vengono spostati aka se lato client si mandano 15 studenti da spostare, li si sposta tutti e 15
+//il modo migliore per fare un controllo sarebbe quello di implementarlo lato server (come è giusto che sia)
+// e nella classe Client usiamo solo i primi tot per costruire il messaggio anche se ce ne sono selezionati 1000.
+//alcune fasi richiedono un tot e quello è, altre un range. In MoveFromLobby non si può mandare a destinazione un solo studente
+
+//
 public class GameTableController extends GUIController implements UpdatableController{
     @FXML private ImageView player1Icon;
     @FXML private ImageView player2Icon;
@@ -61,6 +71,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private boolean initialized = false;
     private boolean showDeck;
     private ArrayList<Object> parameters;
+    private ArrayList<Node> selectedImages;
 
     public void start(){ //metodo di inizializzazione chiamato da GUI. In alcune situazioni viene chiamato due volte ma noi dobbiamo inizializzare una volta sola
         if(!initialized){ //sarebbe meglio spostare questo controllo sulla GUI e generalizzarlo
@@ -72,11 +83,13 @@ public class GameTableController extends GUIController implements UpdatableContr
             currentTurnCardsImages = new HashMap<>();
             selectedLobbyStudents = new ArrayList<>();
             selectedStudentsDestinations = new ArrayList<>();
+            selectedImages = new ArrayList<>();
             initialized = true;
             showDeck=true;
 
             sendButton.setOnMouseEntered(e -> sendButton.setEffect(new Bloom()));
             sendButton.setOnMouseExited(e -> sendButton.setEffect(null));
+            //contextMessage.setFont(Font.loadFont("/fonts/Cute And Active.ttf", 12));
 
             if(gui.getNumOfPlayers()==2)
                 player3Icon.setVisible(false);
@@ -106,11 +119,32 @@ public class GameTableController extends GUIController implements UpdatableContr
         waitTurn = value;
     }
 
+    @Override
+    public void handleErrorMessage(boolean fromServer){
+        String messageForToolTip="";
+        List<String> texts= fromServer ? gui.getCurrentState().getServerErrorMessage() : gui.getCurrentState().getInputErrorMessage();
+
+        contextMessage.setText(texts.get(0));
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask()
+        {
+            public void run()
+            {
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        visualizeContextMessage();//può essere eseguito solo sul thread di GUI
+                    }
+                });
+            }
+        };
+        timer.schedule(task, 5000L);
+    }
+
     public void send(){
         //qui si hanno tanti selezionabili, ma abbiamo la garanzia che solo quelli clickable per il currentstate saranno !=null
         //dobbiamo prendere e mettere quelli non null (Senza controllare quali sono) in un arraylist di object da passare a buildMessage
-
-        //rivedere questo design considerando i drag n drop
         sendButton.setEffect(new DropShadow());
         if(selectedAssistant!=-1)
             parameters.add(selectedAssistant);
@@ -125,19 +159,31 @@ public class GameTableController extends GUIController implements UpdatableContr
         if (selectedMNmove!=-1)
             parameters.add(selectedMNmove);
 
-        if(parameters.size() > 0){ //se qualcosa è stato selezionato
-            //da modificare, non funzione se provo a giocare una carta personaggio ad esempio in moveFromLobby
-            //perché da per scontato che io stia muovendo le pedine e non giochi una carta
-            Message message = client.buildMessageFromPlayerInput(parameters, gui.getCurrentState());
-            gui.passToSocket(message);
-            //dopo send deseleziona tutto
-            setSelectedAssistant(-1);
-            setSelectedCloud(-1);
-            setSelectedMNmove(-1);
-            selectedLobbyStudents.clear();
-            selectedStudentsDestinations.clear();
+        if(gui.getCurrentState().equals(ClientState.END_TURN) && parameters.size() == 0) //se siamo a fine turno e non vogliamo mandare le carte, scriviamo "end" in parameters
+            parameters.add(0,"end");
 
-            parameters.clear();
+        //per le carte personaggio quando le si inizia si vede cosa fare nel dettaglio
+
+        if(parameters.size() > 0){
+            Message message = client.buildMessageFromPlayerInput(parameters, gui.getCurrentState());
+            if(message != null){
+                System.out.println("Il messaggio è stato costruito ed è valido");
+                gui.passToSocket(message);
+                //dopo send deseleziona tutto
+                setSelectedAssistant(-1);
+                setSelectedCloud(-1);
+                setSelectedMNmove(-1);
+                selectedLobbyStudents.clear();
+                selectedStudentsDestinations.clear();
+
+                parameters.clear();
+
+                for(Node n : selectedImages) //resetta tutti gli effetti di selezione
+                    n.setEffect(null);
+            }
+        }else{
+            System.out.println("Il giocatore ha premuto send ma non ha mandato niente");
+            handleErrorMessage(false);
         }
 
     }
@@ -150,16 +196,21 @@ public class GameTableController extends GUIController implements UpdatableContr
         renderCurrentTurnCards();
         if (gui.getGB().isExpertGame())
             renderPersonalityCards();
-        populateDashboard();
+        populateDashboard(false);
         visualizeContextMessage();
-        sendButton.setEffect(null); //modo temporaneo per resettare l'effetto generato dal click
-        sendButton.toFront();
+        renderSendButton();
 
         if(waitTurn)
             gui.disableScene();
         else
             gui.enableScene();
 
+    }
+
+    private void renderSendButton(){
+        sendButton.setEffect(null); //modo temporaneo per resettare l'effetto generato dal click
+        sendButton.toFront();
+        sendButton.setText(gui.getCurrentState().equals(ClientState.END_TURN) ? "END TURN" : "CONFIRM");
     }
 
     private void renderIslands(){
@@ -225,9 +276,9 @@ public class GameTableController extends GUIController implements UpdatableContr
         clouds=newClouds;
     }
 
-    private void populateDashboard(){
+    private void populateDashboard(boolean fromClick){ //from click ci dice se è arrivato un update o se il metodo è stato chiamato dalla chiusura di una board
         if(currentBoard != null){ //se c'è già qualcosa renderizzato pulisci prima quello
-            currentBoard.clearBoard();
+            currentBoard.clearBoard(fromClick);
         }
         ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard));
         currentBoard = new GUIBoard(clientBoard,gui,this,tableBounds);
@@ -327,7 +378,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         if (playerName.equals(gui.getGB().getNickname()))
             name = new Text("YOUR BOARD");
         else
-            name = new Text(playerName.toUpperCase()+"'S BOARD");
+            name = new Text(playerName.toUpperCase()+"'S"+"\nBOARD");
         name.setLayoutX(playerIcon.getLayoutX());
         System.out.println("Posizione x del buttone di " + playerName + "è " + playerIcon.getLayoutX());
         name.setLayoutY(playerIcon.getLayoutY()+NAME_TO_BUTTON_VGAP);
@@ -340,21 +391,22 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
     private void visualizeContextMessage(){
-        String messageToShow ="";
-        String messageForToolTip="";
+        StringBuilder messageForToolTip= new StringBuilder();
         List<String> texts= gui.getCurrentState().getGUIContextMessage(gui.getGB());
         for (String text: texts){
-            messageToShow+=text+" ";
-            messageForToolTip+=text+"\n";
+            messageForToolTip.append(text).append("\n");
         }
-        contextMessage.setText(messageToShow);
-        Tooltip fullMessage = new Tooltip(messageForToolTip);
+
+        System.out.println("SCRIVO CONTEXT "+texts.get(0));
+        contextMessage.setText(texts.get(0));
+        Tooltip fullMessage = new Tooltip(messageForToolTip.toString());
         fullMessage.setShowDelay(Duration.seconds(0.3));
         Tooltip.install(contextMessage, fullMessage);
     }
 
     public void handleSelectionEffect(Node n, Clickable type){ //gestisce gli effetti di selezione per ogni clickable (vedremo in futuro se avrà senso averlo così generalizzato)
         if(actionParser.canClick(gui.getCurrentState(),type)){
+            selectedImages.add(n);
             switch(type){
                 case ASSISTANT -> {
                     for(ImageView card : deckImages){
@@ -431,7 +483,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         if(renderedDashboard!=1){
             //clearBoard();
             renderedDashboard = 1;
-            populateDashboard();
+            populateDashboard(true);
         }
     }
 
@@ -440,14 +492,14 @@ public class GameTableController extends GUIController implements UpdatableContr
         if(renderedDashboard!=2){
             //clearBoard();
             renderedDashboard = 2;
-            populateDashboard();
+            populateDashboard(true);
         }
     }
     public void onPlayer3Click(){
         if(renderedDashboard!=3){
             //clearBoard();
             renderedDashboard = 3;
-            populateDashboard();
+            populateDashboard(true);
         }
     }
 

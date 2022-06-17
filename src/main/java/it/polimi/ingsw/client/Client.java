@@ -21,29 +21,40 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
     public Message buildMessageFromPlayerInput(ArrayList<Object> data,ClientState currentState){
         switch (currentState){ //in base allo stato costruiamo messaggi differenti
             case CONNECT_STATE:
-                return buildConnectMessage(data);
+                if(data.size() > 0)
+                    return buildConnectMessage(data);
             case INSERT_NEW_GAME_PARAMETERS:
-                return buildNewGameParametersMessage(data);
+                if(data.size() > 1)
+                    return buildNewGameParametersMessage(data);
             case SET_UP_WIZARD_PHASE:
-                return buildWizardSelectionMessage(data);
+                if(data.size() > 0)
+                    return buildWizardSelectionMessage(data);
             case SET_UP_TOWER_PHASE:
-                return buildTowerSelectionMessage(data);
+                if(data.size() > 0)
+                    return buildTowerSelectionMessage(data);
             case PLAY_ASSISTANT_CARD:
-                return buildPlayAssistantCardMessage(data);
+                if(data.size() > 0)
+                    return buildPlayAssistantCardMessage(data);
             case MOVE_FROM_LOBBY:
-                if(data.get(0) instanceof Boolean)
+                if(data.size() >= 2)
+                    if(data.get(0) instanceof Boolean)
                         return buildPlayPersonalityCardMessage(data);
 
-                return buildMoveFromLobbyMessage(data);
+                if(data.size() > 0)
+                    return buildMoveFromLobbyMessage(data);
             case MOVE_MOTHER_NATURE:
-                if(data.get(0) instanceof Boolean)
+                if(data.size() >= 2)
+                    if(data.get(0) instanceof Boolean)
                         return buildPlayPersonalityCardMessage(data);
 
-                return buildMoveMotherNature(data);
+                if(data.size() > 0)
+                    return buildMoveMotherNature(data);
             case PICK_CLOUD:
-                if(data.get(0) instanceof Boolean)
+                if(data.size() >= 2)
+                    if(data.get(0) instanceof Boolean)
                         return buildPlayPersonalityCardMessage(data);
 
+                if(data.size() > 0)
                 return buildCloudSelectionMessage(data);
             case END_TURN:
                 if(data.size() >= 2)
@@ -93,6 +104,7 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
     }
 
     private Message buildMoveFromLobbyMessage(ArrayList<Object> data){
+        ((ArrayList<Integer>) data.get(0)).stream().limit(3);
         return new MoveStudentsFromLobbyMessage((ArrayList<Integer>) data.get(0),(ArrayList<Integer>) data.get(1));
     }
 

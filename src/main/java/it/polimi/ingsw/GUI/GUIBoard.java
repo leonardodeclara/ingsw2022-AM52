@@ -89,7 +89,6 @@ public class GUIBoard {
 
 
     public void populate(){
-        clearBoard();
         populateTables();
         populateLobby();
         populateTowers();
@@ -249,7 +248,7 @@ public class GUIBoard {
         }
     }
 
-    public void clearBoard(){
+    public void clearBoard(boolean fromClick){
         for(ImageView student : lobbyStudentsImages)
             gui.removeElementFromScene(student);
         for(ImageView student : tableStudentsImages)
@@ -264,6 +263,11 @@ public class GUIBoard {
         tableStudentsImages.clear();
         teachersImages.clear();
         towersImages.clear();
+
+        if(!fromClick){
+            numOfStudentsOnTable.clear();
+            studentsInLobby.clear();
+        }
 
     }
 }

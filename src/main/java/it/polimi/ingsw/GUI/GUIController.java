@@ -20,4 +20,7 @@ public class GUIController implements GUIControllerInterface{
 
     @Override
     public void setActionParser(ActionParser actionParser){this.actionParser = actionParser;}
+
+    @Override
+    public void handleErrorMessage(boolean fromServer) {}
 }

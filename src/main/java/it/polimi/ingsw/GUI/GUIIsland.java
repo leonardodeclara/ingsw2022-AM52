@@ -54,7 +54,8 @@ public class GUIIsland{
 
     public void render(){
         gui.addElementToScene(islandImage);
-        islandImage.setEffect(null); //rivedere se il posto giusto dove metterlo, in teoria ora non funziona
+        numOfStudents.clear();
+        initializeNumOfStudents();
         populateStudents();
         populateMotherNature();
         populateTowers();
@@ -200,7 +201,7 @@ public class GUIIsland{
         clearTowers();
         if (clientIsland.getTowers()!=null && clientIsland.getTowers().size()>0){
             String towerColor= clientIsland.getTowers().get(0).toString().toLowerCase();
-            ImageView towerImage = new ImageView("/graphics/"+towerColor+"board_tower.png");
+            ImageView towerImage = new ImageView("/graphics/"+towerColor+"_board_tower.png");
             towerImage.setX(centerX-TOWER_IMAGE_WIDTH/2);
             towerImage.setY(centerY-TOWER_IMAGE_HEIGHT/2);
             towerImage.setFitWidth(TOWER_IMAGE_WIDTH);
