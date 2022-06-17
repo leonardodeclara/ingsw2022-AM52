@@ -14,6 +14,7 @@ public class Constants {
     public static final String NO_DRAW = "noDraw";
     public static final String TIE = "tie";
     public static final int MAX_NUM_ISLANDS = 12;
+    public static final int MOVE_FROM_LOBBY_STUDENTS_NUMBER = 3;
     public static final int MAX_LOBBY_SIZE = 9;
     public static final int MAX_TABLE_SIZE = 10;
     public static final int ISLAND_ID_NOT_RECEIVED = -1;

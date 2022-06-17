@@ -134,14 +134,16 @@ public class GUIBoard {
             if(clientBoard.equals(gui.getOwningPlayerBoard())){
                 studentImage.setOnDragDetected((MouseEvent e) -> {
                     if(controller.actionParser.canClick(gui.getCurrentState(),Clickable.LOBBY_STUDENT)){
-                        Dragboard db = studentImage.startDragAndDrop(TransferMode.MOVE);
-                        db.setDragView(studentImage.getImage());
+                        if(controller.getSelectedStudentsNumber() < MOVE_FROM_LOBBY_STUDENTS_NUMBER){ //si possono selezionare al massimo 3 studenti
+                            Dragboard db = studentImage.startDragAndDrop(TransferMode.MOVE);
+                            db.setDragView(studentImage.getImage());
 
-                        ClipboardContent content = new ClipboardContent();
-                        content.putString(Integer.toString(finalStudentIDCounter));
-                        db.setContent(content);
-                        System.out.println("Inizio il drag event per "+finalStudentIDCounter);
-                        e.consume();
+                            ClipboardContent content = new ClipboardContent();
+                            content.putString(Integer.toString(finalStudentIDCounter));
+                            db.setContent(content);
+                            System.out.println("Inizio il drag event per "+finalStudentIDCounter);
+                            e.consume();
+                        }
                     }
                 });
                 studentImage.setOnDragDone(new EventHandler<DragEvent>() {

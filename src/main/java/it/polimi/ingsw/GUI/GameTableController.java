@@ -33,16 +33,13 @@ import static it.polimi.ingsw.Constants.*;
 //TODO sistemare bene sistema di selezione e pulire action parser dei vecchi parseTower, parseWizard ecc... (ora sono inutili)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
 //TODO sistemare visualizzazione sulle isole quando si hanno 2 colori (angle va cambiato)
-//TODO creare un sistema che sappia quanti elementi puoi toccare e ti impedisca di toccarne di più (move from lobby 3 studenti fisso, alcune carte min 1 max 3)
 //TODO visualizzazione messaggio last round
 
 
-//non ci sono controlli lato server su quanti studenti vengono spostati aka se lato client si mandano 15 studenti da spostare, li si sposta tutti e 15
-//il modo migliore per fare un controllo sarebbe quello di implementarlo lato server (come è giusto che sia)
-// e nella classe Client usiamo solo i primi tot per costruire il messaggio anche se ce ne sono selezionati 1000.
-//alcune fasi richiedono un tot e quello è, altre un range. In MoveFromLobby non si può mandare a destinazione un solo studente
+//il numero di elementi da selezionare (preciso o range) viene settato in send() (così non possono esserne mandati di meno o di più del previsto),
+//il massimo numero è settato nei drag event (in modo che non se ne possano draggare di più)
+//non è presente un sistema di reset in caso di errore, ciò che viene draggato rimane draggato finchè non si manda il messaggio
 
-//
 public class GameTableController extends GUIController implements UpdatableController{
     @FXML private ImageView player1Icon;
     @FXML private ImageView player2Icon;
@@ -148,9 +145,9 @@ public class GameTableController extends GUIController implements UpdatableContr
         sendButton.setEffect(new DropShadow());
         if(selectedAssistant!=-1)
             parameters.add(selectedAssistant);
-        if(selectedLobbyStudents.size() > 0)
+        if(selectedLobbyStudents.size() == MOVE_FROM_LOBBY_STUDENTS_NUMBER) //il send si fa solo se si cliccano esattamente 3 studenti dalla lobby e 3 destinazioni
             parameters.add(selectedLobbyStudents);
-        if(selectedStudentsDestinations.size() > 0)
+        if(selectedStudentsDestinations.size() == MOVE_FROM_LOBBY_STUDENTS_NUMBER)
             parameters.add(selectedStudentsDestinations);
         if(selectedCloud!=-1)
             parameters.add(selectedCloud);
@@ -180,9 +177,12 @@ public class GameTableController extends GUIController implements UpdatableContr
 
                 for(Node n : selectedImages) //resetta tutti gli effetti di selezione
                     n.setEffect(null);
+            }else{
+                handleErrorMessage(false);
+                System.out.println("Il giocatore non ha selezionato qualcosa di valido per lo stato corrente");
             }
         }else{
-            System.out.println("Il giocatore ha premuto send ma non ha mandato niente");
+            System.out.println("Il giocatore ha premuto send ma non ha selezionato niente");
             handleErrorMessage(false);
         }
 
@@ -526,6 +526,10 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     public int extractMNsteps(int islandId){
         return gui.getGB().getMotherNatureDistance(islandId);
+    }
+
+    public int getSelectedStudentsNumber(){
+        return selectedLobbyStudents.size();
     }
 
     public void changeShowedCards(MouseEvent mouseEvent) {
