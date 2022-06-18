@@ -355,13 +355,6 @@ public class GameBoard {
         this.clouds = clouds;
     }
 
-    public void setClientBoards(HashMap<String,ClientBoard> clientBoards) {
-        this.clientBoards = clientBoards;
-    }
-
-    public void setPersonalities(ArrayList<ClientPersonality> personalities) {
-        this.personalities = personalities;
-    }
 
     public void setCoins(int coins) {
         this.coins = coins;

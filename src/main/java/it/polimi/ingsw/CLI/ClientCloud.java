@@ -36,10 +36,6 @@ public class ClientCloud implements Serializable {
         return cloudIndex;
     }
 
-    public void setCloudIndex(int cloudIndex) {
-        this.cloudIndex = cloudIndex;
-    }
-
     public ArrayList<Color> getStudents() {
         return students;
     }

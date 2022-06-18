@@ -107,6 +107,7 @@ public class ClientPersonality implements Serializable {
         System.out.println("DESCRIZIONE: ");
         printDescription();
     }
+
     public void updateCost(){
         if(!hasBeenUsed){
             cost+=1;
