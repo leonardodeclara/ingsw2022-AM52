@@ -328,12 +328,11 @@ public class GUI extends Application implements UI{
         return gameFont;
     }
     public void removeElementFromScene(Node n){
-        System.out.println(((AnchorPane)stage.getScene().getRoot()).getChildren().remove(n) ? "Ho rimosso " : "Non ho rimosso "+n);
+        ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(n);
     }
 
     public void clearScene(){
         ((AnchorPane)stage.getScene().getRoot()).getChildren().removeAll();
-        System.out.println("Rimuovo tutto");
     }
 
 

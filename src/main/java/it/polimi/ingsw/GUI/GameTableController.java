@@ -110,7 +110,8 @@ public class GameTableController extends GUIController implements UpdatableContr
                 GUIBoards.put(clientBoard,new GUIBoard(clientBoard,gui,this,tableBounds)); //Crea tutte le GUIBoards
             }
             renderedDashboard = 1; //Di default renderizziamo la nostra board
-
+            ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard)); //retrieviamo la clientboard da renderizzare
+            currentBoard = GUIBoards.get(clientBoard); //e settiamo la currentBoard per la prima volta
         }
 
     }
@@ -311,26 +312,19 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
     private void populateDashboard(boolean fromClick){ //from click ci dice se è arrivato un update o se il metodo è stato chiamato dalla chiusura di una board
-        //se fromClick == true la vecchia board viene pulita MA non resettata
-        //se fromClick == false la vecchia board viene pulita e resettata
-
-        //in ogni caso dopo rirenderizziamo la board nuovamente
-
-        if(currentBoard != null){ //se c'è già qualcosa renderizzato pulisci prima quello
-            currentBoard.clearBoard(fromClick);
+        if(!fromClick){ //se è arrivato un update, resettiamo i drag n drop clientside
+            for(GUIBoard guiBoard : GUIBoards.values()) //le cicliamo tutte, non sappiamo quali sono state modificate client side
+                guiBoard.clearBoard(true);
+        }
+        else{ //se il giocatore vuole vedere un altra board, dobbiamo preservare i drag n drop clientside
+            if(currentBoard != null){ //se c'è già qualcosa renderizzato lo puliamo senza resettarlo
+                currentBoard.clearBoard(false);
+            }
+            ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard)); //retrieviamo la clientboard da renderizzare
+            currentBoard = GUIBoards.get(clientBoard); //e cambiamo la currentBoard
         }
 
-        ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard));
-        currentBoard = GUIBoards.get(clientBoard);
-
         currentBoard.populate(); //in ogni caso si ripopola la currentBoard
-        /*
-        populateTables(clientBoard);
-        populateLobby(clientBoard);
-        populateTowers(clientBoard);
-        populateTeachers(clientBoard);
-        */
-
     }
 
     private void renderPersonalityCards(){

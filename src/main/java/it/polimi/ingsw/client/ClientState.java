@@ -237,7 +237,7 @@ public enum ClientState {
         @Override
         public ArrayList<String> getServerErrorMessage(){
             ArrayList<String> texts = new ArrayList<>();
-            texts.add("Non puoi spostare lì Madre Natura!");
+            texts.add("Scelta non valida! Riprova");
             return texts;
         }
 
@@ -270,7 +270,7 @@ public enum ClientState {
         @Override
         public ArrayList<String> getServerErrorMessage(){
             ArrayList<String> texts = new ArrayList<>();
-            texts.add("Non puoi scegliere quella nuvola! Riprova");
+            texts.add("Scelta non valida! Riprova");
             return texts;
         }
 
@@ -300,7 +300,7 @@ public enum ClientState {
         @Override
         public ArrayList<String> getServerErrorMessage(){
             ArrayList<String> texts = new ArrayList<>();
-            texts.add("Non è stato possibile terminare il turno! Riprova");
+            texts.add("Scelta non valida! Riprova");
             return texts;
         }
 

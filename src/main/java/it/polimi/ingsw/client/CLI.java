@@ -29,10 +29,7 @@ public class CLI implements Runnable,UI{
     private final ScheduledExecutorService executorService;
     private GameBoard GB;
 
-    /*
-    TODO:
-    i metodi che visualizzano i messaggi a schermo van sistemati. Si potrebbe creare un unico metodo e un hashmap (key:state,value:message)
-     */
+
     public CLI() throws IOException {
         inputStream = new Scanner(System.in);
         outputStream = new PrintStream(System.out);

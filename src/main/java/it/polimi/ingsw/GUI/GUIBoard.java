@@ -67,7 +67,7 @@ public class GUIBoard {
             e.consume();
         });
         tableBounds.setOnDragDropped(new EventHandler<DragEvent>() {
-            public void handle(DragEvent event) { //ci sarà da ottimizzare tutto e pulirlo sfruttando data structures apposite
+            public void handle(DragEvent event) {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
                 if (db.hasString()) { //per generalizzarlo avremo una variabile draggedElement così che qui sappiamo cosa sta venendo rilasciato
@@ -94,9 +94,15 @@ public class GUIBoard {
     private void addStudentToTable(Color student) {
         int numOf = numOfStudentsOnTable.get(student);
         numOfStudentsOnTable.put(student,numOf+1);
+
         populateTables();
     }
 
+
+    //quando si riceve update, viene chiamato populateDashBoard con reset= true, che a sua volta per ogni GUIBoard chiama clearBoard(reset=true)
+    //reset in guiBoard fa clear di studentsInLobby e numOfStudentsInTable e li rinizializza
+
+    //quando si fa click sulla board di qualcuno, viene chiamata populateDashboard con reset=false, quella attuale viene pulita con clearBoard(reset=false) e disegnata quella nuova, ma non viene fatto il reset
 
     public void populate(){
         populateTables();
@@ -199,7 +205,6 @@ public class GUIBoard {
                 ImageView studentImage = new ImageView(studentImagePath);
                 studentImage.setFitWidth(STUDENT_TABLE_WIDTH);
                 studentImage.setFitHeight(STUDENT_TABLE_HEIGHT);
-                System.out.println("Printo studente nella table"+color+" su (X,Y): "+(947+tableCounter*STUDENT_TABLE_HGAP)+(148+i*STUDENT_TABLE_VGAP));
                 studentImage.setX(STUDENT_BOARD_START_X+tableCounter*STUDENT_TABLE_HGAP);
                 studentImage.setY(STUDENT_TABLE_START_Y+i*STUDENT_TABLE_VGAP);
                 studentImage.setOnMouseClicked((MouseEvent e) -> {
@@ -216,7 +221,6 @@ public class GUIBoard {
 
     private void populateTowers(){
         int towersCounter = clientBoard.getTowers();
-        System.out.println("CI SONO " + towersCounter + " DEL COLORE "+clientBoard.getTeam());
         int halfTowersCounter;
         double offsetY,offsetX;
         if (gui.getNumOfPlayers()==3){
@@ -228,7 +232,6 @@ public class GUIBoard {
             halfTowersCounter=4;
         }
         String towerColor = clientBoard.getTeam().toString().toLowerCase();
-        System.out.println("Il colore della torre è "+ towerColor);
         for (int i = 0; i<towersCounter;i++){
             ImageView towerImage = new ImageView("graphics/"+towerColor+"_board_tower.png");
             towerImage.setFitHeight(TOWER_IMAGE_HEIGHT);
@@ -261,27 +264,51 @@ public class GUIBoard {
         }
     }
 
-    public void clearBoard(boolean fromClick){
+    private void clearLobby(){
         for(ImageView student : lobbyStudentsImages)
             gui.removeElementFromScene(student);
-        for(ImageView student : tableStudentsImages)
+        lobbyStudentsImages.clear();
+
+    }
+    private void clearTables(){
+        for(ImageView student : tableStudentsImages){
+            System.out.println("Rimuovo dalla board lo studente "+student.getImage().getUrl());
             gui.removeElementFromScene(student);
+        }
+        tableStudentsImages.clear();
+
+    }
+    private void clearTeachers(){
         for(ImageView teacher : teachersImages)
             gui.removeElementFromScene(teacher);
+        teachersImages.clear();
+
+    }
+    private void clearTowers(){
         for(ImageView tower : towersImages)
             gui.removeElementFromScene(tower);
-        gui.removeElementFromScene(coinImage);
-
-        lobbyStudentsImages.clear();
-        tableStudentsImages.clear();
-        teachersImages.clear();
         towersImages.clear();
 
-        if(!fromClick){
-            numOfStudentsOnTable.clear();
-            studentsInLobby.clear();
-            initializeBoard();
-        }
+    }
 
+    public ClientBoard getClientBoard(){
+        return clientBoard;
+    }
+    public void clearBoard(boolean reset){
+        clearLobby();
+        clearTables();
+        clearTeachers();
+        clearTowers();
+        gui.removeElementFromScene(coinImage);
+
+        if(reset)
+            reset();
+
+    }
+
+    private void reset(){
+        numOfStudentsOnTable.clear();
+        studentsInLobby.clear();
+        initializeBoard();
     }
 }
