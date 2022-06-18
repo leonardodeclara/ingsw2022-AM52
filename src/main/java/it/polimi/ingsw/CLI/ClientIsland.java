@@ -102,6 +102,10 @@ public class ClientIsland implements Serializable {
         return numMergedIslands;
     }
 
+    public int getBans() {
+        return bans;
+    }
+
     public void setNumMergedIslands(int numMergedIslands) {
         this.numMergedIslands = numMergedIslands;
     }

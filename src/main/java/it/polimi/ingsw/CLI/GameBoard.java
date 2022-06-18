@@ -355,7 +355,6 @@ public class GameBoard {
         this.clouds = clouds;
     }
 
-
     public void setCoins(int coins) {
         this.coins = coins;
     }
