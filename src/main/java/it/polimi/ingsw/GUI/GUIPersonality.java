@@ -1,41 +1,47 @@
 package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.ClientPersonality;
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.model.Color;
+import javafx.event.EventHandler;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
 
 import static it.polimi.ingsw.Constants.*;
 
-//TODO: aggiungere effetti on mouse exit ecc
+//TODO: aggiungere label/effetto che mostri che una carta è attiva
 //TODO: aggiungere tooltip per descrizione dell'effetto della carta
 
 public class GUIPersonality {
+    private ClientPersonality personality;
     private ImageView cardImage;
     private int cardId;
     private ArrayList<ImageView> studentsImages;
     private ImageView banImage;
     private ImageView coinImage;
-    private ArrayList<Color> students;
     private double centerX;
     private double centerY;
     private GameTableController controller;
     private GUI gui;
+    private ActionParser actionParser;
 
-    public GUIPersonality(int cardId,double x,double y,double width,double height,GameTableController controller,GUI gui){
+    public GUIPersonality(int cardId,double x,double y,double width,double height,
+                          GameTableController controller,GUI gui,ClientPersonality personality){
         cardImage = new ImageView("/graphics/personality_"+cardId+".jpg");
         this.cardId = cardId;
         setPos(x,y);
         setSize(width,height);
         setCenter();
         this.controller = controller;
+        this.actionParser= controller.getActionParser();
         this.gui = gui;
+        this.personality=personality;
         studentsImages = new ArrayList<>();
         initializeExtraFeatures();
     }
@@ -64,8 +70,8 @@ public class GUIPersonality {
 
     private void populate(){
         clearExtraFeatures();
-        ClientPersonality card = gui.getGB().getPersonalityById(cardId);
-        if (card.isHasBeenUsed()){
+
+        if (personality.isHasBeenUsed()){
             coinImage = new ImageView("graphics/coin.png");
             //rivedere dove posizionarla
             double coinX = cardImage.getX()+PERSONALITY_IMAGE_WIDTH/2;
@@ -79,17 +85,17 @@ public class GUIPersonality {
             coinImage.toFront();
 
         }
-        if (card.getStudents()!=null && card.getStudents().size()>0){
+        if (personality.getStudents()!=null && personality.getStudents().size()>0){
             System.out.println("aggiungo immagini degli studenti alla carta "+cardId);
-            populateLobbyPersonality(card);
+            populateLobbyPersonality();
         }
-        else if (card.getBans()!=0){
+        else if (personality.getBans()!=0){
             System.out.println("aggiungo immagini dei ban alla carta " +cardId);
-            populateBanPersonality(card);
+            populateBanPersonality();
         }
     }
 
-    private void populateLobbyPersonality(ClientPersonality personality){
+    private void populateLobbyPersonality(){
         ArrayList<Color> cardStudents = personality.getStudents();
         int halfAmountOfStudents=cardStudents.size()/2;
         double offsetX=STUDENT_IMAGE_WIDTH*2;
@@ -110,16 +116,18 @@ public class GUIPersonality {
             studentImage.setFitHeight(STUDENT_IMAGE_HEIGHT);
             studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
             studentImage.setOnMouseClicked((MouseEvent e) -> {
-                controller.handleClickEvent(personality.getStudents().indexOf(student),Clickable.PERSONALITY_STUDENT); //come id passa il primo studente di quel colore che trova nell'isola
+                //controller.handleClickEvent(personality.getStudents().indexOf(student),Clickable.PERSONALITY_STUDENT);
+                actionParser.handleSelectionEvent(personality.getStudents().indexOf(student),Clickable.PERSONALITY_STUDENT,gui.getCurrentState());
             });
             gui.addElementToScene(studentImage);
             studentImage.toFront();
             System.out.println("Aggiunto studente "+student+" alla carta lobby "+cardId);
             studentsImages.add(studentImage);
+            setStudentsEvents(studentImage, i);
         }
     }
 
-    private void populateBanPersonality(ClientPersonality personality){
+    private void populateBanPersonality(){
         double startY = centerY+PERSONALITY_IMAGE_HEIGHT*0.15;
         double startX = centerX;
         int banCount = personality.getBans();
@@ -137,13 +145,11 @@ public class GUIPersonality {
     }
 
     private void initializeExtraFeatures(){
-        ClientPersonality personality = gui.getGB().getPersonalityById(cardId);
-        if (students!=null && students.size()>0)
-            students=personality.getStudents();
+        //
     }
 
     private void clearExtraFeatures(){
-        if (students!=null && students.size()>0)
+        if (personality.getStudents()!=null && personality.getStudents().size()>0)
             for(ImageView studentImage : studentsImages){
                 gui.removeElementFromScene(studentImage);
             }
@@ -155,7 +161,8 @@ public class GUIPersonality {
 
     public void setEvents(){
         cardImage.setOnMouseClicked((MouseEvent e) ->{
-            controller.handleClickEvent(cardId,Clickable.PERSONALITY);
+            //controller.handleClickEvent(cardId,Clickable.PERSONALITY);
+            actionParser.handleSelectionEvent(cardId,Clickable.PERSONALITY,gui.getCurrentState());
             controller.handleSelectionEffect(cardImage,Clickable.PERSONALITY);
         });
         cardImage.setOnMouseEntered((MouseEvent e) -> {
@@ -164,6 +171,31 @@ public class GUIPersonality {
         cardImage.setOnMouseExited((MouseEvent e) -> {
             if (cardImage.getEffect()==null || !(DropShadow.class).equals(cardImage.getEffect().getClass())) //rivedere, qui il comportamento è lo stesso delle carte personaggio
                 cardImage.setEffect(null);
+        });
+    }
+
+    public void setStudentsEvents(ImageView studentImage, int studentIndex){
+        studentImage.setOnDragDetected((MouseEvent e) -> {
+            if(controller.actionParser.canDrag(gui.getCurrentState(),Clickable.CARD_STUDENT)){
+                Dragboard db = studentImage.startDragAndDrop(TransferMode.MOVE);
+                db.setDragView(studentImage.getImage());
+                ClipboardContent content = new ClipboardContent();
+                content.putString(Integer.toString(studentIndex));
+                db.setContent(content);
+                System.out.println("Inizio il drag event per "+studentIndex);
+                e.consume();
+
+            }
+        });
+        studentImage.setOnDragDone(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                System.out.println("Drag completato, tolgo lo studente dalla carta");
+                if (event.getTransferMode() == TransferMode.MOVE) {
+                    studentsImages.remove(studentImage);
+                    gui.removeElementFromScene(studentImage);
+                }
+                event.consume();
+            }
         });
     }
 

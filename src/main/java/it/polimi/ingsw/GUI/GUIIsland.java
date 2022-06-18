@@ -2,6 +2,8 @@ package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.ClientBoard;
 import it.polimi.ingsw.CLI.ClientIsland;
+import it.polimi.ingsw.CLI.ClientPersonality;
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
 import javafx.event.EventHandler;
@@ -32,12 +34,14 @@ public class GUIIsland{
     private double centerX;
     private double centerY;
     private GameTableController controller;
+    private ActionParser actionParser;
     private GUI gui;
     private HashMap<Color,Long> numOfStudents;
     private HashMap<Color,Tooltip> tooltips;
 
 //TODO sistemare range cerchio quando si aggiungono studenti lato client
 //TODO sistemare posizioni di madre natura e torri
+//TODO aggiungere rendering ban
 
     public GUIIsland(int index,double x,double y,double width,double height,GameTableController controller,GUI gui){
         islandImage = new ImageView("/graphics/island"+((index%3)+1)+".png");
@@ -46,6 +50,7 @@ public class GUIIsland{
         setSize(width,height);
         setCenter();
         this.controller = controller;
+        this.actionParser=controller.getActionParser();
         this.gui = gui;
         students = new ArrayList<>();
         tooltips = new HashMap<>();
@@ -87,7 +92,12 @@ public class GUIIsland{
     }
     public void setEvents(){
         islandImage.setOnMouseClicked((MouseEvent e) -> {
-            controller.handleClickEvent(index,Clickable.ISLAND);
+            //controller.handleClickEvent(index,Clickable.ISLAND);
+            if (gui.getCurrentState().equals(ClientState.MOVE_MOTHER_NATURE)){
+                System.out.println("Sono in MOVE MN, non devo passare l'indice dell'isola ma il numero di passi");
+                actionParser.handleSelectionEvent(controller.extractMNsteps(index),Clickable.ISLAND,gui.getCurrentState());
+            }
+            else actionParser.handleSelectionEvent(index,Clickable.ISLAND,gui.getCurrentState());
             controller.handleSelectionEffect(islandImage,Clickable.ISLAND);
             //setSelectedIslandID(i);
             //System.out.println("Hai cliccato sull'isola "+selectedIslandID);
@@ -114,13 +124,27 @@ public class GUIIsland{
                 boolean success = false;
                 if (db.hasString()) { //per generalizzarlo avremo una variabile draggedElement così che qui sappiamo cosa sta venendo rilasciato
                     //per ora creiamo solo il caso specifico di move from lobby
-                    ClientBoard clientBoard = gui.getOwningPlayerBoard();
                     int studentID = Integer.parseInt(db.getString());
-                    Color student  = clientBoard.getLobby().get(studentID); //prendo il colore
+                    Color student;
+                    //rivedere se si può generalizzare rispetto allo stato
+                    if (gui.getCurrentState().equals(ClientState.MOVE_FROM_LOBBY)){
+                        ClientBoard clientBoard = gui.getOwningPlayerBoard();
+                        student = clientBoard.getLobby().get(studentID); //prendo il colore
+                    }
+                    else{
+                        ClientPersonality activeCard = gui.getGB().getActivePersonality();
+                        student = activeCard.getStudents().get(studentID);
+                    }
+                    ArrayList<Object> selection = new ArrayList<>();
+                    selection.add(studentID);
+                    selection.add(index);
+                    //MANCA CONTROLLO CAN CLICK-CAN DRAG
+                    actionParser.handleSelectionEvent(selection, gui.getCurrentState());
+                    //controller.addSelectedCardStudent(studentID,index);
                     addStudentToIsland(student);
                     success = true;
                     System.out.println("Drop sull'isola "+index);
-                    controller.addSelectedStudent(studentID,index);
+
                 }
                 event.setDropCompleted(success);
 
@@ -229,7 +253,7 @@ public class GUIIsland{
         Tooltip tooltip = tooltips.get(color);
         long num = numOfStudents.get(color);
         if(tooltip!=null){
-            tooltip.setText("Ci sono: "+Long.toString(num)+" studenti "+color.translateToItalian().toLowerCase());
+            tooltip.setText("Ci sono: "+ num +" studenti "+color.translateToItalian().toLowerCase());
             Tooltip.install(studentImage,tooltip);
         }else{
             Tooltip numOfStudents = new Tooltip("Ci sono: "+Long.toString(num)+" studenti "+color.translateToItalian().toLowerCase());

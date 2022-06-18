@@ -20,6 +20,7 @@ public class GUICloud {
     private double centerX;
     private double centerY;
     private GameTableController controller;
+    private ActionParser actionParser;
     private GUI gui;
 
     public GUICloud(int index,double x,double y,double width,double height,GameTableController controller,GUI gui){
@@ -29,6 +30,7 @@ public class GUICloud {
         setSize(width,height);
         setCenter();
         this.controller = controller;
+        this.actionParser=controller.getActionParser();
         this.gui = gui;
         initializeStudents();
         studentsImages = new ArrayList<>();
@@ -83,7 +85,8 @@ public class GUICloud {
 
     public void setEvents(){
         cloudImage.setOnMouseClicked((MouseEvent e) -> {
-            controller.handleClickEvent(index,Clickable.CLOUD);
+            //controller.handleClickEvent(index,Clickable.CLOUD);
+            actionParser.handleSelectionEvent(index,Clickable.CLOUD,gui.getCurrentState());
             controller.handleSelectionEffect(cloudImage,Clickable.CLOUD);
         });
         cloudImage.setOnMouseEntered((MouseEvent e) -> {

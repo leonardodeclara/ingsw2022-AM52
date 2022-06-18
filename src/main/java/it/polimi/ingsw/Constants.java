@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.model.Color;
 
 import java.util.Collection;
@@ -15,6 +16,7 @@ public class Constants {
     public static final String TIE = "tie";
     public static final int MAX_NUM_ISLANDS = 12;
     public static final int MOVE_FROM_LOBBY_STUDENTS_NUMBER = 3;
+    public static final int CARD_1_STUDENTS_TO_MOVE = 1;
     public static final int MAX_LOBBY_SIZE = 9;
     public static final int MAX_TABLE_SIZE = 10;
     public static final int ISLAND_ID_NOT_RECEIVED = -1;
@@ -111,7 +113,16 @@ public class Constants {
     public static String getStudentsColor(Color c){
             return colorPerStudent.get(c);
     }
+
+    public static int getMaximumStudentsMoveForState(ClientState state){
+            switch (state){
+                case CHOOSE_STUDENT_FOR_CARD_1, CHOOSE_STUDENT_FOR_CARD_11 -> {return 1;}
+                case SWAP_STUDENTS_FOR_CARD_7 -> {return 3;}
+                case CHOOSE_STUDENTS_FOR_CARD_10 -> {return 2;}
+            }
+            return -1;
     }
+}
 
 
 

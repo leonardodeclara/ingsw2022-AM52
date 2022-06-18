@@ -292,7 +292,7 @@ public class GameBoard {
     }
 
     public void resetActivePersonality(int inactivePersonality){
-        outputStream.println("La carta personaggio "+inactivePersonality+ " non è più attiva!");
+        //outputStream.println("La carta personaggio "+inactivePersonality+ " non è più attiva!");
         this.activePersonality = null;
     }
 
@@ -325,6 +325,10 @@ public class GameBoard {
         for (Map.Entry<String,ClientBoard> playerToBoard: clientBoards.entrySet())
             playerToCards.put(playerToBoard.getKey(), playerToBoard.getValue().getCurrentCard());
         return playerToCards;
+    }
+
+    public ClientPersonality getActivePersonality() {
+        return activePersonality;
     }
 
     public void setNumberOfPlayers(int numberOfPlayers) {

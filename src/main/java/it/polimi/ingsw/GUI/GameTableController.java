@@ -1,6 +1,7 @@
 package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.*;
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.Message;
 import javafx.application.Platform;
@@ -26,7 +27,7 @@ import static it.polimi.ingsw.Constants.*;
 //TODO sistemare bene sistema di selezione e pulire action parser dei vecchi parseTower, parseWizard ecc... (ora sono inutili)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
 //TODO visualizzazione messaggio last round
-
+//TODO: sistema di unclick per gli spostamenti di studenti
 
 //il numero di elementi da selezionare (preciso o range) viene settato in send() (così non possono esserne mandati di meno o di più del previsto),
 //il massimo numero è settato nei drag event (in modo che non se ne possano draggare di più)
@@ -45,8 +46,11 @@ public class GameTableController extends GUIController implements UpdatableContr
     private int selectedMNmove = -1;
     private ArrayList<Integer> selectedLobbyStudents;
     private ArrayList<Integer> selectedStudentsDestinations;
+    private ArrayList<Integer> selectedCardStudents;
+    private ArrayList<Integer> selectedCardStudentsDestinations;
     private int selectedAssistant = -1; //priority
     private int selectedPersonality = -1;
+    private int selectedIsland = -1;
     private ArrayList<ImageView> deckImages;
     private HashMap<ImageView,Text> currentTurnCardsImages;
     private ArrayList<GUIIsland> islands;
@@ -72,12 +76,15 @@ public class GameTableController extends GUIController implements UpdatableContr
             deckImages = new ArrayList<>();
             currentTurnCardsImages = new HashMap<>();
             selectedLobbyStudents = new ArrayList<>();
+            selectedCardStudentsDestinations= new ArrayList<>();
+            selectedCardStudents = new ArrayList<>();
             selectedStudentsDestinations = new ArrayList<>();
             GUIBoards = new HashMap<>();
             selectedImages = new ArrayList<>();
             islands = new ArrayList<>();
             initialized = true;
             showDeck=true;
+
 
             sendButton.setOnMouseEntered(e -> sendButton.setEffect(new Bloom()));
             sendButton.setOnMouseExited(e -> sendButton.setEffect(null));
@@ -140,37 +147,61 @@ public class GameTableController extends GUIController implements UpdatableContr
         //qui si hanno tanti selezionabili, ma abbiamo la garanzia che solo quelli clickable per il currentstate saranno !=null
         //dobbiamo prendere e mettere quelli non null (Senza controllare quali sono) in un arraylist di object da passare a buildMessage
         sendButton.setEffect(new DropShadow());
+        /*
         if(selectedAssistant!=-1)
             parameters.add(selectedAssistant);
         if(selectedLobbyStudents.size() == MOVE_FROM_LOBBY_STUDENTS_NUMBER) //il send si fa solo se si cliccano esattamente 3 studenti dalla lobby e 3 destinazioni
             parameters.add(selectedLobbyStudents);
-        if(selectedStudentsDestinations.size() == MOVE_FROM_LOBBY_STUDENTS_NUMBER)
+        if(selectedStudentsDestinations.size() == MOVE_FROM_LOBBY_STUDENTS_NUMBER) //si può riutilizzare per gestire tutti gli spostamenti ma bisogna generalizzare rispetto allo stato in cui si trova
             parameters.add(selectedStudentsDestinations);
+
+        //RIVEDERE, in questo caso funziona solo per la carta 1
+        if(selectedCardStudents.size() == Constants.getMaximumStudentsMoveForState(gui.getCurrentState())
+                && selectedCardStudentsDestinations.size()== Constants.getMaximumStudentsMoveForState(gui.getCurrentState())
+                &&selectedCardStudents.size()==1){
+            parameters.add(selectedCardStudents.get(0));
+            parameters.add(selectedCardStudentsDestinations.get(0));}
+
         if(selectedCloud!=-1)
             parameters.add(selectedCloud);
         if (selectedPersonality!=-1)
             parameters.add(selectedPersonality);
         if (selectedMNmove!=-1)
             parameters.add(selectedMNmove);
+        if (selectedIsland!=-1)
+            parameters.add(selectedIsland);
+            */
 
-        if(gui.getCurrentState().equals(ClientState.END_TURN) && parameters.size() == 0) //se siamo a fine turno e non vogliamo mandare le carte, scriviamo "end" in parameters
-            parameters.add(0,"end");
+        //da sistemare
+        if(gui.getCurrentState().equals(ClientState.END_TURN) && actionParser.getParameters().size() == 0) //se siamo a fine turno e non vogliamo mandare le carte, scriviamo "end" in parameters
+            actionParser.getParameters().add(0,"end");
 
         //per le carte personaggio quando le si inizia si vede cosa fare nel dettaglio
 
-        if(parameters.size() > 0){
-            Message message = client.buildMessageFromPlayerInput(parameters, gui.getCurrentState());
+        //if(parameters.size() > 0){
+        if(actionParser.getParameters().size() > 0){
+            //Message message = client.buildMessageFromPlayerInput(parameters, gui.getCurrentState());
+            Message message = client.buildMessageFromPlayerInput(actionParser.getParameters(), gui.getCurrentState());
             if(message != null){
                 System.out.println("Il messaggio è stato costruito ed è valido");
                 gui.passToSocket(message);
+
+                //pulisco l'array di parametri dopo aver inviato il messaggio
+                actionParser.clearSelectedParameters();
+
                 //dopo send deseleziona tutto
+                /*
                 setSelectedAssistant(-1);
+                setSelectedPersonality(-1);
                 setSelectedCloud(-1);
                 setSelectedMNmove(-1);
+                setSelectedIsland(-1);
                 selectedLobbyStudents.clear();
                 selectedStudentsDestinations.clear();
 
                 parameters.clear();
+
+                */
 
                 for(Node n : selectedImages) //resetta tutti gli effetti di selezione
                     n.setEffect(null);
@@ -312,7 +343,9 @@ public class GameTableController extends GUIController implements UpdatableContr
             System.out.println("GameTableController: renderizzo la carta personaggio "+cardId);
             cardY = centerY - PERSONALITY_OFFSET_Y + ISLAND_IMAGE_HEIGHT*1.1; //scelta a caso
             cardX= centerX - PERSONALITY_IMAGE_WIDTH + i*PERSONALITY_IMAGE_WIDTH;
-            GUIPersonality guiPersonality = new GUIPersonality(cardId,cardX-PERSONALITY_IMAGE_WIDTH/2,cardY-PERSONALITY_IMAGE_HEIGHT/2,PERSONALITY_IMAGE_WIDTH,PERSONALITY_IMAGE_HEIGHT,this,gui);
+            GUIPersonality guiPersonality = new GUIPersonality(cardId,cardX-PERSONALITY_IMAGE_WIDTH/2,
+                    cardY-PERSONALITY_IMAGE_HEIGHT/2,PERSONALITY_IMAGE_WIDTH,PERSONALITY_IMAGE_HEIGHT,
+                    this,gui, card);
             guiPersonality.render();
             guiPersonality.setEvents();
             newPersonalities.add(guiPersonality);
@@ -353,7 +386,8 @@ public class GameTableController extends GUIController implements UpdatableContr
                 assistantImage.setFitHeight(ASSISTANT_IMAGE_HEIGHT);
                 assistantImage.setPreserveRatio(true);
                 assistantImage.setOnMouseClicked((MouseEvent e) -> {
-                    handleClickEvent(priority, Clickable.ASSISTANT);
+                    //handleClickEvent(priority, Clickable.ASSISTANT);
+                    actionParser.handleSelectionEvent(priority,Clickable.ASSISTANT,gui.getCurrentState());
                     handleSelectionEffect(assistantImage,Clickable.ASSISTANT);
                 });
                 assistantImage.setOnMouseEntered((MouseEvent e) -> {
@@ -459,6 +493,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         }
     }
 
+    /*
     public void handleClickEvent(int id,Clickable clickedElement){
         if(actionParser.canClick(gui.getCurrentState(),clickedElement)){
             switch(clickedElement){
@@ -473,6 +508,9 @@ public class GameTableController extends GUIController implements UpdatableContr
                     //si potrebbe aggiungere un controllo qui in modo che se sono
                     //in move from lobby, ho spostato due studenti e poi clicco una carta questo click non viene contato
                     //altrimenti si modifica actionParser.canClick
+
+                    //versione temporanea, perché se mischio click di altre cose è un casino
+                    parameters.add(0,(Boolean)true);
                     setSelectedPersonality(id);
                     System.out.println("Hai cliccato sulla carta personaggio ");
                 }
@@ -480,9 +518,18 @@ public class GameTableController extends GUIController implements UpdatableContr
                     selectedLobbyStudents.add(id);
                 }
                 case ISLAND -> {
-                    //rivedere, per certe carte personaggio bisogna fare click sull'isola per selezionarla,
-                    //quindi bisogna distinguere i casi in cui memorizzare il numero di passi o l'indice
-                    setSelectedMNmove(extractMNsteps(id));
+
+                    switch (gui.getCurrentState()){
+                        case MOVE_MOTHER_NATURE -> {
+                            setSelectedMNmove(extractMNsteps(id));
+                            System.out.println("Sposto MN di " +selectedMNmove+ " passi");
+                        }
+                        case CHOOSE_ISLAND_FOR_CARD_3,CHOOSE_ISLAND_FOR_CARD_5 -> {
+                            setSelectedIsland(id);
+                            System.out.println("Ho selezionato l' isola "+selectedIsland);
+                        }
+                    }
+
                     System.out.println("Hai cliccato su un'isola");
                 }
 
@@ -491,6 +538,8 @@ public class GameTableController extends GUIController implements UpdatableContr
         else
             System.out.println("Non puoi cliccare "+clickedElement+" se sei in "+gui.getCurrentState());
     }
+
+    */
 
     public void onPlayer1Click(){
         if(renderedDashboard!=1){
@@ -523,12 +572,17 @@ public class GameTableController extends GUIController implements UpdatableContr
     public void setSelectedAssistant(int priority){
         selectedAssistant = priority;
     }
+
     private void setSelectedPersonality(int personalityId) {
         selectedPersonality = personalityId;
     }
 
     public void setSelectedMNmove(int numOfSteps) {
         selectedMNmove = numOfSteps;
+    }
+
+    private void setSelectedIsland(int islandIndex) {
+        selectedIsland=islandIndex;
     }
 
 
@@ -625,4 +679,22 @@ public class GameTableController extends GUIController implements UpdatableContr
         currentTurnCardsImages.clear();
     }
 
+    public int getSelectedCardStudentsNumber() {
+        return selectedCardStudents.size();
+    }
+
+    public int getSelectedCardStudentsDestinations() {
+        return selectedCardStudentsDestinations.size();
+    }
+
+    //usato per la carta 1 intanto
+    //per le altre carte si potrebbe fare overloading di metodi con meno parametri/parametri diversi
+    public void addSelectedCardStudent(int cardStudentIndex, int destinationIndex){
+        selectedCardStudents.add(cardStudentIndex);
+        selectedCardStudentsDestinations.add(destinationIndex);
+    }
+
+    public ActionParser getActionParser() {
+        return actionParser;
+    }
 }

@@ -4,9 +4,9 @@ import it.polimi.ingsw.client.Client;
 import javafx.scene.control.TextField;
 
 public class GUIController implements GUIControllerInterface{
-    GUI gui; //main class
-    ActionParser actionParser; //array of raw data builder
-    Client client; //message builder
+    protected GUI gui; //main class
+    protected ActionParser actionParser; //array of raw data builder
+    protected Client client; //message builder
 
     @Override
     public void setGUI(GUI gui) {

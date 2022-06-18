@@ -270,11 +270,3 @@ public class Server {
         serverSocket.run();
     }
 }
-
-/*
-finchè i giocatori sono in connection phase hanno l'id del client handler
-vengono messi in lobby
-quando la lobby parte viene creato il controller, che crea il model e a loro vengono assegnati gli id
-a quel punto si avrà in ogni game handler un hashmap nickname->id
-in lobby si devono sapere i nickname, il numero di player per partire
- */
