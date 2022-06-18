@@ -81,8 +81,8 @@ public class Constants {
     public static double TOWER_IMAGE_WIDTH = 40;
     public static double BAN_IMAGE_HEIGHT = 30;
     public static double BAN_IMAGE_WIDTH = 30;
-    public static double MOTHER_NATURE_HEIGHT=38;
-    public static double MOTHER_NATURE_WIDTH=38;
+    public static double MOTHER_NATURE_HEIGHT=68.22;
+    public static double MOTHER_NATURE_WIDTH=45;
     public static final String RESET = "\033[0m";
 
     public static final String RED = "\033[0;31m";

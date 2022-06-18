@@ -33,6 +33,7 @@ public class GUIIsland{
     private int index;
     private double centerX;
     private double centerY;
+    private double angle;
     private GameTableController controller;
     private ActionParser actionParser;
     private GUI gui;
@@ -43,7 +44,7 @@ public class GUIIsland{
 //TODO sistemare posizioni di madre natura e torri
 //TODO aggiungere rendering ban
 
-    public GUIIsland(int index,double x,double y,double width,double height,GameTableController controller,GUI gui){
+    public GUIIsland(int index,double x,double y,double width,double height,double angle,GameTableController controller,GUI gui){
         islandImage = new ImageView("/graphics/island"+((index%3)+1)+".png");
         this.index = index;
         setPos(x,y);
@@ -52,6 +53,7 @@ public class GUIIsland{
         this.controller = controller;
         this.actionParser=controller.getActionParser();
         this.gui = gui;
+        this.angle = angle;
         students = new ArrayList<>();
         tooltips = new HashMap<>();
         numOfStudents = new HashMap<>();
@@ -208,11 +210,18 @@ public class GUIIsland{
     }
 
     public void populateMotherNature(){
+        double screenCenterX = gui.getScreenX()/2;
+        double screenCenterY = gui.getScreenY()/2 - 15;
+
         clearMotherNature();
         if (clientIsland.isMotherNature()){
-            ImageView motherNatureImage = new ImageView("/graphics/mother_nature.png");
-            motherNatureImage.setX(centerX-MOTHER_NATURE_WIDTH/2);
-            motherNatureImage.setY(centerY-MOTHER_NATURE_HEIGHT/2);
+            ImageView motherNatureImage = new ImageView("/graphics/MotherNature.png");
+            double xOffset = (ISLAND_CIRCLE_RADIUS - 25)* Math.cos(angle-Math.PI/2);
+            double yOffset = (ISLAND_CIRCLE_RADIUS - 25) * Math.sin(angle-Math.PI/2);
+            double x = screenCenterX + xOffset ;
+            double y = screenCenterY + yOffset ;
+            motherNatureImage.setX(x-ISLAND_IMAGE_WIDTH/2);
+            motherNatureImage.setY(y-ISLAND_IMAGE_HEIGHT/2);
             motherNatureImage.setFitWidth(MOTHER_NATURE_WIDTH);
             motherNatureImage.setFitHeight(MOTHER_NATURE_HEIGHT);
             motherNatureImage.setPreserveRatio(true);
