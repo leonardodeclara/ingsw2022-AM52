@@ -2,6 +2,7 @@ package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.ClientPersonality;
 import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.model.Color;
 import javafx.event.EventHandler;
 import javafx.scene.control.Tooltip;
@@ -17,6 +18,7 @@ import static it.polimi.ingsw.Constants.*;
 
 //TODO: aggiungere label/effetto che mostri che una carta è attiva
 //TODO: aggiungere tooltip per descrizione dell'effetto della carta
+//TODO. aggiungere controllo (in controller/actionParser/qui che mi renda selezionabile solo gli studenti della carta attiva, non di tutte le carte)
 
 public class GUIPersonality {
     private ClientPersonality personality;
@@ -115,10 +117,6 @@ public class GUIPersonality {
             studentImage.setPreserveRatio(true);
             studentImage.setFitHeight(STUDENT_IMAGE_HEIGHT);
             studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
-            studentImage.setOnMouseClicked((MouseEvent e) -> {
-                //controller.handleClickEvent(personality.getStudents().indexOf(student),Clickable.PERSONALITY_STUDENT);
-                actionParser.handleSelectionEvent(personality.getStudents().indexOf(student),Clickable.PERSONALITY_STUDENT,gui.getCurrentState());
-            });
             gui.addElementToScene(studentImage);
             studentImage.toFront();
             System.out.println("Aggiunto studente "+student+" alla carta lobby "+cardId);
@@ -161,7 +159,6 @@ public class GUIPersonality {
 
     public void setEvents(){
         cardImage.setOnMouseClicked((MouseEvent e) ->{
-            //controller.handleClickEvent(cardId,Clickable.PERSONALITY);
             actionParser.handleSelectionEvent(cardId,Clickable.PERSONALITY,gui.getCurrentState());
             controller.handleSelectionEffect(cardImage,Clickable.PERSONALITY);
         });
@@ -175,8 +172,14 @@ public class GUIPersonality {
     }
 
     public void setStudentsEvents(ImageView studentImage, int studentIndex){
+        studentImage.setOnMouseClicked((MouseEvent e) -> {
+            //if (personality.isActive) aggiungere controllo per cui si può clickare su uno studente se la carta è attiva
+            //o qui o in controller o actionParser
+            actionParser.handleSelectionEvent(studentIndex,Clickable.PERSONALITY_CARD_STUDENT, gui.getCurrentState());
+            controller.handleSelectionEffect(studentImage,Clickable.PERSONALITY_CARD_STUDENT);
+        });
         studentImage.setOnDragDetected((MouseEvent e) -> {
-            if(controller.actionParser.canDrag(gui.getCurrentState(),Clickable.CARD_STUDENT)){
+            if(controller.getActionParser().canDrag(gui.getCurrentState(),Clickable.PERSONALITY_CARD_STUDENT)){
                 Dragboard db = studentImage.startDragAndDrop(TransferMode.MOVE);
                 db.setDragView(studentImage.getImage());
                 ClipboardContent content = new ClipboardContent();
@@ -187,15 +190,13 @@ public class GUIPersonality {
 
             }
         });
-        studentImage.setOnDragDone(new EventHandler<DragEvent>() {
-            public void handle(DragEvent event) {
-                System.out.println("Drag completato, tolgo lo studente dalla carta");
-                if (event.getTransferMode() == TransferMode.MOVE) {
-                    studentsImages.remove(studentImage);
-                    gui.removeElementFromScene(studentImage);
-                }
-                event.consume();
+        studentImage.setOnDragDone(event -> {
+            System.out.println("Drag completato, tolgo lo studente dalla carta");
+            if (event.getTransferMode() == TransferMode.MOVE) {
+                studentsImages.remove(studentImage);
+                gui.removeElementFromScene(studentImage);
             }
+            event.consume();
         });
     }
 

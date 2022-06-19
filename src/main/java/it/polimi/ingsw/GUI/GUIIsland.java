@@ -99,10 +99,9 @@ public class GUIIsland{
                 System.out.println("Sono in MOVE MN, non devo passare l'indice dell'isola ma il numero di passi");
                 actionParser.handleSelectionEvent(controller.extractMNsteps(index),Clickable.ISLAND,gui.getCurrentState());
             }
-            else actionParser.handleSelectionEvent(index,Clickable.ISLAND,gui.getCurrentState());
+            else actionParser.handleSelectionEvent(index,Clickable.ISLAND,gui.getCurrentState()); //es carte 3,5
             controller.handleSelectionEffect(islandImage,Clickable.ISLAND);
-            //setSelectedIslandID(i);
-            //System.out.println("Hai cliccato sull'isola "+selectedIslandID);
+
         });
         islandImage.setOnMouseEntered((MouseEvent e) -> {
             if (!clientIsland.isMotherNature() || !(gui.getCurrentState().equals(ClientState.MOVE_MOTHER_NATURE))) //se sono in una fase che non è moveMN deve vedersi l'effetto di hover
@@ -142,7 +141,6 @@ public class GUIIsland{
                     selection.add(index);
                     //MANCA CONTROLLO CAN CLICK-CAN DRAG
                     actionParser.handleSelectionEvent(selection, gui.getCurrentState());
-                    //controller.addSelectedCardStudent(studentID,index);
                     addStudentToIsland(student);
                     success = true;
                     System.out.println("Drop sull'isola "+index);

@@ -148,40 +148,14 @@ public class GameTableController extends GUIController implements UpdatableContr
         //qui si hanno tanti selezionabili, ma abbiamo la garanzia che solo quelli clickable per il currentstate saranno !=null
         //dobbiamo prendere e mettere quelli non null (Senza controllare quali sono) in un arraylist di object da passare a buildMessage
         sendButton.setEffect(new DropShadow());
-        /*
-        if(selectedAssistant!=-1)
-            parameters.add(selectedAssistant);
-        if(selectedLobbyStudents.size() == MOVE_FROM_LOBBY_STUDENTS_NUMBER) //il send si fa solo se si cliccano esattamente 3 studenti dalla lobby e 3 destinazioni
-            parameters.add(selectedLobbyStudents);
-        if(selectedStudentsDestinations.size() == MOVE_FROM_LOBBY_STUDENTS_NUMBER) //si può riutilizzare per gestire tutti gli spostamenti ma bisogna generalizzare rispetto allo stato in cui si trova
-            parameters.add(selectedStudentsDestinations);
-
-        //RIVEDERE, in questo caso funziona solo per la carta 1
-        if(selectedCardStudents.size() == Constants.getMaximumStudentsMoveForState(gui.getCurrentState())
-                && selectedCardStudentsDestinations.size()== Constants.getMaximumStudentsMoveForState(gui.getCurrentState())
-                &&selectedCardStudents.size()==1){
-            parameters.add(selectedCardStudents.get(0));
-            parameters.add(selectedCardStudentsDestinations.get(0));}
-
-        if(selectedCloud!=-1)
-            parameters.add(selectedCloud);
-        if (selectedPersonality!=-1)
-            parameters.add(selectedPersonality);
-        if (selectedMNmove!=-1)
-            parameters.add(selectedMNmove);
-        if (selectedIsland!=-1)
-            parameters.add(selectedIsland);
-            */
 
         //da sistemare
         if(gui.getCurrentState().equals(ClientState.END_TURN) && actionParser.getParameters().size() == 0) //se siamo a fine turno e non vogliamo mandare le carte, scriviamo "end" in parameters
             actionParser.getParameters().add(0,"end");
 
-        //per le carte personaggio quando le si inizia si vede cosa fare nel dettaglio
 
-        //if(parameters.size() > 0){
         if(actionParser.getParameters().size() > 0){
-            //Message message = client.buildMessageFromPlayerInput(parameters, gui.getCurrentState());
+
             Message message = client.buildMessageFromPlayerInput(actionParser.getParameters(), gui.getCurrentState());
             if(message != null){
                 System.out.println("Il messaggio è stato costruito ed è valido");
@@ -189,20 +163,6 @@ public class GameTableController extends GUIController implements UpdatableContr
 
                 //pulisco l'array di parametri dopo aver inviato il messaggio
                 actionParser.clearSelectedParameters();
-
-                //dopo send deseleziona tutto
-                /*
-                setSelectedAssistant(-1);
-                setSelectedPersonality(-1);
-                setSelectedCloud(-1);
-                setSelectedMNmove(-1);
-                setSelectedIsland(-1);
-                selectedLobbyStudents.clear();
-                selectedStudentsDestinations.clear();
-
-                parameters.clear();
-
-                */
 
                 for(Node n : selectedImages) //resetta tutti gli effetti di selezione
                     n.setEffect(null);
@@ -471,6 +431,9 @@ public class GameTableController extends GUIController implements UpdatableContr
                     for(GUIPersonality card : personalities){
                         card.setImageEffect(null);
                     }
+                    n.setEffect(new DropShadow());
+                }
+                case PERSONALITY_CARD_STUDENT,LOBBY_STUDENT,TABLE_STUDENT -> {
                     n.setEffect(new DropShadow());
                 }
             }
