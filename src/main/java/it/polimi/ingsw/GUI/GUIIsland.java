@@ -105,7 +105,7 @@ public class GUIIsland{
             //System.out.println("Hai cliccato sull'isola "+selectedIslandID);
         });
         islandImage.setOnMouseEntered((MouseEvent e) -> {
-            if (!clientIsland.isMotherNature())
+            if (!clientIsland.isMotherNature() || !(gui.getCurrentState().equals(ClientState.MOVE_MOTHER_NATURE))) //se sono in una fase che non è moveMN deve vedersi l'effetto di hover
                 controller.handleHoverEvent(islandImage, Clickable.ISLAND);
         });
         islandImage.setOnMouseExited((MouseEvent e) -> {

@@ -326,29 +326,35 @@ class GameTest {
      */
     @Test
     void moveStudentFromLobbyToIslandTest(){
-        Game game = gameSetup(2);
-
-        //subtest per le isole
-        Color s1 = game.getPlayerByName("leo").getBoard().getLobbyStudent(0);
-        Color s2 = game.getPlayerByName("mari").getBoard().getLobbyStudent(0);
+        Game game = new Game(2);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("mari");
+        players.add("leo");
+        game.instantiateGameElements(players);
+        game.getPlayerByName("leo").setTeam(Tower.GREY);
+        game.getPlayerByName("mari").setTeam(Tower.WHITE);
         int mnPosition = 0;
         for (Island island : game.getIslands()){
             if (island.isMotherNature())
                 mnPosition= island.getIslandIndex();
         }
-
-        ArrayList<Integer> studentsToMove = new ArrayList<>();
-        studentsToMove.add(0);
+        ArrayList<Color> toBeMoved = new ArrayList<>();
+        for (int i = 0; i<3;i++)
+            toBeMoved.add(game.getPlayerByName("leo").getBoard().getLobbyStudent(i));
+        int lobbySize = game.getPlayerByName("leo").getBoard().getLobby().size();
+        ArrayList<Integer> studentsToMoveIndexes = new ArrayList<>();
         ArrayList<Integer> destinations = new ArrayList<>();
-        destinations.add((mnPosition+1)%12);
-        game.moveStudentsFromLobby("leo", studentsToMove,destinations);
-        destinations.clear();
-        destinations.add((mnPosition+2)%12);
-        game.moveStudentsFromLobby("mari",studentsToMove, destinations);
+        for (int i = 0; i<3;i++){
+            destinations.add((mnPosition+1+i)%12);
+            studentsToMoveIndexes.add(i);
+        }
+        assertTrue(game.moveStudentsFromLobby("leo", studentsToMoveIndexes,destinations));
         assertEquals(2, game.getIslands().get((mnPosition+1)%12).getStudents().size());
         assertEquals(2, game.getIslands().get((mnPosition+2)%12).getStudents().size());
-        assertEquals(s1, game.getIslands().get((mnPosition+1)%12).getStudents().get(1));
-        assertEquals(s2, game.getIslands().get((mnPosition+2)%12).getStudents().get(1));
+        assertEquals(2, game.getIslands().get((mnPosition+3)%12).getStudents().size());
+        assertEquals(toBeMoved.get(0), game.getIslands().get((mnPosition+1)%12).getStudents().get(1));
+        assertEquals(toBeMoved.get(1), game.getIslands().get((mnPosition+2)%12).getStudents().get(1));
+        assertEquals(toBeMoved.get(2), game.getIslands().get((mnPosition+3)%12).getStudents().get(1));
     }
 
 
@@ -358,24 +364,45 @@ class GameTest {
      */
     @Test
     void moveStudentFromLobbyToTableTest(){
-        Game game = gameSetup(2);
-
-        Color s0 = game.getPlayers().get(0).getBoard().getLobbyStudent(1);
-        int tableSizeP0 = game.getPlayers().get(0).getBoard().getStudentsTable().get(s0);
-        Color s1 = game.getPlayers().get(1).getBoard().getLobbyStudent(1);
-        int tableSizeP1 = game.getPlayers().get(1).getBoard().getStudentsTable().get(s1);
-        int lobbySizeP0 = game.getPlayers().get(0).getBoard().getLobby().size();
-        int lobbySizeP1 = game.getPlayers().get(1).getBoard().getLobby().size();
+        Game game = new Game(2);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("mari");
+        players.add("leo");
+        game.instantiateGameElements(players);
+        game.getPlayerByName("leo").setTeam(Tower.GREY);
+        game.getPlayerByName("mari").setTeam(Tower.WHITE);
+        HashMap<Color,Integer> movementsLeo = new HashMap<>();
+        HashMap<Color,Integer> movementsMari = new HashMap<>();
+        for (Color color: Color.values()){
+            movementsLeo.put(color,0);
+            movementsMari.put(color,0);
+        }
+        for (int i = 0;i<3;i++){
+            Color leoStudent = game.getPlayerByName("leo").getBoard().getLobbyStudent(i);
+            movementsLeo.put(leoStudent, movementsLeo.get(leoStudent)+1);
+            Color mariStudent = game.getPlayerByName("mari").getBoard().getLobbyStudent(i);
+            movementsMari.put(mariStudent, movementsMari.get(mariStudent)+1);
+        }
+        int lobbySizeP0 = game.getPlayerByName("leo").getBoard().getLobby().size();
+        int lobbySizeP1 = game.getPlayerByName("mari").getBoard().getLobby().size();
         ArrayList<Integer> studentsToMoveIndexes = new ArrayList<>();
-        studentsToMoveIndexes.add(1);
         ArrayList<Integer> destinations = new ArrayList<>();
-        destinations.add(-1);
-        game.moveStudentsFromLobby("leo",studentsToMoveIndexes,destinations);
-        game.moveStudentsFromLobby("mari",studentsToMoveIndexes,destinations);
-        assertEquals(tableSizeP0+1, game.getPlayers().get(0).getBoard().getStudentsTable().get(s0));
-        assertEquals(tableSizeP1+1, game.getPlayers().get(1).getBoard().getStudentsTable().get(s1));
-        assertEquals(lobbySizeP0-1, game.getPlayers().get(0).getBoard().getLobby().size());
-        assertEquals(lobbySizeP1-1, game.getPlayers().get(1).getBoard().getLobby().size());
+        for (int i = 0; i<3;i++){
+            studentsToMoveIndexes.add(i);
+            destinations.add(-1);
+        }
+        for (Color color: Color.values()){
+            assertEquals(0, game.getPlayerByName("leo").getBoard().getStudentsTable().get(color));
+            assertEquals(0, game.getPlayerByName("mari").getBoard().getStudentsTable().get(color));
+        }
+        assertTrue(game.moveStudentsFromLobby("leo",studentsToMoveIndexes,destinations));
+        assertTrue(game.moveStudentsFromLobby("mari",studentsToMoveIndexes,destinations));
+        for (Color color: Color.values()){
+            assertEquals(movementsLeo.get(color), game.getPlayerByName("leo").getBoard().getStudentsTable().get(color));
+            assertEquals(movementsMari.get(color), game.getPlayerByName("mari").getBoard().getStudentsTable().get(color));
+        }
+        assertEquals(lobbySizeP0-3, game.getPlayerByName("leo").getBoard().getLobby().size());
+        assertEquals(lobbySizeP1-3, game.getPlayerByName("mari").getBoard().getLobby().size());
     }
 
     @Test

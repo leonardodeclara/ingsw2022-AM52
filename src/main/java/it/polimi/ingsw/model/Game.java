@@ -353,7 +353,7 @@ public class Game {
      */
     public boolean isMoveMNLegal(String nickname,int numSteps){
         int playerMaxSteps = currentTurnAssistantCards.get(nickname).getNumMoves();
-        return numSteps > playerMaxSteps? false : true;
+        return numSteps <= playerMaxSteps && numSteps > 0;
     }
 
     /**
