@@ -158,8 +158,13 @@ public class ActionParser {
                         ((ArrayList<Integer>) parameters.get(1)).add((Integer) selection);
                     }
                 }
+                case CHOOSE_COLOR_FOR_CARD_9,CHOOSE_COLOR_FOR_CARD_12 ->{
+                    if (parameters.size()>0)
+                        clearSelectedParameters();
+                    parameters.add(selection);
+                }
 
-                //vedere come gestire carte 9,12
+                //vedere se si può togliere
                 default -> {
                     if (parameters.size() > 0)
                         clearSelectedParameters();

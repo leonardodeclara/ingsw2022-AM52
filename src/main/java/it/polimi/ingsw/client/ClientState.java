@@ -437,9 +437,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return null;
-            //return new ArrayList(List.of(Clickable.STUDENT)); //TODO: rivedere come selezionare colore per la carta 9
-            //si potrebbe creare un prompt apposito
+            return new ArrayList(List.of(Clickable.COLOR));
         }
     },CHOOSE_STUDENTS_FOR_CARD_10(10){
         @Override
@@ -519,9 +517,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return null;
-            //return new ArrayList(List.of(Clickable.STUDENT)); //TODO: rivedere come selezionare colore
-            //idem come carta 9
+            return new ArrayList(List.of(Clickable.COLOR));
         }
     }, END_GAME(0){
         @Override

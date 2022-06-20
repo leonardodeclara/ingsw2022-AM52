@@ -5,9 +5,15 @@ import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.Message;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.*;
@@ -42,17 +48,9 @@ public class GameTableController extends GUIController implements UpdatableContr
     @FXML private Button sendButton;
     @FXML private Label contextMessage;
     private int renderedDashboard;
-    private int selectedCloud = -1;
-    private int selectedMNmove = -1;
-    private ArrayList<Integer> selectedLobbyStudents;
-    private ArrayList<Integer> selectedStudentsDestinations;
-    private ArrayList<Integer> selectedCardStudents;
-    private ArrayList<Integer> selectedCardStudentsDestinations;
-    private int selectedAssistant = -1; //priority
-    private int selectedPersonality = -1;
-    private int selectedIsland = -1;
     private ArrayList<ImageView> deckImages;
     private HashMap<ImageView,Text> currentTurnCardsImages;
+    private ChoiceBox<it.polimi.ingsw.model.Color> colorChoiceBox;
     private ArrayList<GUIIsland> islands;
     private ArrayList<GUICloud> clouds;
     private ArrayList<GUIPersonality> personalities;
@@ -64,7 +62,6 @@ public class GameTableController extends GUIController implements UpdatableContr
     private boolean waitTurn = false;
     private boolean initialized = false;
     private boolean showDeck;
-    private ArrayList<Object> parameters;
     private ArrayList<Node> selectedImages;
 
     public void start(){ //metodo di inizializzazione chiamato da GUI. In alcune situazioni viene chiamato due volte ma noi dobbiamo inizializzare una volta sola
@@ -72,19 +69,13 @@ public class GameTableController extends GUIController implements UpdatableContr
             centerX = gui.getScreenX()/2;
             centerY = gui.getScreenY()/2 - 15;
             deckButton.setImage(new Image("/graphics/Wizard_"+(gui.getWizard()+1)+".png"));
-            parameters = new ArrayList<>();
             deckImages = new ArrayList<>();
             currentTurnCardsImages = new HashMap<>();
-            selectedLobbyStudents = new ArrayList<>();
-            selectedCardStudentsDestinations= new ArrayList<>();
-            selectedCardStudents = new ArrayList<>();
-            selectedStudentsDestinations = new ArrayList<>();
             GUIBoards = new HashMap<>();
             selectedImages = new ArrayList<>();
             islands = new ArrayList<>();
             initialized = true;
             showDeck=true;
-
 
             sendButton.setOnMouseEntered(e -> sendButton.setEffect(new Bloom()));
             sendButton.setOnMouseExited(e -> sendButton.setEffect(null));
@@ -185,6 +176,10 @@ public class GameTableController extends GUIController implements UpdatableContr
         renderCurrentTurnCards();
         if (gui.getGB().isExpertGame())
             renderPersonalityCards();
+        clearColorChoiceBox();
+        if (gui.getCurrentState().equals(ClientState.CHOOSE_COLOR_FOR_CARD_9)
+                || gui.getCurrentState().equals(ClientState.CHOOSE_COLOR_FOR_CARD_12))
+            renderColorChoiceBox();
         populateDashboard(false);
         visualizeContextMessage();
         renderSendButton();
@@ -359,9 +354,7 @@ public class GameTableController extends GUIController implements UpdatableContr
             }
             deckButton.toFront();
         }
-
     }
-
 
     private void clearDeck(){
         for(ImageView card : deckImages){
@@ -390,6 +383,26 @@ public class GameTableController extends GUIController implements UpdatableContr
         message.setShowDelay(Duration.seconds(0.3));
         Tooltip.install(playerIcon, message);
     }
+
+    private void renderColorChoiceBox() {
+        if (colorChoiceBox!=null)
+            clearColorChoiceBox();
+        ObservableList<it.polimi.ingsw.model.Color> colorOptions = FXCollections.observableArrayList();
+        colorOptions.addAll(it.polimi.ingsw.model.Color.values());
+        colorChoiceBox =  new ChoiceBox<>();
+        colorChoiceBox.setItems(colorOptions);
+        colorChoiceBox.getSelectionModel().selectedItemProperty().addListener((ChangeListener) (ov,old_value,new_value)-> {
+                actionParser.handleSelectionEvent(new_value,Clickable.COLOR,gui.getCurrentState());
+        });
+        colorChoiceBox.setPrefWidth(COLOR_CHOICEBOX_WIDTH);
+        colorChoiceBox.setLayoutX(centerX-COLOR_CHOICEBOX_WIDTH/2);
+        colorChoiceBox.setLayoutY(centerY-COLOR_CHOICEBOX_VGAP);
+        Tooltip message = new Tooltip("CHOOSE A COLOR");
+        message.setShowDelay(Duration.seconds(0.1));
+        Tooltip.install(colorChoiceBox, message);
+        gui.addElementToScene(colorChoiceBox);
+    }
+
 
     private void visualizeContextMessage(){
         StringBuilder messageForToolTip= new StringBuilder();
@@ -522,38 +535,8 @@ public class GameTableController extends GUIController implements UpdatableContr
         }
     }
 
-    public void setSelectedCloud(int id){
-        selectedCloud = id;
-    }
-
-    public void setSelectedAssistant(int priority){
-        selectedAssistant = priority;
-    }
-
-    private void setSelectedPersonality(int personalityId) {
-        selectedPersonality = personalityId;
-    }
-
-    public void setSelectedMNmove(int numOfSteps) {
-        selectedMNmove = numOfSteps;
-    }
-
-    private void setSelectedIsland(int islandIndex) {
-        selectedIsland=islandIndex;
-    }
-
-
-    public void addSelectedStudent(int studentID,int destID){
-        selectedLobbyStudents.add(studentID);
-        selectedStudentsDestinations.add(destID);
-    }
-
     public int extractMNsteps(int islandId){
         return gui.getGB().getMotherNatureDistance(islandId);
-    }
-
-    public int getSelectedStudentsNumber(){
-        return selectedLobbyStudents.size();
     }
 
     public void changeShowedCards(MouseEvent mouseEvent) {
@@ -636,19 +619,8 @@ public class GameTableController extends GUIController implements UpdatableContr
         currentTurnCardsImages.clear();
     }
 
-    public int getSelectedCardStudentsNumber() {
-        return selectedCardStudents.size();
-    }
-
-    public int getSelectedCardStudentsDestinations() {
-        return selectedCardStudentsDestinations.size();
-    }
-
-    //usato per la carta 1 intanto
-    //per le altre carte si potrebbe fare overloading di metodi con meno parametri/parametri diversi
-    public void addSelectedCardStudent(int cardStudentIndex, int destinationIndex){
-        selectedCardStudents.add(cardStudentIndex);
-        selectedCardStudentsDestinations.add(destinationIndex);
+    private void clearColorChoiceBox(){
+        gui.removeElementFromScene(colorChoiceBox);
     }
 
     public ActionParser getActionParser() {
