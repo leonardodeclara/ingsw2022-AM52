@@ -1019,4 +1019,19 @@ class GameTest {
     TODO: aggiungere test che verifichi il corretto merge con una isola a dx
      */
 
+    /**
+     * This test helps verifying that a student tile is not choosen more than once in a movement.
+     */
+    @Test
+    void hasDuplicatesTest(){
+        Game game = new Game(2);
+        ArrayList<Integer> numbers = new ArrayList<>();
+        for (int i = 0; i< 3; i++){
+            numbers.add(i);
+        }
+        assertFalse(game.hasDuplicates(numbers));
+        numbers.add(0);
+        assertTrue(game.hasDuplicates(numbers));
+    }
+
 }

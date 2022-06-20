@@ -264,7 +264,7 @@ public class Game {
         Player player = getPlayerByName(nickname);
         int islandIndexCounter = 0;
 
-        if(studentIDs.size() != 3)
+        if(studentIDs.size() != 3 || islandIDs.size()!=3 || hasDuplicates(studentIDs))
             return false;
 
         for (int i = 0; i < studentIDs.size(); i++) { //controlliamo se la mossa è legit per ogni studente e per ogni destinazione
@@ -812,6 +812,10 @@ public class Game {
                 return island;
         }
         return null;
+    }
+
+    public boolean hasDuplicates(ArrayList<Integer> studentIndexes){
+        return (studentIndexes.stream().distinct().count()!=studentIndexes.size());
     }
 
 
