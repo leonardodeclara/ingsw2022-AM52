@@ -128,6 +128,8 @@ public class GameTableController extends GUIController implements UpdatableContr
                     @Override
                     public void run() {
                         visualizeContextMessage();//può essere eseguito solo sul thread di GUI
+                        renderIslands();
+                        populateDashboard(false);
                     }
                 });
             }
