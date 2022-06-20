@@ -134,7 +134,7 @@ public class GameTableController extends GUIController implements UpdatableContr
                 });
             }
         };
-        timer.schedule(task, 5000L);
+        timer.schedule(task, 2000L);
     }
 
     public void send(){
@@ -225,28 +225,6 @@ public class GameTableController extends GUIController implements UpdatableContr
             islandCounter++;
         }
     }
-    /*
-    private void addStudentToIsland(ImageView islandImage,int islandCounter,ClientIsland island,Color student){
-        ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
-
-        long numberOfStudents = island.getStudents()
-                .stream()
-                .filter(color -> color.equals(student)).count();
-        if(numberOfStudents > 0){
-            Tooltip numOfStudents = new Tooltip(Long.toString(numberOfStudents+1));
-            numOfStudents.setShowDelay(Duration.seconds(0.1));
-            Tooltip.install(studentImage, numOfStudents);
-            System.out.println("Aggiungo uno studente"+student+" all'isola "+islandCounter+" e ora ce ne sono "+(numberOfStudents+1));
-        }else{
-            List<Color> distinctStudents = island.getStudents().stream().distinct().toList();
-            distinctStudents.add(student);
-            populateIsland(islandImage,gui.getIslands(),islandCounter,distinctStudents);
-            System.out.println("Ho aggiunto uno studente"+student+" all'isola "+islandCounter+" e ora ce n'è uno");
-
-        }
-
-    }
-    */
 
     private void renderClouds(){
         ArrayList<GUICloud> newClouds = new ArrayList<>();

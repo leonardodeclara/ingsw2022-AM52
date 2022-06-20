@@ -70,15 +70,15 @@ public class GUIBoard {
             public void handle(DragEvent event) {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
-                if (db.hasString()) { //per generalizzarlo avremo una variabile draggedElement così che qui sappiamo cosa sta venendo rilasciato
-                    //per ora creiamo solo il caso specifico di move from lobby
+                if (db.hasString()) {
                     ClientBoard clientBoard = gui.getOwningPlayerBoard();
-                    int studentID = Integer.parseInt(db.getString());
-                    Color student  = clientBoard.getLobby().get(studentID); //prendo il colore
+                    int colorIndex = Integer.parseInt(db.getString());
+                    Color student = Color.getById(colorIndex);
                     addStudentToTable(student);
                     success = true;
                     ArrayList<Object> selection = new ArrayList<>();
-                    selection.add(studentID);
+                    int selectedStudentID = clientBoard.getLobby().indexOf(student);
+                    selection.add(selectedStudentID);
                     selection.add(ISLAND_ID_NOT_RECEIVED);
                     actionParser.handleSelectionEvent(selection, gui.getCurrentState());
                 }
@@ -92,7 +92,9 @@ public class GUIBoard {
     private void addStudentToTable(Color student) {
         int numOf = numOfStudentsOnTable.get(student);
         numOfStudentsOnTable.put(student,numOf+1);
-
+        System.out.println("Aggiungo in numOfStudentsOnTable di "+getClientBoard().getOwner()+" uno studente "+student);
+        for(Color s : numOfStudentsOnTable.keySet())
+            System.out.println("C'è uno studente "+s+" in numOfStudentsOnTable");
         populateTables();
     }
 
@@ -110,6 +112,7 @@ public class GUIBoard {
         if (gui.getGB().isExpertGame()){
             populateCoins();
         }
+        setTableEvents();
     }
 
     private void populateTeachers(){
@@ -129,6 +132,7 @@ public class GUIBoard {
         }
     }
     private void populateLobby(){
+        clearLobby();
         int studentRowCounter = 0;
         int studentColumnCounter = 0;
         int studentIDCounter = 0; //identificativo studente lobby
@@ -138,25 +142,16 @@ public class GUIBoard {
             studentImage.setFitHeight(STUDENT_TABLE_HEIGHT);
             studentImage.setX(STUDENT_BOARD_START_X+studentColumnCounter*STUDENT_TABLE_HGAP);
             studentImage.setY(STUDENT_LOBBY_START_Y+studentRowCounter*STUDENT_LOBBY_VGAP);
-            int finalStudentIDCounter = studentIDCounter; //event handler accetta solo variabili final
-            //se si mantiene la stessa scelta di effetti per tutti gli oggetti clickable questi tre metodi possono finire in un unico metodo
-            /*
-            studentImage.setOnMouseClicked((MouseEvent e) -> {
-                handleClickEvent(finalStudentIDCounter,Clickable.LOBBY_STUDENT);
-            });
-            */
+            int finalStudentIDCounter = studentIDCounter;
             if(clientBoard.equals(gui.getOwningPlayerBoard())){
                 studentImage.setOnDragDetected((MouseEvent e) -> {
                     if(actionParser.canDrag(gui.getCurrentState(),Clickable.LOBBY_STUDENT)){
-                        //if(controller.getSelectedStudentsNumber() < MOVE_FROM_LOBBY_STUDENTS_NUMBER){ //si possono selezionare al massimo 3 studenti
                             Dragboard db = studentImage.startDragAndDrop(TransferMode.MOVE);
                             db.setDragView(studentImage.getImage());
                             ClipboardContent content = new ClipboardContent();
-                            content.putString(Integer.toString(finalStudentIDCounter));
+                            content.putString(Integer.toString(student.getIndex()));
                             db.setContent(content);
-                            System.out.println("Inizio il drag event per "+finalStudentIDCounter);
                             e.consume();
-                        //}
                     }
                 });
                 studentImage.setOnDragDone(new EventHandler<DragEvent>() {
@@ -196,6 +191,7 @@ public class GUIBoard {
     }
 
     private void populateTables(){
+        clearTables();
         int tableCounter = 0;
         ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));
         for(Color color : tableColors){
@@ -221,6 +217,7 @@ public class GUIBoard {
     }
 
     private void populateTowers(){
+        clearTowers();
         int towersCounter = clientBoard.getTowers();
         int halfTowersCounter;
         double offsetY,offsetX;

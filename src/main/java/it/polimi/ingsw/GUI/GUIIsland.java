@@ -128,19 +128,20 @@ public class GUIIsland{
                 boolean success = false;
                 if (db.hasString()) { //per generalizzarlo avremo una variabile draggedElement così che qui sappiamo cosa sta venendo rilasciato
                     //per ora creiamo solo il caso specifico di move from lobby
-                    int studentID = Integer.parseInt(db.getString());
-                    Color student;
-                    //rivedere se si può generalizzare rispetto allo stato
+                    int colorIndex = Integer.parseInt(db.getString());
+                    Color student = Color.getById(colorIndex);
+                    int selectedStudentID;
                     if (gui.getCurrentState().equals(ClientState.MOVE_FROM_LOBBY)){
                         ClientBoard clientBoard = gui.getOwningPlayerBoard();
-                        student = clientBoard.getLobby().get(studentID); //prendo il colore
+                        selectedStudentID = clientBoard.getLobby().indexOf(student);
                     }
                     else{
                         ClientPersonality activeCard = gui.getGB().getActivePersonality();
-                        student = activeCard.getStudents().get(studentID);
+                        selectedStudentID = activeCard.getStudents().indexOf(student);
+
                     }
                     ArrayList<Object> selection = new ArrayList<>();
-                    selection.add(studentID);
+                    selection.add(selectedStudentID);
                     selection.add(index);
                     //MANCA CONTROLLO CAN CLICK-CAN DRAG
                     actionParser.handleSelectionEvent(selection, gui.getCurrentState());
