@@ -58,7 +58,7 @@ public class Client { //gestisce la socket da un lato e dialoga con CLI/GUI dall
                 return buildCloudSelectionMessage(data);
             case END_TURN:
                 if(data.size() >= 2)
-                    if((Boolean) data.get(1) == true)
+                    if((Boolean) data.get(0) == true)
                         return buildPlayPersonalityCardMessage(data);
 
                 return buildCloseTurnMessage(data);

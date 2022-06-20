@@ -16,7 +16,7 @@ import java.util.List;
 
 import static it.polimi.ingsw.Constants.*;
 
-
+//TODO: sistemare il caso in cui provi a spostare meno di due studenti dalla lobby in MOVE_FROM_LOBBY
 
 public class GUIBoard {
     private ClientBoard clientBoard;
@@ -77,11 +77,9 @@ public class GUIBoard {
                     Color student  = clientBoard.getLobby().get(studentID); //prendo il colore
                     addStudentToTable(student);
                     success = true;
-                    //controller.addSelectedStudent(studentID, ISLAND_ID_NOT_RECEIVED);
                     ArrayList<Object> selection = new ArrayList<>();
                     selection.add(studentID);
                     selection.add(ISLAND_ID_NOT_RECEIVED);
-                    //MANCA CONTROLLO CAN CLICK-CAN DRAG
                     actionParser.handleSelectionEvent(selection, gui.getCurrentState());
                 }
                 event.setDropCompleted(success);
@@ -149,9 +147,8 @@ public class GUIBoard {
             */
             if(clientBoard.equals(gui.getOwningPlayerBoard())){
                 studentImage.setOnDragDetected((MouseEvent e) -> {
-                    //if(controller.actionParser.canClick(gui.getCurrentState(),Clickable.LOBBY_STUDENT)){
-                    if(controller.actionParser.canDrag(gui.getCurrentState(),Clickable.LOBBY_STUDENT)){
-                        if(controller.getSelectedStudentsNumber() < MOVE_FROM_LOBBY_STUDENTS_NUMBER){ //si possono selezionare al massimo 3 studenti
+                    if(actionParser.canDrag(gui.getCurrentState(),Clickable.LOBBY_STUDENT)){
+                        //if(controller.getSelectedStudentsNumber() < MOVE_FROM_LOBBY_STUDENTS_NUMBER){ //si possono selezionare al massimo 3 studenti
                             Dragboard db = studentImage.startDragAndDrop(TransferMode.MOVE);
                             db.setDragView(studentImage.getImage());
                             ClipboardContent content = new ClipboardContent();
@@ -159,7 +156,7 @@ public class GUIBoard {
                             db.setContent(content);
                             System.out.println("Inizio il drag event per "+finalStudentIDCounter);
                             e.consume();
-                        }
+                        //}
                     }
                 });
                 studentImage.setOnDragDone(new EventHandler<DragEvent>() {
@@ -179,6 +176,10 @@ public class GUIBoard {
                 studentImage.setOnMouseExited((MouseEvent e) -> {
                     if (studentImage.getEffect()==null || !(DropShadow.class).equals(studentImage.getEffect().getClass())) //rivedere, qui il comportamento è lo stesso delle carte personaggio
                         studentImage.setEffect(null);
+                });
+                studentImage.setOnMouseClicked((MouseEvent e)->{
+                    actionParser.handleSelectionEvent(finalStudentIDCounter,Clickable.LOBBY_STUDENT, gui.getCurrentState());
+                    controller.handleSelectionEffect(studentImage,Clickable.LOBBY_STUDENT);
                 });
             }
 
@@ -208,8 +209,8 @@ public class GUIBoard {
                 studentImage.setX(STUDENT_BOARD_START_X+tableCounter*STUDENT_TABLE_HGAP);
                 studentImage.setY(STUDENT_TABLE_START_Y+i*STUDENT_TABLE_VGAP);
                 studentImage.setOnMouseClicked((MouseEvent e) -> {
-                    //controller.handleClickEvent(color.getIndex(),Clickable.TABLE_STUDENT); //come id passa l'index del colore della board
-                    actionParser.handleSelectionEvent(color.getIndex(),Clickable.TABLE_STUDENT,gui.getCurrentState());
+                    actionParser.handleSelectionEvent(color,Clickable.TABLE_STUDENT,gui.getCurrentState());
+                    controller.handleSelectionEffect(studentImage,Clickable.TABLE_STUDENT);
                 });
                 tableStudentsImages.add(studentImage);
                 gui.addElementToScene(studentImage);

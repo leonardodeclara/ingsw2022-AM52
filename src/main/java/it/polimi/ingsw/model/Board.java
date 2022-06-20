@@ -97,7 +97,8 @@ public class Board {
     public boolean switchStudents(ArrayList<Color> tableStudents, ArrayList<Integer> lobbyStudentsIndexes) {
         if (lobbyStudentsIndexes.size()> Constants.MAX_STUDENTS_FOR_CARD_10_SWITCH
                 || tableStudents.size()>Constants.MAX_STUDENTS_FOR_CARD_10_SWITCH
-                || tableStudents.size()!=lobbyStudentsIndexes.size())
+                || tableStudents.size()!=lobbyStudentsIndexes.size()
+                || hasDuplicates(lobbyStudentsIndexes))
             return false;
 
         for (Integer index: lobbyStudentsIndexes)
@@ -247,6 +248,11 @@ public class Board {
      */
     public void setTowers(int towers) {
         this.towers = towers;
+    }
+
+
+    public boolean hasDuplicates(ArrayList<Integer> indexes){
+        return (indexes.stream().distinct().count()!=indexes.size());
     }
 
 }

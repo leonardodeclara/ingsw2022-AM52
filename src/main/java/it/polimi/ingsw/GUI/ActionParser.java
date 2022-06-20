@@ -1,6 +1,7 @@
 package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.client.ClientState;
+import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
 import static it.polimi.ingsw.Constants.*;
 
@@ -33,7 +34,6 @@ public class ActionParser {
         if (canClick(state, clickedElement)){
             switch (state){
                 case MOVE_FROM_LOBBY -> {
-                    //alla fine significa fare un thickish client
 
                     if (parameters.size()==0 ||
                             (((ArrayList<Integer>) parameters.get(0)).size()<MOVE_FROM_LOBBY_STUDENTS_NUMBER))
@@ -53,14 +53,9 @@ public class ActionParser {
     //selection deve necessariamente essere un arrayList di Object perché certe azioni (drag and drop) restituiscono più elementi selezionati
     public void handleSelectionEvent(ArrayList<Object> selection,  ClientState state){
         //MANCA CONTROLLO CAN CLICK-CAN DRAG
-        /*
-        for (Clickable clickedElement: clickedElements){
-            if (!canClick(state,clickedElement)){
-                System.out.println("Non puoi cliccare "+clickedElement+" se sei in "+state);
-                return;
-            }
-        }
-        */
+        //MA IN TEORIA C'È PRIMA CHE IL METODO VENGA CHIAMATO PERCHÉ GLI UNICI CASI IN CUI VIENE CHIAMATO QUESTO METODO
+        // É QUANDO C'È UN DRAG AND DROP. vedere GUIBoard e GUIIsland
+
         switch (state){
             case MOVE_FROM_LOBBY -> {
                 //pulisco l'array di parameters
@@ -85,29 +80,12 @@ public class ActionParser {
                 parameters.add(selection.get(0));
                 parameters.add(selection.get(1));
             }
-            case SWAP_STUDENTS_FOR_CARD_7 -> {}
-            case CHOOSE_STUDENTS_FOR_CARD_10 -> {}
         }
 
     }
 
     //metodo che viene cliccato per eventi a click "singoli" (pick cloud, move mn,ecc)
     public void handleSelectionEvent(Object selection, Clickable clickedElement, ClientState state){
-        /*
-        switch (state){
-            case PLAY_ASSISTANT_CARD, MOVE_MOTHER_NATURE -> {
-                if(parameters.size()>0)
-                    clearSelectedParameters();
-                parameters.add(selection);
-            }
-            case PICK_CLOUD -> {}
-            case END_TURN -> {}
-            case CHOOSE_ISLAND_FOR_CARD_3 -> {}
-            case CHOOSE_ISLAND_FOR_CARD_5 -> {}
-            case CHOOSE_COLOR_FOR_CARD_9 -> {}
-            case CHOOSE_STUDENT_FOR_CARD_11 -> {}
-            case CHOOSE_COLOR_FOR_CARD_12 -> {}
-        }*/
         if (canClick(state,clickedElement)){
             switch (state) {
                 case MOVE_MOTHER_NATURE, PICK_CLOUD, END_TURN -> {
@@ -139,8 +117,54 @@ public class ActionParser {
                     }
 
                 }
-                //default: CHOOSE_STUDENT_FOR_CARD_11,CHOOSE_ISLAND_FOR_CARD_3,CHOOSE_ISLAND_FOR_CARD_5
-                //vedere come gestire carte 9,12
+                case CHOOSE_ISLAND_FOR_CARD_3,CHOOSE_ISLAND_FOR_CARD_5,CHOOSE_STUDENT_FOR_CARD_11 -> {
+                    if (parameters.size() > 0)
+                        clearSelectedParameters();
+                    parameters.add(selection);
+                }
+                //situazione tricky, devono arrivare max tre indici di cardStudent e max tre indici di lobbyStudent
+                case SWAP_STUDENTS_FOR_CARD_7 -> {
+                    if (parameters.size()==0){
+                        ArrayList<Integer> studentCardIDs = new ArrayList<>();
+                        ArrayList<Integer> studentLobbyIDs = new ArrayList<>();
+                        parameters.add(0,studentCardIDs);
+                        parameters.add(1,studentLobbyIDs);
+                    }
+                    if (clickedElement.equals(Clickable.LOBBY_STUDENT)) {
+                        System.out.println("ACTION PARSER: sono in stato carta 7 e ho selezionato uno studente della lobby");
+                        ((ArrayList<Integer>) parameters.get(1)).add((Integer) selection);
+                    }
+                    else //necessariamente dovrei finirci se ho clickato su uno studente della carta
+                    {
+                        System.out.println("ACTION PARSER: sono in stato carta 7 e ho selezionato uno studente della carta");
+                        ((ArrayList<Integer>) parameters.get(0)).add((Integer) selection);
+                    }
+                    //il numero di parametri non è un problema perché dovrebbe venire controllato lato server
+                }
+                case CHOOSE_STUDENTS_FOR_CARD_10 -> {
+                    if (parameters.size()==0){
+                        ArrayList<Color> tableStudentColors = new ArrayList<>();
+                        ArrayList<Integer> lobbyStudentIDs = new ArrayList<>();
+                        parameters.add(0,tableStudentColors);
+                        parameters.add(1,lobbyStudentIDs);
+                    }
+                    if (clickedElement.equals(Clickable.TABLE_STUDENT)) {
+                        System.out.println("ACTION PARSER: sono in stato carta 7 e ho selezionato uno studente della lobby");
+                        ((ArrayList<Color>) parameters.get(0)).add((Color) selection);
+                    }
+                    else //necessariamente dovrei finirci se ho clickato su uno studente della lobby
+                    {
+                        System.out.println("ACTION PARSER: sono in stato carta 7 e ho selezionato uno studente della carta");
+                        ((ArrayList<Integer>) parameters.get(1)).add((Integer) selection);
+                    }
+                }
+                case CHOOSE_COLOR_FOR_CARD_9,CHOOSE_COLOR_FOR_CARD_12 ->{
+                    if (parameters.size()>0)
+                        clearSelectedParameters();
+                    parameters.add(selection);
+                }
+
+                //vedere se si può togliere
                 default -> {
                     if (parameters.size() > 0)
                         clearSelectedParameters();

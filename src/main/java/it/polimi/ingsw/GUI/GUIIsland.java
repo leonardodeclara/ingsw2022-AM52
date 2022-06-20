@@ -30,6 +30,7 @@ public class GUIIsland{
     private ArrayList<ImageView> students;
     private ImageView motherNature;
     private ImageView tower;
+    private ImageView banImage;
     private int index;
     private double centerX;
     private double centerY;
@@ -42,9 +43,9 @@ public class GUIIsland{
 
 //TODO sistemare range cerchio quando si aggiungono studenti lato client
 //TODO sistemare posizioni di madre natura e torri
-//TODO aggiungere rendering ban
 
-    public GUIIsland(int index,double x,double y,double width,double height,double angle,GameTableController controller,GUI gui){
+    public GUIIsland(int index,double x,double y,double width,double height,double angle,
+                     GameTableController controller,GUI gui){
         islandImage = new ImageView("/graphics/island"+((index%3)+1)+".png");
         this.index = index;
         setPos(x,y);
@@ -67,6 +68,8 @@ public class GUIIsland{
         populateStudents();
         populateMotherNature();
         populateTowers();
+        if (clientIsland.getBans()>0)
+            populateBans();
     }
     public void setPos(double x,double y){
         islandImage.setX(x);
@@ -99,13 +102,12 @@ public class GUIIsland{
                 System.out.println("Sono in MOVE MN, non devo passare l'indice dell'isola ma il numero di passi");
                 actionParser.handleSelectionEvent(controller.extractMNsteps(index),Clickable.ISLAND,gui.getCurrentState());
             }
-            else actionParser.handleSelectionEvent(index,Clickable.ISLAND,gui.getCurrentState());
+            else actionParser.handleSelectionEvent(index,Clickable.ISLAND,gui.getCurrentState()); //es carte 3,5
             controller.handleSelectionEffect(islandImage,Clickable.ISLAND);
-            //setSelectedIslandID(i);
-            //System.out.println("Hai cliccato sull'isola "+selectedIslandID);
+
         });
         islandImage.setOnMouseEntered((MouseEvent e) -> {
-            if (!clientIsland.isMotherNature())
+            if (!clientIsland.isMotherNature() || !(gui.getCurrentState().equals(ClientState.MOVE_MOTHER_NATURE))) //se sono in una fase che non è moveMN deve vedersi l'effetto di hover
                 controller.handleHoverEvent(islandImage, Clickable.ISLAND);
         });
         islandImage.setOnMouseExited((MouseEvent e) -> {
@@ -142,7 +144,6 @@ public class GUIIsland{
                     selection.add(index);
                     //MANCA CONTROLLO CAN CLICK-CAN DRAG
                     actionParser.handleSelectionEvent(selection, gui.getCurrentState());
-                    //controller.addSelectedCardStudent(studentID,index);
                     addStudentToIsland(student);
                     success = true;
                     System.out.println("Drop sull'isola "+index);
@@ -248,6 +249,29 @@ public class GUIIsland{
             setTowersTooltip();
             gui.addElementToScene(tower);
         }
+    }
+
+    public void populateBans(){
+        clearBans();
+        int banCount = clientIsland.getBans();
+        double startX = centerX;
+        double startY = centerY+ISLAND_IMAGE_HEIGHT*0.15;
+        banImage = new ImageView("/graphics/deny_island_icon.png");
+        banImage.setX(startX-BAN_IMAGE_WIDTH/2);
+        banImage.setY(startY);
+        banImage.setPreserveRatio(true);
+        banImage.setFitHeight(BAN_IMAGE_HEIGHT);
+        banImage.setFitWidth(BAN_IMAGE_WIDTH);
+        Tooltip numOfBanTiles = new Tooltip(("BANS PLACED: "+banCount));
+        numOfBanTiles.setShowDelay(Duration.seconds(0.3));
+        Tooltip.install(banImage, numOfBanTiles);
+        gui.addElementToScene(banImage);
+        banImage.toFront();
+    }
+
+    private void clearBans() {
+        gui.removeElementFromScene(banImage);
+        banImage =null;
     }
 
     private void clearTowers(){

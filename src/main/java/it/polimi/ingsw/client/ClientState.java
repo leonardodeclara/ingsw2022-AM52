@@ -332,7 +332,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return new ArrayList(List.of(Clickable.CARD_STUDENT));
+            return new ArrayList(List.of(Clickable.PERSONALITY_CARD_STUDENT));
         }
     },CHOOSE_ISLAND_FOR_CARD_3(3){
         @Override
@@ -411,7 +411,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return null;
+            return new ArrayList(List.of(Clickable.PERSONALITY_CARD_STUDENT,Clickable.LOBBY_STUDENT));
         }
     },CHOOSE_COLOR_FOR_CARD_9(9){
         @Override
@@ -437,9 +437,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return null;
-            //return new ArrayList(List.of(Clickable.STUDENT)); //TODO: rivedere come selezionare colore per la carta 9
-            //si potrebbe creare un prompt apposito
+            return new ArrayList(List.of(Clickable.COLOR));
         }
     },CHOOSE_STUDENTS_FOR_CARD_10(10){
         @Override
@@ -479,7 +477,7 @@ public enum ClientState {
         @Override
         public ArrayList<String> getGUIContextMessage(GameBoard GB) {
             ArrayList<String> texts = new ArrayList<>();
-            texts.add("Scegli uno studente da spostare nella sala facendo drag and drop e poi CONFIRM.");
+            texts.add("Scegli uno studente da spostare nella sala cliccandolo e poi CONFIRM.");
             return texts;
         }
 
@@ -492,7 +490,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return new ArrayList(List.of(Clickable.CARD_STUDENT));
+            return new ArrayList(List.of(Clickable.PERSONALITY_CARD_STUDENT));
         }
     },CHOOSE_COLOR_FOR_CARD_12(12){
         @Override
@@ -519,9 +517,7 @@ public enum ClientState {
 
         @Override
         public ArrayList<Clickable> getClickableList() {
-            return null;
-            //return new ArrayList(List.of(Clickable.STUDENT)); //TODO: rivedere come selezionare colore
-            //idem come carta 9
+            return new ArrayList(List.of(Clickable.COLOR));
         }
     }, END_GAME(0){
         @Override

@@ -53,7 +53,8 @@ public class Constants {
     public static double ASSISTANT_IMAGE_HEIGHT = 125;
     public static double ASSISTANT_IMAGE_WIDTH = 85;
     public static int CURRENT_ASSISTANT_VGAP = 150;
-
+    public static double COLOR_CHOICEBOX_VGAP = 70;
+    public static double COLOR_CHOICEBOX_WIDTH = 100;
     public static double PERSONALITY_IMAGE_HEIGHT = 125;
     public static double PERSONALITY_IMAGE_WIDTH = 85;
     public static double COIN_IMAGE_HEIGHT = 56;

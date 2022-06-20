@@ -314,5 +314,20 @@ class BoardTest {
         assertEquals(0, board.getTowers());
     }
 
+    /**
+     * This test helps verifying that a student tile is not choosen more than once in a movement.
+     */
+    @Test
+    void hasDuplicatesTest(){
+        Board board = new Board();
+        ArrayList<Integer> numbers = new ArrayList<>();
+        for (int i = 0; i< 3; i++){
+            numbers.add(i);
+        }
+        assertFalse(board.hasDuplicates(numbers));
+        numbers.add(0);
+        assertTrue(board.hasDuplicates(numbers));
+    }
+
 
 }

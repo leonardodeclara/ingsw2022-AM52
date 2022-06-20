@@ -321,7 +321,9 @@ public class ExpertGame extends Game {
      */
     public boolean executeCard7Effect(ArrayList<Integer> cardStudentsIndexes, ArrayList<Integer> lobbyStudentsIndexes){
         if (cardStudentsIndexes.size()>3 || lobbyStudentsIndexes.size()>3
-                || cardStudentsIndexes.size()!=lobbyStudentsIndexes.size())
+                || cardStudentsIndexes.size()!=lobbyStudentsIndexes.size()
+                || hasDuplicates(cardStudentsIndexes)
+                || hasDuplicates(lobbyStudentsIndexes))
             return false;
         ArrayList<Color> fromCard = new ArrayList<>();
         ArrayList<Color> fromLobby = new ArrayList<>();
@@ -510,6 +512,3 @@ public class ExpertGame extends Game {
         listeners.addPropertyChangeListener("NoLongerActivePersonality", controller); //fatto
     }
 }
-
-
-//monete
