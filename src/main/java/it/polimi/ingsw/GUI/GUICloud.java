@@ -13,9 +13,9 @@ import static it.polimi.ingsw.Constants.*;
 
 
 public class GUICloud {
+    private ClientCloud clientCloud;
     private ImageView cloudImage;
     private ArrayList<ImageView> studentsImages;
-    private ArrayList<Color> students;
     private int index;
     private double centerX;
     private double centerY;
@@ -23,7 +23,8 @@ public class GUICloud {
     private ActionParser actionParser;
     private GUI gui;
 
-    public GUICloud(int index,double x,double y,double width,double height,GameTableController controller,GUI gui){
+    public GUICloud(int index,double x,double y,double width,double height,
+                    GameTableController controller,GUI gui, ClientCloud clientCloud){
         cloudImage = new ImageView("/graphics/cloud"+((index%3)+1)+".png");
         this.index = index;
         setPos(x,y);
@@ -31,8 +32,8 @@ public class GUICloud {
         setCenter();
         this.controller = controller;
         this.actionParser=controller.getActionParser();
+        this.clientCloud=clientCloud;
         this.gui = gui;
-        initializeStudents();
         studentsImages = new ArrayList<>();
     }
 
@@ -61,10 +62,9 @@ public class GUICloud {
 
     private void populate(){
         clearStudentsImages();
-
         int studentCounter = 0; //va tenuta traccia manualmente, indexOf trovava la prima occurence
-        for(Color student : students){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
-            double angle = 2 * studentCounter * Math.PI / students.size();
+        for(Color student : clientCloud.getStudents()){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
+            double angle = 2 * studentCounter * Math.PI / clientCloud.getStudents().size();
             double xOffset = STUDENTS_CLOUD_CIRCLE_RADIUS * Math.cos(angle);
             double yOffset = STUDENTS_CLOUD_CIRCLE_RADIUS * Math.sin(angle);
             double x = centerX + xOffset ;
@@ -97,11 +97,6 @@ public class GUICloud {
                 cloudImage.setEffect(null);
         });
 
-    }
-
-    private void initializeStudents(){
-        ClientCloud clientCloud= gui.getGB().getCloudByIndex(index);
-        students = clientCloud.getStudents();
     }
 
     private void clearStudentsImages(){

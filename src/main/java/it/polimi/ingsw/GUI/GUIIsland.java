@@ -30,6 +30,7 @@ public class GUIIsland{
     private ArrayList<ImageView> students;
     private ImageView motherNature;
     private ImageView tower;
+    private ImageView banImage;
     private int index;
     private double centerX;
     private double centerY;
@@ -44,7 +45,8 @@ public class GUIIsland{
 //TODO sistemare posizioni di madre natura e torri
 //TODO aggiungere rendering ban
 
-    public GUIIsland(int index,double x,double y,double width,double height,double angle,GameTableController controller,GUI gui){
+    public GUIIsland(int index,double x,double y,double width,double height,double angle,
+                     GameTableController controller,GUI gui){
         islandImage = new ImageView("/graphics/island"+((index%3)+1)+".png");
         this.index = index;
         setPos(x,y);
@@ -67,6 +69,8 @@ public class GUIIsland{
         populateStudents();
         populateMotherNature();
         populateTowers();
+        if (clientIsland.getBans()>0)
+            populateBans();
     }
     public void setPos(double x,double y){
         islandImage.setX(x);
@@ -249,6 +253,29 @@ public class GUIIsland{
             setTowersTooltip();
             gui.addElementToScene(tower);
         }
+    }
+
+    public void populateBans(){
+        clearBans();
+        int banCount = clientIsland.getBans();
+        double startX = centerX;
+        double startY = centerY+ISLAND_IMAGE_HEIGHT*0.15;
+        banImage = new ImageView("/graphics/deny_island_icon.png");
+        banImage.setX(startX-BAN_IMAGE_WIDTH/2);
+        banImage.setY(startY);
+        banImage.setPreserveRatio(true);
+        banImage.setFitHeight(BAN_IMAGE_HEIGHT);
+        banImage.setFitWidth(BAN_IMAGE_WIDTH);
+        Tooltip numOfBanTiles = new Tooltip(("BANS PLACED: "+banCount));
+        numOfBanTiles.setShowDelay(Duration.seconds(0.3));
+        Tooltip.install(banImage, numOfBanTiles);
+        gui.addElementToScene(banImage);
+        banImage.toFront();
+    }
+
+    private void clearBans() {
+        gui.removeElementFromScene(banImage);
+        banImage =null;
     }
 
     private void clearTowers(){

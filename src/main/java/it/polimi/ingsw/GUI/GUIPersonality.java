@@ -91,7 +91,7 @@ public class GUIPersonality {
             System.out.println("aggiungo immagini degli studenti alla carta "+cardId);
             populateLobbyPersonality();
         }
-        else if (personality.getBans()!=0){
+        else if (personality.getBans()>0){
             System.out.println("aggiungo immagini dei ban alla carta " +cardId);
             populateBanPersonality();
         }

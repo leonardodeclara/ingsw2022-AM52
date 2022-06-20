@@ -258,7 +258,8 @@ public class GameTableController extends GUIController implements UpdatableContr
             double yOffset = CLOUD_CIRCLE_RADIUS * Math.sin(angle);
             double x = centerX + xOffset ;
             double y = centerY + yOffset - personalitiesYOffset;
-            GUICloud guiCloud = new GUICloud(i, x-CLOUD_IMAGE_WIDTH/2,y-CLOUD_IMAGE_HEIGHT/2,CLOUD_IMAGE_WIDTH,CLOUD_IMAGE_HEIGHT,this,gui);
+            GUICloud guiCloud = new GUICloud(i, x-CLOUD_IMAGE_WIDTH/2,y-CLOUD_IMAGE_HEIGHT/2,
+                    CLOUD_IMAGE_WIDTH,CLOUD_IMAGE_HEIGHT,this,gui,cloud);
             guiCloud.setEvents();
             guiCloud.render();
             newClouds.add(guiCloud);
