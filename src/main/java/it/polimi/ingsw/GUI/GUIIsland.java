@@ -214,14 +214,11 @@ public class GUIIsland{
         double screenCenterY = gui.getScreenY()/2 - 15;
 
         clearMotherNature();
-        if (clientIsland.isMotherNature()){
-            ImageView motherNatureImage = new ImageView("/graphics/MotherNature.png");
-            double xOffset = (ISLAND_CIRCLE_RADIUS - 25)* Math.cos(angle-Math.PI/2);
-            double yOffset = (ISLAND_CIRCLE_RADIUS - 25) * Math.sin(angle-Math.PI/2);
-            double x = screenCenterX + xOffset ;
-            double y = screenCenterY + yOffset ;
-            motherNatureImage.setX(x-ISLAND_IMAGE_WIDTH/2);
-            motherNatureImage.setY(y-ISLAND_IMAGE_HEIGHT/2);
+        if (clientIsland.isMotherNature()){ //alziamo le carte personaggio di un tot e mettiamo mother nature in una traiettoria circolare in corrispondenza delle isole (radius più piccolo, quindi madre natura è dentro il cerchio)
+            ImageView motherNatureImage = new ImageView("/graphics/MotherNature_Overlay.png");
+            motherNatureImage.setX(islandImage.getX()+MOTHER_NATURE_OFFSET_X);
+            motherNatureImage.setY(islandImage.getY()+MOTHER_NATURE_OFFSET_Y);
+            motherNatureImage.setRotate(180);
             motherNatureImage.setFitWidth(MOTHER_NATURE_WIDTH);
             motherNatureImage.setFitHeight(MOTHER_NATURE_HEIGHT);
             motherNatureImage.setPreserveRatio(true);

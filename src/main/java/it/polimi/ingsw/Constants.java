@@ -39,14 +39,14 @@ public class Constants {
     public static double CLOUD_CIRCLE_RADIUS = 50;
     public static double ISLAND_IMAGE_WIDTH = 100*1.15;
     public static double ISLAND_IMAGE_HEIGHT = 88.9*1.15;
-    public static double PERSONALITY_OFFSET_Y = 10;
+    public static double PERSONALITY_OFFSET_Y = 20;
     public static double CLOUD_IMAGE_WIDTH = 65;
     public static double CLOUD_IMAGE_HEIGHT = 58.5;
     public static double STUDENT_IMAGE_HEIGHT = 16;
     public static double STUDENT_IMAGE_WIDTH = 16;
     public static double STUDENTS_ISLAND_CIRCLE_RADIUS = 22;
     public static double STUDENTS_CLOUD_CIRCLE_RADIUS = 12;
-    public static int CLOUD_PERSONALITY_OFFSET = 30;
+    public static int CLOUD_PERSONALITY_OFFSET = 50;
     public static double ASSISTANT_X = 26;
     public static int ASSISTANT_Y_START = 11;
     public static int ASSISTANT_Y_OFFSET = 46;
@@ -81,8 +81,10 @@ public class Constants {
     public static double TOWER_IMAGE_WIDTH = 40;
     public static double BAN_IMAGE_HEIGHT = 30;
     public static double BAN_IMAGE_WIDTH = 30;
-    public static double MOTHER_NATURE_HEIGHT=68.22;
-    public static double MOTHER_NATURE_WIDTH=45;
+    public static double MOTHER_NATURE_HEIGHT=116;
+    public static double MOTHER_NATURE_WIDTH=109.44;
+    public static double MOTHER_NATURE_OFFSET_X=3;
+    public static double MOTHER_NATURE_OFFSET_Y=-7;
     public static final String RESET = "\033[0m";
 
     public static final String RED = "\033[0;31m";
