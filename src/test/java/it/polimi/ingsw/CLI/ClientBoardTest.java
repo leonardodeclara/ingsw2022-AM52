@@ -72,5 +72,62 @@ class ClientBoardTest {
         assertEquals(1, board.getTowers());
     }
 
+    /**
+     * this method verifies the correct setting of coins on ClientBoard instance
+     */
 
+    @Test
+    void coinsTest() {
+        ClientBoard board = new ClientBoard("mari");
+        assertEquals(0, board.getCoins());
+        board.setCoins(1);
+        assertEquals(1, board.getCoins());
+    }
+
+    /**
+     * this method verfies the correct initialization of the deck on ClientBoard instance
+     */
+
+    @Test
+    void initializeDeckTest() {
+        ClientBoard board = new ClientBoard("mari");
+        assertEquals(0, board.getDeck().size());
+        HashMap<Integer, Integer> deck = new HashMap<>();
+        board.initializeDeck();
+        deck.put(1,1);
+        deck.put(2,1);
+        deck.put(3,2);
+        deck.put(4,2);
+        deck.put(5,3);
+        deck.put(6,3);
+        deck.put(7,4);
+        deck.put(8,4);
+        deck.put(9,5);
+        deck.put(10,5);
+        board.setDeck(deck);
+        assertEquals(deck, board.getDeck());
+        }
+
+    /**
+     * this method verifies the correct setting of the team on a ClientBoard instance
+     */
+
+    @Test
+    void teamTest(){
+        ClientBoard board = new ClientBoard("mari");
+        board.setTeam(Tower.WHITE);
+        assertEquals(Tower.WHITE, board.getTeam());
+    }
+
+    /**
+     * this method verifies the correct setting and getting of the owner of a ClientBoard instance
+     */
+    @Test
+    void ownerTest(){
+        ClientBoard board = new ClientBoard("mari");
+        board.setOwner("mari");
+        assertEquals("mari", board.getOwner());
+    }
 }
+
+
