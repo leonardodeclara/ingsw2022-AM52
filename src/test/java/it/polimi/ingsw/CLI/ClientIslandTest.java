@@ -26,6 +26,10 @@ class ClientIslandTest {
         assertEquals(0,island.getBans());
     }
 
+    /**
+     * This method verifies the correct setting and removal of towers on a ClientIsland instance
+     */
+
     @Test
     void towersTest() {
         ClientIsland island = new ClientIsland(1);
@@ -36,6 +40,9 @@ class ClientIslandTest {
         assertEquals(Tower.WHITE, island.getTowers().get(0));
     }
 
+    /**
+     * This method verifies the correct setting and removal of students on a ClientIsland instance
+     */
     @Test
     void studentsTest() {
         ClientIsland island = new ClientIsland(1);
@@ -48,6 +55,9 @@ class ClientIslandTest {
         assertEquals(students,island.getStudents());
     }
 
+    /**
+     * This method verifies the correct setting of motherNature on a ClientIsland instance
+     */
     @Test
     void motherNatureTest() {
         ClientIsland island = new ClientIsland(1);
@@ -56,6 +66,9 @@ class ClientIslandTest {
     }
 
 
+    /**
+     * This method verifies the correct setting of number of merged island of a ClientIsland instance
+     */
     @Test
     void setNumMergedIslands() {
         ClientIsland island = new ClientIsland(1);
