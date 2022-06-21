@@ -10,6 +10,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -143,7 +144,11 @@ public class GUIPersonality {
     }
 
     private void initializeExtraFeatures(){
-        //
+        Tooltip descriptionToolTip = new Tooltip(personality.getDescription());
+        descriptionToolTip.setShowDelay(Duration.seconds(0.3));
+        descriptionToolTip.setHideDelay(Duration.seconds(20));
+        descriptionToolTip.setFont(gui.getGameFont());
+        Tooltip.install(cardImage, descriptionToolTip);
     }
 
     private void clearExtraFeatures(){

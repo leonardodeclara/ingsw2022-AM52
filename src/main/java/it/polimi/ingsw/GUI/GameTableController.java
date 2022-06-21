@@ -114,7 +114,6 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     @Override
     public void handleErrorMessage(boolean fromServer){
-        String messageForToolTip="";
         List<String> texts= fromServer ? gui.getCurrentState().getServerErrorMessage() : gui.getCurrentState().getInputErrorMessage();
 
         contextMessage.setText(texts.get(0));
@@ -573,7 +572,7 @@ public class GameTableController extends GUIController implements UpdatableContr
                 Text cardLabel = new Text(text);
                 cardLabel.setX(ASSISTANT_X);
                 cardLabel.setY(assistantImage.getY()+ASSISTANT_IMAGE_HEIGHT*0.9);//test
-                cardLabel.setFont(Font.font(13));
+                cardLabel.setFont(gui.getGameFont());
                 cardLabel.setFill(Color.WHITE); //si potrebbe mettere nel css
                 currentTurnCardsImages.put(assistantImage,cardLabel);
                 gui.addElementToScene(assistantImage);
