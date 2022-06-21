@@ -275,6 +275,7 @@ public class GameBoard {
         if(activePers.isPresent()){
             activePersonality = activePers.get();
             activePersonality.updateCost();
+            activePersonality.setActive(true);
         }
         else
             new Throwable().printStackTrace(); //non dovrebbe mai accadere quindi mettiamo eccezione così nel caso in runtime salta fuori un bug
@@ -293,6 +294,7 @@ public class GameBoard {
 
     public void resetActivePersonality(int inactivePersonality){
         //outputStream.println("La carta personaggio "+inactivePersonality+ " non è più attiva!");
+        activePersonality.setActive(false);
         this.activePersonality = null;
     }
 

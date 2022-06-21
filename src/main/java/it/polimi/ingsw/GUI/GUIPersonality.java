@@ -17,8 +17,7 @@ import java.util.ArrayList;
 
 import static it.polimi.ingsw.Constants.*;
 
-//TODO: aggiungere label/effetto che mostri che una carta è attiva
-//TODO: aggiungere tooltip per descrizione dell'effetto della carta
+
 //TODO. aggiungere controllo (in controller/actionParser/qui che mi renda selezionabile solo gli studenti della carta attiva, non di tutte le carte)
 
 public class GUIPersonality {
@@ -28,6 +27,7 @@ public class GUIPersonality {
     private ArrayList<ImageView> studentsImages;
     private ImageView banImage;
     private ImageView coinImage;
+    private Text activeText;
     private double centerX;
     private double centerY;
     private GameTableController controller;
@@ -86,7 +86,14 @@ public class GUIPersonality {
             coinImage.setPreserveRatio(true);
             gui.addElementToScene(coinImage);
             coinImage.toFront();
-
+        }
+        if (personality.isActive()){
+            activeText = new Text("ACTIVE");
+            activeText.setX(centerX);
+            activeText.setY(centerY+PERSONALITY_IMAGE_HEIGHT/2);//test
+            activeText.setFont(gui.getGameFont());
+            activeText.setFill(javafx.scene.paint.Color.BLACK); //si potrebbe mettere nel css
+            gui.addElementToScene(activeText);
         }
         if (personality.getStudents()!=null && personality.getStudents().size()>0){
             System.out.println("aggiungo immagini degli studenti alla carta "+cardId);
@@ -146,7 +153,7 @@ public class GUIPersonality {
     private void initializeExtraFeatures(){
         Tooltip descriptionToolTip = new Tooltip(personality.getDescription());
         descriptionToolTip.setShowDelay(Duration.seconds(0.3));
-        descriptionToolTip.setHideDelay(Duration.seconds(20));
+        descriptionToolTip.setHideDelay(Duration.seconds(8));
         descriptionToolTip.setFont(gui.getGameFont());
         Tooltip.install(cardImage, descriptionToolTip);
     }
@@ -154,12 +161,13 @@ public class GUIPersonality {
     private void clearExtraFeatures(){
         if (personality.getStudents()!=null && personality.getStudents().size()>0)
             for(ImageView studentImage : studentsImages){
-                gui.removeElementFromScene(studentImage);
-            }
+                gui.removeElementFromScene(studentImage);}
         if (coinImage!=null)
             gui.removeElementFromScene(coinImage);
         if (banImage!=null)
             gui.removeElementFromScene(banImage);
+        if (activeText!=null)
+            gui.removeElementFromScene(activeText);
     }
 
     public void setEvents(){

@@ -30,6 +30,7 @@ public class MatchMakingController extends GUIController{
     public void searchGame(){
         if(!alreadyPressed){
             int numOfPlayersValue = Integer.parseInt(numOfPlayers.getSelectionModel().getSelectedItem());
+            actionParser.setPlayersNumber(numOfPlayersValue);
             String gameTypeString = gameType.getSelectionModel().getSelectedItem();
             boolean isExpert = (!gameTypeString.equals("Basic Rules"));
             //per ora non serve currentState perchè questo controller non si occupa di altro se non questo

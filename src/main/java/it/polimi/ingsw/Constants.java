@@ -1,9 +1,7 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.model.Color;
 
-import java.util.Collection;
 import java.util.HashMap;
 
 public class Constants {
@@ -15,7 +13,8 @@ public class Constants {
     public static final String NO_DRAW = "noDraw";
     public static final String TIE = "tie";
     public static final int MAX_NUM_ISLANDS = 12;
-    public static final int MOVE_FROM_LOBBY_STUDENTS_NUMBER = 3;
+    public static final int MOVE_FROM_LOBBY_STUDENTS_NUMBER_FOR_2_PLAYERS = 3;
+    public static final int MOVE_FROM_LOBBY_STUDENTS_NUMBER_FOR_3_PLAYERS = 4;
     public static final int CARD_1_STUDENTS_TO_MOVE = 1;
     public static final int MAX_LOBBY_SIZE = 9;
     public static final int MAX_TABLE_SIZE = 10;
@@ -54,7 +53,7 @@ public class Constants {
     public static double ASSISTANT_IMAGE_WIDTH = 85;
     public static int CURRENT_ASSISTANT_VGAP = 150;
     public static double COLOR_CHOICEBOX_VGAP = 70;
-    public static double COLOR_CHOICEBOX_WIDTH = 100;
+    public static double COLOR_CHOICEBOX_WIDTH = 150;
     public static double PERSONALITY_IMAGE_HEIGHT = 125;
     public static double PERSONALITY_IMAGE_WIDTH = 85;
     public static double COIN_IMAGE_HEIGHT = 56;
@@ -117,13 +116,71 @@ public class Constants {
             return colorPerStudent.get(c);
     }
 
-    public static int getMaximumStudentsMoveForState(ClientState state){
-            switch (state){
-                case CHOOSE_STUDENT_FOR_CARD_1, CHOOSE_STUDENT_FOR_CARD_11 -> {return 1;}
-                case SWAP_STUDENTS_FOR_CARD_7 -> {return 3;}
-                case CHOOSE_STUDENTS_FOR_CARD_10 -> {return 2;}
+    public static String personalityDescription(int cardId){
+        String description="";
+            switch (cardId) {
+                case 1 -> {
+                    description += ("CHOOSE A STUDENT TILE AND PLACE IT ON YOUR\n");
+                    description += ("ISLAND OF CHOICE. A STUDENT WILL THEN BE PICKED\n");
+                    description += ("FROM THE BAG AND PLACED BACK ON THIS CARD\n");
+                }
+                case 2-> {
+                    description += ("DURING THIS TURN TAKE OVER TEACHERS\n");
+                    description += ("EVEN IF IN YOUR TABLE THERE ARE AS MANY\n");
+                    description += ("STUDENTS AS IN THE CURRENT OWNER'S TABLE\n");
+                }
+                case 3-> {
+                    description += ("CHOOSE AN ISLAND AND CALCULATE THE PLAYERS'\n");
+                    description += ("INFLUENCE AS IF MOTHER NATURE HAD ENDED ITS MOVEMENT\n");
+                    description += ("THERE. DURING THIS TURN MOTHER NATURE WILL MOVE AS USUAL\n");
+                    description += ("AND THE PLAYERS' INFLUENCE WILL BE COMPUTED AS ALWAYS\n");
+                }
+                case 4-> {
+                    description += ("YOU CAN MOVE MOTHER NATURE UP TO TWO PLACES MORE\n");
+                    description += ("THAN WHAT YOUR CURRENT ASSISTANT CARD SAYS.\n");
+                }
+                case 5-> {
+                    description += ("PLACE A BAN TILE ON AN ISLAND OF CHOICE.\n");
+                    description += ("THE NEXT TIME MOTHER NATURE IS ENDING ITS MOVEMENT\n");
+                    description += ("THERE PUT BACK THE TILE WITHOUT COMPUTING\n");
+                    description += ("THE PLAYERS INFLUENCE ON THAT ISLAND AND WITHOUT PLACING TOWERS\n");
+                }
+                case 6 -> {
+                    description += ("DURING ISLANDS' INFLUENCE COMPUTATION \n");
+                    description += ("TOWERS WILL NOT BE COUNTED\n");
+
+                }
+                case 7 -> {
+                    description += ("TAKE UP TO THREE STUDENTS FROM THIS CARD\n");
+                    description += ("AND SWAP THEM WITH AS MANY STUDENTS\n");
+                    description += ("PLACED IN YOUR TABLE'S ENTRANCE\n");
+                }
+                case 8 -> {
+                    description += ("DURING THIS TURN TWO POINTS ARE ADDED\n");
+                    description += ("TO YOUR INFLUENCE COMPUTATION\n");
+                }
+                case 9 -> {
+                    description += ("CHOOSE A STUDENT'S COLOR: DURING THE INFLUENCE \n");
+                    description += ("COMPUTATION THAT COLOR WILL NOT PROVIDE INFLUENCE\n");
+                }
+                case 10 -> {
+                    description += ("YOU CAN SWAP UP TO TWO STUDENTS\n");
+                    description += ("BETWEEN YOUR BOARD'S TABLE AND ENTRANCE\n");
+                }
+                case 11 -> {
+                    description += ("PICK A STUDENT FROM THIS CARD AND PLACE IT\n");
+                    description += ("IN YOUR TABLE. THEN A NEW STUDENT TILE WILL\n");
+                    description += ("BE PICKED FROM THE BAG AND PUT HERE\n");
+                }
+                case 12 -> {
+                    description += ("CHOOSE A STUDENT'S COLOR: EVERY PLAYER\n");
+                    description += ("(INCLUDING YOU) HAS TO PUT BACK IN THE BAG\n");
+                    description += ("THREE TABLE'S STUDENT TILES OF THAT COLOR.\n");
+                    description += ("PLAYERS THAT HAVE LESS THAN THREE WILL PUT\n");
+                    description += ("BACK AS MANY AS THEY HAVE\n");
+                }
             }
-            return -1;
+            return description;
     }
 }
 

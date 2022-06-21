@@ -263,8 +263,11 @@ public class Game {
         ArrayList<Color> studentsToMove = new ArrayList<>();
         Player player = getPlayerByName(nickname);
         int islandIndexCounter = 0;
+        int maxStudentsToMove = numOfPlayers==2?
+                Constants.MOVE_FROM_LOBBY_STUDENTS_NUMBER_FOR_2_PLAYERS:
+                Constants.MOVE_FROM_LOBBY_STUDENTS_NUMBER_FOR_3_PLAYERS;
 
-        if(studentIDs.size() != 3 || islandIDs.size()!=3 || hasDuplicates(studentIDs))
+        if(studentIDs.size() != maxStudentsToMove || islandIDs.size()!=maxStudentsToMove || hasDuplicates(studentIDs))
             return false;
 
         for (int i = 0; i < studentIDs.size(); i++) { //controlliamo se la mossa è legit per ogni studente e per ogni destinazione

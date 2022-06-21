@@ -11,6 +11,7 @@ import java.util.HashMap;
 public class ActionParser {
     private HashMap<ClientState,ArrayList<Clickable>> stateToClickableList;
     private ArrayList<Object> parameters;
+    private int playersNumber;
 
     public ActionParser(){
         stateToClickableList = new HashMap<>();
@@ -34,9 +35,11 @@ public class ActionParser {
         if (canClick(state, clickedElement)){
             switch (state){
                 case MOVE_FROM_LOBBY -> {
-
+                    int maxMovements = playersNumber==2?
+                            MOVE_FROM_LOBBY_STUDENTS_NUMBER_FOR_2_PLAYERS:
+                            MOVE_FROM_LOBBY_STUDENTS_NUMBER_FOR_3_PLAYERS;
                     if (parameters.size()==0 ||
-                            (((ArrayList<Integer>) parameters.get(0)).size()<MOVE_FROM_LOBBY_STUDENTS_NUMBER))
+                            (((ArrayList<Integer>) parameters.get(0)).size()<maxMovements))
                         return true;
                 }
                 case CHOOSE_STUDENT_FOR_CARD_1 ->{
@@ -225,5 +228,10 @@ public class ActionParser {
 
     public ArrayList<Object> getParameters() {
         return parameters;
+    }
+
+    public void setPlayersNumber(int playersNumber){
+        this.playersNumber=playersNumber;
+        System.out.println("ACTION PARSER: numeri di giocatori per questa partita: "+this.playersNumber);
     }
 }
