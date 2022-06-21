@@ -128,17 +128,15 @@ public class GUIIsland{
                 boolean success = false;
                 if (db.hasString()) { //per generalizzarlo avremo una variabile draggedElement così che qui sappiamo cosa sta venendo rilasciato
                     //per ora creiamo solo il caso specifico di move from lobby
-                    int colorIndex = Integer.parseInt(db.getString());
-                    Color student = Color.getById(colorIndex);
-                    int selectedStudentID;
+                    int selectedStudentID = Integer.parseInt(db.getString());
+                    Color student;
                     if (gui.getCurrentState().equals(ClientState.MOVE_FROM_LOBBY)){
                         ClientBoard clientBoard = gui.getOwningPlayerBoard();
-                        selectedStudentID = clientBoard.getLobby().indexOf(student);
+                        student = clientBoard.getLobby().get(selectedStudentID);
                     }
                     else{
                         ClientPersonality activeCard = gui.getGB().getActivePersonality();
-                        selectedStudentID = activeCard.getStudents().indexOf(student);
-
+                        student = activeCard.getStudents().get(selectedStudentID);
                     }
                     ArrayList<Object> selection = new ArrayList<>();
                     selection.add(selectedStudentID);
@@ -157,6 +155,8 @@ public class GUIIsland{
         });
 
     }
+
+
 
     private void addStudentToIsland(Color student){
         ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");

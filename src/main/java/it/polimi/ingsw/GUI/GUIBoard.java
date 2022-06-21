@@ -12,7 +12,6 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import static it.polimi.ingsw.Constants.*;
 
@@ -31,7 +30,7 @@ public class GUIBoard {
     private ImageView tableBounds;
     private ImageView coinImage;
     private HashMap<Color,Integer> numOfStudentsOnTable;
-    private ArrayList<Color> studentsInLobby;
+    private ArrayList<Color> clientSideLobbyStudents;
 
     public GUIBoard(ClientBoard clientBoard,GUI gui,GameTableController controller,ImageView tableBounds){
         this.clientBoard = clientBoard;
@@ -45,7 +44,7 @@ public class GUIBoard {
         towersImages = new ArrayList<>();
         tableStudentsImages = new ArrayList<>();
         lobbyStudentsImages = new ArrayList<>();
-        studentsInLobby = new ArrayList<>();
+        clientSideLobbyStudents = new ArrayList<>();
         initializeBoard();
         setTableEvents();
     }
@@ -56,8 +55,9 @@ public class GUIBoard {
             numOfStudentsOnTable.put(color,clientBoard.getStudentsTable().get(color));
         }
 
-        studentsInLobby.addAll(clientBoard.getLobby());
+        clientSideLobbyStudents.addAll(clientBoard.getLobby());
     }
+
     private void setTableEvents(){
         tableBounds.setOnDragOver((DragEvent e) -> { //qui si avrà il check dell'action parser (se non è clickable questo evento non deve partire)
             if (e.getGestureSource() != tableBounds && e.getDragboard().hasString()) {
@@ -72,13 +72,12 @@ public class GUIBoard {
                 boolean success = false;
                 if (db.hasString()) {
                     ClientBoard clientBoard = gui.getOwningPlayerBoard();
-                    int colorIndex = Integer.parseInt(db.getString());
-                    Color student = Color.getById(colorIndex);
+                    int studentID = Integer.parseInt(db.getString());
+                    Color student = clientBoard.getLobby().get(studentID);
                     addStudentToTable(student);
                     success = true;
                     ArrayList<Object> selection = new ArrayList<>();
-                    int selectedStudentID = clientBoard.getLobby().indexOf(student);
-                    selection.add(selectedStudentID);
+                    selection.add(studentID);
                     selection.add(ISLAND_ID_NOT_RECEIVED);
                     actionParser.handleSelectionEvent(selection, gui.getCurrentState());
                 }
@@ -136,7 +135,7 @@ public class GUIBoard {
         int studentRowCounter = 0;
         int studentColumnCounter = 0;
         int studentIDCounter = 0; //identificativo studente lobby
-        for(Color student : studentsInLobby){
+        for(Color student : clientSideLobbyStudents){
             ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
             studentImage.setFitWidth(STUDENT_TABLE_WIDTH);
             studentImage.setFitHeight(STUDENT_TABLE_HEIGHT);
@@ -149,7 +148,7 @@ public class GUIBoard {
                             Dragboard db = studentImage.startDragAndDrop(TransferMode.MOVE);
                             db.setDragView(studentImage.getImage());
                             ClipboardContent content = new ClipboardContent();
-                            content.putString(Integer.toString(student.getIndex()));
+                            content.putString(Integer.toString(finalStudentIDCounter));
                             db.setContent(content);
                             e.consume();
                     }
@@ -158,7 +157,8 @@ public class GUIBoard {
                     public void handle(DragEvent event) {
                         System.out.println("Drag completato, tolgo lo studente dalla lobby");
                         if (event.getTransferMode() == TransferMode.MOVE) {
-                            studentsInLobby.remove(student);
+                            int removedIndex = clientSideLobbyStudents.indexOf(student);
+                            clientSideLobbyStudents.remove(student);
                             lobbyStudentsImages.remove(studentImage);
                             gui.removeElementFromScene(studentImage);
                         }
@@ -188,6 +188,48 @@ public class GUIBoard {
             }
             studentIDCounter++;
         }
+        //bisogna associare a ogni studente della lobby un qualcosa di univoco in modo che negli eventi drag possa essere
+        //associato questo qualcosa di univoco a quello specifico studente
+
+        //l'unica cosa univoca è l'indice all'interno dell'array lobby di clientBoard.
+        //il problema è che se iteriamo lobby, dobbiamo renderizzare solo gli studenti presenti anche in studentsinlobby ma essendo color un enum
+        //è impossibile fare studentsInLobby.contains(student) perchè non terrebbe conto del numero di studenti del tipo student contenuti in studentsInLobby
+
+        //l'unica è ciclare studentsInLobby e associare l'indice nell'array all'evento drag dell'immagine di quello studente usando un hashmap
+        //che dall'indice di studentsInLobby (studentCounter) sa a cosa corrisponde in lobby.
+        //quando uno studente viene aggiunto alla table/isola è facile farlo, e lo si toglie da studentsInLobby come al solito.
+        //a quel punto però si aggiorna l'hashmap che binda gli id di lobby a quelli di studentsInLobby
+        //quindi quando si posiziona la prima volta lo studente 3 ad esempio di lobby sulla table, questo viene rimosso da studentsInLobby
+        //e si modifica questa hashmap
+        //per le isole è la stessa cosa. Nel messaggio si avrà l'id di lobby, si modifica studentsInLobby, si aggiorna l'hashmap in modo che
+        //il prossimo drag vada a buon fine
+
+
+
+        //per l'hashmap il codice di aggiornamento è
+
+
+        /*
+        l'hashmap è <studentsInLobbyIndex,lobbyID>
+         // 1 2 3 4 5 6 studentsInLobby
+            R G B B Y G
+        // 1 2 3 4 5 6 lobby
+           R G B B Y G
+        //è stato rimosso il 5 di lobby  (removedIndex)
+        // hashMap.clear()   //per sicurezza
+        //for(i=0;i<studentsInLobby.size();i++){
+            if(i<removedIndex)
+                hashMap.put(i,i)
+            if(i>=removedIndex)
+                hashMap.put(i,i+1)
+
+        // }
+
+
+        l'aggiornamento dell'hashmap avviene quando si toglie qualcosa da studentsInLobby
+        l'hashmap invece si usa quando si vuole draggare uno studente, poichè in clipboard viene messo l'id di lobby, non quello di studentsInLobby
+        ossia  hashMap.get(finalStudentIDCounter)
+         */
     }
 
     private void populateTables(){
@@ -304,9 +346,13 @@ public class GUIBoard {
 
     }
 
+    public boolean isLobbyModified(){
+        return clientSideLobbyStudents.size() != clientBoard.getLobby().size();
+    }
+
     private void reset(){
         numOfStudentsOnTable.clear();
-        studentsInLobby.clear();
+        clientSideLobbyStudents.clear();
         initializeBoard();
     }
 }

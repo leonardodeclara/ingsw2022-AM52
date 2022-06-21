@@ -493,7 +493,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     */
 
     public void onPlayer1Click(){
-        if(renderedDashboard!=1){
+        if(renderedDashboard!=1 && !currentBoard.isLobbyModified()){
             //clearBoard();
             renderedDashboard = 1;
             populateDashboard(true);
@@ -502,14 +502,14 @@ public class GameTableController extends GUIController implements UpdatableContr
 
 
     public void onPlayer2Click(){
-        if(renderedDashboard!=2){
+        if(renderedDashboard!=2 && !currentBoard.isLobbyModified()){
             //clearBoard();
             renderedDashboard = 2;
             populateDashboard(true);
         }
     }
     public void onPlayer3Click(){
-        if(renderedDashboard!=3){
+        if(renderedDashboard!=3 && !currentBoard.isLobbyModified()){
             //clearBoard();
             renderedDashboard = 3;
             populateDashboard(true);
