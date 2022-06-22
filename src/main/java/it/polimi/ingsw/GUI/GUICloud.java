@@ -105,6 +105,11 @@ public class GUICloud {
         }
     }
 
+    public void clearCloud(){
+        clearStudentsImages();
+        gui.removeElementFromScene(cloudImage);
+    }
+
 
     public void setImageEffect(Effect effect) {
         cloudImage.setEffect(effect);

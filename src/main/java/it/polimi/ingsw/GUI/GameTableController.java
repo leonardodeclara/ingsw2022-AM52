@@ -74,6 +74,8 @@ public class GameTableController extends GUIController implements UpdatableContr
             GUIBoards = new HashMap<>();
             selectedImages = new ArrayList<>();
             islands = new ArrayList<>();
+            clouds = new ArrayList<>();
+            personalities = new ArrayList<>();
             initialized = true;
             showDeck=true;
 
@@ -226,7 +228,10 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
     private void renderClouds(){
-        ArrayList<GUICloud> newClouds = new ArrayList<>();
+        for (GUICloud cloud: clouds)
+            cloud.clearCloud();
+
+        clouds.clear();
         ArrayList<ClientCloud> clientClouds = gui.getClouds();
         int numClouds = clientClouds.size();
         int personalitiesYOffset = ((gui.getGB().isExpertGame() && gui.getNumOfPlayers()==3) ? CLOUD_PERSONALITY_OFFSET : 0);
@@ -241,9 +246,8 @@ public class GameTableController extends GUIController implements UpdatableContr
                     CLOUD_IMAGE_WIDTH,CLOUD_IMAGE_HEIGHT,this,gui,cloud);
             guiCloud.setEvents();
             guiCloud.render();
-            newClouds.add(guiCloud);
+            clouds.add(guiCloud);
         }
-        clouds=newClouds;
     }
 
     private void populateDashboard(boolean fromClick){ //from click ci dice se è arrivato un update o se il metodo è stato chiamato dalla chiusura di una board
@@ -263,8 +267,11 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
     private void renderPersonalityCards(){
+        for (GUIPersonality personality : personalities)
+            personality.clearPersonality();
+        personalities.clear();
+
         ArrayList<ClientPersonality> cards = gui.getPersonalityCards();
-        ArrayList<GUIPersonality> newPersonalities = new ArrayList<>();
         double cardY,cardX;
         int i = 0;
         for (ClientPersonality card: cards){
@@ -277,10 +284,9 @@ public class GameTableController extends GUIController implements UpdatableContr
                     this,gui, card);
             guiPersonality.render();
             guiPersonality.setEvents();
-            newPersonalities.add(guiPersonality);
+            personalities.add(guiPersonality);
             i++;
         }
-        personalities=newPersonalities;
     }
 
     private ClientCloud getClientCloudFromImage(ArrayList<ClientCloud> clouds, int cloudCounter){

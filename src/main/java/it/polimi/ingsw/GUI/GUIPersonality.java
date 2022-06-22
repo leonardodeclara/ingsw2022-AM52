@@ -89,11 +89,12 @@ public class GUIPersonality {
         }
         if (personality.isActive()){
             activeText = new Text("ACTIVE");
-            activeText.setX(centerX);
+            activeText.setX(centerX-PERSONALITY_IMAGE_WIDTH/2);
             activeText.setY(centerY+PERSONALITY_IMAGE_HEIGHT/2);//test
             activeText.setFont(gui.getGameFont());
             activeText.setFill(javafx.scene.paint.Color.BLACK); //si potrebbe mettere nel css
             gui.addElementToScene(activeText);
+            activeText.toFront();
         }
         if (personality.getStudents()!=null && personality.getStudents().size()>0){
             System.out.println("aggiungo immagini degli studenti alla carta "+cardId);
@@ -159,15 +160,13 @@ public class GUIPersonality {
     }
 
     private void clearExtraFeatures(){
+        System.out.println("Qui pulisco le extra feature della carta "+cardId);
         if (personality.getStudents()!=null && personality.getStudents().size()>0)
             for(ImageView studentImage : studentsImages){
                 gui.removeElementFromScene(studentImage);}
-        if (coinImage!=null)
-            gui.removeElementFromScene(coinImage);
-        if (banImage!=null)
-            gui.removeElementFromScene(banImage);
-        if (activeText!=null)
-            gui.removeElementFromScene(activeText);
+        gui.removeElementFromScene(coinImage);
+        gui.removeElementFromScene(banImage);
+        gui.removeElementFromScene(activeText);
     }
 
     public void setEvents(){
@@ -188,8 +187,9 @@ public class GUIPersonality {
         studentImage.setOnMouseClicked((MouseEvent e) -> {
             //if (personality.isActive) aggiungere controllo per cui si può clickare su uno studente se la carta è attiva
             //o qui o in controller o actionParser
-            actionParser.handleSelectionEvent(studentIndex,Clickable.PERSONALITY_CARD_STUDENT, gui.getCurrentState());
-            controller.handleSelectionEffect(studentImage,Clickable.PERSONALITY_CARD_STUDENT);
+            if (personality.isActive()){
+                actionParser.handleSelectionEvent(studentIndex,Clickable.PERSONALITY_CARD_STUDENT, gui.getCurrentState());
+                controller.handleSelectionEffect(studentImage,Clickable.PERSONALITY_CARD_STUDENT);}
         });
         studentImage.setOnDragDetected((MouseEvent e) -> {
             if(controller.getActionParser().canDrag(gui.getCurrentState(),Clickable.PERSONALITY_CARD_STUDENT)){
@@ -211,6 +211,11 @@ public class GUIPersonality {
             }
             event.consume();
         });
+    }
+
+    public void clearPersonality(){
+        clearExtraFeatures();
+        gui.removeElementFromScene(cardImage);
     }
 
     public void setImageEffect(Effect effect) {

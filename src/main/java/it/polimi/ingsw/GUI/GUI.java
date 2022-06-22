@@ -139,7 +139,9 @@ public class GUI extends Application implements UI{
             case MOVE_FROM_LOBBY -> {
                 setSceneShouldWait(false);
             }
-            case END_GAME -> {}
+            case END_GAME -> {
+                setScene(Constants.END_GAME_FXML);
+            }
         }
     }
 
