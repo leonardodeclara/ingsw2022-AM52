@@ -10,13 +10,19 @@ import it.polimi.ingsw.model.Tower;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -140,7 +146,23 @@ public class GUI extends Application implements UI{
                 setSceneShouldWait(false);
             }
             case END_GAME -> {
-                setScene(Constants.END_GAME_FXML);
+                setSceneShouldWait(true);
+                String gameOverMessage = "GAME OVER\n";
+                if (GB.getWinner()==null)
+                    gameOverMessage+="SOMEONE HAS DISCONNECTED";
+                else if (GB.getWinner()!=null && GB.getWinner().equals(TIE))
+                    gameOverMessage+="THE GAME ENDED ON A TIE";
+                else
+                    gameOverMessage+=GB.getWinner().toUpperCase()+" IS THE WINNER!";
+                Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+                Text gameOverText = new Text(gameOverMessage);
+
+                gameOverText.setTextAlignment(TextAlignment.CENTER);
+                gameOverText.setX((screenBounds.getWidth() - END_GAME_MESSAGE_WIDTH) / 2);
+                gameOverText.setY((screenBounds.getHeight() - END_GAME_MESSAGE_HEIGHT) / 2);
+
+                addElementToScene(gameOverText);
+                gameOverText.toFront(); //non funziona forse bisogna aggiungere un pane
             }
         }
     }

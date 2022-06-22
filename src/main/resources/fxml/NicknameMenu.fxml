@@ -15,7 +15,7 @@
             <Image url="@../graphics/splash_screen.png" />
          </image>
       </ImageView>
-      <Text fill="WHITE" layoutX="266.0" layoutY="204.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="Scegli il tuo nome" wrappingWidth="138.6640625">
+      <Text id = "nicknameMessage" fx:id="nicknameMessage" fill="WHITE" layoutX="266.0" layoutY="204.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="Scegli il tuo nome" wrappingWidth="138.6640625">
          <font>
             <Font name="Britannic Bold" size="16.0" />
          </font>

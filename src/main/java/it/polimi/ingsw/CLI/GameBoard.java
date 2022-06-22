@@ -11,6 +11,7 @@ public class GameBoard {
     private int numberOfPlayers;
     private boolean expertGame;
     private String nickname;
+    private String winner;
     private ArrayList<Integer> availableWizards; //sono 4 e a ogni propagazione diminuiscono
     private ArrayList<Tower> availableTowers;
     private ArrayList<ClientIsland> islands;
@@ -191,6 +192,14 @@ public class GameBoard {
         getIslandByIndex(islandId).setBans(bansCount);
     }
 
+    public void setWinner(String winner){
+        this.winner=winner;
+    }
+
+    public String getWinner() {
+        return winner;
+    }
+
     public int getNumberOfPlayers() {
         return numberOfPlayers;
     }
@@ -286,10 +295,12 @@ public class GameBoard {
     }
 
     public void visualizeEndGameMessage(String winner){
-        if(winner.equals(Constants.TIE))
-            outputStream.println("La partita è terminata in pareggio!");
-        else
-            outputStream.println("Il vincitore è " + winner + "!");
+        if (outputStream!=null){
+            if(winner.equals(Constants.TIE))
+                outputStream.println("La partita è terminata in pareggio!");
+            else
+                outputStream.println("Il vincitore è " + winner + "!");
+        }
     }
 
     public void resetActivePersonality(int inactivePersonality){

@@ -24,7 +24,7 @@ public class Constants {
     public static final int MAX_STUDENTS_FOR_CARD_10_SWITCH = 2;
     public static final int MAX_BANS_NUMBER = 4;
     public static final int MAX_COINS_NUMBER = 20;
-    public static final String[] fxmlPaths = new String[]{"/fxml/MainMenu.fxml","/fxml/ConnectMenu.fxml","/fxml/NicknameMenu.fxml","/fxml/MatchMakingMenu.fxml","/fxml/LobbyMenu.fxml","/fxml/WizardChoiceMenu.fxml","/fxml/TowerChoiceMenu.fxml","/fxml/GameTable.fxml","/fxml/EndGameScene.fxml"};
+    public static final String[] fxmlPaths = new String[]{"/fxml/MainMenu.fxml","/fxml/ConnectMenu.fxml","/fxml/NicknameMenu.fxml","/fxml/MatchMakingMenu.fxml","/fxml/LobbyMenu.fxml","/fxml/WizardChoiceMenu.fxml","/fxml/TowerChoiceMenu.fxml","/fxml/GameTable.fxml"};
     public static final String MAIN_MENU_FXML = "/fxml/MainMenu.fxml";
     public static final String CONNECT_MENU_FXML = "/fxml/ConnectMenu.fxml";
     public static final String NICKNAME_MENU_FXML = "/fxml/NicknameMenu.fxml";
@@ -33,7 +33,6 @@ public class Constants {
     public static final String WIZARD_CHOICE_FXML = "/fxml/WizardChoiceMenu.fxml";
     public static final String TOWER_CHOICE_FXML = "/fxml/TowerChoiceMenu.fxml";
     public static final String GAME_TABLE_FXML = "/fxml/GameTable.fxml";
-    public static final String END_GAME_FXML = "/fxml/EndGameScene.fxml";
     public static final String RESOLUTION_TEST_FXML = "/fxml/ResolutionTest.fxml";
     public static double ISLAND_CIRCLE_RADIUS = 250;
     public static double CLOUD_CIRCLE_RADIUS = 50;
@@ -86,6 +85,8 @@ public class Constants {
     public static double MOTHER_NATURE_WIDTH=109.44;
     public static double MOTHER_NATURE_OFFSET_X=3;
     public static double MOTHER_NATURE_OFFSET_Y=-7;
+    public static double END_GAME_MESSAGE_WIDTH = 100;
+    public static double END_GAME_MESSAGE_HEIGHT = 50;
     public static final String RESET = "\033[0m";
 
     public static final String RED = "\033[0;31m";
