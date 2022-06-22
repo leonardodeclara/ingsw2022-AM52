@@ -162,7 +162,7 @@ public class GUI extends Application implements UI{
                 gameOverText.setY((screenBounds.getHeight() - END_GAME_MESSAGE_HEIGHT) / 2);
 
                 addElementToScene(gameOverText);
-                gameOverText.toFront(); //non funziona forse bisogna aggiungere un pane
+                gameOverText.toFront(); //non funziona, forse bisogna aggiungere un pane
             }
         }
     }

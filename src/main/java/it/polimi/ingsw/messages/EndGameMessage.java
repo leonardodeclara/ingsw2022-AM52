@@ -16,8 +16,6 @@ public class EndGameMessage implements UpdateMessage{
     }
 
     @Override
-    public void update(GameBoard GB) {
-        GB.visualizeEndGameMessage(winnerName);
-    }
-    //public void update(GameBoard GB){GB.setWinner(winnerName);}
+    public void update(GameBoard GB){
+        GB.setWinner(winnerName);}
 }

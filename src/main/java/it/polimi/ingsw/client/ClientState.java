@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.CLI.GameBoard;
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.GUI.Clickable;
 
 import java.util.ArrayList;
@@ -523,7 +524,13 @@ public enum ClientState {
         @Override
         public ArrayList<String> getCLIContextMessage(GameBoard GB){
             ArrayList<String> texts = new ArrayList<>();
-            texts.add("La partita si è conclusa! Per chiudere il gioco scrivi close");
+            texts.add("La partita si è conclusa!\n");
+            if (GB.getWinner()==null)
+                texts.add("Qualcuno si è disconnesso");
+            else if(GB.getWinner().equals(Constants.TIE))
+                texts.add("La partita è terminata in pareggio!");
+            else
+                texts.add("Il vincitore è " + GB.getWinner().toUpperCase() + "!");
             return texts;
         }
 

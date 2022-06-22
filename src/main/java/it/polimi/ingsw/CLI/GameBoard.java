@@ -291,16 +291,8 @@ public class GameBoard {
     }
 
     public void visualizeLastRoundMessage(String message){
-        outputStream.println(message);
-    }
-
-    public void visualizeEndGameMessage(String winner){
-        if (outputStream!=null){
-            if(winner.equals(Constants.TIE))
-                outputStream.println("La partita è terminata in pareggio!");
-            else
-                outputStream.println("Il vincitore è " + winner + "!");
-        }
+        if (outputStream!=null)
+            outputStream.println(message);
     }
 
     public void resetActivePersonality(int inactivePersonality){
