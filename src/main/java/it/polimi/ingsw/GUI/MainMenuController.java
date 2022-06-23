@@ -43,36 +43,7 @@ public class MainMenuController extends GUIController {
         });
     }
 
-    @FXML
-    public void addHoverEffectPlay(){
-        System.out.println("HOVER SU PLAY");
-        //sendButton.setOnMouseEntered(e -> sendButton.setEffect(new Bloom()));
-    }
-    @FXML
-    public void addHoverEffectQuit(){
-        quitButton.setOnMouseEntered(e -> quitButton.setEffect(new Bloom()));
-    }
 
-    @FXML
-    public void resetEffectPlay(){
-        sendButton.setOnMouseExited(e -> sendButton.setEffect(null));
-    }
-    @FXML
-    public void resetEffectQuit(){
-        quitButton.setOnMouseExited(e -> quitButton.setEffect(null));
-    }
-
-    @FXML
-    public void mousePressedPlay(){
-        resetEffectPlay();
-        sendButton.setOnMouseEntered(e -> sendButton.setEffect(new DropShadow()));
-    }
-
-    @FXML
-    public void mousePressedQuit(){
-        resetEffectQuit();
-        quitButton.setOnMouseEntered(e -> quitButton.setEffect(new DropShadow()));
-    }
     @FXML
     void openConnectionMenu(MouseEvent event) {
         gui.openConnectMenu();
