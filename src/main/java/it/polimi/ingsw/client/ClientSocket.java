@@ -76,8 +76,7 @@ public class ClientSocket implements Runnable{
         }
     }
 
-    public void send(Message msg) throws IOException {
-
+    public synchronized void send(Message msg) throws IOException {
         out.reset();
         out.writeObject(msg);
         out.flush();

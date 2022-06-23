@@ -97,7 +97,7 @@ public class ClientHandler implements Runnable {
      * It sends a serialized message to the client through socket.
      * @param message: Message instance that is being sent to the client.
      */
-    public void sendMessage(Message message){
+    public synchronized void sendMessage(Message message){
         try{
             System.out.println("Sono CH " + ID + " e sto mandando un messaggio " + (message.getClass().toString()));
             if(message instanceof ClientStateMessage)
