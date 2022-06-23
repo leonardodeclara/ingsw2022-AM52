@@ -57,14 +57,14 @@ class ExpertGameTest {
         assertEquals(1,leo.getCoins());
         ArrayList<Integer> studentIndexes = new ArrayList<>();
         ArrayList<Integer> destinationsIds = new ArrayList<>();
-        ArrayList<Color> movedStudents= new ArrayList<>();
-        for (int i = 0;i<3;i++) leo.addToBoardLobby(Color.BLUE); //mossa illegale, ma è per testare la table
-        for (int i = 0; i< 3;i++){
+
+        for (int i = 0;i<4;i++) leo.addToBoardLobby(Color.BLUE); //mossa illegale, ma è per testare la table
+        for (int i = 0; i< 4;i++){
             studentIndexes.add(i+9);
             destinationsIds.add(Constants.ISLAND_ID_NOT_RECEIVED);
         }
         assertTrue(game.moveStudentsFromLobby("leo", studentIndexes,destinationsIds)); //viene chiamato il metodo override di moveStudentFromLobbyToTable
-        assertEquals(3,leo.getBoard().getTableNumberOfStudents(Color.BLUE));
+        assertEquals(4,leo.getBoard().getTableNumberOfStudents(Color.BLUE));
         assertEquals(2, leo.getCoins());
         assertEquals(16, game.getCoins());
     }

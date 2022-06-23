@@ -132,7 +132,9 @@ public class ExpertGame extends Game {
      */
     public HashMap<String,String> calculateInfluenceForCard6(Island island){
         HashMap<String,Integer>  influences = calculateStudentsInfluences(island,players);
-        return calculateIslandOwner(island,influences);
+        HashMap<String, String> result= calculateIslandOwner(island,influences);
+        mergeIslands(island);
+        return result;
     }
 
     /**
@@ -148,7 +150,9 @@ public class ExpertGame extends Game {
             int towerIncrement = influences.get(towersOwnerName) + island.getTowers().size();
             influences.put(towersOwnerName, towerIncrement);
         }
-        return calculateIslandOwner(island,influences);
+        HashMap<String, String> result= calculateIslandOwner(island,influences);
+        mergeIslands(island);
+        return result;
     }
 
     /**
@@ -163,7 +167,9 @@ public class ExpertGame extends Game {
             int towerIncrement = influences.get(towersOwnerName) + island.getTowers().size();
             influences.put(towersOwnerName,towerIncrement);
         }
-        return calculateIslandOwner(island,influences);
+        HashMap<String, String> result= calculateIslandOwner(island,influences);
+        mergeIslands(island);
+        return result;
     }
 
     /**
