@@ -1,15 +1,17 @@
-.confirmButton {
+
+.confirmButton{
     -fx-background-image: url("../graphics/button1.png");
     -fx-background-size: stretch;
     -fx-background-color: transparent;
     -fx-font-family: "Hey Comic";
-
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+    -fx-font-size: 12.0;
 }
 
-.quitButton {
+.quitButton{
     -fx-background-image: url("../graphics/button2.png");
     -fx-background-size: stretch;
     -fx-background-color: transparent;
     -fx-font-family: "Hey Comic";
-
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
 }
