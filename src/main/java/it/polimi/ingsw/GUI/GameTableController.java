@@ -33,13 +33,10 @@ import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.Constants.*;
 
-//TODO centrare bene gli studenti sulle carte lobbyPersonality
 //TODO visualizzazione messaggio last round
 //TODO: sistema di unclick per gli spostamenti di studenti
 
 
-//TODO render personality
-//TODO cambiare pulsanti e font pulsanti
 //TODO schermata endgame
 
 public class GameTableController extends GUIController implements UpdatableController{
@@ -220,8 +217,9 @@ public class GameTableController extends GUIController implements UpdatableContr
         gameOverText.setFont(gui.getGameFont());
         gameOverText.setStyle("-fx-font-size: 20;");
         gameOverText.setTextAlignment(TextAlignment.CENTER);
-        gameOverText.setX(centerX);
-        gameOverText.setY(centerY+15);
+
+        gameOverText.setX(gui.getScreenX()/2- gameOverText.getLayoutBounds().getWidth()/1.5);
+        gameOverText.setY(gui.getScreenY()/2);
 
         gui.addElementToScene(gameOverText);
         gameOverText.toFront();
