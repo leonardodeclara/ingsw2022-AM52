@@ -19,7 +19,7 @@
             <Font name="Britannic Bold" size="16.0" />
          </font>
       </Text>
-      <Button layoutX="295.0" layoutY="331.0" mnemonicParsing="false" onAction="#send" text="CONTINUE">
+      <Button id="confirmButton" fx:id="confirmButton" layoutX="295.0" layoutY="324.0" mnemonicParsing="false" onAction="#send" prefHeight="32.0" prefWidth="86.0" styleClass="confirmButton" stylesheets="@../css/gameMenu.css">
          <font>
             <Font name="Britannic Bold" size="13.0" />
          </font>

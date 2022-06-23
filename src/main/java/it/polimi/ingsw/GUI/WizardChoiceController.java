@@ -4,10 +4,14 @@ import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.Message;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.control.Button;
+import javafx.scene.effect.Bloom;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
@@ -19,12 +23,30 @@ import static it.polimi.ingsw.Constants.TIE;
 public class WizardChoiceController extends GUIController implements UpdatableController{
     @FXML
     public ImageView wizard_1,wizard_2,wizard_3,wizard_4;
+    @FXML
+    public Button confirmButton;
     boolean alreadyPressed = false;
     int selectedWizard = -1;
     boolean waitTurn = false;
     boolean isGameFinished = false;
 
     public void start(){
+    }
+
+    @FXML
+    public void initialize(){
+        confirmButton.setEffect(null);
+        confirmButton.setText("CONTINUE");
+        Font font = Font.loadFont(getClass().getResourceAsStream("/fonts/Hey Comic.ttf"), 10);
+        confirmButton.setFont(font);
+        confirmButton.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
+
+            confirmButton.setEffect(new Bloom());
+
+        });
+        confirmButton.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
+            confirmButton.setEffect(null);
+        });
     }
 
     @Override

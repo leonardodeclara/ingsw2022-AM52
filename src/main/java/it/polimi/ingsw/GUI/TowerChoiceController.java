@@ -5,9 +5,12 @@ import it.polimi.ingsw.messages.Message;
 import it.polimi.ingsw.model.Tower;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.control.Button;
 import javafx.scene.effect.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
@@ -19,12 +22,29 @@ import static it.polimi.ingsw.Constants.TIE;
 public class TowerChoiceController extends GUIController implements UpdatableController{
     @FXML
     public ImageView white,black,grey;
+    @FXML
+    public Button confirmButton;
+
+
     boolean alreadyPressed = false;
     Tower selectedTower;
     boolean waitTurn = false;
     boolean isGameFinished = false;
 
-    public void start(){
+    @FXML
+    public void initialize(){
+        confirmButton.setEffect(null);
+        confirmButton.setText("CONTINUE");
+        Font font = Font.loadFont(getClass().getResourceAsStream("/fonts/Hey Comic.ttf"), 10);
+        confirmButton.setFont(font);
+        confirmButton.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
+
+            confirmButton.setEffect(new Bloom());
+
+        });
+        confirmButton.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
+            confirmButton.setEffect(null);
+        });
     }
 
     @Override
@@ -58,6 +78,11 @@ public class TowerChoiceController extends GUIController implements UpdatableCon
 
         if(isGameFinished)
             renderEndGame();
+    }
+
+    @Override
+    public void start() {
+
     }
 
     private void renderEndGame(){

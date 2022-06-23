@@ -27,7 +27,7 @@
             <Font name="Britannic Bold" size="16.0" />
          </font>
       </Text>
-      <Button layoutX="305.0" layoutY="324.0" mnemonicParsing="false" text="CONNECT" onAction="#connect">
+      <Button id="connectButton" fx:id="connectButton" layoutX="296.0" layoutY="320.0" mnemonicParsing="false" onAction="#connect" prefHeight="36.0" prefWidth="89.0" styleClass="confirmButton" stylesheets="@../css/gameMenu.css">
          <font>
             <Font name="Britannic Bold" size="13.0" />
          </font>

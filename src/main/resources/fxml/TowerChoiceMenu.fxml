@@ -14,7 +14,7 @@
             <Image url="@../graphics/splash_screen.png" />
          </image>
       </ImageView>
-      <Button layoutX="297.0" layoutY="322.0" mnemonicParsing="false" onAction="#send" text="CONTINUE">
+      <Button id="confirmButton" fx:id="confirmButton" layoutX="291.0" layoutY="313.0" mnemonicParsing="false" onAction="#send" prefHeight="35.0" prefWidth="87.0" styleClass="confirmButton" stylesheets="@../css/gameMenu.css">
          <font>
             <Font name="Britannic Bold" size="13.0" />
          </font>
@@ -34,7 +34,7 @@
             <Image url="@../graphics/grey_tower.png" />
          </image>
       </ImageView>
-      <ImageView id="white" fx:id="white" fitHeight="150.0" fitWidth="200.0" layoutX="372.0" layoutY="154.0" onMouseClicked="#whiteOnClick"  pickOnBounds="true" preserveRatio="true">
+      <ImageView id="white" fx:id="white" fitHeight="150.0" fitWidth="200.0" layoutX="372.0" layoutY="154.0" onMouseClicked="#whiteOnClick" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../graphics/white_tower.png" />
          </image>

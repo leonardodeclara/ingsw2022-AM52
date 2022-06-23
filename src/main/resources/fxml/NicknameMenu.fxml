@@ -15,16 +15,16 @@
             <Image url="@../graphics/splash_screen.png" />
          </image>
       </ImageView>
-      <Text id = "nicknameMessage" fx:id="nicknameMessage" fill="WHITE" layoutX="266.0" layoutY="204.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="Scegli il tuo nome" wrappingWidth="138.6640625">
+      <Text id="nicknameMessage" fx:id="nicknameMessage" fill="WHITE" layoutX="266.0" layoutY="204.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="Scegli il tuo nome" wrappingWidth="138.6640625">
          <font>
             <Font name="Britannic Bold" size="16.0" />
          </font>
       </Text>
-      <Button layoutX="297.0" layoutY="322.0" mnemonicParsing="false" onAction="#authenticate" text="CONTINUE">
+      <Button id="confirmButton" fx:id="confirmButton" layoutX="287.0" layoutY="313.0" mnemonicParsing="false" onAction="#authenticate" prefHeight="35.0" prefWidth="95.0" styleClass="confirmButton" stylesheets="@../css/gameMenu.css">
          <font>
             <Font name="Britannic Bold" size="13.0" />
          </font>
       </Button>
-      <TextField id = "nickname" fx:id="nickname" layoutX="261.0" layoutY="222.0" />
+      <TextField id="nickname" fx:id="nickname" layoutX="261.0" layoutY="222.0" />
    </children>
 </AnchorPane>

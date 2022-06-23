@@ -5,7 +5,11 @@ import it.polimi.ingsw.messages.Message;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.effect.Bloom;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 
@@ -14,6 +18,8 @@ public class MatchMakingController extends GUIController{
     private ChoiceBox<String> numOfPlayers;
     @FXML
     private ChoiceBox<String> gameType;
+    @FXML
+    public Button confirmButton;
 
     private boolean alreadyPressed = false;
 
@@ -25,6 +31,20 @@ public class MatchMakingController extends GUIController{
         gameAvailableChoices.addAll("Basic Rules","Expert Rules");
         numOfPlayers.setItems(playerAvailableChoices);
         gameType.setItems(gameAvailableChoices);
+
+
+        confirmButton.setEffect(null);
+        confirmButton.setText("SEARCH GAME");
+        Font font = Font.loadFont(getClass().getResourceAsStream("/fonts/Hey Comic.ttf"), 10);
+        confirmButton.setFont(font);
+        confirmButton.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
+
+            confirmButton.setEffect(new Bloom());
+
+        });
+        confirmButton.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
+            confirmButton.setEffect(null);
+        });
     }
 
     public void searchGame(){

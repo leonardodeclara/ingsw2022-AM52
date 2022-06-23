@@ -25,7 +25,7 @@
             <Font name="Britannic Bold" size="16.0" />
          </font>
       </Text>
-      <Button layoutX="292.0" layoutY="323.0" mnemonicParsing="false" onAction="#searchGame" text="SEARCH GAME">
+      <Button id="confirmButton" fx:id="confirmButton" layoutX="278.0" layoutY="317.0" mnemonicParsing="false" onAction="#searchGame" prefHeight="35.0" prefWidth="112.0" styleClass="confirmButton" stylesheets="@../css/gameMenu.css" textFill="WHITE">
          <font>
             <Font name="Britannic Bold" size="13.0" />
          </font>
