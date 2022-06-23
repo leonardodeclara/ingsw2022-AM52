@@ -99,6 +99,11 @@ public class GUI extends Application implements UI{
                 }
                 else {
                     ((UpdateMessage) message).update(GB); //aggiorna la gameboard
+                    GUIController currentController = controllers.get(stage.getScene());
+                    if(currentController instanceof UpdatableController){  //Se l'update deve aggiornare anche la scena allora lo fa, altrimenti l'aggiornamento è propagato solo su GB
+                        ((UpdatableController) currentController).update();
+                        System.out.println("Aggiorno il controller da update message "+currentController);
+                    }
                 }
             }
         });
@@ -126,8 +131,7 @@ public class GUI extends Application implements UI{
                     stage.centerOnScreen();//vedere se si può fare in maniera diversa
                 }
 
-                setSceneShouldWait(true); //sarebbe meglio chiamare direttamente enableScene e disableScene ma dava problemi (probabilmente per il render order)
-                //rivedere
+                setSceneShouldWait(true);
 
             }
             case SET_UP_WIZARD_PHASE -> {
