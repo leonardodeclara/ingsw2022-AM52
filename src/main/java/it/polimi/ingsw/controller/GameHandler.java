@@ -522,6 +522,7 @@ public class GameHandler implements PropertyChangeListener{
         //provare entrambe le versioni
         for (ClientHandler clientHandler: nameToHandlerMap.values()){
             clientHandler.closeConnection();
+            clientHandler.setGameHandler(null);
         }
         server.removeGameHandler(this);
         //poi lato server bisogna cancellare la partita e tutto il resto

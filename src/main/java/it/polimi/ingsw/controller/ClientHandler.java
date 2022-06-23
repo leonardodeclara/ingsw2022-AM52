@@ -56,7 +56,8 @@ public class ClientHandler implements Runnable {
         {
             System.out.println("Qualcuno si è disconnesso chiudo la connessione con il client " + ID);
             //e.printStackTrace(); //for debugging
-            closeConnection();
+            if (gameHandler != null) gameHandler.closeMatch();
+            //closeConnection();
         }
         catch (ClassNotFoundException | IOException e)
         {
