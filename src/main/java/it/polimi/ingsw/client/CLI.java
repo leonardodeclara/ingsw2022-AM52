@@ -190,6 +190,11 @@ public class CLI implements Runnable,UI{
         return port;
     }
 
+    @Override
+    public void handleClosingServer() {
+        System.out.println("Il server è crashato");
+        System.exit(0);
+    }
 
     public static void main(String[] args) throws IOException {
         CLI cli = new CLI();

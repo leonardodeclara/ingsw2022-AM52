@@ -261,7 +261,8 @@ public class GUI extends Application implements UI{
             clientSocket.send(message);
         } catch (IOException e) {
             e.printStackTrace();
-        }    }
+        }
+    }
 
     public int getNumOfPlayers(){
         return GB.getNumberOfPlayers();
@@ -354,31 +355,16 @@ public class GUI extends Application implements UI{
         ((AnchorPane)stage.getScene().getRoot()).getChildren().removeAll();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Override
+    public void handleClosingServer() {
+        Platform.runLater(()->{
+            GUIController currentController = controllers.get(stage.getScene());
+            disableScene();
+            if(currentController instanceof UpdatableController)
+                ((UpdatableController) currentController).endGame();
+            System.out.println("FINE GAME PER SERVER CRASH");
+        });
+    }
 
     public static void main(String[] args) {
         launch(args);

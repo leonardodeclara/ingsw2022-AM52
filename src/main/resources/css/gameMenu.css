@@ -4,6 +4,7 @@
     -fx-background-size: stretch;
     -fx-background-color: transparent;
     -fx-font-family: "Hey Comic";
+    -fx-text-fill: WHITE;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
     -fx-font-size: 12.0;
 }
@@ -13,6 +14,6 @@
     -fx-background-size: stretch;
     -fx-background-color: transparent;
     -fx-font-family: "Hey Comic";
-    -fx-text-fill: WHITE
+    -fx-text-fill: WHITE;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
 }

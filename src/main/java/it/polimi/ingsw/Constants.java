@@ -87,6 +87,9 @@ public class Constants {
     public static double MOTHER_NATURE_OFFSET_Y=-7;
     public static double END_GAME_MESSAGE_WIDTH = 100;
     public static double END_GAME_MESSAGE_HEIGHT = 50;
+    public static int TIMEOUT = 10000;
+    public static int PING_PERIOD = 5000;
+
     public static final String RESET = "\033[0m";
 
     public static final String RED = "\033[0;31m";

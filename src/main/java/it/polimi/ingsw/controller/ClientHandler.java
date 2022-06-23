@@ -72,7 +72,7 @@ public class ClientHandler implements Runnable {
      */
     public void readMessage(Message message){
         if (message instanceof Ping){
-            //System.out.println("Ricevuto ping da " + ID);
+            sendMessage(new Ping());
         }
         else if (message instanceof LoginRequestMessage) //manda al server, fase di connessione
         {

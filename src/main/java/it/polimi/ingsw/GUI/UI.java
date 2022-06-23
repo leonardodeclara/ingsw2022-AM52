@@ -9,4 +9,6 @@ public interface UI {
     public void handleMessageFromServer(Message receivedMessage);
 
     public void prepareView(ArrayList<Object> data);
+
+    public void handleClosingServer();
 }

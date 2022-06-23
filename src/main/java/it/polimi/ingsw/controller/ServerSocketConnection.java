@@ -1,5 +1,7 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.Constants;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -9,7 +11,6 @@ import java.util.concurrent.Executors;
 
 public class ServerSocketConnection implements Runnable {
     private final int port;
-    private final int TIMEOUT = 10000;
     private final ExecutorService executorService;
     private final Server server;
     //private final GameHandler gameHandler;
@@ -44,7 +45,7 @@ public class ServerSocketConnection implements Runnable {
 
                 //costruttore va modificato, ho tolto il parametro gameHandler
                 Socket socket = serverSocket.accept();
-                socket.setSoTimeout(TIMEOUT);
+                socket.setSoTimeout(Constants.TIMEOUT);
                 ClientHandler clientHandler = new ClientHandler(socket, server);
                 System.out.println("Connessione avvenuta con successo");
                 executorService.submit(clientHandler);

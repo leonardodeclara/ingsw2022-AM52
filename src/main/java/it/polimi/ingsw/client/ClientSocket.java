@@ -1,14 +1,15 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.GUI.UI;
 import it.polimi.ingsw.messages.*;
 
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 public class ClientSocket implements Runnable{
-    private static int PING_PERIOD = 5000;
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -24,6 +25,7 @@ public class ClientSocket implements Runnable{
         this.port = port;
         this.cli = cli;
         socket = new Socket(ip, port);
+        socket.setSoTimeout(Constants.TIMEOUT);
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(socket.getInputStream());
         active= true;
@@ -31,7 +33,7 @@ public class ClientSocket implements Runnable{
             try {
                 //rivedere gestione active
                 while(active){
-                    Thread.sleep(PING_PERIOD);
+                    Thread.sleep(Constants.PING_PERIOD);
                     //System.out.println("mando ping");
                     send(new Ping());
                 }
@@ -58,14 +60,19 @@ public class ClientSocket implements Runnable{
             while(active){
                 Message receivedMessage = (Message) in.readObject();
                 System.out.println("Ho ricevuto lato client "+receivedMessage);
-                cli.handleMessageFromServer(receivedMessage);
+                if (!(receivedMessage instanceof Ping))
+                    cli.handleMessageFromServer(receivedMessage);
             }
         }
-        catch (IOException | ClassNotFoundException ioException){
-            //gestione dell'errore
+        catch(SocketTimeoutException | EOFException exception ){
+            System.out.println("ClientSocket: catchata eccezione "+exception.getClass().toString());
+            cli.handleClosingServer();
+        }
+        catch (IOException | ClassNotFoundException exception){
+            System.out.println("ClientSocket: catchata eccezione "+exception.getClass().toString());
         } finally {
             closeConnection();
-            //System.exit(0);
+
         }
     }
 
