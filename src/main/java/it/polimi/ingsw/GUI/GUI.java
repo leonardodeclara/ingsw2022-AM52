@@ -147,22 +147,13 @@ public class GUI extends Application implements UI{
             }
             case END_GAME -> {
                 setSceneShouldWait(true);
-                String gameOverMessage = "GAME OVER\n";
-                if (GB.getWinner()==null)
-                    gameOverMessage+="SOMEONE HAS DISCONNECTED";
-                else if (GB.getWinner()!=null && GB.getWinner().equals(TIE))
-                    gameOverMessage+="THE GAME ENDED ON A TIE";
-                else
-                    gameOverMessage+=GB.getWinner().toUpperCase()+" IS THE WINNER!";
-                Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-                Text gameOverText = new Text(gameOverMessage);
+                GUIController currentController = controllers.get(stage.getScene());
+                if(currentController instanceof UpdatableController)
+                    ((UpdatableController) currentController).endGame();
 
-                gameOverText.setTextAlignment(TextAlignment.CENTER);
-                gameOverText.setX((screenBounds.getWidth() - END_GAME_MESSAGE_WIDTH) / 2);
-                gameOverText.setY((screenBounds.getHeight() - END_GAME_MESSAGE_HEIGHT) / 2);
+                System.out.println("FINE GAMEEEE");
 
-                addElementToScene(gameOverText);
-                gameOverText.toFront(); //non funziona, forse bisogna aggiungere un pane
+
             }
         }
     }
@@ -347,7 +338,7 @@ public class GUI extends Application implements UI{
     public void addElementToScene(Node n){
         ((AnchorPane)stage.getScene().getRoot()).getChildren().add(n);
     }
-
+    public String getWinner(){return GB.getWinner();}
     public Font getGameFont(){
         return gameFont;
     }

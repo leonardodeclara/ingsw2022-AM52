@@ -4,10 +4,17 @@ import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.Message;
 import it.polimi.ingsw.model.Tower;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.effect.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
 
 import java.util.ArrayList;
+
+import static it.polimi.ingsw.Constants.TIE;
 
 public class TowerChoiceController extends GUIController implements UpdatableController{
     @FXML
@@ -15,6 +22,7 @@ public class TowerChoiceController extends GUIController implements UpdatableCon
     boolean alreadyPressed = false;
     Tower selectedTower;
     boolean waitTurn = false;
+    boolean isGameFinished = false;
 
     public void start(){
     }
@@ -22,6 +30,12 @@ public class TowerChoiceController extends GUIController implements UpdatableCon
     @Override
     public void setWaitTurn(boolean value) {
         waitTurn = value;
+    }
+
+    @Override
+    public void endGame() {
+        isGameFinished = true;
+        renderEndGame();
     }
 
 
@@ -37,17 +51,29 @@ public class TowerChoiceController extends GUIController implements UpdatableCon
         if(!availableTowers.contains(Tower.WHITE))
             white.setVisible(false);
 
-        /*
-        black.setEffect(new DropShadow());
-        grey.setEffect(new DropShadow());
-        white.setEffect(new DropShadow());
-        */
-
         if(waitTurn)
             gui.disableScene();
         else
             gui.enableScene();
 
+        if(isGameFinished)
+            renderEndGame();
+    }
+
+    private void renderEndGame(){
+        System.out.println("RENDERIZZO SCRITA DI FINE GAME");
+        String gameOverMessage = "GAME OVER\n";
+        gameOverMessage+="SOMEONE HAS DISCONNECTED";
+        Text gameOverText = new Text(gameOverMessage);
+        gameOverText.setFill(Color.WHITE);
+        gameOverText.setFont(gui.getGameFont());
+        gameOverText.setStyle("-fx-font-size: 20;");
+        gameOverText.setTextAlignment(TextAlignment.CENTER);
+        gameOverText.setX(gui.getScreenY()/2);
+        gameOverText.setY(gui.getScreenY()/2);
+
+        gui.addElementToScene(gameOverText);
+        gameOverText.toFront();
     }
 
     public void setTower(Tower tower){

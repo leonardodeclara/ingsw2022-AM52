@@ -41,8 +41,6 @@ public class GUIIsland{
     private HashMap<Color,Long> numOfStudents;
     private HashMap<Color,Tooltip> tooltips;
 
-//TODO sistemare range cerchio quando si aggiungono studenti lato client
-//TODO sistemare posizioni di madre natura e torri
 
     public GUIIsland(int index,double x,double y,double width,double height,double angle,
                      GameTableController controller,GUI gui){

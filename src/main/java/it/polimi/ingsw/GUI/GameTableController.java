@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -23,6 +24,8 @@ import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
 import javafx.util.Duration;
 
 import java.util.*;
@@ -30,14 +33,14 @@ import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.Constants.*;
 
-//TODO sistemare bene sistema di selezione e pulire action parser dei vecchi parseTower, parseWizard ecc... (ora sono inutili)
 //TODO centrare bene gli studenti sulle carte lobbyPersonality
 //TODO visualizzazione messaggio last round
 //TODO: sistema di unclick per gli spostamenti di studenti
 
-//il numero di elementi da selezionare (preciso o range) viene settato in send() (così non possono esserne mandati di meno o di più del previsto),
-//il massimo numero è settato nei drag event (in modo che non se ne possano draggare di più)
-//non è presente un sistema di reset in caso di errore, ciò che viene draggato rimane draggato finchè non si manda il messaggio
+
+//TODO render personality
+//TODO cambiare pulsanti e font pulsanti
+//TODO schermata endgame
 
 public class GameTableController extends GUIController implements UpdatableController{
     @FXML private ImageView player1Icon;
@@ -62,6 +65,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private boolean waitTurn = false;
     private boolean initialized = false;
     private boolean showDeck;
+    private boolean isGameFinished;
     private ArrayList<Node> selectedImages;
 
     public void start(){ //metodo di inizializzazione chiamato da GUI. In alcune situazioni viene chiamato due volte ma noi dobbiamo inizializzare una volta sola
@@ -78,7 +82,7 @@ public class GameTableController extends GUIController implements UpdatableContr
             personalities = new ArrayList<>();
             initialized = true;
             showDeck=true;
-
+            isGameFinished = false;
             sendButton.setOnMouseEntered(e -> sendButton.setEffect(new Bloom()));
             sendButton.setOnMouseExited(e -> sendButton.setEffect(null));
 
@@ -112,6 +116,12 @@ public class GameTableController extends GUIController implements UpdatableContr
     @Override
     public void setWaitTurn(boolean value) {
         waitTurn = value;
+    }
+
+    @Override
+    public void endGame() {
+        isGameFinished = true;
+        renderEndGame();
     }
 
     @Override
@@ -192,6 +202,29 @@ public class GameTableController extends GUIController implements UpdatableContr
         else
             gui.enableScene();
 
+        if(isGameFinished)
+            renderEndGame();
+
+    }
+
+    private void renderEndGame() {
+        String gameOverMessage = "GAME OVER\n";
+        if (gui.getWinner()==null)
+            gameOverMessage+="SOMEONE HAS DISCONNECTED";
+        else if (gui.getWinner()!=null && gui.getWinner().equals(TIE))
+            gameOverMessage+="THE GAME ENDED ON A TIE";
+        else
+            gameOverMessage+=gui.getWinner().toUpperCase()+" IS THE WINNER!";
+        Text gameOverText = new Text(gameOverMessage);
+        gameOverText.setFill(Color.WHITE);
+        gameOverText.setFont(gui.getGameFont());
+        gameOverText.setStyle("-fx-font-size: 20;");
+        gameOverText.setTextAlignment(TextAlignment.CENTER);
+        gameOverText.setX(centerX);
+        gameOverText.setY(centerY+15);
+
+        gui.addElementToScene(gameOverText);
+        gameOverText.toFront();
     }
 
     private void renderSendButton(){
@@ -449,53 +482,6 @@ public class GameTableController extends GUIController implements UpdatableContr
         }
     }
 
-    /*
-    public void handleClickEvent(int id,Clickable clickedElement){
-        if(actionParser.canClick(gui.getCurrentState(),clickedElement)){
-            switch(clickedElement){
-                case ASSISTANT -> {
-                    setSelectedAssistant(id);
-                    System.out.println("Hai cliccato sulla carta "+selectedAssistant);
-                }
-                case CLOUD -> {
-                    setSelectedCloud(id);
-                }
-                case PERSONALITY -> {
-                    //si potrebbe aggiungere un controllo qui in modo che se sono
-                    //in move from lobby, ho spostato due studenti e poi clicco una carta questo click non viene contato
-                    //altrimenti si modifica actionParser.canClick
-
-                    //versione temporanea, perché se mischio click di altre cose è un casino
-                    parameters.add(0,(Boolean)true);
-                    setSelectedPersonality(id);
-                    System.out.println("Hai cliccato sulla carta personaggio ");
-                }
-                case LOBBY_STUDENT -> {
-                    selectedLobbyStudents.add(id);
-                }
-                case ISLAND -> {
-
-                    switch (gui.getCurrentState()){
-                        case MOVE_MOTHER_NATURE -> {
-                            setSelectedMNmove(extractMNsteps(id));
-                            System.out.println("Sposto MN di " +selectedMNmove+ " passi");
-                        }
-                        case CHOOSE_ISLAND_FOR_CARD_3,CHOOSE_ISLAND_FOR_CARD_5 -> {
-                            setSelectedIsland(id);
-                            System.out.println("Ho selezionato l' isola "+selectedIsland);
-                        }
-                    }
-
-                    System.out.println("Hai cliccato su un'isola");
-                }
-
-            }
-        }
-        else
-            System.out.println("Non puoi cliccare "+clickedElement+" se sei in "+gui.getCurrentState());
-    }
-
-    */
 
     public void onPlayer1Click(){
         if(renderedDashboard!=1 && !currentBoard.isLobbyModified()){

@@ -14,12 +14,12 @@
             <Image url="@../graphics/splash_screen.png" />
          </image>
       </ImageView>
-      <Button layoutX="272.0" layoutY="149.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="137.0" text="PLAY" onAction="#openConnectionMenu">
+      <Button id="sendButton" fx:id="sendButton" layoutX="272.0" layoutY="149.0" mnemonicParsing="false" onMouseClicked="#openConnectionMenu" onMouseEntered="#addHoverEffectPlay" onMouseExited="#resetEffectPlay" prefHeight="50.0" prefWidth="137.0" styleClass="confirmButton" stylesheets="@../css/gameMenu.css" text="PLAY" textFill="WHITE">
          <font>
             <Font name="Britannic Bold" size="12.0" />
          </font>
       </Button>
-      <Button layoutX="272.0" layoutY="250.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="137.0" text="QUIT" onAction="#quit">
+      <Button id="closeButton" fx:id="closeButton" layoutX="272.0" layoutY="250.0" mnemonicParsing="false" onMouseClicked="#quit" onMouseEntered="#addHoverEffectQuit" onMouseExited="#resetEffectQuit" prefHeight="50.0" prefWidth="137.0" styleClass="quitButton" stylesheets="@../css/gameMenu.css" text="QUIT" textFill="WHITE">
          <font>
             <Font name="Britannic Bold" size="12.0" />
          </font>

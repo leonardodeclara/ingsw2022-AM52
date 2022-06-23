@@ -3,11 +3,18 @@ package it.polimi.ingsw.GUI;
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.Message;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
 
 import java.util.ArrayList;
+
+import static it.polimi.ingsw.Constants.TIE;
 
 public class WizardChoiceController extends GUIController implements UpdatableController{
     @FXML
@@ -15,6 +22,7 @@ public class WizardChoiceController extends GUIController implements UpdatableCo
     boolean alreadyPressed = false;
     int selectedWizard = -1;
     boolean waitTurn = false;
+    boolean isGameFinished = false;
 
     public void start(){
     }
@@ -22,6 +30,12 @@ public class WizardChoiceController extends GUIController implements UpdatableCo
     @Override
     public void setWaitTurn(boolean value) {
         waitTurn = value;
+    }
+
+    @Override
+    public void endGame() {
+        isGameFinished = true;
+        renderEndGame();
     }
 
     public void update(){
@@ -40,6 +54,25 @@ public class WizardChoiceController extends GUIController implements UpdatableCo
             gui.disableScene();
         else
             gui.enableScene();
+
+        if(isGameFinished)
+            renderEndGame();
+    }
+
+    private void renderEndGame(){
+        System.out.println("RENDERIZZO SCRITA DI FINE GAME");
+        String gameOverMessage = "GAME OVER\n";
+        gameOverMessage+="SOMEONE HAS DISCONNECTED";
+        Text gameOverText = new Text(gameOverMessage);
+        gameOverText.setFill(Color.WHITE);
+        gameOverText.setFont(gui.getGameFont());
+        gameOverText.setStyle("-fx-font-size: 20;");
+        gameOverText.setTextAlignment(TextAlignment.CENTER);
+        gameOverText.setX(gui.getScreenY()/2);
+        gameOverText.setY(gui.getScreenY()/2);
+
+        gui.addElementToScene(gameOverText);
+        gameOverText.toFront();
     }
 
     public void setWizard(int wizardID){

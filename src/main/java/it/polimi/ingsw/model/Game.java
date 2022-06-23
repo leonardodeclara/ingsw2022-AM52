@@ -396,7 +396,7 @@ public class Game {
      */
     public boolean isMoveStudentsToLobbyLegal(Player player,int cloudId){
         if (cloudId >= 0 && cloudId <= clouds.size()-1)
-            return (!clouds.get(cloudId).getStudents().isEmpty()) ? true : false;
+            return !clouds.get(cloudId).getStudents().isEmpty();
         return false;
     }
 

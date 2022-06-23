@@ -193,6 +193,7 @@ public class GameBoard {
     }
 
     public void setWinner(String winner){
+        System.out.println("VINCITORE SETTATO");
         this.winner=winner;
     }
 

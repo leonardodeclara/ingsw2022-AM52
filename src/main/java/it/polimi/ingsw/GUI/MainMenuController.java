@@ -1,23 +1,54 @@
 package it.polimi.ingsw.GUI;
 
-import it.polimi.ingsw.Constants;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.text.Font;
+import javafx.scene.effect.Bloom;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.input.MouseEvent;
 
 public class MainMenuController extends GUIController {
 
     @FXML
     private Button closeButton;
+    @FXML
+    private Button sendButton;
 
     @FXML
-    void openConnectionMenu(ActionEvent event) {
+    public void addHoverEffectPlay(){
+        sendButton.setOnMouseEntered(e -> sendButton.setEffect(new Bloom()));
+    }
+    @FXML
+    public void addHoverEffectQuit(){
+        closeButton.setOnMouseEntered(e -> closeButton.setEffect(new Bloom()));
+    }
+
+    @FXML
+    public void resetEffectPlay(){
+        sendButton.setOnMouseExited(e -> sendButton.setEffect(null));
+    }
+    @FXML
+    public void resetEffectQuit(){
+        closeButton.setOnMouseExited(e -> closeButton.setEffect(null));
+    }
+
+    @FXML
+    public void mousePressedPlay(){
+        resetEffectPlay();
+        sendButton.setOnMouseEntered(e -> sendButton.setEffect(new DropShadow()));
+    }
+
+    @FXML
+    public void mousePressedQuit(){
+        resetEffectQuit();
+        closeButton.setOnMouseEntered(e -> closeButton.setEffect(new DropShadow()));
+    }
+    @FXML
+    void openConnectionMenu(MouseEvent event) {
         gui.openConnectMenu();
     }
 
     @FXML
-    void quit(ActionEvent event) {
+    void quit(MouseEvent event) {
         System.exit(0);
     }
 
