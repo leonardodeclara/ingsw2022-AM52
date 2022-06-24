@@ -30,7 +30,7 @@ public class CLI implements Runnable,UI{
     private GameBoard GB;
 
 
-    public CLI() throws IOException {
+    public CLI() {
         inputStream = new Scanner(System.in);
         outputStream = new PrintStream(System.out);
         client = new Client(this);
@@ -196,7 +196,7 @@ public class CLI implements Runnable,UI{
         System.exit(0);
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         CLI cli = new CLI();
 
         System.out.println(Constants.Logo);
