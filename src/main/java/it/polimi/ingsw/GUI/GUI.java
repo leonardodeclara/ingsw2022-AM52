@@ -53,14 +53,9 @@ public class GUI extends Application implements UI{
     private Font gameFont;
 
 
-    //TODO aggiungere pulsanti belli
-    //TODO sistemare wait screen (problemi di render order quando togliamo setSceneShouldWait() e lo sostituiamo con enable e disable)
     //TODO aggiungere send di messaggio di Disconnect quando si chiude la finestra
-    //TODO aggiungere schermata ENDGAME
 
-    //la GUI si occupa dell'aggiunta e rimozione degli elementi dinamici (compreso wait screen). lo facciamo qui per una questione di duplicazione codice
-    //dato che abbiamo almeno 3 controller che sfruttano i metodi di aggiunta e rimozione.
-    //ridichiararli all'interno di ogni singolo controller sarebbe tempo sprecato e non darebbe alcun vantaggio concreto secondo me
+
     public GUI(){
         currentState = ClientState.CONNECT_STATE;
         active = true;
@@ -80,18 +75,18 @@ public class GUI extends Application implements UI{
             public void run() {
                 if(message instanceof ClientStateMessage){
                     currentState = ((ClientStateMessage) message).getNewState();
-                    System.out.println("Vado nello stato "+currentState);
+                    //System.out.println("Vado nello stato "+currentState);
                     renderScene(); //update scene in funzione del nuovo stato
                     GUIController currentController = controllers.get(stage.getScene());
                     //forse sarebbe comodo mettere currentController come attributo di gui
-                    System.out.println("La scena attuale è "+stage.getScene() + " e il controller "+currentController);
+                    //System.out.println("La scena attuale è "+stage.getScene() + " e il controller "+currentController);
                     if(currentController instanceof UpdatableController){  //Se l'update deve aggiornare anche la scena allora lo fa, altrimenti l'aggiornamento è propagato solo su GB
                         ((UpdatableController) currentController).update();
-                        System.out.println("Aggiorno il controller "+currentController);
+                        //System.out.println("Aggiorno il controller "+currentController);
                     }
                 }
                 else if (message instanceof ErrorMessage){
-                    System.out.println("Errore! ");
+                    //System.out.println("Errore! ");
                     GUIController currentController = controllers.get(stage.getScene());
                     currentController.handleErrorMessage(true);
                     //si potrebbe aggiungere all'interfaccia GUIController un metodo handleErrorMessage
@@ -100,9 +95,14 @@ public class GUI extends Application implements UI{
                 else {
                     ((UpdateMessage) message).update(GB); //aggiorna la gameboard
                     GUIController currentController = controllers.get(stage.getScene());
-                    if(currentController instanceof UpdatableController){  //Se l'update deve aggiornare anche la scena allora lo fa, altrimenti l'aggiornamento è propagato solo su GB
+                    if(currentController instanceof UpdatableController && currentState.equals(ClientState.WAIT_TURN)){
+                        if(message instanceof ActivePersonalityMessage
+                                || message instanceof CloudUpdateMessage
+                                || message instanceof IslandMergeUpdateMessage
+                                || message instanceof IslandStudentsUpdateMessage
+                                || message instanceof IslandTowersUpdateMessage
+                                || message instanceof MotherNatureMovementUpdateMessage)
                         ((UpdatableController) currentController).update();
-                        System.out.println("Aggiorno il controller da update message "+currentController);
                     }
                 }
             }
@@ -155,7 +155,7 @@ public class GUI extends Application implements UI{
                 if(currentController instanceof UpdatableController)
                     ((UpdatableController) currentController).endGame();
 
-                System.out.println("FINE GAMEEEE");
+                //System.out.println("FINE GAMEEEE");
 
 
             }

@@ -91,9 +91,9 @@ public class GUIBoard {
     private void addStudentToTable(Color student) {
         int numOf = numOfStudentsOnTable.get(student);
         numOfStudentsOnTable.put(student,numOf+1);
-        System.out.println("Aggiungo in numOfStudentsOnTable di "+getClientBoard().getOwner()+" uno studente "+student);
+        //System.out.println("Aggiungo in numOfStudentsOnTable di "+getClientBoard().getOwner()+" uno studente "+student);
         for(Color s : numOfStudentsOnTable.keySet())
-            System.out.println("C'è uno studente "+s+" in numOfStudentsOnTable");
+            //System.out.println("C'è uno studente "+s+" in numOfStudentsOnTable");
         populateTables();
     }
 
@@ -155,7 +155,7 @@ public class GUIBoard {
                 });
                 studentImage.setOnDragDone(new EventHandler<DragEvent>() {
                     public void handle(DragEvent event) {
-                        System.out.println("Drag completato, tolgo lo studente dalla lobby");
+                        //System.out.println("Drag completato, tolgo lo studente dalla lobby");
                         if (event.getTransferMode() == TransferMode.MOVE) {
                             int removedIndex = clientSideLobbyStudents.indexOf(student);
                             clientSideLobbyStudents.remove(student);

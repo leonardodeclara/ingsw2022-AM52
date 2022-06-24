@@ -97,11 +97,11 @@ public class GUIPersonality {
             activeText.toFront();
         }
         if (personality.getStudents()!=null && personality.getStudents().size()>0){
-            System.out.println("aggiungo immagini degli studenti alla carta "+cardId);
+            //System.out.println("aggiungo immagini degli studenti alla carta "+cardId);
             populateLobbyPersonality();
         }
         else if (personality.getBans()>0){
-            System.out.println("aggiungo immagini dei ban alla carta " +cardId);
+            //System.out.println("aggiungo immagini dei ban alla carta " +cardId);
             populateBanPersonality();
         }
     }
@@ -128,7 +128,7 @@ public class GUIPersonality {
             studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
             gui.addElementToScene(studentImage);
             studentImage.toFront();
-            System.out.println("Aggiunto studente "+student+" alla carta lobby "+cardId);
+            //System.out.println("Aggiunto studente "+student+" alla carta lobby "+cardId);
             studentsImages.add(studentImage);
             setStudentsEvents(studentImage, i);
         }
@@ -160,7 +160,7 @@ public class GUIPersonality {
     }
 
     private void clearExtraFeatures(){
-        System.out.println("Qui pulisco le extra feature della carta "+cardId);
+        //System.out.println("Qui pulisco le extra feature della carta "+cardId);
         if (personality.getStudents()!=null && personality.getStudents().size()>0)
             for(ImageView studentImage : studentsImages){
                 gui.removeElementFromScene(studentImage);}
@@ -198,13 +198,13 @@ public class GUIPersonality {
                 ClipboardContent content = new ClipboardContent();
                 content.putString(Integer.toString(studentIndex));
                 db.setContent(content);
-                System.out.println("Inizio il drag event per "+studentIndex);
+                //System.out.println("Inizio il drag event per "+studentIndex);
                 e.consume();
 
             }
         });
         studentImage.setOnDragDone(event -> {
-            System.out.println("Drag completato, tolgo lo studente dalla carta");
+            //System.out.println("Drag completato, tolgo lo studente dalla carta");
             if (event.getTransferMode() == TransferMode.MOVE) {
                 studentsImages.remove(studentImage);
                 gui.removeElementFromScene(studentImage);

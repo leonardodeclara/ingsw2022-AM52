@@ -97,7 +97,7 @@ public class GUIIsland{
         islandImage.setOnMouseClicked((MouseEvent e) -> {
             //controller.handleClickEvent(index,Clickable.ISLAND);
             if (gui.getCurrentState().equals(ClientState.MOVE_MOTHER_NATURE)){
-                System.out.println("Sono in MOVE MN, non devo passare l'indice dell'isola ma il numero di passi");
+                //System.out.println("Sono in MOVE MN, non devo passare l'indice dell'isola ma il numero di passi");
                 actionParser.handleSelectionEvent(controller.extractMNsteps(index),Clickable.ISLAND,gui.getCurrentState());
             }
             else actionParser.handleSelectionEvent(index,Clickable.ISLAND,gui.getCurrentState()); //es carte 3,5
@@ -143,7 +143,7 @@ public class GUIIsland{
                     actionParser.handleSelectionEvent(selection, gui.getCurrentState());
                     addStudentToIsland(student);
                     success = true;
-                    System.out.println("Drop sull'isola "+index);
+                    //System.out.println("Drop sull'isola "+index);
 
                 }
                 event.setDropCompleted(success);

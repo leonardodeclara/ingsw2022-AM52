@@ -70,7 +70,7 @@ public class GUICloud {
             double x = centerX + xOffset ;
             double y = centerY + yOffset ;
             ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
-            System.out.println(studentsImages.size());
+            //System.out.println(studentsImages.size());
             studentImage.setX(x-STUDENT_IMAGE_WIDTH/2);
             studentImage.setY(y-STUDENT_IMAGE_HEIGHT/2);
             studentImage.setPreserveRatio(true);
@@ -78,7 +78,7 @@ public class GUICloud {
             studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
             studentsImages.add(studentImage);
             gui.addElementToScene(studentImage);
-            System.out.println("CLOUD: renderizzo uno studente");
+            //System.out.println("CLOUD: renderizzo uno studente");
             studentCounter++;
         }
     }

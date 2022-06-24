@@ -307,7 +307,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         int i = 0;
         for (ClientPersonality card: cards){
             int cardId = card.getCardID();
-            System.out.println("GameTableController: renderizzo la carta personaggio "+cardId);
+            //System.out.println("GameTableController: renderizzo la carta personaggio "+cardId);
             cardY = centerY - PERSONALITY_OFFSET_Y + ISLAND_IMAGE_HEIGHT*1.1; //scelta a caso
             cardX= centerX - PERSONALITY_IMAGE_WIDTH + i*PERSONALITY_IMAGE_WIDTH;
             GUIPersonality guiPersonality = new GUIPersonality(cardId,cardX-PERSONALITY_IMAGE_WIDTH/2,
@@ -342,9 +342,9 @@ public class GameTableController extends GUIController implements UpdatableContr
             clearDeck();
             int deckCounter = 0;
             int startY = ASSISTANT_Y_START + (10 - deck.size()) * ASSISTANT_Y_OFFSET;
-            System.out.println("Ci sono " + deck.size() + " carte nel mazzo");
+            //System.out.println("Ci sono " + deck.size() + " carte nel mazzo");
             for (Integer priority : deck.keySet()) {
-                System.out.println("Renderizzo la carta " + priority);
+                //System.out.println("Renderizzo la carta " + priority);
                 ImageView assistantImage = new ImageView("/graphics/assistant_" + priority + ".png");
                 assistantImage.setX(ASSISTANT_X);
                 assistantImage.setY(startY + deckCounter * ASSISTANT_Y_OFFSET);
@@ -388,9 +388,9 @@ public class GameTableController extends GUIController implements UpdatableContr
         else
             name = new Text(playerName.toUpperCase()+"'S"+"\nBOARD");
         name.setLayoutX(playerIcon.getLayoutX());
-        System.out.println("Posizione x del buttone di " + playerName + "è " + playerIcon.getLayoutX());
+        //System.out.println("Posizione x del buttone di " + playerName + "è " + playerIcon.getLayoutX());
         name.setLayoutY(playerIcon.getLayoutY()+NAME_TO_BUTTON_VGAP);
-        System.out.println("Posizione y del buttone di " + playerName + "è " + playerIcon.getLayoutY());
+        //System.out.println("Posizione y del buttone di " + playerName + "è " + playerIcon.getLayoutY());
         name.setFont(gui.getGameFont());
         name.setFill(Color.WHITE);
         name.setStrokeWidth(.5);
@@ -428,7 +428,7 @@ public class GameTableController extends GUIController implements UpdatableContr
             messageForToolTip.append(text).append("\n");
         }
 
-        System.out.println("SCRIVO CONTEXT "+texts.get(0));
+        //System.out.println("SCRIVO CONTEXT "+texts.get(0));
         contextMessage.setText(texts.get(0));
         Tooltip fullMessage = new Tooltip(messageForToolTip.toString());
         fullMessage.setShowDelay(Duration.seconds(0.3));
@@ -510,9 +510,9 @@ public class GameTableController extends GUIController implements UpdatableContr
     }
 
     public void changeShowedCards(MouseEvent mouseEvent) {
-        System.out.println("Ho cliccato per cambiare le carte da mostrare");
+        //System.out.println("Ho cliccato per cambiare le carte da mostrare");
         if(showDeck) {
-            System.out.println("ora mostro le currentAssistantCards");
+            //System.out.println("ora mostro le currentAssistantCards");
             for (ImageView deckCardImage : deckImages)
                 deckCardImage.setVisible(false);
             for (Map.Entry<ImageView,Text> turnCardImage: currentTurnCardsImages.entrySet()){
@@ -522,7 +522,7 @@ public class GameTableController extends GUIController implements UpdatableContr
             showDeck=false;
         }
         else{
-            System.out.println("ora mostro le deckImages");
+            //System.out.println("ora mostro le deckImages");
             for (Map.Entry<ImageView,Text> turnCardImage: currentTurnCardsImages.entrySet()){
                 turnCardImage.getKey().setVisible(false);
                 turnCardImage.getValue().setVisible(false);
@@ -545,15 +545,15 @@ public class GameTableController extends GUIController implements UpdatableContr
             clearCurrentTurnCards();
             int cardCounter = 0;
             double startY = deckButton.getLayoutY()-CURRENT_ASSISTANT_VGAP;
-            System.out.println("Start y per le current assistant: "+startY);
+            //System.out.println("Start y per le current assistant: "+startY);
 
             for (Map.Entry<String,Integer> cardChoice: cardsToRender.entrySet()) {
-                System.out.println("Renderizzo la carta "+cardChoice.getValue()+" di " + cardChoice.getKey());
+                //System.out.println("Renderizzo la carta "+cardChoice.getValue()+" di " + cardChoice.getKey());
                 ImageView assistantImage = new ImageView("/graphics/assistant_" + cardChoice.getValue() + ".png");
                 assistantImage.setX(ASSISTANT_X);
                 assistantImage.setY(startY - cardCounter * CURRENT_ASSISTANT_VGAP);
-                System.out.println("Carta di "+cardChoice.getKey()+" in posizione x "+assistantImage.getX());
-                System.out.println("Carta di "+cardChoice.getKey()+" in posizione y "+assistantImage.getY());
+                //System.out.println("Carta di "+cardChoice.getKey()+" in posizione x "+assistantImage.getX());
+                //System.out.println("Carta di "+cardChoice.getKey()+" in posizione y "+assistantImage.getY());
                 assistantImage.setFitWidth(ASSISTANT_IMAGE_WIDTH);
                 assistantImage.setFitHeight(ASSISTANT_IMAGE_HEIGHT);
                 assistantImage.setPreserveRatio(true);
@@ -578,7 +578,7 @@ public class GameTableController extends GUIController implements UpdatableContr
                 cardCounter++;
             }
         }
-        System.out.println("Numero di immagini di carte assistente del turno: "+currentTurnCardsImages.size());
+        //System.out.println("Numero di immagini di carte assistente del turno: "+currentTurnCardsImages.size());
     }
 
     private void clearCurrentTurnCards(){
