@@ -193,7 +193,7 @@ public class CLI implements Runnable,UI{
     @Override
     public void handleClosingServer() {
         System.out.println("Il server è crashato");
-        System.exit(0);
+        System.exit(0); //TODO: si può far chiudere al giocatore con un messaggio (in teoria funziona cosi togliendo questa riga)
     }
 
     public static void main(String[] args) {
