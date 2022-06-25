@@ -6,9 +6,9 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
 /**
- * This class contains the information of a PLayer.
- * Each player can be identified by its playerId.
- * Each player has a Board
+ * This class contains the information of a Player.
+ * Each player can be identified by its nickname.
+ * Each player has a Board, a deck of Assistant cards and a team.
  */
 
 public class Player {
@@ -19,6 +19,7 @@ public class Player {
     private Tower team;
     private PropertyChangeSupport listeners;
     private int coins;
+
     /**
      * Constructor creates a Player instance.
      * @param index: unique identification for the player.
@@ -33,7 +34,7 @@ public class Player {
     }
 
     /**
-     * Method that assign a deck of Assistant card to a player
+     * Method that assigns a deck of Assistant card to a player
      * @param newDeck: ArrayList of Assistant cards that make up the deck
      */
     public void setDeck(ArrayList<Assistant> newDeck){
@@ -43,7 +44,7 @@ public class Player {
     }
 
     /**
-     * Method that return the instance of the player's board
+     * Method that returns the instance of the player's board
      * @return instance of the board
      */
     public Board getBoard() {
@@ -88,25 +89,32 @@ public class Player {
         listeners.firePropertyChange("Board", null, this);
     }
 
-    /*
-    TODO: testare le modifiche
+    /**
+     * Method removeAssistantCard removes a chosen card from the player's deck.
+     * @param cardPriority: value of the chosen card's priority.
      */
-    //tolto il fire perché l'aggiornamento lato client viene gestito attraverso CurrentTurnAssistantCards in automatico
-    //rimozione avviene attraverso la priority della carta
     public void removeAssistantCard(int cardPriority){
         for (int i =0; i< deck.size();i++)
         if (deck.get(i).getPriority()==cardPriority){
             deck.remove(i);
             return;
         }
-        //listeners.firePropertyChange("Deck", null, this);
     }
 
+    /**
+     * Method addToBoardLobby adds the chosen student tile to the player's board's lobby.
+     * @param student: chosen student tile.
+     */
     public void addToBoardLobby(Color student){
         board.addToLobby(student);
         listeners.firePropertyChange("Board", null, this);
     }
 
+    /**
+     * Method removeFromBoardLobby removes the selected student tile from the player's board's lobby.
+     * @param student: selected student tile.
+     * @return true if the move has been correctly executed, false otherwise.
+     */
     public boolean removeFromBoardLobby(Color student){
         if(board.removeFromLobby(student)){
             listeners.firePropertyChange("Board", null, this);
@@ -115,6 +123,12 @@ public class Player {
         return false;
     }
 
+    /**
+     * Method switchStudents switch the selected table student tiles with the the selected lobby students.
+     * @param tableStudents: collection of student tiles to be moved from the player's board's table to the the lobby.
+     * @param lobbyStudentsIndexes: collection of integers identifying the selected board's lobby students to be moved to the table.
+     * @return true if the move has been correctly executed, false otherwise.
+     */
     public boolean switchStudents(ArrayList<Color> tableStudents, ArrayList<Integer> lobbyStudentsIndexes){
         if (board.switchStudents(tableStudents,lobbyStudentsIndexes)){
             listeners.firePropertyChange("Board", null, this);
@@ -123,43 +137,66 @@ public class Player {
         return false;
     }
 
-
-    //in expert game ci sarà moveToTable di game per guadagnare le monete
+    /**
+     * Method addToBoardTable adds the chosen student tile to the player's board table.
+     * @param student: student tile which is being added to the player's board's table.
+     * @return true if the student has been correctly moved to the table, false otherwise.
+     */
     public boolean addToBoardTable(Color student){
         boolean gainCoin = board.addToTable(student);
         listeners.firePropertyChange("Board", null, this);
         return gainCoin;
     }
 
+    /**
+     * Method removeFromBoardTable removes the selected student from the player's board table.
+     * @param student: student tile which is being removed the player's board's table.
+     */
     public void removeFromBoardTable(Color student){
         board.removeFromTable(student);
         listeners.firePropertyChange("Board", null, this);
     }
 
+    /**
+     * Method addTeacherToBoard adds the selected teacher tile to the player's board.
+     * @param teacher: teacher tile which is being added the player's board.
+     */
     public void addTeacherToBoard(Color teacher){
         board.addTeacher(teacher);
         listeners.firePropertyChange("Board", null, this);
     }
 
-    public Color removeTeacherFromBoard(Color teacher){
+    /**
+     * Method removeTeacherFromBoard removes the selected teacher tile.
+     * @param teacher: teacher tile which is being removed from the player's board.
+     */
+    public void removeTeacherFromBoard(Color teacher){
         Color removed = board.removeTeacher(teacher);
         listeners.firePropertyChange("Board", null, this);
-        return removed;
     }
 
+    /**
+     * Method addTowersToBoard adds the selected amount of towers to the player's board.
+     * @param numTowers: amount of towers that are being added to the player's board.
+     */
     public void addTowersToBoard(int numTowers){
         for (int i= 0; i<numTowers;i++)
             board.addTower();
         listeners.firePropertyChange("Board", null, this);
     }
 
+    /**
+     * Method removeTowerFromBoard removes a single tower from the player's board.
+     */
     public void removeTowerFromBoard(){
         board.removeTower();
         listeners.firePropertyChange("Board", null, this);
     }
 
-    /*
-    TODO: testarla
+    /**
+     * Method getCardByPriority returns the Assistant card identified by the selected priority number.
+     * @param priority: priority number identifying the Assistant card.
+     * @return the wanted Assistant card if present, null otherwise.
      */
     public Assistant getCardByPriority(int priority){
         for (Assistant card: deck){
@@ -169,16 +206,26 @@ public class Player {
         return null;
     }
 
+    /**
+     * Method getCoins returns the amount of coins owned by the player.
+     * @return the amount of coins owned by the player.
+     */
     public int getCoins(){
         return coins;
     }
 
+    /**
+     * Method setCoins sets the amount of coins owned by the player.
+     * @param coins: amount of coins owned by the player.
+     */
     public void setCoins(int coins){
         this.coins=coins;
     }
 
-    //vanno cambiati tutti i test
-
+    /**
+     * Method setPropertyChangeListener sets the listener of Player's state.
+     * @param controller: controller instance listening to the game's changes.
+     */
     public void setPropertyChangeListener(GameController controller) {
         listeners.addPropertyChangeListener("Deck", controller); //non sono sicuro sia un'informazione visibile a tutti
         listeners.addPropertyChangeListener("Board", controller);

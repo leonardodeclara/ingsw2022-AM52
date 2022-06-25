@@ -3,9 +3,9 @@ package it.polimi.ingsw.model;
 import java.util.ArrayList;
 
 /**
- * This is a subclass of the class Personality
- * This class represents the Personality card with CardID 1, 7 and 11
- * At the beginning of the game this card has a number of student tiles on it according to the card
+ * This is a subclass of the class Personality.
+ * This class represents the Personality card with CardID 1, 7 and 11.
+ * At the beginning of the game this card has a number of student tiles on it according to the card.
  */
 
 public class LobbyPersonality extends Personality{
@@ -49,6 +49,11 @@ public class LobbyPersonality extends Personality{
         return new ArrayList<>(students);
     }
 
+    /**
+     * Method getStudent extracts the student tile identified by studentIndex from the card's students' ArrayList.
+     * @param studentIndex: index of the selected student tile.
+     * @return the student tile at position studentIndex if present, null otherwise.
+     */
     public Color getStudent(int studentIndex){
         if (studentIndex>=0 && studentIndex<students.size())
             return students.get(studentIndex);
@@ -56,14 +61,14 @@ public class LobbyPersonality extends Personality{
             return null;
     }
 
+    /**
+     * Method removeStudent removes, if present, the selected student tile from the card's students ArrayList.
+     * @param student: student tile that is being removed from the students ArrayList.
+     */
     public void removeStudent(Color student){
         if (students.contains(student)){
             students.remove(student);
             listeners.firePropertyChange("PersonalityUsage", null,this);
         }
     }
-
-    //all'interno di expertGame ci dovrà essere un metodo prende in input la carta LobbyPersonality
-    // giocata e riempie l'arraylist gli studenti pescandoli dal basket
-
 }

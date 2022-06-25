@@ -3,7 +3,6 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.exceptions.EmptyBasketException;
-import it.polimi.ingsw.exceptions.InvalidMoveException;
 
 import java.util.*;
 
@@ -34,7 +33,7 @@ public class ExpertGame extends Game {
     }
 
     /**
-     * This method instantiates all the game elements (clouds,teachers,basket,islands and boards)
+     * This method instantiates all the game elements: clouds,teachers,basket,islands, boards and personality cards.
      */
     @Override
     public void instantiateGameElements(ArrayList<String> playersNames) {
@@ -60,10 +59,7 @@ public class ExpertGame extends Game {
                 coinsChange.add(player.getNickname());
                 coinsChange.add(coins);
                 listeners.firePropertyChange("Coins", null, coinsChange);
-            }else{
-                new Exception().printStackTrace(); //se accade lo vediamo (non dovrebbe)
             }
-
         }
     }
 
@@ -116,9 +112,10 @@ public class ExpertGame extends Game {
     }
 
     /**
-     * Method isMoveMNLegalForCard4 checks  if the player with Player ID can move Mother Nature of numSteps
-     * @param nickname : name given to the player, TO DO
+     * Method isMoveMNLegalForCard4 checks  if the player identified by nickname can move Mother Nature of numSteps.
+     * @param nickname : name given to the player.
      * @param numSteps : number of islands that the player identified with the playerId wants to move mother nature
+     * @return true if the move is legal, false otherwise.
      */
     public boolean isMoveMNLegalForCard4(String nickname,int numSteps){
         int add = (getPlayerByName(nickname).equals(currentPersonalityPlayer) ? 2 : 0);

@@ -77,7 +77,7 @@ public class Cloud {
     }
 
     /**
-     * Sets the listener of Cloud's state.
+     * Method setPropertyChangeListener sets the listener of Cloud's state.
      * @param controller: controller instance listening to the game's changes.
      */
     public void setPropertyChangeListener(GameController controller){

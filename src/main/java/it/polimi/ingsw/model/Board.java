@@ -1,10 +1,7 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.Constants;
-import it.polimi.ingsw.controller.GameController;
 
-import java.beans.PropertyChangeSupport;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,9 +20,8 @@ public class Board {
      * Constructor creates a Board instance.
      *
      */
-
     public Board() {
-        studentsTable = new HashMap<Color, Integer>();
+        studentsTable = new HashMap<>();
         studentsTable.put(Color.GREEN,0);
         studentsTable.put(Color.RED,0);
         studentsTable.put(Color.YELLOW,0);
@@ -37,19 +33,17 @@ public class Board {
     }
 
     /**
-     * Add a student object to the board's lobby
-     * @param student
+     * Add a student object to the board's lobby.
+     * @param student: student instance being added to the board's lobby.
      */
-
     public void addToLobby(Color student) {
         lobby.add(student);
     }
 
     /**
      * Remove a student object from the board's lobby
-     * @param student
+     * @param student: student instance being removed to the board's lobby
      */
-
     public boolean removeFromLobby(Color student){
         if(lobby.contains(student)){
             lobby.remove(student);
@@ -59,16 +53,12 @@ public class Board {
     }
 
     /**
-     * Add each student object to the table corresponding to their color
-     * This method also check if the students is the third, the sixth or the ninth added to the table for the expert
-     * game mode for earn money
-     * @param student instance of the student that has to be added
-     * @return true if the student is the third, the sixth or the ninth added to the table, false otherwise
+     * Add each student object to the table corresponding to their color.
+     * This method also checks if the students is the third, the sixth or the ninth added to the table for the expert
+     * game mode for earn money.
+     * @param student instance of the student that has to be added.
+     * @return true if the student is the third, the sixth or the ninth added to the table, false otherwise.
      */
-
-    //vedo il colore del nuovo studente e lo uso come chiave ricavando l'attuale table di quel colore
-    //aggiungo a quella table il nuovo studente e aggiorno la voce corrispondente nella hashmap
-    //controllo l'indice a cui è stato messo il nuovo studente e traggo le conclusioni del caso
     public boolean addToTable(Color student) {
         Integer numOfStudents = studentsTable.get(student);
         numOfStudents++;
@@ -76,10 +66,9 @@ public class Board {
         return (numOfStudents == 3 || numOfStudents == 6 || numOfStudents == 9);
     }
 
-
     /**
-     * Remove each student object from the table
-     * @param student: instance of the student that has to be removed
+     * Remove each student object from the table.
+     * @param student: instance of the student that has to be removed.
      */
     public void removeFromTable(Color student){
         Integer numOfStudents = studentsTable.get(student);
@@ -87,13 +76,12 @@ public class Board {
         studentsTable.put(student,numOfStudents);
     }
 
-
-    /*
-    TODO: Da finire
+    /**
+     * Method switchStudents switches the selected table students with the selected lobby students.
+     * @param tableStudents: color of student tiles that are being moved from the table to the lobby.
+     * @param lobbyStudentsIndexes: indexes of the lobby student tiles that are being from the lobby to the table.
+     * @return true if the input parameters are correct and the switch has been correctly executed, false otherwise.
      */
-    //casi limite:
-    //voglio togliere due pedine verdi dalla table ma ne ho 0/1
-    //voglio mettere due pedine verdi ma la table è piena/gliene manca 1
     public boolean switchStudents(ArrayList<Color> tableStudents, ArrayList<Integer> lobbyStudentsIndexes) {
         if (lobbyStudentsIndexes.size()> Constants.MAX_STUDENTS_FOR_CARD_10_SWITCH
                 || tableStudents.size()>Constants.MAX_STUDENTS_FOR_CARD_10_SWITCH
@@ -118,17 +106,6 @@ public class Board {
             fromTable.put(toBeMovedFromTable, fromTable.get(toBeMovedFromTable)+1);
         }
 
-        //questo controllo si basa sull'idea che non ha senso spostare una pedina dello stesso colore
-        // dalla lobby alla table e viceversa
-        //quindi per controllare se è vuota o piena non tengo conto di eventuali scambi dello stesso colore
-        //si può anche aggiungere volendo, il codice sarebbe
-        /*
-        for (Color color: Color.values())
-            if (fromLobby.get(color)+studentsTable.get(color)-fromTable.get(color)>Constants.MAX_TABLE_SIZE
-                    || studentsTable.get(color)-fromTable.get(color) + fromLobby.get(color)<0)
-                return false;
-
-         */
         for (Color color: Color.values())
             if (fromLobby.get(color)+studentsTable.get(color)>Constants.MAX_TABLE_SIZE
                     || studentsTable.get(color)-fromTable.get(color)<0)
@@ -144,7 +121,6 @@ public class Board {
                 removeFromTable(color);
             }
         }
-
         return true;
     }
 
@@ -250,7 +226,11 @@ public class Board {
         this.towers = towers;
     }
 
-
+    /**
+     * Method hasDuplicates checks if the selected ArrayList has duplicate elements.
+     * @param indexes: ArrayList carrying Integer instances that need to be checked for duplicates.
+     * @return true if the input ArrayList has duplicated elements, false otherwise.
+     */
     public boolean hasDuplicates(ArrayList<Integer> indexes){
         return (indexes.stream().distinct().count()!=indexes.size());
     }

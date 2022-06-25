@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model;
 
-//carta id 5
-
 import it.polimi.ingsw.Constants;
 
 /**

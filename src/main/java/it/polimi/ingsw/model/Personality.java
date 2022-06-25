@@ -5,9 +5,9 @@ import it.polimi.ingsw.controller.GameController;
 import java.beans.PropertyChangeSupport;
 
 /**
- * This class represents the Personality card
- * Players can use Personality card in expert game mode
- * Each player can use 3 Personality card during the game
+ * This class represents the Personality card.
+ * Players can use Personality card in expert game mode.
+ * Each player can use 3 Personality card during the game.
  */
 public class Personality {
     private final int characterId;
@@ -68,13 +68,11 @@ public class Personality {
         return cost;
     }
 
+    /**
+     * Metod setPropertyChangeListener sets the Personality's  state listeners.
+     * @param controller: controller instance listening to the game's changes.
+     */
     public void setPropertyChangeListener(GameController controller){
         listeners.addPropertyChangeListener("PersonalityUsage",controller);
-        //mancano tutti i fire di update per le modifiche di monete, studenti in lobbyPersonality e ban in BanPersonality
     }
 }
-
-
-//carte 0, 6, 10: lobby personality
-//carta 4 ban personality
-//le altre personality classiche

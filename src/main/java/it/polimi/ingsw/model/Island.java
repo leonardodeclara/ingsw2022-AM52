@@ -95,9 +95,7 @@ public class Island {
                 listeners.firePropertyChange("IslandTowers", null, this);
             }
         }
-        catch (NullPointerException ignored){
-            System.out.println("Inserimento illegale");
-        }
+        catch (NullPointerException ignored){}
     }
 
     /**
@@ -106,9 +104,7 @@ public class Island {
      */
     public void addStudent(Color student){
         students.add(student);
-        //System.out.println("Island: ora scatta un propertyChange per la modifica degli students");
         listeners.firePropertyChange("IslandStudents", null, this);
-        //System.out.println("Island: è scattato il propertyChange");
     }
 
     /**
@@ -177,20 +173,34 @@ public class Island {
             return null;
     }
 
+    /**
+     * Method putBan adds a ban to the island ban count.
+     */
     public void putBan(){
         bans++;
         listeners.firePropertyChange("IslandBans", null, this);
     }
 
+    /**
+     * Method removeBan removes a ban from the island ban count.
+     */
     public void removeBan(){
         bans--;
         listeners.firePropertyChange("IslandBans", null, this);
     }
 
+    /**
+     * Method getBans returns the island's number of bans.
+     * @return the island bans.
+     */
     public int getBans() {
         return bans;
     }
 
+    /**
+     * Method isBanned verifies if the island has bans.
+     * @return true if the island has at least one ban.
+     */
     public boolean isBanned(){
         return bans>0;
     }
