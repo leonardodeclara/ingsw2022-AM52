@@ -396,12 +396,12 @@ public class Game {
                 try{
                     pick = basket.pickStudent();
                     if (pick == null)
-                        throw new IllegalStateException(); //rivedere se questo è il modo giusto per gestire questo caso
+                        throw new IllegalStateException();
                     picks.add(pick);
                 }
                 catch (EmptyBasketException e){
                     cloud.fillStudents(picks);
-                    cloud.setFilled(false); //se non riesco a riempirla del tutto imposto filled a false in modo da skippare la fase di PICK_CLOUD
+                    cloud.setFilled(false);
                     picks.clear();
                     listeners.firePropertyChange("CloudsRefill", null, new ArrayList<>(clouds));
                     boolean oldLastRound = lastRound;

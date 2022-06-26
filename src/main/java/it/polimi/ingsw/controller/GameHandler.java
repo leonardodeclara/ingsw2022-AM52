@@ -25,6 +25,13 @@ public class GameHandler implements PropertyChangeListener{
     private ArrayList<String> playersOrder;
     private Iterator<String> playersOrderIterator;
 
+    /**
+     * Constructor GameHandler creates a new GameHandler instance by receiving a reference to the Server,
+     * the list of clients that are taking part in the game and their relative ClientHandler reference. It also holds the mode of the new game.
+     * @param server: Server instance holding information about the clients and the server state.
+     * @param nameToHandlerMap: HashMap containing the associations between a client's nickname and his ClientHandler instance.
+     * @param expertGame: game mode for the game managed by GameHandler.
+     */
     public GameHandler(Server server,HashMap<String, ClientHandler> nameToHandlerMap, boolean expertGame){
         this.server = server;
         this.nameToHandlerMap =nameToHandlerMap;
@@ -75,7 +82,6 @@ public class GameHandler implements PropertyChangeListener{
             handleCard12Effect((Card12EffectMessage) message, clientHandler);
     }
 
-
     /**
      * It starts a new game by instantiating a new GameController and by setting the listener system.
      * It also communicates to the players the model's initial status.
@@ -86,22 +92,13 @@ public class GameHandler implements PropertyChangeListener{
         gameController= new GameController(expertGame, new ArrayList<>(players));
         gameController.setUpdateListener(this); //gameHandler inizia ad ascoltare il controller
         System.out.println("GameHandler: ora faccio ascoltare game da GC");
-        //mando a tutti le isole istanziate
         Message gameInstantiationMessage = gameController.handleGameInstantiation();
         sendAll(gameInstantiationMessage);
-
-        //System.out.println("GameHandler: ho istanziato Controller che ha istanziato game con i listener");
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         Message setUpPhaseStateMessage = new ClientStateMessage(ClientState.SET_UP_WIZARD_PHASE);
-
-        sendAllExcept(nameToHandlerMap.get(playersOrder.get(0)),waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
-        sendTo(playersOrder.get(0), new AvailableWizardMessage(gameController.getAvailableWizards())); //al primo giocatore viene aggiornata la lista di wizard disponibili
-        sendTo(playersOrder.get(0),setUpPhaseStateMessage);  //viene aggiornato lo stato del primo giocatore
-
-
-        //in teoria qui manualmente vanno mandate a tutti i client le informazioni necessarie per far inizializzare le view
-        //o qui oppure in  startPlanningPhase() ma dato che viene printata la board lato client in planning phase, si rischia di printare quella vecchia
-
+        sendAllExcept(nameToHandlerMap.get(playersOrder.get(0)),waitStateMessage);
+        sendTo(playersOrder.get(0), new AvailableWizardMessage(gameController.getAvailableWizards()));
+        sendTo(playersOrder.get(0),setUpPhaseStateMessage);
         System.out.println("GameHandler: finito startGame");
     }
 
@@ -110,20 +107,13 @@ public class GameHandler implements PropertyChangeListener{
      * The other players are sent a message telling them to wait for their turn.
      */
     private void startPlanningPhase(){
-
-        gameController.updateCloudsStudents(); //all'inizio della planning phase vengono riempite le clouds
+        gameController.updateCloudsStudents();
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         Message playAssistantCardMessage = new ClientStateMessage(ClientState.PLAY_ASSISTANT_CARD);
-
         String startingPlayer = playersOrder.get(0);
-        sendAllExcept(nameToHandlerMap.get(startingPlayer), waitStateMessage); //tutti i giocatori tranne il primo vengono messi in wait
-
-        sendTo(startingPlayer, playAssistantCardMessage);  //viene aggiornato lo stato del primo giocatore
-
+        sendAllExcept(nameToHandlerMap.get(startingPlayer), waitStateMessage);
+        sendTo(startingPlayer, playAssistantCardMessage);
         updatePlayersOrder(playersOrder);
-        // in teoria togliendo questa chiamata non ci dovrebbero essere problemi con l'ordine
-        //perché alla prima planningPhase in assoluto il turno è stato stabilito in startGame
-        // e dall seconda si usa l'ordine stabilito dalle carte del round precedente finché non hanno scelto tutti le carte
     }
 
     /**
@@ -133,7 +123,6 @@ public class GameHandler implements PropertyChangeListener{
     private void startActionPhase(){
         Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);
         Message moveFromLobbyMessage = new ClientStateMessage(ClientState.MOVE_FROM_LOBBY);
-
         ArrayList<String> currentTurnOrder = gameController.getActionPhaseTurnOrder();
         String startingPlayer = currentTurnOrder.get(0);
         gameController.setCurrentPlayer(startingPlayer);
@@ -174,14 +163,7 @@ public class GameHandler implements PropertyChangeListener{
         }
     }
 
-    /**
-     * It extracts a player's name by its clientHandler's identification number.
-     * @param clientID: ClientHandler's identification number.
-     * @return the name of the player linked to the ClientHandler's clientId.
-     */
-    private String getNicknameFromClientID(int clientID){
-        return server.getIdToNicknameMap().get(clientID);
-    }
+
 
     /**
      * It manages the selection of a tower color by a player: the choice is communicated to the GameController,
@@ -233,9 +215,7 @@ public class GameHandler implements PropertyChangeListener{
                 System.out.println("Siccome " + clientName + " ha finito la sua selezione ora è il turno di " + nextPlayer);
                 sendTo(nextPlayer,playAssistantCardMessage);
             }
-            else{
-                startActionPhase();
-            }
+            else startActionPhase();
         }
         else sendTo(clientName, response);
     }
@@ -269,9 +249,6 @@ public class GameHandler implements PropertyChangeListener{
         String clientName = getNicknameFromClientID(client.getID());
         System.out.println("GameHandler:è arrivato un messaggio di moveMotherNature da " + clientName);
         Message response = gameController.moveMotherNature(clientName, steps); //se il messaggio andava bene il model si è aggiornato dopo questa riga
-        //gestire qui il caso di termine partita con la chiamata a closeMatch()
-        //dividere i casi: errore, tutto okay avanti con PICK_CLOUD o END_TURN, fine partita
-        //nel secondo terzo caso entrambi i messaggi sono
         if (response instanceof EndGameMessage){
             sendAll(response);
             closeMatch();
@@ -309,8 +286,6 @@ public class GameHandler implements PropertyChangeListener{
         String clientName = getNicknameFromClientID(client.getID());
         if(expertGame)
             gameController.resetPersonalityCard();
-        //qui metto l'avanzamento dell'iterator
-        // se l'ultimo giocatore ha giocato passo a EndRound quindi nuova planning phase ecce
         if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
             Message stateChange = new ClientStateMessage(ClientState.WAIT_TURN);
             sendTo(clientName, stateChange);
@@ -320,9 +295,8 @@ public class GameHandler implements PropertyChangeListener{
             System.out.println("Siccome " + clientName + " ha finito il suo turno ora è il turno di " + nextPlayer);
             sendTo(nextPlayer,moveStudentsFromLobbyMessage);
         }
-        else{
+        else
             handleEndRound();
-        }
 
     }
 
@@ -344,7 +318,7 @@ public class GameHandler implements PropertyChangeListener{
         }
         else
         {
-            Message response = new ErrorMessage(ErrorKind.ILLEGAL_MOVE); //il client non dovrebbe mai costringere il client a farlo, ma per solidità facciamo un doppio controllo
+            Message response = new ErrorMessage(ErrorKind.ILLEGAL_MOVE);
             sendTo(clientName,response);
         }
     }
@@ -352,8 +326,8 @@ public class GameHandler implements PropertyChangeListener{
     /**
      * This method is responsible for the sequence of events related to the effect of Personality 1:
      * the player's choice is communicated to the GameController, whose response is sent back to the client.
-     * @param message: Card1EffectMessage instance carrying the student and island choice made by the player.
-     * @param client: ClientHandler instance handling the player's connection.
+     * @param message Card1EffectMessage instance carrying the student and island choice made by the player.
+     * @param client ClientHandler instance handling the player's connection.
      */
     private void handleCard1Effect(Card1EffectMessage message, ClientHandler client){
         String clientName = getNicknameFromClientID(client.getID());
@@ -381,7 +355,6 @@ public class GameHandler implements PropertyChangeListener{
             return;
         }
         else if (response==null) {
-            //caso in cui non c'è stato un errore o non è finita la partita
             response= new ClientStateMessage(client.getCurrentClientState());
             System.out.println(clientName + "ha utilizzato l'effetto della carta 3, " +
                     "ora lo mando nello stato precedente alla invocazione della carta");
@@ -435,8 +408,6 @@ public class GameHandler implements PropertyChangeListener{
         System.out.println(clientName + "ha utilizzato l'effetto della carta 9, " +
                     "ora lo mando nello stato precedente alla invocazione della carta");
         sendTo(clientName, new ClientStateMessage(client.getCurrentClientState()));
-        //in teoria non ci possono essere errori di invalid input per questo carta perché
-        //eventuali input errati (cioè string che non sono i color) vengono gestiti lato client
     }
 
     /**
@@ -525,7 +496,6 @@ public class GameHandler implements PropertyChangeListener{
             clientHandler.setGameHandler(null);
         }
         server.removeGameHandler(this);
-        //poi lato server bisogna cancellare la partita e tutto il resto
     }
 
     /**
@@ -588,6 +558,20 @@ public class GameHandler implements PropertyChangeListener{
         }
     }
 
+    /**
+     * It extracts a player's name by its clientHandler's identification number.
+     * @param clientID: ClientHandler's identification number.
+     * @return the name of the player linked to the ClientHandler's clientId.
+     */
+    private String getNicknameFromClientID(int clientID){
+        return server.getIdToNicknameMap().get(clientID);
+    }
+
+    /**
+     * Method propertyChange receives an update notification from the GameController and sends all client a serialized
+     * message containing the information about the update.
+     * @param evt: event of type PropertyChangeEvent
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         System.out.println("GH: ho ricevuto un messaggio di update, ora lo mando in broadcast");
@@ -595,7 +579,8 @@ public class GameHandler implements PropertyChangeListener{
         if (eventName.equals("UpdateMessage") && evt.getNewValue()!=null){
             Message outwardsMessage = (Message) evt.getNewValue();
             sendAll(outwardsMessage);
+            System.out.println("GH: mandato il messaggio in broadcast");
         }
-        System.out.println("GH: mandato il messaggio in broadcast");
+
     }
 }

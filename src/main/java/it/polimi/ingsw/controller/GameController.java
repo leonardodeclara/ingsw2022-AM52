@@ -12,6 +12,10 @@ import java.util.*;
 import java.util.function.*;
 
 
+/**
+ * Class GameController receives parameters relative to game moves from GameHandler and communicates with model's Game class in order to apply those moves.
+ * Depending on the model's response GameController builds a new message that will be sent to one or more players.
+ */
 public class GameController implements PropertyChangeListener {
     private final Game game;
     private String currentPlayer;
@@ -19,13 +23,18 @@ public class GameController implements PropertyChangeListener {
     private final PropertyChangeSupport listener;
     private final UpdateMessageBuilder updateMessageBuilder;
     private final ArrayList<Tower> availableTowers;
-    private final ArrayList<Integer> availableWizards; //poi sta cosa va tolta da game
+    private final ArrayList<Integer> availableWizards;
     private final HashMap<String, Integer> playerToWizardMap;
     private BiPredicate<String,Integer> moveMotherNature;
     private Function<Island,HashMap<String,String>> calculateInfluence;
     private Consumer<String> updateTeachersOwnership;
 
 
+    /**
+     * Constructor GameController creates a new GameController instance.
+     * @param isExpert game mode for the match, can be expert or base.
+     * @param players nicknames of the players taking part in the game.
+     */
     public GameController(boolean isExpert, ArrayList<String> players) {
         updateMessageBuilder = new UpdateMessageBuilder();
         listener = new PropertyChangeSupport(this);
@@ -40,12 +49,15 @@ public class GameController implements PropertyChangeListener {
         availableTowers.addAll(Arrays.asList(Tower.values()));
         playerToWizardMap = new HashMap<>();
 
-
-        changeGameRulesForPersonalityCard(0); //settiamo le default rules
-
+        changeGameRulesForPersonalityCard(0);
         System.out.println("GameController: mi sono istanziato");
     }
 
+    /**
+     * Method handleGameInstantiation communicates with Game class in order to begin a new match.
+     * It also sets the listening system between GameController and GameHandler.
+     * @return a Message instance containing the first status of the game.
+     */
     public Message handleGameInstantiation(){
         game.instantiateGameElements(players);
         game.setPropertyChangeListeners(this);
@@ -53,6 +65,12 @@ public class GameController implements PropertyChangeListener {
         return updateMessageBuilder.buildGameInstantiationMessage(game);
     }
 
+    /**
+     * Method updateWizardSelection handles the selection of a wizard deck by a player. If the selection is not legal the player is being sent a GameError message.
+     * @param player name of the player choosing a wizard deck.
+     * @param wizard wizard chosen by the player.
+     * @return a message relative to the next game phase if the selection is legal, an ErrorMessage instance otherwise.
+     */
     public Message updateWizardSelection(String player, Integer wizard){
         System.out.println("Maghi disponibili lato server: "+availableWizards);
         if (availableWizards.contains(wizard)){
@@ -66,8 +84,12 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
-    //creo l'assocazione giocatore-torre, mi serve per poter aggiungere i giocatori alla partita
-    //potrei mettere qui dentro l'assegnamento del deck, ma posso anche farlo a parte
+    /**
+     * Method updateWizardSelection handles the selection of a Tower by a player. If the selection is not legal the player is being sent a GameError message.
+     * @param player name of the player choosing a Tower team.
+     * @param tower Tower chosen by the player.
+     * @return a message relative to the next game phase if the selection is legal, an ErrorMessage instance otherwise.
+     */
     public Message updateTowerSelection(String player, Tower tower){
         System.out.println("Torri disponibili lato server: "+availableTowers);
         if (availableTowers.contains(tower)){
@@ -80,19 +102,34 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
+    /**
+     * Method updateCloudsStudents calls the Game's method responsible for the refilling of clouds' students list.
+     */
     public void updateCloudsStudents(){
         game.refillClouds();
     }
 
+    /**
+     * Method updateAssistantCards handles the selection of an Assistant card by a player.
+     * @param player name of the player choosing an Assistant card.
+     * @param cardID priority of the chosen card.
+     * @return a message relative to the next game phase if the selection is legal, an ErrorMessage instance otherwise.
+     */
     public Message updateAssistantCards(String player, int cardID){
-        if(game.playAssistantCard(player,cardID)==-1){ //se returna -1 la carta non può essere giocata
+        if(game.playAssistantCard(player,cardID)==-1)
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
-        }else{ //altrimenti
+        else
             return new ClientStateMessage(ClientState.WAIT_TURN);
-        }
+
     }
 
-
+    /**
+     * Method moveStudentsFromLobby handles the game action carried out by a player of moving three student tiles from his board's lobby to his board's table.
+     * @param player name of the player responsible for the game action.
+     * @param studentIDs indexes of the students tile being moved from the board's lobby.
+     * @param destIDs destinations of the selected student tiles.
+     * @return a message relative to the next game phase if the selection is legal, an ErrorMessage instance otherwise.
+     */
     public Message moveStudentsFromLobby(String player, ArrayList<Integer> studentIDs, ArrayList<Integer> destIDs){
         if(game.moveStudentsFromLobby(player,studentIDs,destIDs)){
             updateTeachersOwnership.accept(player);
@@ -102,20 +139,22 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
+    /**
+     * Method moveMotherNature handles the game action carried out by a player of moving Mother Nature from its current island to a new destination island.
+     * Furthermore, if the action triggers a end-game condition a message communicating the winner is being sent to all players.
+     * @param player name of the player responsible for the game action.
+     * @param steps number of steps by which Mother Nature is being moved.
+     * @return a message relative to the next game phase if the selection is legal, an ErrorMessage instance otherwise.
+     */
     public Message moveMotherNature(String player, int steps){
         if(moveMotherNature.test(player,steps)){
-            if (!game.getCurrentMotherNatureIsland().isBanned()){ //effetto carta 5
-                //qui va aggiunto tutta la gestione del calcolo influenza, spostamento torri, merge isole ecc
+            if (!game.getCurrentMotherNatureIsland().isBanned()){
                 calculateInfluence.apply(game.getCurrentMotherNatureIsland());
-                //calculateInfluence prende a prescindere bannedColor,
-                //ma se non è stata attivata la carta 9 non lo prende in considerazione
                 if (game.checkGameOver())
                     return new EndGameMessage(game.getWinner()==null? Constants.TIE: game.getWinner().getNickname());
             }
             else {
-
                 ((ExpertGame)game).resetIslandBan(game.getCurrentMotherNatureIsland());
-                //rivedere, potrebbe esserci un problema qui
             }
             if (game.isLastRound() && !game.areCloudsFull())
                 return new ClientStateMessage(ClientState.END_TURN);
@@ -127,19 +166,27 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
+    /**
+     * Method refillLobby handles the game action carried out by a player of picking a Cloud tile whose students tile will be moved to his board's lobby.
+     * @param player name of the player responsible for the game action.
+     * @param cloudIndex identification for the chosen Cloud instance.
+     * @return a message relative to the next game phase if the selection is legal, an ErrorMessage instance otherwise.
+     */
     public Message refillLobby(String player, int cloudIndex){
         if(game.moveStudentsToLobby(player, cloudIndex))
             return new ClientStateMessage(ClientState.END_TURN);
-            //soluzione temporanea che va cambiata:
-            //se sono in expert Game e non ho giocato la carta + ho i coins devo essere in grado di giocarla
-            //intanto usiamo END_TURN
+
         else
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
-    //questo deve costruire i messaggi degli stati ad hoc delle carte che fanno fare ai giocatori qualcosa
-    //se invece modifica un input viene fatto tutto internmente a setActivePersonality
-
+    /**
+     * Method playPersonalityCard handles the game action, carried out by a player, of activating a Personality card.
+     * @param player name of the player responsible for the game action.
+     * @param cardID identification for the chosen Personality card.
+     * @param currentClientState state of the playing client.
+     * @return a message relative to the game phase linked to the Personality effect if the selection is legal, an ErrorMessage instance otherwise.
+     */
     public Message playPersonalityCard(String player, int cardID,ClientState currentClientState){
         if(((ExpertGame) game).setActivePersonality(cardID)) {
             changeGameRulesForPersonalityCard(cardID);
@@ -150,21 +197,29 @@ public class GameController implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Method resetPersonalityCard cancels the game effects applied as a result of a Personality activation.
+     */
     public void resetPersonalityCard(){
         ((ExpertGame) game).resetActivePersonality();
         changeGameRulesForPersonalityCard(0);
         if (((ExpertGame)game).getBannedColor()!=null)
-            ((ExpertGame)game).resetBannedColor(); //inutile ma lo mettiamo comunque perché concettualmente corrretto
+            ((ExpertGame)game).resetBannedColor();
     }
 
+    /**
+     * Method changeGameRulesForPersonalityCard changes a specific game rule as a result of a Personality activation or deactivation.
+     * If the input is 0 it sets the rules to their default, otherwise it sets them accordingly to the effect of cardID.
+     * @param cardID Personality identification used to change a specific game rule.
+     */
     private void changeGameRulesForPersonalityCard(int cardID){
         switch(cardID){
-            case 0: //resetta gli effetti sulle regole di gioco
+            case 0:
                 moveMotherNature = game::moveMotherNature;
                 updateTeachersOwnership = game::updateTeachersOwnership;
                 calculateInfluence = game::calculateInfluence;
                 break;
-            case 2: //in teoria quando chiamiamo case != 0, è già stato resettato tutto, ma per sicurezza li mettiamo tutti i metodi
+            case 2:
                 moveMotherNature = game::moveMotherNature;
                 updateTeachersOwnership = ((ExpertGame)game)::updateTeachersOwnershipForCard2;
                 calculateInfluence = game::calculateInfluence;
@@ -269,28 +324,10 @@ public class GameController implements PropertyChangeListener {
         return null;
     }
 
-    public ArrayList<String> getActionPhaseTurnOrder(){
-        return game.getActionPhasePlayerOrder();
-    }
 
-
-    private String getRandomPlayer(){
-        Random rand = new Random();
-        return players.get(rand.nextInt(players.size()));
-    }
-
-    public ArrayList<Integer> getAvailableWizards() {
-        return availableWizards;
-    }
-
-    public ArrayList<Tower> getAvailableTowers() {
-        return availableTowers;
-    }
 
     public void setUpdateListener(GameHandler gameHandler){
         listener.addPropertyChangeListener("UpdateMessage", gameHandler);
-        //si potrebbe mettere anche il listener per il messaggio di errore,
-        // o magari quello lo gestisco in maniera diversa. rivedere
     }
 
     @Override
@@ -349,9 +386,6 @@ public class GameController implements PropertyChangeListener {
             System.out.println("GC: ho generato un messaggio di update valido: ora lo passo a GH");
             listener.firePropertyChange("UpdateMessage", null, toSend);
         }
-        //in propertyChange di GameHandler bisogna fare il controllo oldValue-newValue perché se
-        // la generazione dei messaggi restituisce null non devo inviare nulla (tipo nel caso LastRound)
-
     }
 
     public Game getGame() {
@@ -361,6 +395,23 @@ public class GameController implements PropertyChangeListener {
     public void setCurrentPlayer(String currentPlayer) {
         this.currentPlayer = currentPlayer;
         game.setCurrentPlayer(currentPlayer);
+    }
+
+    private String getRandomPlayer(){
+        Random rand = new Random();
+        return players.get(rand.nextInt(players.size()));
+    }
+
+    public ArrayList<Integer> getAvailableWizards() {
+        return availableWizards;
+    }
+
+    public ArrayList<Tower> getAvailableTowers() {
+        return availableTowers;
+    }
+
+    public ArrayList<String> getActionPhaseTurnOrder(){
+        return game.getActionPhasePlayerOrder();
     }
 
 }

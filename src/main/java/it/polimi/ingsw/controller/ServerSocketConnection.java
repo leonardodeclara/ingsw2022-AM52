@@ -5,7 +5,6 @@ import it.polimi.ingsw.Constants;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -13,8 +12,6 @@ public class ServerSocketConnection implements Runnable {
     private final int port;
     private final ExecutorService executorService;
     private final Server server;
-    //private final GameHandler gameHandler;
-    //ArrayList<ClientHandler> clientHandlers;
     private final boolean serverRunning;
 
     /**
@@ -26,8 +23,6 @@ public class ServerSocketConnection implements Runnable {
     public ServerSocketConnection(int port, Server server) {
         this.server = server;
         this.port = port;
-        //this.gameHandler = gameHandler;
-        //clientHandlers = new ArrayList<ClientHandler>();
         executorService = Executors.newCachedThreadPool();
         serverRunning =true;
     }
@@ -42,16 +37,11 @@ public class ServerSocketConnection implements Runnable {
         while (serverRunning) {
             try {
                 System.out.println("In attesa...");
-
-                //costruttore va modificato, ho tolto il parametro gameHandler
                 Socket socket = serverSocket.accept();
                 socket.setSoTimeout(Constants.TIMEOUT);
                 ClientHandler clientHandler = new ClientHandler(socket, server);
                 System.out.println("Connessione avvenuta con successo");
                 executorService.submit(clientHandler);
-                //queste cose le ho fatto aggiungere direttamente a clientHandler via classe Server
-                //clientHandlers.add(clientHandler);
-                //clientHandler.setID(clientHandlers.indexOf(clientHandler));
 
             } catch (IOException e) {
                 System.err.println("Error: " + e.getMessage());
@@ -73,6 +63,5 @@ public class ServerSocketConnection implements Runnable {
             System.exit(0);
         }
     }
-
 
 }

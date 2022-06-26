@@ -16,7 +16,7 @@ public class Server {
     private ArrayList<Lobby> lobbies;
     private HashMap<String, GameHandler> playerToGameMap;
     private ArrayList<GameHandler> gameHandlers;
-    private int clientHandlerCounter; //assegna gli id ai clientHandler
+    private int clientHandlerCounter;
 
     public Server(){
         idToNicknameMap= new HashMap<>();
@@ -28,7 +28,6 @@ public class Server {
     }
 
 
-    //questo in teoria è l'unico punto d'accesso tra i thread clienthandlers e il server, quindi lo sincronizziamo per gestirne l'uso concorrente da parte di più thread
     /**
      * It handles the first messages sent by a player in order to register its name and its choice
      * for the number of players and game mode.
@@ -50,8 +49,6 @@ public class Server {
      */
     public void handleLogin(LoginRequestMessage message, ClientHandler sender){
         String nickname = message.getPlayerNickname();
-
-        //questo controllo deve essere a livello server perché in teoria il nome deve essere univoco a livello server, non a livello partita
         if(isNicknameAvailable(nickname)){
             sender.setID(clientHandlerCounter);
             clientHandlerCounter++;
@@ -60,7 +57,6 @@ public class Server {
             sender.sendMessage(new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS));
         }else{
             ErrorMessage error = new ErrorMessage(ErrorKind.INVALID_NICKNAME);
-            System.out.println("Mando un messaggio di invalid nickname al client " + sender.getID());
             sender.sendMessage(error);
         }
     }
@@ -75,11 +71,9 @@ public class Server {
         boolean expertGame = message.isExpertGame();
         int numberOfPlayers = message.getNumberPlayers();
         Lobby matchingLobby = joinLobby(sender.getID(),numberOfPlayers,expertGame);
-        if(matchingLobby.getShouldStart()){ //c'è una lobby e il gioco sta per partire
-            System.out.println("Si parte!");
+        if(matchingLobby.getShouldStart()){
             createMatch(matchingLobby);
-        } else { //lobby appena creata/lobby già esistente ma non abbastanza players
-            System.out.println("Mando lo stato di attesa della lobby");
+        } else {
             sender.sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY));
         }
     }
@@ -97,14 +91,12 @@ public class Server {
             Lobby matchingLobby = getMatchingLobby(numberPlayers,expertGame);
             matchingLobby.addToLobby(idToNicknameMap.get(playerID));
             matchingLobby.checkIfShouldStart();
-            System.out.println("Esiste già una lobby di questo tipo e ha "+(matchingLobby.getPlayers().size()- 1)+" giocatori in attesa");
             return matchingLobby;
         }
         catch (NoSuchElementException e){
             Lobby newLobby = new Lobby(numberPlayers,expertGame);
             newLobby.addToLobby(idToNicknameMap.get(playerID));
             lobbies.add(newLobby);
-            System.out.println("Non esiste una lobby con questi parametri quindi la creiamo");
             return newLobby;
         }
     }
@@ -117,22 +109,18 @@ public class Server {
     private void createMatch(Lobby lobby){ //cancella la lobby, crea la lista giocatori, crea gamehandler e manda i messaggi ai giocatori
         ArrayList<String> players = lobby.getPlayers();
         boolean expert = lobby.isExpertGame();
-        lobbies.remove(lobby); //cancella la lobby
-        System.out.println("Inizializziamo il GH");
+        lobbies.remove(lobby);
         HashMap<String, ClientHandler> playerInGame = selectLobbyPlayers(players);
-        for (String player: playerInGame.keySet()){
-            System.out.println("Nella nuova partita c'è "+ player +", clientHandler numero " + playerInGame.get(player).getID());
-        }
         GameHandler gameHandler = new GameHandler(this,playerInGame,expert);
         gameHandlers.add(gameHandler);
         for (String player : players) {
             playerToGameMap.put(player,gameHandler);
         }
         ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
-        for (String nickname : players){ //fetching degli id dei giocatori della partita creata
+        for (String nickname : players){
             clientHandlers.add(nameToHandlerMap.get(nickname));
         }
-        for(ClientHandler ch : clientHandlers) //aggiungi al reference del gamehandler creato a ogni clienthandler
+        for(ClientHandler ch : clientHandlers)
             ch.setGameHandler(gameHandler);
 
         gameHandler.startGame();
@@ -165,16 +153,6 @@ public class Server {
                 .get();
     }
 
-    //alla creazione di una nuova partita viene rimossa da lobbies la lobby riferita a quella partita
-    //in teoria si può cancellare
-    private void removeLobby(int numberPlayers, boolean expertGame){
-        Lobby removedLobby=null;
-        for (Lobby lobby: lobbies)
-            if (lobby.getNumberPlayersRequired()== numberPlayers && lobby.isExpertGame()==expertGame)
-                removedLobby=lobby;
-        lobbies.remove(removedLobby);
-    }
-
     /**
      * It verifies whether a nickname's choice is valid or not by checking if there's already a client with that nickname.
      * @param nickname: the client's chosen name.
@@ -205,34 +183,29 @@ public class Server {
         nameToHandlerMap.put(nickname, clientConnection);
     }
 
-    public ClientHandler getClientHandlerById(int playerId){
-        String nickname = idToNicknameMap.get(playerId);
-        return nameToHandlerMap.get(nickname);
-    }
-
+    /**
+     * Method getIdToNicknameMap returns the HashMap containing the associations between a ClientHandler identification number
+     * and the name of the player associated with that ClientHandler.
+     * @return HashMap with the association between ClientHandler ID and player name.
+     */
     public HashMap<Integer, String> getIdToNicknameMap() {
         return idToNicknameMap;
     }
 
     /**
-     * It removes the selected ClientHandler from the server's registries.
-     * @param clientHandler: ClientHandler instance that is being removed from the server's maps.
+     * It removes the selected ClientHandler from the server's registries. If the disconnecting player is in an active
+     * match its ClientHandler reference is removed from the HashMap with the associations between nicknames and GameHandlers.
+     * @param clientHandler: ClientHandler instance that is being removed from the server's maps. Otherwise, he is removed from a waiting lobby.
      */
     public synchronized void removeClientConnection(ClientHandler clientHandler){
         String clientName = idToNicknameMap.get(clientHandler.getID());
         idToNicknameMap.remove(clientHandler.getID());
-        //bisogna gestire in maniera diversa il caso in cui il client sia ancora in attesa o il caso in cui sia a partita iniziata
-        //intanto facciamo così
 
-        //partita esiste
-        if (clientHandler.getGameHandler()!=null){
+        if (clientHandler.getGameHandler()!=null)
             playerToGameMap.remove(clientName);
-
-        }
-        else //è ancora in lobby
-        {
+        else
             removeClientFromLobby(clientName);
-        }
+
         nameToHandlerMap.remove(clientName);
 
     }

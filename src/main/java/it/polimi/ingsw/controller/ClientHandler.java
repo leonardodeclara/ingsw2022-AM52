@@ -9,9 +9,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
-
-//AGGIUNGERE ACTIVE PER DISATTIVARE I CLIENTHANDLER DEI CLIENT IN WAIT STATE (TANTO PER SICUREZZA)
-
 /**
  * ClientHandler's class handles the communication between a single client and the server by making use of sockets.
  * Serialized messages are exchanged through this class.
@@ -19,13 +16,19 @@ import java.net.SocketTimeoutException;
 public class ClientHandler implements Runnable {
     private final Socket socket;
     private final Server server;
-    private int ID; //same id of player
+    private int ID;
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private GameHandler gameHandler;
     private boolean active;
     private ClientState currentClientState;
 
+    /**
+     * Constructor ClientHandler creates a new ClientHandler instance.
+     * @param socket: Socket instance through which the server is connected to the client.
+     * @param server: Server instance holding information about the clients and the server state.
+     * @throws IOException //TODO
+     */
     public ClientHandler(Socket socket, Server server) throws IOException {
         this.socket = socket;
         this.server = server;
@@ -33,6 +36,7 @@ public class ClientHandler implements Runnable {
         out = new ObjectOutputStream(socket.getOutputStream());
     }
 
+    //TODO Rivedere
     /**
      * It loops continuing to read and handle messages sent by the client: as the loop's break it closes the connection
      * to client and eventually terminates the active match.
@@ -89,7 +93,7 @@ public class ClientHandler implements Runnable {
             throw new QuitException();
         }
         else
-            gameHandler.handleMessage(message,this); //attende che gamehandler,gamecontroller e gli altri facciano quello che devono
+            gameHandler.handleMessage(message,this);
     }
 
 
@@ -112,18 +116,13 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    //questo metodo va chiamato in caso di termine/crash partita,
-    // chiusura inaspettata della connessione lato client, chiusura volontaria lato client (manca messaggio disconnect)
-
     /**
      * It terminates the server's connection to client by removing its reference from the associations contained in the Server class.
      * Ultimately it closes the communication's endpoint.
      */
     public void closeConnection() {
         System.out.println("ClientHandler "+ ID+ ": tolgo i miei riferimenti dal server e poi chiudo la socket");
-        //toglie da tutte le mappe di server questo client, connessioni ecc.
         server.removeClientConnection(this);
-        //rivedere se
         try {
             socket.close();
         }
@@ -134,38 +133,43 @@ public class ClientHandler implements Runnable {
     }
 
 
+    /**
+     * Method setID sets ClientHandler's identification number.
+     * @param ID: unique number identification for the ClientHandler.
+     */
     public void setID(int ID){
         this.ID = ID;
     }
 
+    /**
+     * Method getID returns ClientHandler's identification number.
+     * @return ID, the unique number identification for the ClientHandler.
+     */
     public int getID(){
         return ID;
     }
 
+    /**
+     * Method setGameHandler sets ClientHandler's reference to a GameHandler instance.
+     * @param gameHandler: GameHandler instance managing the application of client's moves.
+     */
     public void setGameHandler(GameHandler gameHandler) {
         this.gameHandler = gameHandler;
     }
 
+    /**
+     * Method getGameHandler returns ClientHandler's reference to a GameHandler instance.
+     * @return GameHandler instance managing the application of client's moves.
+     */
     public GameHandler getGameHandler() {
         return gameHandler;
     }
 
+    /**
+     * Method getCurrentClientState returns the game state in which the client is currently set to.
+     * @return ClientState instance identifying the client's game status.
+     */
     public ClientState getCurrentClientState(){
         return currentClientState;
     }
 }
-
-
-/*
-i client handler sono collegati singolarmente alla classe Game_Handler.
-La classe game_handler ha un metodo handleMessage(msg,playerID) che viene chiamato da ClientHandler.
-Questo metodo ha uno switch instanceOf che chiama metodi differenti in base al tipo di messaggio
-I metodi si chiamano handleMoveStudentMessage, handleConnectionRequest ecc...
-La risposta del server viene scritta in un attributo di clienthandler, che la legge e la manda al client
-Per i metodi di gioco che richiedono aggiornamenti del model, viene chiamato GC.updateModel(MoveStudent message)
-GameController a sua volta ha un instanceof e chiama il metodo di GM in base al tipo di messaggio ricevuto
-Se riceve errore
-
-
-
- */

@@ -22,8 +22,6 @@ public class GameBoard {
     private PrintStream outputStream;
     private int coins;
 
-//TODO sostituire con ascii art intestazioni "board","islands","clouds"
-
     public GameBoard(PrintStream outputStream){
         availableWizards = new ArrayList<>();
         availableTowers = new ArrayList<>();

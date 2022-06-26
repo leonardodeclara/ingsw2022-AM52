@@ -19,8 +19,7 @@ import java.util.Objects;
 //questo messaggio viene restituito al controller, ascoltato da gameHandler che riceverà il messaggio da controller via firePropertyChange e ne gestirà l'invio ai client
 public class UpdateMessageBuilder {
 
-    public UpdateMessageBuilder() {
-    }
+    public UpdateMessageBuilder() {}
 
     public Message buildGameInstantiationMessage(Game game) {
         ArrayList<ClientIsland> clientIslands = new ArrayList<>();

@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ClientBoard implements Serializable {
-    static final long serialVersionUID = 42L;
+    private static final long serialVersionUID = 42L;
     private HashMap<Color,Integer> studentsTable;
     private ArrayList<Color> teacherTable;
     private ArrayList<Color> lobby;
@@ -21,7 +21,7 @@ public class ClientBoard implements Serializable {
     private String owner;
     private Tower team;
     private int currentCard;
-    private GameBoard GB; //TODO: da togliere, gestire in qualche altro modo il fatto di stampare le carte assistente o no
+    private GameBoard GB;
 
     public ClientBoard(String owner){
         this.owner = owner;
