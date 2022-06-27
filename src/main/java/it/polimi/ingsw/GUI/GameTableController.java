@@ -27,12 +27,12 @@ import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.Constants.*;
 
-//TODO visualizzazione messaggio last round
-//TODO: sistema di unclick per gli spostamenti di studenti
 
-
-//TODO schermata endgame
-
+/**
+ * Class GameTableController implements all the logic behind the Game Table FXML Scene
+ * It renders almost all the game elements, handles mouse event handling,
+ * sets up various selection effects, deals with player input and sends messages back to the GUI
+ */
 public class GameTableController extends GUIController implements UpdatableController{
     @FXML private ImageView player1Icon;
     @FXML private ImageView player2Icon;
@@ -50,7 +50,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private ArrayList<GUIPersonality> personalities;
     private HashMap<ClientBoard,GUIBoard> GUIBoards;
     private GUIBoard currentBoard;
-    private HashMap<Integer,String> localIDToPlayer; //1 sempre giocatore,2 giocatore in alto,3 giocatore in mezzo (associa all'icona ingame, il nickname)
+    private HashMap<Integer,String> localIDToPlayer;
     private double centerX = 0;
     private double centerY = 0;
     private boolean waitTurn = false;
@@ -59,8 +59,11 @@ public class GameTableController extends GUIController implements UpdatableContr
     private boolean isGameFinished;
     private ArrayList<Node> selectedImages;
 
-    public void start(){ //metodo di inizializzazione chiamato da GUI. In alcune situazioni viene chiamato due volte ma noi dobbiamo inizializzare una volta sola
-        if(!initialized){ //sarebbe meglio spostare questo controllo sulla GUI e generalizzarlo
+    /**
+     * Method start initializes all the data structures containing the various game elements to render.
+     */
+    public void start(){
+        if(!initialized){
             centerX = gui.getScreenX()/2;
             centerY = gui.getScreenY()/2 - 15;
             deckButton.setImage(new Image("/graphics/Wizard_"+(gui.getWizard()+1)+".png"));
@@ -82,39 +85,49 @@ public class GameTableController extends GUIController implements UpdatableContr
 
             localIDToPlayer = new HashMap<>();
             localIDToPlayer.put(1,gui.getPlayerNickname());
-            System.out.println("Bottone 1 è "+localIDToPlayer.get(1));
             int i = 2;
             for(String otherPlayer : gui.getOtherPlayers()){
                 localIDToPlayer.put(i,otherPlayer);
                 i++;
             }
-            System.out.println("Bottone 2 è "+localIDToPlayer.get(2));
-            System.out.println("Bottone 3 è "+localIDToPlayer.get(3));
             renderPlayerButtonName(player1Icon, localIDToPlayer.get(1));
             renderPlayerButtonName(player2Icon,localIDToPlayer.get(2));
             renderPlayerButtonName(player3Icon, localIDToPlayer.get(3));
 
             for(ClientBoard clientBoard : gui.getClientBoards()){
-                GUIBoards.put(clientBoard,new GUIBoard(clientBoard,gui,this,tableBounds)); //Crea tutte le GUIBoards
+                GUIBoards.put(clientBoard,new GUIBoard(clientBoard,gui,this,tableBounds));
             }
-            renderedDashboard = 1; //Di default renderizziamo la nostra board
-            ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard)); //retrieviamo la clientboard da renderizzare
-            currentBoard = GUIBoards.get(clientBoard); //e settiamo la currentBoard per la prima volta
+            renderedDashboard = 1;
+            ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard));
+            currentBoard = GUIBoards.get(clientBoard);
         }
 
     }
 
+    /**
+     * Method setWaitTurn sets waitTurn flag
+     * If the flag is set to True, the controller will render the gray overlay to prevent player input
+     * @param value is used to set waitTurn
+     */
     @Override
     public void setWaitTurn(boolean value) {
         waitTurn = value;
     }
 
+    /**
+     * Method endGame sets gameFinished flag to True and then renders end game overlay
+     */
     @Override
     public void endGame() {
         isGameFinished = true;
         renderEndGame();
     }
 
+    /**
+     * Method handleErrorMessage replaces the current state prompt with an error message for 2 seconds.
+     * This only gets called if the player tries to do an invalid action
+     * @param fromServer is a flag eventually used by the controller to decide which error message should be rendered
+     */
     @Override
     public void handleErrorMessage(boolean fromServer){
         List<String> texts= fromServer ? gui.getCurrentState().getServerErrorMessage() : gui.getCurrentState().getInputErrorMessage();
@@ -129,7 +142,7 @@ public class GameTableController extends GUIController implements UpdatableContr
 
                     @Override
                     public void run() {
-                        visualizeContextMessage();//può essere eseguito solo sul thread di GUI
+                        visualizeContextMessage();
                         renderIslands();
                         populateDashboard(false);
                     }
@@ -139,13 +152,19 @@ public class GameTableController extends GUIController implements UpdatableContr
         timer.schedule(task, 2000L);
     }
 
+    /**
+     * Method send check if something is currently selected and eventually sends to ClientMessageBuilder those parameters
+     * to build a message to send to the server accordingly to the current client state.
+     * This method gets called when the player clicks on CONFIRM button in the bottom center of the screen
+     * If nothing has been selected, an error prompt gets rendered
+     * If the player tries to perform an invalid action, an error prompt gets rendered
+     * It also handles various selection effects for both the selected items and the CONFIRM button
+     */
     public void send(){
-        //qui si hanno tanti selezionabili, ma abbiamo la garanzia che solo quelli clickable per il currentstate saranno !=null
-        //dobbiamo prendere e mettere quelli non null (Senza controllare quali sono) in un arraylist di object da passare a buildMessage
+
         sendButton.setEffect(new DropShadow());
 
-        //da sistemare
-        if(gui.getCurrentState().equals(ClientState.END_TURN) && actionParser.getParameters().size() == 0) //se siamo a fine turno e non vogliamo mandare le carte, scriviamo "end" in parameters
+        if(gui.getCurrentState().equals(ClientState.END_TURN) && actionParser.getParameters().size() == 0)
             actionParser.getParameters().add(0,"end");
 
 
@@ -153,25 +172,27 @@ public class GameTableController extends GUIController implements UpdatableContr
 
             Message message = clientMessageBuilder.buildMessageFromPlayerInput(actionParser.getParameters(), gui.getCurrentState());
             if(message != null){
-                System.out.println("Il messaggio è stato costruito ed è valido");
                 gui.passToSocket(message);
 
-                //pulisco l'array di parametri dopo aver inviato il messaggio
                 actionParser.clearSelectedParameters();
 
-                for(Node n : selectedImages) //resetta tutti gli effetti di selezione
+                for(Node n : selectedImages)
                     n.setEffect(null);
             }else{
                 handleErrorMessage(false);
-                System.out.println("Il giocatore non ha selezionato qualcosa di valido per lo stato corrente");
             }
         }else{
-            System.out.println("Il giocatore ha premuto send ma non ha selezionato niente");
             handleErrorMessage(false);
         }
 
     }
 
+    /**
+     * Method update gets from GUI instance the current status of the GameBoard instance
+     * and renders all the game elements accordingly.
+     * The rendered board depends on the current value of renderedDashboard variable
+     * If the current client state is WAIT_TURN or if the game is finished, a gray overlay with a message gets rendered
+     */
     @Override
     public void update() {
         renderIslands();
@@ -198,6 +219,10 @@ public class GameTableController extends GUIController implements UpdatableContr
 
     }
 
+    /**
+     * Method renderEndGame renders a gray overlay screen to prevent player input and
+     * renders a message in the center of the screen to let the player know that the game is over
+     */
     private void renderEndGame() {
         String gameOverMessage = "GAME OVER\n";
         if (gui.getWinner()==null)
@@ -219,20 +244,28 @@ public class GameTableController extends GUIController implements UpdatableContr
         gameOverText.toFront();
     }
 
+    /**
+     * Method renderSendButton renders the button used by the player to perform game actions
+     */
     private void renderSendButton(){
-        sendButton.setEffect(null); //modo temporaneo per resettare l'effetto generato dal click
+        sendButton.setEffect(null);
         sendButton.toFront();
         sendButton.setText(gui.getCurrentState().equals(ClientState.END_TURN) ? "END TURN" : "CONFIRM");
     }
 
+    /**
+     * Method renderIslands renders all the islands elements, in a circle pattern, to the screen.
+     * Each island corresponds to a GUIIsland instance
+     * Also,in the rendering loop, all the GUIIslands' events are set and
+     * the image reference gets saved
+     */
     private void renderIslands(){
         for(GUIIsland guiIsland : islands){
-            guiIsland.clearIsland(); //cancella tutte le isole e relativo contenuto
+            guiIsland.clearIsland();
         }
 
-        islands.clear(); //rimuovi le reference dall'array islands
+        islands.clear();
 
-        //procedi a renderizzare le isole da capo
         ArrayList<ClientIsland> clientIslands = gui.getIslands();
         int numIslands = clientIslands.size();
 
@@ -252,6 +285,12 @@ public class GameTableController extends GUIController implements UpdatableContr
         }
     }
 
+    /**
+     * Method renderClouds renders all the clouds elements, in a circle pattern, to the screen.
+     * Each cloud corresponds to a GUICloud instance
+     * Also,in the rendering loop, all the GUICloud events are set and
+     * the image reference gets saved
+     */
     private void renderClouds(){
         for (GUICloud cloud: clouds)
             cloud.clearCloud();
@@ -275,22 +314,30 @@ public class GameTableController extends GUIController implements UpdatableContr
         }
     }
 
-    private void populateDashboard(boolean fromClick){ //from click ci dice se è arrivato un update o se il metodo è stato chiamato dalla chiusura di una board
-        if(!fromClick){ //se è arrivato un update, resettiamo i drag n drop clientside
-            for(GUIBoard guiBoard : GUIBoards.values()) //le cicliamo tutte, non sappiamo quali sono state modificate client side
+    /**
+     * Method populateDashboard renders all the board elements to the screen.
+     * This includes lobby students, table students, teachers' tables and towers.
+     * The board to render is chosen accordingly to the value of renderedDashboard
+     */
+    private void populateDashboard(boolean fromClick){
+        if(!fromClick){
+            for(GUIBoard guiBoard : GUIBoards.values())
                 guiBoard.clearBoard(true);
         }
-        else{ //se il giocatore vuole vedere un altra board, dobbiamo preservare i drag n drop clientside
-            if(currentBoard != null){ //se c'è già qualcosa renderizzato lo puliamo senza resettarlo
+        else{
+            if(currentBoard != null){
                 currentBoard.clearBoard(false);
             }
-            ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard)); //retrieviamo la clientboard da renderizzare
-            currentBoard = GUIBoards.get(clientBoard); //e cambiamo la currentBoard
+            ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard));
+            currentBoard = GUIBoards.get(clientBoard);
         }
 
-        currentBoard.populate(); //in ogni caso si ripopola la currentBoard
+        currentBoard.populate();
     }
 
+    /**
+     * Method renderPersonalityCards renders all the personality cards to the screen.
+     */
     private void renderPersonalityCards(){
         for (GUIPersonality personality : personalities)
             personality.clearPersonality();
@@ -301,8 +348,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         int i = 0;
         for (ClientPersonality card: cards){
             int cardId = card.getCardID();
-            //System.out.println("GameTableController: renderizzo la carta personaggio "+cardId);
-            cardY = centerY - PERSONALITY_OFFSET_Y + ISLAND_IMAGE_HEIGHT*1.1; //scelta a caso
+            cardY = centerY - PERSONALITY_OFFSET_Y + ISLAND_IMAGE_HEIGHT*1.1;
             cardX= centerX - PERSONALITY_IMAGE_WIDTH + i*PERSONALITY_IMAGE_WIDTH;
             GUIPersonality guiPersonality = new GUIPersonality(cardId,cardX-PERSONALITY_IMAGE_WIDTH/2,
                     cardY-PERSONALITY_IMAGE_HEIGHT/2,PERSONALITY_IMAGE_WIDTH,PERSONALITY_IMAGE_HEIGHT,
@@ -314,31 +360,17 @@ public class GameTableController extends GUIController implements UpdatableContr
         }
     }
 
-    private ClientCloud getClientCloudFromImage(ArrayList<ClientCloud> clouds, int cloudCounter){
-        Optional<ClientCloud> optCloud = clouds.stream()
-                .filter(clientCloud -> clientCloud.getCloudIndex() == cloudCounter)
-                .findFirst();
 
-        return optCloud.orElse(null);
-    }
-
-    private ClientIsland getClientIslandFromImage(ArrayList<ClientIsland> islands,int islandCounter){
-        Optional<ClientIsland> optIsland = islands.stream()
-                .filter(clientIsland -> clientIsland.getIslandIndex() == islandCounter)
-                .findFirst();
-
-        return optIsland.orElse(null);
-    }
-
+    /**
+     * Method renderDeck renders all the assistant cards to the screen.
+     */
     private void renderDeck(){
-        HashMap<Integer, Integer> deck = gui.getDeck(); //k= priority, v = numMoves
+        HashMap<Integer, Integer> deck = gui.getDeck();
         if((deckImages.size() == 0 || deck.size() != deckImages.size())){
             clearDeck();
             int deckCounter = 0;
             int startY = ASSISTANT_Y_START + (10 - deck.size()) * ASSISTANT_Y_OFFSET;
-            //System.out.println("Ci sono " + deck.size() + " carte nel mazzo");
             for (Integer priority : deck.keySet()) {
-                //System.out.println("Renderizzo la carta " + priority);
                 ImageView assistantImage = new ImageView("/graphics/assistant_" + priority + ".png");
                 assistantImage.setX(ASSISTANT_X);
                 assistantImage.setY(startY + deckCounter * ASSISTANT_Y_OFFSET);
@@ -346,7 +378,6 @@ public class GameTableController extends GUIController implements UpdatableContr
                 assistantImage.setFitHeight(ASSISTANT_IMAGE_HEIGHT);
                 assistantImage.setPreserveRatio(true);
                 assistantImage.setOnMouseClicked((MouseEvent e) -> {
-                    //handleClickEvent(priority, Clickable.ASSISTANT);
                     actionParser.handleSelectionEvent(priority,Clickable.ASSISTANT,gui.getCurrentState());
                     handleSelectionEffect(assistantImage,Clickable.ASSISTANT);
                 });
@@ -354,7 +385,6 @@ public class GameTableController extends GUIController implements UpdatableContr
                     handleHoverEvent(assistantImage, Clickable.ASSISTANT);
                 });
                 assistantImage.setOnMouseExited((MouseEvent e) -> {
-                    //tolgo l'effetto impostato quando muovo il mouse solo se la carta non è quella clickata
                     if (assistantImage.getEffect()==null || !(DropShadow.class).equals(assistantImage.getEffect().getClass()))
                         assistantImage.setEffect(null);
                 });
@@ -367,6 +397,10 @@ public class GameTableController extends GUIController implements UpdatableContr
         }
     }
 
+    /**
+     * Method clearDeck removes from the screen all the assistant cards' images
+     * It's used to clear the screen before rendering after update
+     */
     private void clearDeck(){
         for(ImageView card : deckImages){
             gui.removeElementFromScene(card);
@@ -374,6 +408,9 @@ public class GameTableController extends GUIController implements UpdatableContr
         deckImages.clear();
     }
 
+    /**
+     * Method renderPlayerButtonName renders the text to the bottom of the board buttons
+     */
     private void renderPlayerButtonName(ImageView playerIcon, String playerName){
         if (playerName==null) return;
         Text name;
@@ -382,9 +419,7 @@ public class GameTableController extends GUIController implements UpdatableContr
         else
             name = new Text(playerName.toUpperCase()+"'S"+"\nBOARD");
         name.setLayoutX(playerIcon.getLayoutX());
-        //System.out.println("Posizione x del buttone di " + playerName + "è " + playerIcon.getLayoutX());
         name.setLayoutY(playerIcon.getLayoutY()+NAME_TO_BUTTON_VGAP);
-        //System.out.println("Posizione y del buttone di " + playerName + "è " + playerIcon.getLayoutY());
         name.setFont(gui.getGameFont());
         name.setFill(Color.WHITE);
         name.setStrokeWidth(.5);
@@ -395,6 +430,10 @@ public class GameTableController extends GUIController implements UpdatableContr
         Tooltip.install(playerIcon, message);
     }
 
+    /**
+     * Method renderColorChoiceBox renders a ChoiceBox used by some cards, to
+     * let player select a specific color to activate the card effect
+     */
     private void renderColorChoiceBox() {
         if (colorChoiceBox!=null)
             clearColorChoiceBox();
@@ -414,7 +453,10 @@ public class GameTableController extends GUIController implements UpdatableContr
         gui.addElementToScene(colorChoiceBox);
     }
 
-
+    /**
+     * Method visualizeContextMessage renders, accordingly to the current client state
+     * the context message so that the player knows what to do
+     */
     private void visualizeContextMessage(){
         StringBuilder messageForToolTip= new StringBuilder();
         List<String> texts= gui.getCurrentState().getGUIContextMessage(gui.getGB());
@@ -422,14 +464,18 @@ public class GameTableController extends GUIController implements UpdatableContr
             messageForToolTip.append(text).append("\n");
         }
 
-        //System.out.println("SCRIVO CONTEXT "+texts.get(0));
         contextMessage.setText(texts.get(0));
         Tooltip fullMessage = new Tooltip(messageForToolTip.toString());
         fullMessage.setShowDelay(Duration.seconds(0.3));
         Tooltip.install(contextMessage, fullMessage);
     }
 
-    public void handleSelectionEffect(Node n, Clickable type){ //gestisce gli effetti di selezione per ogni clickable (vedremo in futuro se avrà senso averlo così generalizzato)
+    /**
+     * Method handleSelectionEffect renders the selection effect for the selected items
+     * This is done only if the selected item's type is in the clickable list of the current
+     * client state
+     */
+    public void handleSelectionEffect(Node n, Clickable type){
         if(actionParser.canClick(gui.getCurrentState(),type)){
             selectedImages.add(n);
             switch(type){
@@ -464,9 +510,14 @@ public class GameTableController extends GUIController implements UpdatableContr
         }
     }
 
-    public void handleHoverEvent(Node n, Clickable hoveredElement){ //gestisce l'hover per ogni clickable (vedremo in futuro se avrà senso averlo generalizzato)
+    /**
+     * Method handleHoverEvent renders the hover effect for the item pointed
+     * by the mouse cursor
+     * This is done only if the hovered item's type is in the clickable list of the current
+     * client state
+     */
+    public void handleHoverEvent(Node n, Clickable hoveredElement){
         if(actionParser.canClick(gui.getCurrentState(),hoveredElement)){
-            //aggiungo il bloom solo se la carta non è stata clickata
             if (n.getEffect()==null){
                 Bloom bloom = new Bloom();
                 bloom.setThreshold(0.1);
@@ -474,39 +525,60 @@ public class GameTableController extends GUIController implements UpdatableContr
         }
     }
 
-
+    /**
+     * Method onPlayer1Click renders the board of player 1, which is always the player
+     * who is playing the game from this instance of the game.
+     * If the rendered board of the player has already been rendered, nothing changes
+     * If the player is moving students with drag n drop, nothing changes
+     */
     public void onPlayer1Click(){
         if(renderedDashboard!=1 && !currentBoard.isLobbyModified()){
-            //clearBoard();
             renderedDashboard = 1;
             populateDashboard(true);
         }
     }
 
-
+    /**
+     * Method onPlayer2Click renders the board of player 2
+     * If the rendered board of the player has already been rendered, nothing changes
+     * If the player is moving students with drag n drop, nothing changes
+     */
     public void onPlayer2Click(){
         if(renderedDashboard!=2 && !currentBoard.isLobbyModified()){
-            //clearBoard();
             renderedDashboard = 2;
             populateDashboard(true);
         }
     }
+
+    /**
+     * Method onPlayer3Click renders the board of player 3
+     * If the rendered board of the player has already been rendered, nothing changes
+     * If the player is moving students with drag n drop, nothing changes
+     */
     public void onPlayer3Click(){
         if(renderedDashboard!=3 && !currentBoard.isLobbyModified()){
-            //clearBoard();
             renderedDashboard = 3;
             populateDashboard(true);
         }
     }
 
+    /**
+     * Method extractMNsteps returns the distance between the island where mother nature is
+     * and the one specified by the island ID parameter
+     * @param islandId represents the ID of the island to consider in the calculation
+     * @return the result of the calculation
+     */
     public int extractMNsteps(int islandId){
         return gui.getGB().getMotherNatureDistance(islandId);
     }
 
-    public void changeShowedCards(MouseEvent mouseEvent) {
-        //System.out.println("Ho cliccato per cambiare le carte da mostrare");
+
+    /**
+     * Method changeShowedCards show/hides the assistant cards played in the current turn
+     * or the player's deck cards accordingly to showDeck flag
+     */
+    public void changeShowedCards() {
         if(showDeck) {
-            //System.out.println("ora mostro le currentAssistantCards");
             for (ImageView deckCardImage : deckImages)
                 deckCardImage.setVisible(false);
             for (Map.Entry<ImageView,Text> turnCardImage: currentTurnCardsImages.entrySet()){
@@ -516,7 +588,6 @@ public class GameTableController extends GUIController implements UpdatableContr
             showDeck=false;
         }
         else{
-            //System.out.println("ora mostro le deckImages");
             for (Map.Entry<ImageView,Text> turnCardImage: currentTurnCardsImages.entrySet()){
                 turnCardImage.getKey().setVisible(false);
                 turnCardImage.getValue().setVisible(false);
@@ -527,27 +598,25 @@ public class GameTableController extends GUIController implements UpdatableContr
         }
     }
 
+    /**
+     * Method renderCurrentTurnCards renders the current turn cards
+     */
     public void renderCurrentTurnCards(){
         HashMap<String,Integer> playerToCard = gui.getTurnCards();
         HashMap<String,Integer> cardsToRender=
                 new HashMap<>(playerToCard.entrySet().
                 stream().filter(entry->entry.getValue()!=0).
                 collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
-        //se qualcuno non ha ancora giocato la sua carta assistente viene settato in GameBoard che il valore della sua carta è 0
 
         if (currentTurnCardsImages.size()==0 || currentTurnCardsImages.size()!=cardsToRender.size()){
             clearCurrentTurnCards();
             int cardCounter = 0;
             double startY = deckButton.getLayoutY()-CURRENT_ASSISTANT_VGAP;
-            //System.out.println("Start y per le current assistant: "+startY);
 
             for (Map.Entry<String,Integer> cardChoice: cardsToRender.entrySet()) {
-                //System.out.println("Renderizzo la carta "+cardChoice.getValue()+" di " + cardChoice.getKey());
                 ImageView assistantImage = new ImageView("/graphics/assistant_" + cardChoice.getValue() + ".png");
                 assistantImage.setX(ASSISTANT_X);
                 assistantImage.setY(startY - cardCounter * CURRENT_ASSISTANT_VGAP);
-                //System.out.println("Carta di "+cardChoice.getKey()+" in posizione x "+assistantImage.getX());
-                //System.out.println("Carta di "+cardChoice.getKey()+" in posizione y "+assistantImage.getY());
                 assistantImage.setFitWidth(ASSISTANT_IMAGE_WIDTH);
                 assistantImage.setFitHeight(ASSISTANT_IMAGE_HEIGHT);
                 assistantImage.setPreserveRatio(true);
@@ -555,32 +624,46 @@ public class GameTableController extends GUIController implements UpdatableContr
                         "YOUR CARD": cardChoice.getKey().toUpperCase()+"'S CARD";
                 Text cardLabel = new Text(text);
                 cardLabel.setX(ASSISTANT_X);
-                cardLabel.setY(assistantImage.getY()+ASSISTANT_IMAGE_HEIGHT*0.9);//test
+                cardLabel.setY(assistantImage.getY()+ASSISTANT_IMAGE_HEIGHT*0.9);
                 cardLabel.setFont(gui.getGameFont());
-                cardLabel.setFill(Color.WHITE); //si potrebbe mettere nel css
+                cardLabel.setFill(Color.WHITE);
                 currentTurnCardsImages.put(assistantImage,cardLabel);
                 gui.addElementToScene(assistantImage);
                 gui.addElementToScene(cardLabel);
-                //per centrare il testo, una variante di questo
-                //Bounds textBounds = cardLabel.getBoundsInLocal();
-                //double scalex = ASSISTANT_IMAGE_WIDTH/textBounds.getWidth();
-                //cardLabel.setScaleX( scalex );
-
                 assistantImage.setVisible(!showDeck);
                 cardLabel.setVisible(!showDeck);
                 cardLabel.toFront();
                 cardCounter++;
             }
         }
-        //System.out.println("Numero di immagini di carte assistente del turno: "+currentTurnCardsImages.size());
     }
 
+    /**
+     * Method clearCurrentTurnCards removes from the screen all the assistant cards' images played in the current turn
+     * It's used to clear the screen before rendering after update
+     */
     private void clearCurrentTurnCards(){
         for(Map.Entry<ImageView,Text> card : currentTurnCardsImages.entrySet()){
             gui.removeElementFromScene(card.getKey());
             gui.removeElementFromScene(card.getValue());
         }
         currentTurnCardsImages.clear();
+    }
+
+    private ClientCloud getClientCloudFromImage(ArrayList<ClientCloud> clouds, int cloudCounter){
+        Optional<ClientCloud> optCloud = clouds.stream()
+                .filter(clientCloud -> clientCloud.getCloudIndex() == cloudCounter)
+                .findFirst();
+
+        return optCloud.orElse(null);
+    }
+
+    private ClientIsland getClientIslandFromImage(ArrayList<ClientIsland> islands,int islandCounter){
+        Optional<ClientIsland> optIsland = islands.stream()
+                .filter(clientIsland -> clientIsland.getIslandIndex() == islandCounter)
+                .findFirst();
+
+        return optIsland.orElse(null);
     }
 
     private void clearColorChoiceBox(){
