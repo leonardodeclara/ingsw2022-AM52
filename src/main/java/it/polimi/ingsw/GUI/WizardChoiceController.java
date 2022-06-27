@@ -3,7 +3,6 @@ package it.polimi.ingsw.GUI;
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.Message;
 import javafx.fxml.FXML;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.effect.Bloom;
 import javafx.scene.effect.BoxBlur;
@@ -14,11 +13,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Screen;
 
 import java.util.ArrayList;
-
-import static it.polimi.ingsw.Constants.TIE;
 
 public class WizardChoiceController extends GUIController implements UpdatableController{
     @FXML
@@ -139,7 +135,7 @@ public class WizardChoiceController extends GUIController implements UpdatableCo
             gui.setWizard(selectedWizard);
             //per ora non serve currentState perchè questo controller non si occupa di altro
             System.out.println("Mando "+selectedWizard);
-            Message builtMessage = client.buildMessageFromPlayerInput(actionParser.parseWizardChoice(selectedWizard), ClientState.SET_UP_WIZARD_PHASE);
+            Message builtMessage = clientMessageBuilder.buildMessageFromPlayerInput(actionParser.parseWizardChoice(selectedWizard), ClientState.SET_UP_WIZARD_PHASE);
             gui.passToSocket(builtMessage);
             alreadyPressed = true;
         }

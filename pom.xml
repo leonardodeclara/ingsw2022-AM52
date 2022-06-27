@@ -121,7 +121,7 @@
               <appendAssemblyId>false</appendAssemblyId>
               <archive>
                 <manifest>
-                  <mainClass>it.polimi.ingsw.client.EriantysClient</mainClass>
+                  <mainClass>it.polimi.ingsw.clientMessageBuilder.EriantysClient</mainClass>
                 </manifest>
               </archive>
               <descriptorRefs>

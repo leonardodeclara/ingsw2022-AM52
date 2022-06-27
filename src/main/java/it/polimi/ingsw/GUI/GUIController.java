@@ -1,12 +1,11 @@
 package it.polimi.ingsw.GUI;
 
-import it.polimi.ingsw.client.Client;
-import javafx.scene.control.TextField;
+import it.polimi.ingsw.client.ClientMessageBuilder;
 
 public class GUIController implements GUIControllerInterface{
     protected GUI gui; //main class
     protected ActionParser actionParser; //array of raw data builder
-    protected Client client; //message builder
+    protected ClientMessageBuilder clientMessageBuilder; //message builder
 
     @Override
     public void setGUI(GUI gui) {
@@ -14,8 +13,8 @@ public class GUIController implements GUIControllerInterface{
     }
 
     @Override
-    public void setClient(Client client) {
-        this.client = client;
+    public void setClient(ClientMessageBuilder clientMessageBuilder) {
+        this.clientMessageBuilder = clientMessageBuilder;
     }
 
     @Override

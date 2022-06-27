@@ -39,7 +39,7 @@ public class NicknameController extends GUIController{
             String stringNickname = nickname.getText();
             if(stringNickname.length() > 0 && !stringNickname.equals(" ")){
                 gui.setPlayerNickname(stringNickname);
-                Message message = client.buildMessageFromPlayerInput(actionParser.parseNickname(stringNickname), ClientState.CONNECT_STATE);
+                Message message = clientMessageBuilder.buildMessageFromPlayerInput(actionParser.parseNickname(stringNickname), ClientState.CONNECT_STATE);
                 gui.passToSocket(message);
                 alreadyPressed = true;
             }

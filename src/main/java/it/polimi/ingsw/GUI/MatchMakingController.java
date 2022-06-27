@@ -56,7 +56,7 @@ public class MatchMakingController extends GUIController{
             //per ora non serve currentState perchè questo controller non si occupa di altro se non questo
             ArrayList<Object> selectedMode = actionParser.parseNewGameParameters(numOfPlayersValue,isExpert);
 
-            Message builtMessage = client.buildMessageFromPlayerInput(selectedMode, ClientState.INSERT_NEW_GAME_PARAMETERS);
+            Message builtMessage = clientMessageBuilder.buildMessageFromPlayerInput(selectedMode, ClientState.INSERT_NEW_GAME_PARAMETERS);
             gui.passToSocket(builtMessage);
             gui.prepareView(selectedMode);
             alreadyPressed = true;

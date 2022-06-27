@@ -1,17 +1,13 @@
 package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.*;
-import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.Message;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -22,10 +18,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Screen;
 import javafx.util.Duration;
 
 import java.util.*;
@@ -157,7 +151,7 @@ public class GameTableController extends GUIController implements UpdatableContr
 
         if(actionParser.getParameters().size() > 0){
 
-            Message message = client.buildMessageFromPlayerInput(actionParser.getParameters(), gui.getCurrentState());
+            Message message = clientMessageBuilder.buildMessageFromPlayerInput(actionParser.getParameters(), gui.getCurrentState());
             if(message != null){
                 System.out.println("Il messaggio è stato costruito ed è valido");
                 gui.passToSocket(message);

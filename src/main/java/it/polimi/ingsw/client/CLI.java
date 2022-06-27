@@ -20,7 +20,7 @@ public class CLI implements Runnable,UI{
     private final Scanner inputStream;
     private final PrintStream outputStream;
     private boolean active;
-    private Client client;
+    private ClientMessageBuilder clientMessageBuilder;
     private ClientSocket clientSocket;
     private ClientState currentState;
     private InputParser inputParser;
@@ -33,7 +33,7 @@ public class CLI implements Runnable,UI{
     public CLI() {
         inputStream = new Scanner(System.in);
         outputStream = new PrintStream(System.out);
-        client = new Client(this);
+        clientMessageBuilder = new ClientMessageBuilder(this);
         receivedMessage = null;
         executorService = Executors.newSingleThreadScheduledExecutor();
         GB = new GameBoard(outputStream);
@@ -64,7 +64,7 @@ public class CLI implements Runnable,UI{
                 if (inputStream.hasNext()) {
                     playerInput = inputParser.parse(inputStream.nextLine(), currentState);
                     if (playerInput.size() > 0) {
-                        Message messageToSend = client.buildMessageFromPlayerInput(playerInput, currentState);
+                        Message messageToSend = clientMessageBuilder.buildMessageFromPlayerInput(playerInput, currentState);
                         try {
                             clientSocket.send(messageToSend);
                         } catch (IOException e) {

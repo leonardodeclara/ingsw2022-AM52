@@ -5,15 +5,12 @@ import it.polimi.ingsw.CLI.ClientCloud;
 import it.polimi.ingsw.CLI.ClientIsland;
 import it.polimi.ingsw.CLI.ClientPersonality;
 import it.polimi.ingsw.Constants;
-import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.model.*;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 //v1 di UpdateMessageBuilder: la classe si occupa di generare il messaggio di update in base al contenuto dell'evento ricevuto
 //questo messaggio viene restituito al controller, ascoltato da gameHandler che riceverà il messaggio da controller via firePropertyChange e ne gestirà l'invio ai client

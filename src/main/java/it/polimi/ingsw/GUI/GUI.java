@@ -2,7 +2,7 @@ package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.*;
 import it.polimi.ingsw.Constants;
-import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.ClientMessageBuilder;
 import it.polimi.ingsw.client.ClientSocket;
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.*;
@@ -10,21 +10,13 @@ import it.polimi.ingsw.model.Tower;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -46,7 +38,7 @@ public class GUI extends Application implements UI{
     private final HashMap<Scene,GUIController> controllers;
     private final String[] fxmlPaths;
     private ClientSocket clientSocket;
-    private final Client client;
+    private final ClientMessageBuilder clientMessageBuilder;
     private final ActionParser actionParser;
     private final GameBoard GB;
     private final ImageView greyOverlay;
@@ -62,7 +54,7 @@ public class GUI extends Application implements UI{
         fxmlPaths = Arrays.copyOf(Constants.fxmlPaths,Constants.fxmlPaths.length);
         scenes = new HashMap<>();
         controllers = new HashMap<>();
-        client = new Client(this);
+        clientMessageBuilder = new ClientMessageBuilder(this);
         actionParser = new ActionParser();
         GB = new GameBoard();
         greyOverlay = new ImageView();
@@ -176,7 +168,7 @@ public class GUI extends Application implements UI{
             scenes.put(path,scene);
             GUIController controller = fxmlLoader.getController();
             controller.setGUI(this);
-            controller.setClient(this.client);
+            controller.setClient(this.clientMessageBuilder);
             controller.setActionParser(this.actionParser);
             controllers.put(scene,controller);
         }
@@ -365,7 +357,7 @@ public class GUI extends Application implements UI{
     }
 
     public ArrayList<ClientBoard> getClientBoards(){
-        return new ArrayList<ClientBoard>(GB.getClientBoards().values());
+        return new ArrayList<>(GB.getClientBoards().values());
     }
     public ClientBoard getPlayerBoard(String playerNickname){
         return GB.getClientBoards().get(playerNickname);
@@ -394,9 +386,7 @@ public class GUI extends Application implements UI{
         ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(n);
     }
 
-    public void clearScene(){
-        ((AnchorPane)stage.getScene().getRoot()).getChildren().removeAll();
-    }
+
 
 
 
