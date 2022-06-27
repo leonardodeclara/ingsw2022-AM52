@@ -13,7 +13,11 @@ import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 
-
+/**
+ * Class MatchMakingController implements all the logic behind the MatchMaking Menu FXML Scene
+ * It parses parameters from ChoiceBox instances, sets up buttons' styling, handles mouse events,
+ * and passes built message back to the GUI instance
+ */
 public class MatchMakingController extends GUIController{
     @FXML
     private ChoiceBox<String> numOfPlayers;
@@ -24,6 +28,10 @@ public class MatchMakingController extends GUIController{
 
     private boolean alreadyPressed = false;
 
+    /**
+     * Method initialize sets up effects for button hover events
+     * and initializes choice boxes' fields
+     */
     @FXML
     public void initialize(){
         ObservableList<String> playerAvailableChoices = FXCollections.observableArrayList();
@@ -38,16 +46,15 @@ public class MatchMakingController extends GUIController{
         confirmButton.setText("SEARCH GAME");
         Font font = Font.loadFont(getClass().getResourceAsStream("/fonts/Hey Comic.ttf"), 10);
         confirmButton.setFont(font);
-        confirmButton.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
-
-            confirmButton.setEffect(new Bloom());
-
-        });
-        confirmButton.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
-            confirmButton.setEffect(null);
-        });
+        confirmButton.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> confirmButton.setEffect(new Bloom()));
+        confirmButton.addEventFilter(MouseEvent.MOUSE_EXITED, e -> confirmButton.setEffect(null));
     }
 
+    /**
+     * Method searchGame parses numOfPlayers and gameType parameters from ChoiceBoxes
+     * and sends them to ClientMessageBuilder to build a Message instance
+     * which is then passed to the GUI instance with passToSocket method
+     */
     public void searchGame(){
         if(!alreadyPressed){
             int numOfPlayersValue = Integer.parseInt(numOfPlayers.getSelectionModel().getSelectedItem());

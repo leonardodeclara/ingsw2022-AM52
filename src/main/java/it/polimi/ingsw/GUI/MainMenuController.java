@@ -1,10 +1,8 @@
 package it.polimi.ingsw.GUI;
 
-import it.polimi.ingsw.client.ClientState;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.effect.Bloom;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
 
@@ -31,41 +29,27 @@ public class MainMenuController extends GUIController {
         Font font = Font.loadFont(getClass().getResourceAsStream("/fonts/Hey Comic.ttf"), 12);
         sendButton.setFont(font);
         quitButton.setFont(font);
-        sendButton.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
+        sendButton.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> sendButton.setEffect(new Bloom()));
+        sendButton.addEventFilter(MouseEvent.MOUSE_EXITED, e -> sendButton.setEffect(null));
 
-            sendButton.setEffect(new Bloom());
-
-        });
-        sendButton.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
-            sendButton.setEffect(null);
-        });
-
-        quitButton.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
-
-            quitButton.setEffect(new Bloom());
-
-        });
-        quitButton.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
-            quitButton.setEffect(null);
-        });
+        quitButton.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> quitButton.setEffect(new Bloom()));
+        quitButton.addEventFilter(MouseEvent.MOUSE_EXITED, e -> quitButton.setEffect(null));
     }
 
 
     /**
      * Method openConnectionMenu calls GUI instance method to switch scene from Main Menu to Connection Menu
-     * @param event mouse click event reference
      */
     @FXML
-    void openConnectionMenu(MouseEvent event) {
+    void openConnectionMenu() {
         gui.openConnectMenu();
     }
 
     /**
      * Method quit terminates the currently running JVM
-     * @param event mouse click event reference
      */
     @FXML
-    void quit(MouseEvent event) {
+    void quit() {
         System.exit(0);
     }
 

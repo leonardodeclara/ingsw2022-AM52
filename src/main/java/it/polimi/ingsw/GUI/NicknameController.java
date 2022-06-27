@@ -12,7 +12,8 @@ import javafx.scene.text.Text;
 
 /**
  * Class NicknameController implements all the logic behind the Nickname Menu FXML Scene
- * It includes nickname parsing from TextField, buttons' styling, mouse event handling, and passing message back to the GUI instance
+ * It parses nickname string from TextField, sets up buttons style,handles mouse events,
+ * and passes built message back to the GUI instance
  */
 public class NicknameController extends GUIController{
 
@@ -31,14 +32,8 @@ public class NicknameController extends GUIController{
         confirmButton.setText("CONTINUE");
         Font font = Font.loadFont(getClass().getResourceAsStream("/fonts/Hey Comic.ttf"), 10);
         confirmButton.setFont(font);
-        confirmButton.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
-
-            confirmButton.setEffect(new Bloom());
-
-        });
-        confirmButton.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
-            confirmButton.setEffect(null);
-        });
+        confirmButton.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> confirmButton.setEffect(new Bloom()));
+        confirmButton.addEventFilter(MouseEvent.MOUSE_EXITED, e -> confirmButton.setEffect(null));
     }
 
     /**
