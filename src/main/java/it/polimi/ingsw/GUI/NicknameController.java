@@ -10,6 +10,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+/**
+ * Class NicknameController implements all the logic behind the Nickname Menu FXML Scene
+ * It includes nickname parsing from TextField, buttons' styling, mouse event handling, and passing message back to the GUI instance
+ */
 public class NicknameController extends GUIController{
 
     public Button confirmButton;
@@ -18,6 +22,9 @@ public class NicknameController extends GUIController{
     public Text nicknameMessage;
     private boolean alreadyPressed = false;
 
+    /**
+     * Method initialize sets the style for the buttons and sets up the mouse hover event handlers
+     */
     @FXML
     public void initialize(){
         confirmButton.setEffect(null);
@@ -33,6 +40,11 @@ public class NicknameController extends GUIController{
             confirmButton.setEffect(null);
         });
     }
+
+    /**
+     * Method authenticate gets the nickname in the TextField instance and sends it to ClientMessageBuilder instance to build a message,
+     * which is then passed to the GUI instance with passToSocket
+     */
     @FXML
     public void authenticate(){
         if(!alreadyPressed){
@@ -47,10 +59,15 @@ public class NicknameController extends GUIController{
 
     }
 
+    /**
+     * Method handleErrorMessage replaces the text asking for a nickname, with an error message.
+     * This only gets called if the player sends a not available nickname
+     * @param fromServer is a flag eventually used by the controller to decide which error message should be rendered
+     */
     @Override
     public void handleErrorMessage(boolean fromServer) {
         alreadyPressed=false;
         nickname.clear();
-        nicknameMessage.setText("Riprova");
+        nicknameMessage.setText("Entered nickname is not available. Please choose another one");
     }
 }

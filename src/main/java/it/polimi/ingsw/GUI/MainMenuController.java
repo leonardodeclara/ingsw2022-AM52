@@ -8,6 +8,10 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
 
+/**
+ * Class MainMenuController implements all the logic behind the Main Menu FXML Scene
+ * including button event handling and button styling
+ */
 public class MainMenuController extends GUIController {
 
     @FXML
@@ -15,6 +19,9 @@ public class MainMenuController extends GUIController {
     @FXML
     private Button sendButton;
 
+    /**
+     * Method initialize sets the style for the buttons and sets up the mouse hover event handlers
+     */
     @FXML
     public void initialize() {
         sendButton.setEffect(null);
@@ -44,11 +51,19 @@ public class MainMenuController extends GUIController {
     }
 
 
+    /**
+     * Method openConnectionMenu calls GUI instance method to switch scene from Main Menu to Connection Menu
+     * @param event mouse click event reference
+     */
     @FXML
     void openConnectionMenu(MouseEvent event) {
         gui.openConnectMenu();
     }
 
+    /**
+     * Method quit terminates the currently running JVM
+     * @param event mouse click event reference
+     */
     @FXML
     void quit(MouseEvent event) {
         System.exit(0);
