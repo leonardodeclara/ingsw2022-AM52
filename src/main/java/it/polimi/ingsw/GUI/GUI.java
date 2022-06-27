@@ -35,30 +35,30 @@ import java.util.List;
 
 import static it.polimi.ingsw.Constants.*;
 
-
+/**
+ * Class GUI represents the main class for the Client Graphic Interface component. It initializes and updates the scene as well as handling messages coming
+ * from ClientSocket
+ */
 public class GUI extends Application implements UI{
     private ClientState currentState;
-    private boolean active;
     private Stage stage;
-    private HashMap<String,Scene> scenes;
-    private HashMap<Scene,GUIController> controllers;
-    private String[] fxmlPaths;
+    private final HashMap<String,Scene> scenes;
+    private final HashMap<Scene,GUIController> controllers;
+    private final String[] fxmlPaths;
     private ClientSocket clientSocket;
-    private Client client;
-    private ActionParser actionParser;
-    private GameBoard GB;
-    private ImageView greyOverlay;
-    private int wizardID; //andrebbero messe in GameBoard ma è una sbatta
-    private Tower team; //andrebbero messe in GameBoard ma è una sbatta
+    private final Client client;
+    private final ActionParser actionParser;
+    private final GameBoard GB;
+    private final ImageView greyOverlay;
+    private int wizardID;
+    private Tower team;
     private Font gameFont;
 
-
-    //TODO aggiungere send di messaggio di Disconnect quando si chiude la finestra
-
-
+    /**
+     * Constructor GUI creates a new GUI instance.
+     */
     public GUI(){
         currentState = ClientState.CONNECT_STATE;
-        active = true;
         fxmlPaths = Arrays.copyOf(Constants.fxmlPaths,Constants.fxmlPaths.length);
         scenes = new HashMap<>();
         controllers = new HashMap<>();
@@ -69,31 +69,33 @@ public class GUI extends Application implements UI{
         greyOverlay.setImage(new Image("graphics/wait_gray_overlay.png"));
     }
 
-    public void handleMessageFromServer(Message message){ //quando arriva il messaggio viene gestito come sulla CLI e viene cambiata/aggiornata la scena
-        Platform.runLater(new Runnable() { //il thread client socket non l'auth per lavorare con javaFX, quindi tutto l'aggiornamento della GUI avviene dopo nel thread ad hoc
+
+    /**
+     * Method handleMessageFromServer receives a Message instance from ClientSocket and react accordingly to the message type.
+     * @param message received from server.
+     * If the message is instance of ClientStateMessage, handleMessageFromServer changes the current client state and if the current scene is updatable, it gets updated
+     * If the message is instance of ErrorMessage, handleMessageFromServer calls the current scene's controller error handling method
+     * If the message is instance of UpdateMessage, handleMessageFromServer updates the GameBoard instance and updates the scene if it's in WAIT_TURN state
+     * Since this method is called from another thread, Platform.runLater() ensures that the method is executed by this (GUI) thread to avoid run time exceptions
+     */
+    public void handleMessageFromServer(Message message){
+        Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 if(message instanceof ClientStateMessage){
                     currentState = ((ClientStateMessage) message).getNewState();
-                    //System.out.println("Vado nello stato "+currentState);
-                    renderScene(); //update scene in funzione del nuovo stato
+                    renderScene();
                     GUIController currentController = controllers.get(stage.getScene());
-                    //forse sarebbe comodo mettere currentController come attributo di gui
-                    //System.out.println("La scena attuale è "+stage.getScene() + " e il controller "+currentController);
-                    if(currentController instanceof UpdatableController){  //Se l'update deve aggiornare anche la scena allora lo fa, altrimenti l'aggiornamento è propagato solo su GB
+                    if(currentController instanceof UpdatableController){
                         ((UpdatableController) currentController).update();
-                        //System.out.println("Aggiorno il controller "+currentController);
                     }
                 }
                 else if (message instanceof ErrorMessage){
-                    //System.out.println("Errore! ");
                     GUIController currentController = controllers.get(stage.getScene());
                     currentController.handleErrorMessage(true);
-                    //si potrebbe aggiungere all'interfaccia GUIController un metodo handleErrorMessage
-                    // che permette di gestire in maniera diverso il messaggio di errore
                 }
                 else {
-                    ((UpdateMessage) message).update(GB); //aggiorna la gameboard
+                    ((UpdateMessage) message).update(GB);
                     GUIController currentController = controllers.get(stage.getScene());
                     if(currentController instanceof UpdatableController && currentState.equals(ClientState.WAIT_TURN)){
                         if(message instanceof ActivePersonalityMessage
@@ -110,15 +112,21 @@ public class GUI extends Application implements UI{
 
     }
 
-
+    /**
+     * Method prepareView initializes the GameBoard with the game parameters (isExpert and numberOfPlayers)
+     * @param data received from MatchMaking controller when the player has sent game parameters
+     */
     public void prepareView(ArrayList<Object> data){
         GB.setNumberOfPlayers((Integer)data.get(0));
         GB.setExpertGame((Boolean)data.get(1));
     }
-
-    private void renderScene(){ //nelle fasi più avanzate si aggiornerà la scena aggiungendo immagini o altro ma non si chiamerà più setScene
+    /**
+     * Method renderScene sets the scene accordingly to the currentState and eventually renders the wait gray screen overlay
+     * In WAIT_TURN state it also does some additional operations to assure that the next scene is loaded in the correct moment
+     */
+    private void renderScene(){
         switch (currentState) {
-            case INSERT_NEW_GAME_PARAMETERS -> { //vanno usati i pulsanti nella cartella graphics per tutti quelli presenti in game
+            case INSERT_NEW_GAME_PARAMETERS -> {
                 setScene(Constants.MATCHMAKING_MENU_FXML);
             }
             case WAIT_IN_LOBBY -> setScene(Constants.LOBBY_FXML);
@@ -128,7 +136,7 @@ public class GUI extends Application implements UI{
                     setScene(Constants.WIZARD_CHOICE_FXML);
                 if (currentScene.equals(scenes.get(Constants.TOWER_CHOICE_FXML))){
                     setScene(Constants.GAME_TABLE_FXML);
-                    stage.centerOnScreen();//vedere se si può fare in maniera diversa
+                    stage.centerOnScreen();
                 }
 
                 setSceneShouldWait(true);
@@ -154,15 +162,13 @@ public class GUI extends Application implements UI{
                 GUIController currentController = controllers.get(stage.getScene());
                 if(currentController instanceof UpdatableController)
                     ((UpdatableController) currentController).endGame();
-
-                //System.out.println("FINE GAMEEEE");
-
-
             }
         }
     }
 
-
+    /**
+     * Method setupScenes initializes all the scenes and controllers, saving them in <FXML Path, Scene> and <Scene, Controller> hashmaps
+     */
     public void setupScenes() throws IOException {
         for(String path : fxmlPaths){
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(path));
@@ -176,17 +182,25 @@ public class GUI extends Application implements UI{
         }
     }
 
-
+    /**
+     * Method setScene changes the current scene accordingly to the fxml path received as parameter
+     * @param path represents the FXML path of the scene to load
+     */
     public void setScene(String path){
       stage.setScene(scenes.get(path));
       stage.show();
       GUIController currentController = controllers.get(stage.getScene());
       if(currentController instanceof UpdatableController){
-          ((UpdatableController)currentController).start(); //inutilizzato per ora (basta il metodo update) ma non rimuovere finchè non si è sicuri che non serva
+          ((UpdatableController)currentController).start();
       }
     }
 
-    private void setSceneShouldWait(boolean value){ //si potrebbe chiamare da renderScene direttamente disable ed enable ma così penso sia p
+    /**
+     * Method setSceneShouldWait calls the current scene's controller waitTurn setter, so that the update() method inside controller "knows"
+     * if the wait overlay should be rendered or not.
+     * @param value is true if the wait overlay should be added, false if it should be removed
+     */
+    private void setSceneShouldWait(boolean value){
         GUIController controller = controllers.get(stage.getScene());
         try{
             ((UpdatableController) controller).setWaitTurn(value);
@@ -196,26 +210,31 @@ public class GUI extends Application implements UI{
 
     }
 
-    public void disableScene(){ //ingrigisce la GUI dinamicamente (indipendentemente dalla scena renderizzata) e scrive ATTENDI IL TUO TURNO... al centro
+    /**
+     * Method disableScene adds to the stage the gray overlay.
+     */
+    public void disableScene(){
        if(!((AnchorPane)stage.getScene().getRoot()).getChildren().contains(greyOverlay)){
            ((AnchorPane)stage.getScene().getRoot()).getChildren().add(greyOverlay);
        }
         greyOverlay.toFront();
     }
-
-//versione fancy: si itera su ogni elemento della scena e si fa GRAY = R + G +B / 3 o roba simile
+    /**
+     * Method enableScene removes from the stage the gray overlay.
+     */
     public void enableScene(){ //riabilita la GUI
         ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(greyOverlay);
     }
 
+    /**
+     * Method start sets the stage reference,sets the resolution, adds the icon to the window,
+     * sets up all the scenes and the game font and finally renders the main menu
+     * @param primaryStage is the GUI instance stage
+     */
     @Override
     public void start(Stage primaryStage) throws IOException {
-        //game table non viene aperto nè in fullscreen (farlo non darebbe nè vantaggi nè svantaggi, è preferenza personale)
-        // e il resizing automatico non è implementato per questioni di tempo
-        //la risoluzione è settata manualmente con un rateo di 16:9 e una dimensione ottimale per schermi 1920x1080
         stage = primaryStage;
         stage.setOnCloseRequest(event->System.exit(0));
-        //equivalente della chiusura forzata da cli, poi bisogna gestire per gli altri client il messaggio di fine partita
 
         Image icon = new Image("/graphics/logo.png");
         stage.getIcons().add(icon);
@@ -233,20 +252,21 @@ public class GUI extends Application implements UI{
 
     }
 
-    public ClientState getCurrentState() {
-        return currentState;
-    }
 
-    public void connect(String ip, String portText) throws IOException { //chiamato da ConnectMenuController quando si preme Connect
+    /**
+     * Method connect attempt a connection to the server by initializing a socket on a new thread and setting up the Nickname Menu scene
+     * @param ip represents the server ip
+     * @param portText represent the port the server is listening on converted to String type
+     */
+    public void connect(String ip, String portText) throws IOException {
         int port;
         try{
             port = Integer.parseInt(portText);
             clientSocket = new ClientSocket(ip,port,this);
-            Thread socketThread = new Thread(clientSocket); //la sposti su un nuovo thread (parte run() in automatico)
+            Thread socketThread = new Thread(clientSocket);
             socketThread.start();
             setScene(Constants.NICKNAME_MENU_FXML);
         }catch(NumberFormatException | UnknownHostException | SocketException e){
-            //renderizza qualche messaggio di errore
             e.printStackTrace();
         }
 
@@ -256,7 +276,11 @@ public class GUI extends Application implements UI{
         setScene(Constants.CONNECT_MENU_FXML);
     }
 
-    public void passToSocket(Message message){ //chiamato dai controller
+    /**
+     * Method passToSocket sends a Message instance to the clientSocket instance so that it can be sent to the server
+     * @param message represents the message to send
+     */
+    public void passToSocket(Message message){
         try {
             clientSocket.send(message);
         } catch (IOException e) {
@@ -264,8 +288,27 @@ public class GUI extends Application implements UI{
         }
     }
 
+    /**
+     * Method handleClosingServer removes the WAIT_TURN gray overlay
+     * and calls the end game procedures of the current scene's controller
+     * Since this method is called from another thread, Platform.runLater() ensures that the method is executed by this (GUI) thread to avoid run time exceptions
+     */
+    @Override
+    public void handleClosingServer() {
+        Platform.runLater(()->{
+            GUIController currentController = controllers.get(stage.getScene());
+            disableScene();
+            if(currentController instanceof UpdatableController)
+                ((UpdatableController) currentController).endGame();
+        });
+    }
+
     public int getNumOfPlayers(){
         return GB.getNumberOfPlayers();
+    }
+
+    public ClientState getCurrentState() {
+        return currentState;
     }
 
     public ArrayList<Integer> getAvailableWizards(){
@@ -288,7 +331,7 @@ public class GUI extends Application implements UI{
         wizardID = wizard;
     }
 
-    public void setTeam(Tower team){ //chiamato dal controller quando fa send
+    public void setTeam(Tower team){
         this.team = team;
     }
 
@@ -355,16 +398,7 @@ public class GUI extends Application implements UI{
         ((AnchorPane)stage.getScene().getRoot()).getChildren().removeAll();
     }
 
-    @Override
-    public void handleClosingServer() {
-        Platform.runLater(()->{
-            GUIController currentController = controllers.get(stage.getScene());
-            disableScene();
-            if(currentController instanceof UpdatableController)
-                ((UpdatableController) currentController).endGame();
-            System.out.println("FINE GAME PER SERVER CRASH");
-        });
-    }
+
 
     public static void main(String[] args) {
         launch(args);
