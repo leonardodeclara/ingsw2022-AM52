@@ -685,6 +685,9 @@ public class Game {
         return false;
     }
 
+    /**
+     * Method calculateWinner checks and, if present, sets the winner name by counting each player's number of towers and teacher tiles. If a tie is reached winner is set to null.
+     */
     public void calculateWinner(){
         int minTowers = Constants.MAX_TOWER_NUMBER;
         ArrayList<Player> potentialWinners = new ArrayList<>();

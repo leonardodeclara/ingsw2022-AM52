@@ -14,16 +14,23 @@ import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-//v1 di UpdateMessageBuilder: la classe si occupa di generare il messaggio di update in base al contenuto dell'evento ricevuto
-//questo messaggio viene restituito al controller, ascoltato da gameHandler che riceverà il messaggio da controller via firePropertyChange e ne gestirà l'invio ai client
-public class UpdateMessageBuilder {
+
+/**
+ * Class UpdateMessageBuilder is responsible for the assembly of an UpdateMessage carrying the information about changes in the model state.
+ * According to the update type a specific Message is built and passed off to GameController class. Each Message is going to be broadcast to all players in game.
+ */
+public class  UpdateMessageBuilder {
 
     public UpdateMessageBuilder() {}
 
+    /**
+     * Method buildGameInstantiationMessage builds a message carrying the information about newly instantiated game elements.
+     * @param game Game instance whose elements have been newly instantiated.
+     * @return Message instance holding the information about a model update.
+     */
     public Message buildGameInstantiationMessage(Game game) {
         ArrayList<ClientIsland> clientIslands = new ArrayList<>();
         int towersNumber = game.getNumOfPlayers() == 2 ? 8 : 6;
-
         for (Island modelIsland : game.getIslands()) {
             ClientIsland newIsland = new ClientIsland(modelIsland.getIslandIndex());
             newIsland.setMotherNature(modelIsland.isMotherNature());
@@ -40,7 +47,6 @@ public class UpdateMessageBuilder {
             clientBoards.put(modelPlayer.getNickname(), newBoard);
 
         }
-
         if (game instanceof ExpertGame) {
             ArrayList<ClientPersonality> personalities = new ArrayList<>();
             for (Personality personality : ((ExpertGame) game).getPersonalities()) {
@@ -54,20 +60,21 @@ public class UpdateMessageBuilder {
             for (String player : clientBoards.keySet()) {
                 clientBoards.get(player).setCoins(1);
             }
-
             return new GameInstantiationMessage(clientIslands, clientBoards, personalities);
         }
-
         return new GameInstantiationMessage(clientIslands, clientBoards);
-
     }
 
+    /**
+     * Method buildMotherNatureMessage builds a message carrying the update about a Mother Nature movement communicated through a PropertyChangeEvent.
+     * @param event PropertyChangeEvent carrying the information about Mother Nature's movement.
+     * @return Message instance holding the information about a model update.
+     */
     public Message buildMotherNatureMessage(PropertyChangeEvent event) {
         int motherNaturePosition = (int) event.getNewValue();
         return new MotherNatureMovementUpdateMessage(motherNaturePosition);
     }
 
-    //quando viene fatto un merge viene mandata l'intera lista con le isole aggiornate
     public Message buildMergeMessage(PropertyChangeEvent event) {
         ArrayList<Island> modelIslands = (ArrayList<Island>) event.getNewValue();
         ArrayList<ClientIsland> clientIslands = new ArrayList<>();

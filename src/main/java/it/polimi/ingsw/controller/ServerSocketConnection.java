@@ -59,6 +59,7 @@ public class ServerSocketConnection implements Runnable {
             System.out.println("Started Listening");
             acceptClientConnections(serverSocket);
         } catch (IOException e) {
+            e.printStackTrace();
             System.err.println("Error during Socket initialization, quitting...");
             System.exit(0);
         }

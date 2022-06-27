@@ -252,6 +252,13 @@ public class GameController implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Method applyEffect1 manages the execution of Personality 1's effect by calling the ExpertGame class' method responsible for its enforcement: that is the
+     * displacement of a student tile onto an island tile.
+     * @param studentIndex index of the student which is being affected by the Personality effect.
+     * @param islandId identification number for the destination island.
+     * @return null if the effect has been correctly applied, an ErrorMessage instance otherwise.
+     */
     public Message applyEffect1(int studentIndex, int islandId){
         if (((ExpertGame)game).executeCard1Effect(studentIndex, islandId))
             return null;
@@ -259,6 +266,13 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
+    /**
+     * Method applyEffect3 manages the execution of Personality 3's effect by calling the ExpertGame class' method responsible for its enforcement: that is the
+     * computation of the players influence on a chosen island.
+     * @param islandId identification number for the chosen island.
+     * @return EndGameMessage if the effect has triggered an endgame condition, null if the execution had no side effects,
+     * an ErrorMessage instance otherwise.
+     */
     public Message applyEffect3(int islandId){
         if (game.getIslandById(islandId)!=null){
             calculateInfluence.apply(game.getIslandById(islandId));
@@ -271,6 +285,12 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
+    /**
+     * Method applyEffect5 manages the execution of Personality 5's effect by calling the ExpertGame class' method responsible for its enforcement:
+     * that is the ban of the selected island.
+     * @param islandId identification number for the chosen island.
+     * @return null if the effect has been correctly applied, an ErrorMessage instance otherwise.
+     */
     public Message applyEffect5(int islandId){
         if (((ExpertGame) game).executeCard5Effect(islandId))
             return null;
@@ -278,6 +298,13 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
+    /**
+     * Method applyEffect7 manages the execution of Personality 7's effect by calling the ExpertGame class' method responsible for its enforcement:
+     * that is the switch between at most three student tiles from the card with as many from the current player's board's lobby.
+     * @param cardStudentsIndexes indexes of the chosen card students.
+     * @param lobbyStudentsIndexes indexes of the chosen lobby students.
+     * @return null if the effect has been correctly applied, an ErrorMessage instance otherwise.
+     */
     public Message applyEffect7(ArrayList<Integer> cardStudentsIndexes, ArrayList<Integer> lobbyStudentsIndexes){
         if (((ExpertGame) game).executeCard7Effect(cardStudentsIndexes, lobbyStudentsIndexes))
             return null;
@@ -285,12 +312,23 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
-    //void perché non possono esserci errore in teoria
+    /**
+     * Method applyEffect9 manages the execution of Personality 9's effect by calling the ExpertGame class' method responsible for its enforcement:
+     * that is the ban of a selected color from the influence computation.
+     * @param banned chosen color to be banned.
+     */
     public void applyEffect9(Color banned){
         ((ExpertGame)game).setBannedColor(banned);
     }
 
-
+    /**
+     * Method applyEffect10 manages the execution of Personality 10's effect by calling the ExpertGame class' method responsible for its enforcement:
+     * that is the switch between at most two student tiles from the current player's lobby with as many from his board's table.
+     * @param player nickname of the player applying the Personality effect.
+     * @param tableStudents colors of the chosen table students.
+     * @param lobbyStudentsIndexes indexes of the chosen lobby students.
+     * @return null if the effect has been correctly applied, an ErrorMessage instance otherwise.
+     */
     public Message applyEffect10(String player,ArrayList<Color> tableStudents, ArrayList<Integer> lobbyStudentsIndexes){
         if (((ExpertGame) game).executeCard10Effect(tableStudents, lobbyStudentsIndexes)){
             updateTeachersOwnership.accept(player);
@@ -299,6 +337,13 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
+    /**
+     * Method applyEffect11 manages the execution of Personality 11's effect by calling the ExpertGame class' method responsible for its enforcement:
+     * that is the displacement of a student tile from the card to the acting player's table.
+     * @param player nickname of the player applying the effect.
+     * @param cardStudentIndex  indexes of the chosen card student.
+     * @return null if the effect has been correctly applied, an ErrorMessage instance otherwise.
+     */
     public Message applyEffect11(String player, int cardStudentIndex){
         if (((ExpertGame) game).executeCard11Effect(cardStudentIndex)){
             updateTeachersOwnership.accept(player);
@@ -308,6 +353,12 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
+    /**
+     * Method applyEffect12 manages the execution of Personality 12's effect by calling the ExpertGame class' method responsible for its enforcement:
+     * that is the removal of at most three students of the chosen color from each player's table.
+     * @param chosenCard color of the students that are being removed from the players' table.
+     * @return null if the effect has been correctly applied, an ErrorMessage instance otherwise.
+     */
     public Message applyEffect12(Color chosenCard){
         if (((ExpertGame) game).executeCard12Effect(chosenCard))
             return null;
@@ -315,26 +366,34 @@ public class GameController implements PropertyChangeListener {
             return new ErrorMessage(ErrorKind.INVALID_INPUT);
     }
 
-
-    //return true se la partita è finita, false otherwise
+    /**
+     * Method closeCurrentRound manages the end of a game round by checking if the one just completed was the final one.
+     * In this case every player is sent a message with the result (the name of the winner if present, tie otherwise).
+     * The current turn's assistant cards are also reset.
+     * @return EndGameMessage if an endgame condition has been triggered, null otherwise.
+     */
     public Message closeCurrentRound(){
-        //bisogna gestire la fine partita nel caso fosse il lastRound
         if (game.isLastRound()){
             game.calculateWinner();
-            //in game manca tutto il calcolo del vincitore in caso la partita finisca al termine del lastRound
-            System.out.println("Finita la partita");
             return new EndGameMessage(game.getWinner()==null? Constants.TIE: game.getWinner().getNickname());
         }
         game.resetCurrentTurnAssistantCards();
         return null;
     }
 
-
-
+    /**
+     * Method setUpdateListener sets the listener of GameController's update system.
+     * @param gameHandler GameHandler instance listening to GameController.
+     */
     public void setUpdateListener(GameHandler gameHandler){
         listener.addPropertyChangeListener("UpdateMessage", gameHandler);
     }
 
+    /**
+     * Method propertyChange receives an update notification from model classes and hands GameHandler an update message
+     * carrying the information about the update.
+     * @param event event of type PropertyChangeEvent.
+     */
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         System.out.println("GC: è stato invocato il mio propertyChange");
@@ -393,30 +452,36 @@ public class GameController implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Method getGame returns the Game instance GameController is communicating with.
+     * @return Game instance, the model entry point.
+     */
     public Game getGame() {
         return game;
     }
 
+    /**
+     * Method setCurrentPlayer updates the name of the currentPlayer in GameController and Game classes.
+     * @param currentPlayer nickname of the current player in action.
+     */
     public void setCurrentPlayer(String currentPlayer) {
         this.currentPlayer = currentPlayer;
         game.setCurrentPlayer(currentPlayer);
     }
 
-    private String getRandomPlayer(){
-        Random rand = new Random();
-        return players.get(rand.nextInt(players.size()));
-    }
-
+    /**
+     * Method getAvailableWizards returns the list of wizard decks currently available to players.
+     * @return ArrayList containing wizards deck yet to be chosen.
+     */
     public ArrayList<Integer> getAvailableWizards() {
         return availableWizards;
     }
 
-    public ArrayList<Tower> getAvailableTowers() {
-        return availableTowers;
-    }
-
+    /**
+     * Method getAvailableWizards returns the list of players ordered by their action priority.
+     * @return ArrayList of ordered players.
+     */
     public ArrayList<String> getActionPhaseTurnOrder(){
         return game.getActionPhasePlayerOrder();
     }
-
 }

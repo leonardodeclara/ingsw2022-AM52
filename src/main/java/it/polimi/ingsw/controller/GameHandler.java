@@ -576,7 +576,7 @@ public class GameHandler implements PropertyChangeListener{
     /**
      * Method propertyChange receives an update notification from the GameController and sends all client a serialized
      * message containing the information about the update.
-     * @param evt: event of type PropertyChangeEvent
+     * @param evt event of type PropertyChangeEvent
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
