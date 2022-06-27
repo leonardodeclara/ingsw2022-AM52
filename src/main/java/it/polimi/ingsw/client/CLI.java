@@ -6,6 +6,9 @@ import it.polimi.ingsw.GUI.UI;
 import it.polimi.ingsw.exceptions.EndGameException;
 import it.polimi.ingsw.exceptions.QuitException;
 import it.polimi.ingsw.messages.*;
+import it.polimi.ingsw.messages.ServerMessages.ClientStateMessage;
+import it.polimi.ingsw.messages.ServerMessages.DisconnectMessage;
+import it.polimi.ingsw.messages.ServerMessages.ErrorMessage;
 
 import java.io.IOException;
 import java.io.PrintStream;

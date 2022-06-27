@@ -2,6 +2,11 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.*;
+import it.polimi.ingsw.messages.ClientMessages.GameParametersMessage;
+import it.polimi.ingsw.messages.ClientMessages.LoginRequestMessage;
+import it.polimi.ingsw.messages.ServerMessages.ClientStateMessage;
+import it.polimi.ingsw.messages.ServerMessages.ErrorKind;
+import it.polimi.ingsw.messages.ServerMessages.ErrorMessage;
 
 import java.util.*;
 

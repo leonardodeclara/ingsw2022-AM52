@@ -2,6 +2,7 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.GUI.UI;
 import it.polimi.ingsw.messages.*;
+import it.polimi.ingsw.messages.ClientMessages.*;
 import it.polimi.ingsw.model.Tower;
 import it.polimi.ingsw.model.Color;
 

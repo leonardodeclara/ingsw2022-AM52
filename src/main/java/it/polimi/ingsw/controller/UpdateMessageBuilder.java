@@ -6,6 +6,8 @@ import it.polimi.ingsw.CLI.ClientIsland;
 import it.polimi.ingsw.CLI.ClientPersonality;
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.messages.*;
+import it.polimi.ingsw.messages.ClientMessages.ActivePersonalityMessage;
+import it.polimi.ingsw.messages.UpdateMessages.*;
 import it.polimi.ingsw.model.*;
 
 import java.beans.PropertyChangeEvent;

@@ -3,6 +3,7 @@ package it.polimi.ingsw.client;
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.GUI.UI;
 import it.polimi.ingsw.messages.*;
+import it.polimi.ingsw.messages.ServerMessages.Ping;
 
 import java.io.*;
 import java.net.Socket;
