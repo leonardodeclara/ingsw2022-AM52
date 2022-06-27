@@ -265,7 +265,8 @@ public class GUI extends Application implements UI{
             socketThread.start();
             setScene(Constants.NICKNAME_MENU_FXML);
         }catch(NumberFormatException | UnknownHostException | SocketException e){
-            e.printStackTrace();
+            GUIController controller = controllers.get(stage.getScene());
+            controller.handleErrorMessage(true);
         }
 
     }
