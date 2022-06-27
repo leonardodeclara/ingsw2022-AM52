@@ -1,12 +1,11 @@
-package it.polimi.ingsw.GUI;
+package it.polimi.ingsw.GUI.GUIControllers;
 
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.Message;
+import it.polimi.ingsw.model.Tower;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.effect.Bloom;
-import javafx.scene.effect.BoxBlur;
-import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -17,22 +16,23 @@ import javafx.scene.text.TextAlignment;
 import java.util.ArrayList;
 
 /**
- * Class WizardChoiceController implements all the logic behind the Wizard Choice Menu FXML Scene
+ * Class TowerChoiceController implements all the logic behind the Tower Choice Menu FXML Scene
  * It sets up buttons and images styling, handles mouse events,
- * and passes built message with wizard ID back to the GUI instance
+ * and passes built message with tower enum back to the GUI instance
  * This class implements UpdatableController interface which includes a few methods to implement
  * the typical tabletop turn mechanics and the updatable interface
  */
-public class WizardChoiceController extends GUIController implements UpdatableController{
+public class TowerChoiceController extends GUIController implements UpdatableController{
     @FXML
-    public ImageView wizard_1,wizard_2,wizard_3,wizard_4;
+    public ImageView white,black,grey;
     @FXML
     public Button confirmButton;
+
+
     boolean alreadyPressed = false;
-    int selectedWizard = -1;
+    Tower selectedTower;
     boolean waitTurn = false;
     boolean isGameFinished = false;
-
 
     /**
      * Method initialize sets up effects for button hover events
@@ -67,23 +67,21 @@ public class WizardChoiceController extends GUIController implements UpdatableCo
     }
 
     /**
-     * Method update gets from GUI instance the available wizards
-     * and sets to visible only the images corresponding to those wizards
+     * Method update gets from GUI instance the available towers
+     * and sets to visible only the images corresponding to those towers
      * to prevent the player to select the ones that have been
      * already chosen by other players
      * It also checks if end game or wait turn overlays should be rendered by using waitTurn and isGameFinished flags
      */
     public void update(){
-        ArrayList<Integer> availableWizards = gui.getAvailableWizards();
+        ArrayList<Tower> availableTowers = gui.getAvailableTowers();
 
-        if(!availableWizards.contains(0))
-            wizard_1.setVisible(false);
-        if(!availableWizards.contains(1))
-            wizard_2.setVisible(false);
-        if(!availableWizards.contains(2))
-            wizard_3.setVisible(false);
-        if(!availableWizards.contains(3))
-            wizard_4.setVisible(false);
+        if(!availableTowers.contains(Tower.BLACK))
+            black.setVisible(false);
+        if(!availableTowers.contains(Tower.GREY))
+            grey.setVisible(false);
+        if(!availableTowers.contains(Tower.WHITE))
+            white.setVisible(false);
 
         if(waitTurn)
             gui.disableScene();
@@ -93,6 +91,8 @@ public class WizardChoiceController extends GUIController implements UpdatableCo
         if(isGameFinished)
             renderEndGame();
     }
+
+
 
     /**
      * Method renderEndGame renders a gray overlay screen to prevent player input and
@@ -114,82 +114,65 @@ public class WizardChoiceController extends GUIController implements UpdatableCo
     }
 
     /**
-     * Method setWizard changes the selectedWizard value with a new one
-     * It gets called whenever a player clicks on a wizard image.
-     * @param wizardID represents the selected tower enum
+     * Method setTower changes the selectedTower value with a new one
+     * It gets called whenever a player clicks on a tower image.
+     * @param tower represents the selected tower enum
      */
-    public void setWizard(int wizardID){
-        selectedWizard = wizardID;
+    public void setTower(Tower tower){
+        selectedTower = tower;
     }
 
     /**
-     * Method card1OnClick sets up the selection effects for wizard image 1 and sets the currently selected
-     * wizard to 0
+     * Method blackOnClick sets up the selection effects for black tower image
+     * and sets the currently selected tower to BLACK
      */
-    public void card1OnClick(){
-        wizard_1.setEffect(new DropShadow());
-        wizard_2.setEffect(new BoxBlur());
-        wizard_3.setEffect(new BoxBlur());
-        wizard_4.setEffect(new BoxBlur());
-        setWizard(0);
+    public void blackOnClick(){
+        white.setEffect(new BoxBlur());
+        grey.setEffect(new BoxBlur());
+        black.setEffect(new DropShadow());
+        setTower(Tower.BLACK);
     }
 
     /**
-     * Method card2OnClick sets up the selection effects for wizard image 1 and sets the currently selected
-     * wizard to 1
+     * Method whiteOnClick sets up the selection effects for white tower image
+     * and sets the currently selected tower to WHITE
      */
-    public void card2OnClick(){
-        wizard_1.setEffect(new BoxBlur());
-        wizard_2.setEffect(new DropShadow());
-        wizard_3.setEffect(new BoxBlur());
-        wizard_4.setEffect(new BoxBlur());
-        setWizard(1);
+    public void whiteOnClick(){
+        black.setEffect(new BoxBlur());
+        grey.setEffect(new BoxBlur());
+        white.setEffect(new DropShadow());
+        setTower(Tower.WHITE);
     }
 
     /**
-     * Method card3OnClick sets up the selection effects for wizard image 1 and sets the currently selected
-     * wizard to 2
+     * Method greyOnClick sets up the selection effects for grey tower image
+     * and sets the currently selected tower to GREY
      */
-    public void card3OnClick(){
-        wizard_1.setEffect(new BoxBlur());
-        wizard_2.setEffect(new BoxBlur());
-        wizard_3.setEffect(new DropShadow());
-        wizard_4.setEffect(new BoxBlur());
-        setWizard(2);
+    public void greyOnClick(){
+        white.setEffect(new BoxBlur());
+        black.setEffect(new BoxBlur());
+        grey.setEffect(new DropShadow());
+        setTower(Tower.GREY);
     }
 
     /**
-     * Method card4OnClick sets up the selection effects for wizard image 1 and sets the currently selected
-     * wizard to 3
-     */
-    public void card4OnClick(){
-        wizard_1.setEffect(new BoxBlur());
-        wizard_2.setEffect(new BoxBlur());
-        wizard_3.setEffect(new BoxBlur());
-        wizard_4.setEffect(new DropShadow());
-        setWizard(3);
-    }
-
-    /**
-     * Method send passes to ClientMessageBuilder instance the currently selected wizard ID and sends back to the GUI instance
+     * Method send passes to ClientMessageBuilder instance the currently selected tower enum and sends back to the GUI instance
      * the built message.
-     * This logic is executed if and only if the player has already selected something
+     * This logic is executed if and only if the player has already selected a tower
      */
     public void send(){
-        if(!alreadyPressed && selectedWizard!=-1){
-            gui.setWizard(selectedWizard);
-            Message builtMessage = clientMessageBuilder.buildMessageFromPlayerInput(actionParser.parseWizardChoice(selectedWizard), ClientState.SET_UP_WIZARD_PHASE);
+        if(!alreadyPressed && selectedTower!=null){
+            gui.setTeam(selectedTower);
+            Message builtMessage = clientMessageBuilder.buildMessageFromPlayerInput(actionParser.parseTowerChoice(selectedTower), ClientState.SET_UP_TOWER_PHASE);
             gui.passToSocket(builtMessage);
             alreadyPressed = true;
         }
     }
 
-
-
-
     /**
      * Method start comes from the implemented interface UpdatableController, but in this specific case it's not used
      */
-    public void start(){
+    public void start() {
+
     }
 }

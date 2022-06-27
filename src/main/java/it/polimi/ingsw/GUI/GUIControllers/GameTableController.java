@@ -1,6 +1,7 @@
-package it.polimi.ingsw.GUI;
+package it.polimi.ingsw.GUI.GUIControllers;
 
 import it.polimi.ingsw.CLI.*;
+import it.polimi.ingsw.GUI.*;
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.Message;
 import javafx.application.Platform;
@@ -48,7 +49,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private ArrayList<GUIIsland> islands;
     private ArrayList<GUICloud> clouds;
     private ArrayList<GUIPersonality> personalities;
-    private HashMap<ClientBoard,GUIBoard> GUIBoards;
+    private HashMap<ClientBoard, GUIBoard> GUIBoards;
     private GUIBoard currentBoard;
     private HashMap<Integer,String> localIDToPlayer;
     private double centerX = 0;
@@ -378,7 +379,7 @@ public class GameTableController extends GUIController implements UpdatableContr
                 assistantImage.setFitHeight(ASSISTANT_IMAGE_HEIGHT);
                 assistantImage.setPreserveRatio(true);
                 assistantImage.setOnMouseClicked((MouseEvent e) -> {
-                    actionParser.handleSelectionEvent(priority,Clickable.ASSISTANT,gui.getCurrentState());
+                    actionParser.handleSelectionEvent(priority, Clickable.ASSISTANT,gui.getCurrentState());
                     handleSelectionEffect(assistantImage,Clickable.ASSISTANT);
                 });
                 assistantImage.setOnMouseEntered((MouseEvent e) -> {

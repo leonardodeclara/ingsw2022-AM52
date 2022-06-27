@@ -1,10 +1,8 @@
 package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.ClientPersonality;
-import it.polimi.ingsw.Constants;
-import it.polimi.ingsw.client.ClientState;
+import it.polimi.ingsw.GUI.GUIControllers.GameTableController;
 import it.polimi.ingsw.model.Color;
-import javafx.event.EventHandler;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;

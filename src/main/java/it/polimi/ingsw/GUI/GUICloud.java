@@ -1,6 +1,7 @@
 package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.ClientCloud;
+import it.polimi.ingsw.GUI.GUIControllers.GameTableController;
 import it.polimi.ingsw.model.Color;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;

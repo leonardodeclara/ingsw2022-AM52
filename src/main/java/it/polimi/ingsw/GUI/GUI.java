@@ -2,6 +2,8 @@ package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.*;
 import it.polimi.ingsw.Constants;
+import it.polimi.ingsw.GUI.GUIControllers.GUIController;
+import it.polimi.ingsw.GUI.GUIControllers.UpdatableController;
 import it.polimi.ingsw.client.ClientMessageBuilder;
 import it.polimi.ingsw.client.ClientSocket;
 import it.polimi.ingsw.client.ClientState;
@@ -39,7 +41,7 @@ public class GUI extends Application implements UI{
     private ClientState currentState;
     private Stage stage;
     private final HashMap<String,Scene> scenes;
-    private final HashMap<Scene,GUIController> controllers;
+    private final HashMap<Scene, GUIController> controllers;
     private final String[] fxmlPaths;
     private ClientSocket clientSocket;
     private final ClientMessageBuilder clientMessageBuilder;

@@ -3,6 +3,7 @@ package it.polimi.ingsw.GUI;
 import it.polimi.ingsw.CLI.ClientBoard;
 import it.polimi.ingsw.CLI.ClientIsland;
 import it.polimi.ingsw.CLI.ClientPersonality;
+import it.polimi.ingsw.GUI.GUIControllers.GameTableController;
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.model.Color;
 import it.polimi.ingsw.model.Tower;
@@ -17,7 +18,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.util.Duration;
 
-import javax.tools.Tool;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

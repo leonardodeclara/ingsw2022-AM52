@@ -1,6 +1,7 @@
 package it.polimi.ingsw.GUI;
 
 import it.polimi.ingsw.CLI.ClientBoard;
+import it.polimi.ingsw.GUI.GUIControllers.GameTableController;
 import it.polimi.ingsw.model.Color;
 import javafx.event.EventHandler;
 import javafx.scene.control.Tooltip;

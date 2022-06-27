@@ -1,8 +1,10 @@
-package it.polimi.ingsw.GUI;
+package it.polimi.ingsw.GUI.GUIControllers;
 
+import it.polimi.ingsw.GUI.ActionParser;
+import it.polimi.ingsw.GUI.GUI;
 import it.polimi.ingsw.client.ClientMessageBuilder;
 
-public class GUIController implements GUIControllerInterface{
+public class GUIController implements GUIControllerInterface {
     protected GUI gui; //main class
     protected ActionParser actionParser; //array of raw data builder
     protected ClientMessageBuilder clientMessageBuilder; //message builder

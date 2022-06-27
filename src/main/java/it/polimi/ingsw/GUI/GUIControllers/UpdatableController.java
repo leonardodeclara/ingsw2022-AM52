@@ -1,4 +1,4 @@
-package it.polimi.ingsw.GUI;
+package it.polimi.ingsw.GUI.GUIControllers;
 
 public interface UpdatableController {
     public void update();

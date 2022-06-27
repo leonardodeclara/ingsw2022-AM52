@@ -1,4 +1,4 @@
-package it.polimi.ingsw.GUI;
+package it.polimi.ingsw.GUI.GUIControllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -6,7 +6,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.Bloom;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.io.IOException;
