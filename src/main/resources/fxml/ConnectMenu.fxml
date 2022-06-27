@@ -32,5 +32,10 @@
             <Font name="Britannic Bold" size="13.0" />
          </font>
       </Button>
+      <Text id="connectionFailedText" fx:id="connectionFailedText" fill="WHITE" layoutX="217.0" layoutY="177.0" strokeType="OUTSIDE" strokeWidth="0.0">
+         <font>
+            <Font name="Britannic Bold" size="16.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>

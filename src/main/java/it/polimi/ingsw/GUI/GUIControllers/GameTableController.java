@@ -28,7 +28,10 @@ import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.Constants.*;
 
-
+//TODO immagini per i bottoni delle board
+//TODO tasto per chiudere il gioco dopo la disconnessione
+//TODO scelta porta per il server
+//TODO gestione errore per connect menu
 /**
  * Class GameTableController implements all the logic behind the Game Table FXML Scene
  * It renders almost all the game elements, handles mouse event handling,
@@ -59,6 +62,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private boolean showDeck;
     private boolean isGameFinished;
     private ArrayList<Node> selectedImages;
+    private Text waitTurnText;
 
     /**
      * Method start initializes all the data structures containing the various game elements to render.
@@ -101,6 +105,18 @@ public class GameTableController extends GUIController implements UpdatableContr
             renderedDashboard = 1;
             ClientBoard clientBoard = gui.getPlayerBoard(localIDToPlayer.get(renderedDashboard));
             currentBoard = GUIBoards.get(clientBoard);
+
+            String waitMessage = "WAIT FOR YOUR TURN";
+            waitTurnText = new Text(waitMessage);
+            waitTurnText.setFill(Color.WHITE);
+            waitTurnText.setFont(gui.getGameFont());
+            waitTurnText.setStyle("-fx-font-size: 20;");
+            waitTurnText.setTextAlignment(TextAlignment.CENTER);
+
+            waitTurnText.setX(gui.getScreenX()/2- waitTurnText.getLayoutBounds().getWidth()/1.5);
+            waitTurnText.setY(gui.getScreenY()/2+200);
+
+            gui.addElementToScene(waitTurnText);
         }
 
     }
@@ -215,14 +231,16 @@ public class GameTableController extends GUIController implements UpdatableContr
         else
             gui.enableScene();
 
+        renderWaitTurnScreen();
+
         if(isGameFinished)
             renderEndGame();
 
     }
 
     /**
-     * Method renderEndGame renders a gray overlay screen to prevent player input and
-     * renders a message in the center of the screen to let the player know that the game is over
+     * Method renderEndGame renders a message in the center of the screen
+     * to let the player know that the game is over
      */
     private void renderEndGame() {
         String gameOverMessage = "GAME OVER\n";
@@ -243,6 +261,15 @@ public class GameTableController extends GUIController implements UpdatableContr
 
         gui.addElementToScene(gameOverText);
         gameOverText.toFront();
+    }
+
+    /**
+     * Method renderEndGame renders a message in the bottom center of the screen
+     * to let the player know that it's not his turn
+     */
+    private void renderWaitTurnScreen(){
+        waitTurnText.setVisible(waitTurn);
+        waitTurnText.toFront();
     }
 
     /**
