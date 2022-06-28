@@ -46,7 +46,7 @@ public class ClientPersonality implements Serializable {
     }
 
     /**
-     * Method print prints Persoanlity's content on CLI interfaces.
+     * Method print prints Personality's content on CLI interfaces.
      */
     public void print(){
         System.out.print("ID: "+cardId + " " +"Costo: "+cost+ " ");
