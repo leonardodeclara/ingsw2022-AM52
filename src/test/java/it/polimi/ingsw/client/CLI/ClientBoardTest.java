@@ -66,7 +66,7 @@ class ClientBoardTest {
 
     @Test
     void towerstest() {
-        ClientBoard board = new ClientBoard(0, "mari");
+        ClientBoard board = new ClientBoard(0, "mari" );
         assertEquals(0, board.getTowers());
         board.setTowers(1);
         assertEquals(1, board.getTowers());

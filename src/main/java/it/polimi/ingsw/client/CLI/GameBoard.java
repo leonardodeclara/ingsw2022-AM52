@@ -71,6 +71,7 @@ public class GameBoard {
         islands.addAll(newIslands);
         for (String player: boards.keySet()){
             boards.get(player).setGB(this);
+            boards.get(player).setWizardID(-1);
             clientBoards.put(player, boards.get(player));
         }
 
@@ -218,6 +219,7 @@ public class GameBoard {
         board.setTeacherTable(clientBoard.getTeacherTable());
         board.setTowers(clientBoard.getTowers());
         board.setTeam(clientBoard.getTeam());
+        board.setWizardID(clientBoard.getWizardID());
     }
 
     /**

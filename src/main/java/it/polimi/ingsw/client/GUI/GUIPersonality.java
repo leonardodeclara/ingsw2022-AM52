@@ -94,6 +94,14 @@ public class GUIPersonality {
             gui.addElementToScene(coinImage);
             coinImage.toFront();
         }
+        if (personality.getStudents()!=null && personality.getStudents().size()>0){
+            //System.out.println("aggiungo immagini degli studenti alla carta "+cardId);
+            populateLobbyPersonality();
+        }
+        else if (personality.getBans()>0){
+            //System.out.println("aggiungo immagini dei ban alla carta " +cardId);
+            populateBanPersonality();
+        }
         if (personality.isActive()){
             activeText = new Text("ACTIVE");
             activeText.setX(centerX-PERSONALITY_IMAGE_WIDTH/2);
@@ -102,14 +110,6 @@ public class GUIPersonality {
             activeText.setFill(javafx.scene.paint.Color.BLACK); //si potrebbe mettere nel css
             gui.addElementToScene(activeText);
             activeText.toFront();
-        }
-        if (personality.getStudents()!=null && personality.getStudents().size()>0){
-            //System.out.println("aggiungo immagini degli studenti alla carta "+cardId);
-            populateLobbyPersonality();
-        }
-        else if (personality.getBans()>0){
-            //System.out.println("aggiungo immagini dei ban alla carta " +cardId);
-            populateBanPersonality();
         }
     }
 

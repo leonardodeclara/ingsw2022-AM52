@@ -25,17 +25,17 @@
       <Button id="sendButton" fx:id="sendButton" layoutX="528.0" layoutY="609.0" mnemonicParsing="false" onMouseClicked="#send" opacity="1.0" prefHeight="44.0" prefWidth="115.0" styleClass="confirmButton" stylesheets="@../css/gameTable.css" text="CONFIRM" textFill="WHITE" />
       <ImageView id="player2Icon" fx:id="player2Icon" fitHeight="136.0" fitWidth="99.0" layoutX="154.0" layoutY="34.0" onMouseClicked="#onPlayer2Click" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../graphics/cerchi.png" />
+            <Image url="@../graphics/board_circle0.png" />
          </image>
       </ImageView>
       <ImageView id="player3Icon" fx:id="player3Icon" fitHeight="136.0" fitWidth="99.0" layoutX="154.0" layoutY="278.0" onMouseClicked="#onPlayer3Click" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../graphics/cerchi.png" />
+            <Image url="@../graphics/board_circle0.png" />
          </image>
       </ImageView>
       <ImageView id="player1Icon" fx:id="player1Icon" fitHeight="136.0" fitWidth="99.0" layoutX="154.0" layoutY="533.0" onMouseClicked="#onPlayer1Click" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../graphics/cerchi.png" />
+            <Image url="@../graphics/board_circle0.png" />
          </image>
       </ImageView>
       <ImageView fitHeight="336.0" fitWidth="548.0" layoutX="757.0" layoutY="198.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
