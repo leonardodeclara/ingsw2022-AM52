@@ -7,6 +7,10 @@ import it.polimi.ingsw.model.Tower;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * Class ClientIsland holds basic information about an Island state in order to render its content through CLI and GUI interfaces.
+ * It carries information about towers, student tiles and bans placed on it. It also allows verifying whether Mother Nature is placed on it or not.
+ */
 public class ClientIsland implements Serializable {
     static final long serialVersionUID = 42L;
     private int islandIndex;
@@ -17,6 +21,10 @@ public class ClientIsland implements Serializable {
     private int bans;
     private String owner;
 
+    /**
+     * Constructor islandIndex creates a ClientIsland instance whose identification number is islandIndex.
+     * @param islandIndex identification number for the island.
+     */
     public ClientIsland(int islandIndex ) {
         this.islandIndex = islandIndex;
         this.towers = new ArrayList<>();
@@ -27,6 +35,9 @@ public class ClientIsland implements Serializable {
         this.owner = null;
     }
 
+    /**
+     * Method print prints the island's content on CLI interfaces.
+     */
     public void print(){
         System.out.println("ISOLA " + getIslandIndex() + ":");
         System.out.print("STUDENTS ON THE ISLAND: ");

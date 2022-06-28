@@ -26,7 +26,6 @@ public class GameController implements PropertyChangeListener {
     private String currentPlayer;
     private final ArrayList<String> players;
     private final PropertyChangeSupport listener;
-    private final UpdateMessageBuilder updateMessageBuilder;
     private final ArrayList<Tower> availableTowers;
     private final ArrayList<Integer> availableWizards;
     private final HashMap<String, Integer> playerToWizardMap;
@@ -41,7 +40,6 @@ public class GameController implements PropertyChangeListener {
      * @param players nicknames of the players taking part in the game.
      */
     public GameController(boolean isExpert, ArrayList<String> players) {
-        updateMessageBuilder = new UpdateMessageBuilder();
         listener = new PropertyChangeSupport(this);
         game = (isExpert) ? new ExpertGame(players.size()) : new Game(players.size());
         this.players = new ArrayList<>();
@@ -67,7 +65,7 @@ public class GameController implements PropertyChangeListener {
         game.instantiateGameElements(players);
         game.setPropertyChangeListeners(this);
         System.out.println("GC: ho impostato correttamente i primi gameElements e ho settato i PropertyChange");
-        return updateMessageBuilder.buildGameInstantiationMessage(game);
+        return UpdateMessageBuilder.buildGameInstantiationMessage(game);
     }
 
     /**
@@ -401,49 +399,49 @@ public class GameController implements PropertyChangeListener {
         Message toSend = null;
         switch (eventName) {
             case "MotherNature":
-                toSend = updateMessageBuilder.buildMotherNatureMessage(event);
+                toSend = UpdateMessageBuilder.buildMotherNatureMessage(event);
                 break;
             case "Merge":
-                toSend = updateMessageBuilder.buildMergeMessage(event);
+                toSend = UpdateMessageBuilder.buildMergeMessage(event);
                 break;
             case "LastRound":
-                toSend = updateMessageBuilder.buildLastRoundMessage(event);
+                toSend = UpdateMessageBuilder.buildLastRoundMessage(event);
                 break;
             case "CloudsRefill":
-                toSend = updateMessageBuilder.buildCloudsRefillMessage(event);
+                toSend = UpdateMessageBuilder.buildCloudsRefillMessage(event);
                 break;
             case "CurrentTurnAssistantCards":
-                toSend = updateMessageBuilder.buildCurrentTurnAssistantCardsMessage(event);
+                toSend = UpdateMessageBuilder.buildCurrentTurnAssistantCardsMessage(event);
                 break;
             case "Deck": //non se è messaggio broadcast, forse in gameHandler va gestito in maniera diversa
-                toSend = updateMessageBuilder.buildDeckUpdateMessage(event);
+                toSend = UpdateMessageBuilder.buildDeckUpdateMessage(event);
                 break;
             case "IslandTowers":
-                toSend = updateMessageBuilder.buildIslandTowersMessage(event);
+                toSend = UpdateMessageBuilder.buildIslandTowersMessage(event);
                 break;
             case "IslandStudents":
-                toSend = updateMessageBuilder.buildIslandStudentsMessage(event);
+                toSend = UpdateMessageBuilder.buildIslandStudentsMessage(event);
                 break;
             case "IslandBans":
-                toSend = updateMessageBuilder.buildIslandBansMessage(event);
+                toSend = UpdateMessageBuilder.buildIslandBansMessage(event);
                 break;
             case "PickedCloud":
-                toSend = updateMessageBuilder.buildPickedCloudMessage(event);
+                toSend = UpdateMessageBuilder.buildPickedCloudMessage(event);
                 break;
             case "Board":
-                toSend = updateMessageBuilder.buildBoardUpdateMessage(event);
+                toSend = UpdateMessageBuilder.buildBoardUpdateMessage(event);
                 break;
             case "ActivePersonality":
-                toSend = updateMessageBuilder.buildActivePersonalityMessage(event);
+                toSend = UpdateMessageBuilder.buildActivePersonalityMessage(event);
                 break;
             case "NoLongerActivePersonality":
-                toSend = updateMessageBuilder.buildNoLongerActivePersonalityMessage(event);
+                toSend = UpdateMessageBuilder.buildNoLongerActivePersonalityMessage(event);
                 break;
             case "Coins":
-                toSend = updateMessageBuilder.buildCoinsUpdate(event);
+                toSend = UpdateMessageBuilder.buildCoinsUpdateMessage(event);
                 break;
             case "PersonalityUsage":
-                toSend = updateMessageBuilder.buildPersonalityUsageMessage(event);
+                toSend = UpdateMessageBuilder.buildPersonalityUsageMessage(event);
                 break;
         }
         if (toSend!=null){

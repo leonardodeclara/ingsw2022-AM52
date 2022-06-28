@@ -587,6 +587,5 @@ public class GameHandler implements PropertyChangeListener{
             sendAll(outwardsMessage);
             System.out.println("GH: mandato il messaggio in broadcast");
         }
-
     }
 }

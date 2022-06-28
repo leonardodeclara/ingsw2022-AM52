@@ -14,12 +14,11 @@ public class InputParser {
     private boolean isExpert;
     private int numOfPlayers;
 
-    public InputParser(){
-    }
+    public InputParser(){}
 
     public ArrayList<Object> parse(String input, ClientState state) throws NumberFormatException{
         if (parseQuitInput(input))
-            throw new QuitException(); //creata eccezione ad hoc
+            throw new QuitException();
         data = new ArrayList<>();
         switch(state){
             case CONNECT_STATE:
