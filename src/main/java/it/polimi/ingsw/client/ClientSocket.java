@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.Constants;
-import it.polimi.ingsw.GUI.UI;
+import it.polimi.ingsw.client.GUI.UI;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.messages.ServerMessages.Ping;
 

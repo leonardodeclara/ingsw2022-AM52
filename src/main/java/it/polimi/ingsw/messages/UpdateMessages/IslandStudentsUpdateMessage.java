@@ -1,10 +1,9 @@
 package it.polimi.ingsw.messages.UpdateMessages;
 
-import it.polimi.ingsw.CLI.GameBoard;
+import it.polimi.ingsw.client.CLI.GameBoard;
 import it.polimi.ingsw.messages.UpdateMessage;
 import it.polimi.ingsw.model.Color;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class IslandStudentsUpdateMessage implements UpdateMessage {

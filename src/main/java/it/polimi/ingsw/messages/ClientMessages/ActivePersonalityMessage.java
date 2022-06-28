@@ -1,6 +1,6 @@
 package it.polimi.ingsw.messages.ClientMessages;
 
-import it.polimi.ingsw.CLI.GameBoard;
+import it.polimi.ingsw.client.CLI.GameBoard;
 import it.polimi.ingsw.messages.UpdateMessage;
 
 public class ActivePersonalityMessage implements UpdateMessage {

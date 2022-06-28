@@ -1,9 +1,9 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.CLI.ClientBoard;
-import it.polimi.ingsw.CLI.ClientCloud;
-import it.polimi.ingsw.CLI.ClientIsland;
-import it.polimi.ingsw.CLI.ClientPersonality;
+import it.polimi.ingsw.client.CLI.ClientBoard;
+import it.polimi.ingsw.client.CLI.ClientCloud;
+import it.polimi.ingsw.client.CLI.ClientIsland;
+import it.polimi.ingsw.client.CLI.ClientPersonality;
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.messages.ClientMessages.ActivePersonalityMessage;

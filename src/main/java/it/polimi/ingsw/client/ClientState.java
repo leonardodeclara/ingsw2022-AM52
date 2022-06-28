@@ -1,8 +1,8 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.CLI.GameBoard;
+import it.polimi.ingsw.client.CLI.GameBoard;
 import it.polimi.ingsw.Constants;
-import it.polimi.ingsw.GUI.Clickable;
+import it.polimi.ingsw.client.GUI.Clickable;
 
 import java.util.ArrayList;
 import java.util.Arrays;

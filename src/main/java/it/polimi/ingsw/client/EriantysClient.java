@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.GUI.GUI;
+import it.polimi.ingsw.client.CLI.CLI;
+import it.polimi.ingsw.client.GUI.GUI;
 
 public class EriantysClient {
     private static final String CLI_ARGUMENT = "-cli";

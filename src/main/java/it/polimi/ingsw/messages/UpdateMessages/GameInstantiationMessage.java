@@ -1,9 +1,9 @@
 package it.polimi.ingsw.messages.UpdateMessages;
 
-import it.polimi.ingsw.CLI.ClientBoard;
-import it.polimi.ingsw.CLI.ClientIsland;
-import it.polimi.ingsw.CLI.ClientPersonality;
-import it.polimi.ingsw.CLI.GameBoard;
+import it.polimi.ingsw.client.CLI.ClientBoard;
+import it.polimi.ingsw.client.CLI.ClientIsland;
+import it.polimi.ingsw.client.CLI.ClientPersonality;
+import it.polimi.ingsw.client.CLI.GameBoard;
 import it.polimi.ingsw.messages.UpdateMessage;
 
 import java.util.ArrayList;
