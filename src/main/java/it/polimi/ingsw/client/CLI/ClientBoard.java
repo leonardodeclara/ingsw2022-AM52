@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class ClientBoard holds basic information about a SchoolBoard state in order to render its content through CLI and GUI interfaces.
+ * It carries information about lobby students, table students, towers coins and assistant cards.
+ */
 public class ClientBoard implements Serializable {
     private static final long serialVersionUID = 42L;
     private HashMap<Color,Integer> studentsTable;
@@ -22,6 +26,10 @@ public class ClientBoard implements Serializable {
     private int currentCard;
     private GameBoard GB;
 
+    /**
+     * Constructor ClientBoard creates the ClientBoard instance of a selected player, whose name is given as parameter.
+     * @param owner board's owner name.
+     */
     public ClientBoard(String owner){
         this.owner = owner;
         this.studentsTable = new HashMap<>();
@@ -30,6 +38,11 @@ public class ClientBoard implements Serializable {
         this.deck = new HashMap<>();
     }
 
+    /**
+     * Constructor ClientBoard creates a ClientBoard instance of a selected player, whose name and towers count are given as parameter.
+     * @param towers number of towers on the board.
+     * @param owner board's owner name.
+     */
     public ClientBoard(int towers, String owner) {
         this.towers = towers;
         this.owner = owner;
@@ -39,13 +52,15 @@ public class ClientBoard implements Serializable {
         this.deck = new HashMap<>();
     }
 
+    /**
+     * Method print prints the board's content on CLI interfaces.
+     */
     public void print(){
-        //stampo il nickname
         if (owner.equalsIgnoreCase(GB.getNickname()))
             System.out.println("************************************************"+"YOUR SCHOOL"+"************************************************");
         else
             System.out.println("************************************************"+getOwner().toUpperCase() + "'S SCHOOL"+"************************************************");
-        //stampo la lobby
+
         System.out.print("LOBBY: ");
         for(int i=0;i<lobby.size();i++){
             System.out.print(Constants.getStudentsColor(lobby.get(i)) + "■ ");
@@ -54,7 +69,6 @@ public class ClientBoard implements Serializable {
 
         System.out.print("\n");
 
-        //stampo la StudentsTable
         System.out.println("STUDENTS TABLE: ");
         try {
             for(Color color : studentsTable.keySet()){
@@ -69,8 +83,6 @@ public class ClientBoard implements Serializable {
             System.out.println("No students in the Table");
         }
 
-
-        //stampo la TeachersTable
         System.out.print("TEACHERS TABLE: ");
         try {
             for (Color color : Color.values()) {
@@ -82,7 +94,6 @@ public class ClientBoard implements Serializable {
             System.out.println("No teachers in the Table");
         }
 
-        //stampo le torri
         System.out.print("TOWERS:\n");
         try {
             for (int i = 0; i < getTowers(); i++) {
@@ -92,7 +103,6 @@ public class ClientBoard implements Serializable {
                     System.out.print("♦ ");
                 else if (getTeam().equals(Tower.GREY))
                     System.out.print(Constants.GREY + "♦ ");
-
             }
             System.out.print("\n");
             System.out.print(Constants.RESET);
@@ -109,24 +119,21 @@ public class ClientBoard implements Serializable {
         if (GB.isExpertGame())
             System.out.println("COINS: "+getCoins());
 
-
-        //mancano da stampare: monete (se in expert game)
         if(GB.getNickname().equals(getOwner())){
             for(Map.Entry<Integer,Integer> entry : getDeck().entrySet()){
                 System.out.println("CARTA ASSISTENTE "+entry.getKey()+":"+"(priorità: "+entry.getKey()+",numero mosse: "+entry.getValue()+")");
             }
         }
-
-
-
     }
+
+    /**
+     * Method initializeDeck sets the Assistant cards available to a player.
+     */
     public void initializeDeck(){
-        for(int numWizard = 0; numWizard < 4; numWizard++){
-            int numMoves;
-            for(int priority = 1; priority < 11; priority++){
-                numMoves = priority%2==0 ? priority/2 : priority/2+1;
-                deck.put(priority,numMoves);
-            }
+        int numMoves;
+        for(int priority = 1; priority < 11; priority++){
+            numMoves = priority%2==0 ? priority/2 : priority/2+1;
+            deck.put(priority,numMoves);
         }
     }
 
@@ -182,7 +189,6 @@ public class ClientBoard implements Serializable {
     public String getOwner() {
         return owner;
     }
-
 
     public void setOwner(String owner) {
         this.owner = owner;

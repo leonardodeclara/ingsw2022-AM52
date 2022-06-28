@@ -6,7 +6,7 @@ import it.polimi.ingsw.client.CLI.ClientIsland;
 import it.polimi.ingsw.client.CLI.ClientPersonality;
 import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.messages.*;
-import it.polimi.ingsw.messages.ClientMessages.ActivePersonalityMessage;
+import it.polimi.ingsw.messages.UpdateMessages.ActivePersonalityMessage;
 import it.polimi.ingsw.messages.UpdateMessages.*;
 import it.polimi.ingsw.model.*;
 
@@ -19,16 +19,14 @@ import java.util.HashMap;
  * Class UpdateMessageBuilder is responsible for the assembly of an UpdateMessage carrying the information about changes in the model state.
  * According to the update type a specific Message is built and passed off to GameController class. Each Message is going to be broadcast to all players in game.
  */
-public class  UpdateMessageBuilder {
-
-    public UpdateMessageBuilder() {}
+public class UpdateMessageBuilder {
 
     /**
      * Method buildGameInstantiationMessage builds a message carrying the information about newly instantiated game elements.
      * @param game Game instance whose elements have been newly instantiated.
-     * @return Message instance holding the information about a model update.
+     * @return Message instance holding the information about the model update.
      */
-    public Message buildGameInstantiationMessage(Game game) {
+    public static Message buildGameInstantiationMessage(Game game) {
         ArrayList<ClientIsland> clientIslands = new ArrayList<>();
         int towersNumber = game.getNumOfPlayers() == 2 ? 8 : 6;
         for (Island modelIsland : game.getIslands()) {
@@ -68,14 +66,19 @@ public class  UpdateMessageBuilder {
     /**
      * Method buildMotherNatureMessage builds a message carrying the update about a Mother Nature movement communicated through a PropertyChangeEvent.
      * @param event PropertyChangeEvent carrying the information about Mother Nature's movement.
-     * @return Message instance holding the information about a model update.
+     * @return Message instance holding the information about the model update.
      */
-    public Message buildMotherNatureMessage(PropertyChangeEvent event) {
+    public static Message buildMotherNatureMessage(PropertyChangeEvent event) {
         int motherNaturePosition = (int) event.getNewValue();
         return new MotherNatureMovementUpdateMessage(motherNaturePosition);
     }
 
-    public Message buildMergeMessage(PropertyChangeEvent event) {
+    /**
+     * Method buildMergeMessage builds a message carrying the update on islands' merges communicated through a PropertyChangeEvent.
+     * @param event PropertyChangeEvent notifying a merge event.
+     * @return Message instance holding the information about the model update.
+     */
+    public static Message buildMergeMessage(PropertyChangeEvent event) {
         ArrayList<Island> modelIslands = (ArrayList<Island>) event.getNewValue();
         ArrayList<ClientIsland> clientIslands = new ArrayList<>();
         for (Island modelIsland : modelIslands) {
@@ -90,7 +93,12 @@ public class  UpdateMessageBuilder {
         return new IslandMergeUpdateMessage(clientIslands);
     }
 
-    public Message buildLastRoundMessage(PropertyChangeEvent event) {
+    /**
+     * Method buildLastRoundMessage builds a message notifying player that current round is the last game round.
+     * @param event PropertyChangeEvent notifying a last round event.
+     * @return Message instance holding the information about the game status.
+     */
+    public static Message buildLastRoundMessage(PropertyChangeEvent event) {
         boolean oldLastRound = (boolean) event.getOldValue();
         boolean newLastRound = (boolean) event.getNewValue();
         if (oldLastRound != newLastRound)
@@ -98,10 +106,14 @@ public class  UpdateMessageBuilder {
         else return null;
     }
 
-    public Message buildCloudsRefillMessage(PropertyChangeEvent event) {
+    /**
+     * Method buildCloudsRefillMessage builds a message carrying the update on cloud tiles' student refills, communicated through a PropertyChangeEvent.
+     * @param event PropertyChangeEvent notifying a cloud refill event.
+     * @return Message instance holding the information about the model update.
+     */
+    public static Message buildCloudsRefillMessage(PropertyChangeEvent event) {
         ArrayList<Cloud> modelClouds = (ArrayList<Cloud>) event.getNewValue();
         ArrayList<ClientCloud> clientClouds = new ArrayList<>();
-        int numClouds = modelClouds.size();
         for (Cloud modelCloud : modelClouds) {
             ArrayList<Color> modelCloudStudents = modelCloud.getStudents();
             ClientCloud cloud = new ClientCloud(modelCloud.getCloudIndex());
@@ -111,7 +123,12 @@ public class  UpdateMessageBuilder {
         return new CloudsRefillMessage(clientClouds);
     }
 
-    public Message buildCurrentTurnAssistantCardsMessage(PropertyChangeEvent event) {
+    /**
+     * Method buildCurrentTurnAssistantCardsMessage builds a message carrying the update on selected assistant cards, communicated through a PropertyChangeEvent.
+     * @param event PropertyChangeEvent notifying that current assistantCards have changed.
+     * @return Message instance holding the information about the model update.
+     */
+    public static Message buildCurrentTurnAssistantCardsMessage(PropertyChangeEvent event) {
         HashMap<String, Assistant> cards = (HashMap<String, Assistant>) event.getNewValue();
         HashMap<String, Integer> playerToCardMap = new HashMap<>();
         int cardPriority;
@@ -119,10 +136,15 @@ public class  UpdateMessageBuilder {
             cardPriority = cards.get(name).getPriority();
             playerToCardMap.put(name, cardPriority);
         }
-        return new CurrentTurnAssistantCardsUpdateMessage(playerToCardMap); //ritorno solo l'associazione <Giocatore, Priorità>
+        return new CurrentTurnAssistantCardsUpdateMessage(playerToCardMap);
     }
 
-    public Message buildDeckUpdateMessage(PropertyChangeEvent event) {
+    /**
+     * Method buildDeckUpdateMessage builds a message carrying the update on a player's assistant deck, communicated through a PropertyChangeEvent.
+     * @param event PropertyChangeEvent notifying a player's deck change.
+     * @return Message instance holding the information about the model update.
+     */
+    public static Message buildDeckUpdateMessage(PropertyChangeEvent event) {
         Player updatedPlayer = (Player) event.getNewValue();
         ArrayList<Assistant> updatedDeck = updatedPlayer.getDeck();
         HashMap<Integer, Integer> availableCards = new HashMap<>();
@@ -132,38 +154,58 @@ public class  UpdateMessageBuilder {
         return new AssistantDeckUpdateMessage(updatedPlayer.getNickname(), availableCards);
     }
 
-    //questo metodo e quello dopo e quello dopo ancora potrebbero essere collassati. rivedere
-    public Message buildIslandTowersMessage(PropertyChangeEvent event) {
+    /**
+     * Method buildIslandTowersMessage builds a message carrying the update on an island's towers number, communicated through a PropertyChangeEvent.
+     * @param event PropertyChangeEvent notifying an island change.
+     * @return Message instance holding the information about the model update.
+     */
+    public static Message buildIslandTowersMessage(PropertyChangeEvent event) {
         Island updatedIsland = (Island) event.getNewValue();
         ArrayList<Tower> towers = updatedIsland.getTowers();
         int index = updatedIsland.getIslandIndex();
         return new IslandTowersUpdateMessage(index, towers);
     }
 
-    public Message buildIslandStudentsMessage(PropertyChangeEvent event) {
-        //System.out.println("MessageBuilder: ora costruisco un messaggio di update degli studenti dell'isola");
+    /**
+     * Method buildIslandStudentsMessage builds a message carrying the update on an island's students number, communicated through a PropertyChangeEvent.
+     * @param event PropertyChangeEvent notifying an island change.
+     * @return Message instance holding the information about the model update.
+     */
+    public static Message buildIslandStudentsMessage(PropertyChangeEvent event) {
         Island updatedModelIsland = (Island) event.getNewValue();
         ArrayList<Color> students = updatedModelIsland.getStudents();
         int index = updatedModelIsland.getIslandIndex();
         return new IslandStudentsUpdateMessage(index, students);
     }
 
-    public Message buildIslandBansMessage(PropertyChangeEvent event){
+    /**
+     * Method buildIslandBansMessage builds a message carrying the update on an island's bans count, communicated through a PropertyChangeEvent.
+     * @param event PropertyChangeEvent notifying an island change.
+     * @return Message instance holding the information about the model update.
+     */
+    public static Message buildIslandBansMessage(PropertyChangeEvent event){
         Island updatedModelIsland = (Island) event.getNewValue();
         int index = updatedModelIsland.getIslandIndex();
         int updatedBans = updatedModelIsland.getBans();
         return new IslandBanUpdateMessage(index, updatedBans);
     }
 
-    public Message buildPickedCloudMessage(PropertyChangeEvent event) {
+    /**
+     * Method buildPickedCloudMessage builds a message carrying the update on a cloud tile's students number, communicated through a PropertyChangeEvent.
+     * @param event PropertyChangeEvent notifying a cloud change.
+     * @return Message instance holding the information about the model update.
+     */
+    public static Message buildPickedCloudMessage(PropertyChangeEvent event) {
         int cloudIndex = (int) event.getNewValue();
         return new CloudUpdateMessage(cloudIndex);
     }
 
-    //messaggio personalizzato manda la nuova clientBoard aggiornata
-    //a questo metodo si possono aggiungere dei clientBoard.setX() se altri el possono cambiare
-    //poi andrà cambiato anche il metodo setUpdatedClientBoard in GameBoard
-    public Message buildBoardUpdateMessage(PropertyChangeEvent event) {
+    /**
+     * Method buildBoardUpdateMessage builds a message carrying the update on a player's board content, communicated through a PropertyChangeEvent.
+     * @param event PropertyChangeEvent notifying a board change.
+     * @return Message instance holding the information about the model update.
+     */
+    public static Message buildBoardUpdateMessage(PropertyChangeEvent event) {
         Player updatedPlayer = (Player) event.getNewValue();
         Board updatedBoard = updatedPlayer.getBoard();
         String updatedOwner = updatedPlayer.getNickname();
@@ -176,18 +218,32 @@ public class  UpdateMessageBuilder {
         return new BoardUpdateMessage(updatedOwner, clientBoard);
     }
 
-
-    public Message buildActivePersonalityMessage(PropertyChangeEvent event) {
+    /**
+     * Method buildActivePersonalityMessage builds a message carrying the update on a Personality card's activation, communicated through a PropertyChangeEvent.
+     * @param event PropertyChangeEvent notifying a Personality activation.
+     * @return Message instance holding the information about the model update.
+     */
+    public static Message buildActivePersonalityMessage(PropertyChangeEvent event) {
         int activeCardId = (int) event.getNewValue();
         return new ActivePersonalityMessage(activeCardId);
     }
 
-    public Message buildNoLongerActivePersonalityMessage(PropertyChangeEvent event) {
+    /**
+     * Method buildNoLongerActivePersonalityMessage builds a message carrying the update on a Personality card's deactivation, communicated through a PropertyChangeEvent.
+     * @param event PropertyChangeEvent notifying a Personality deactivation.
+     * @return Message instance holding the information about the model update.
+     */
+    public static Message buildNoLongerActivePersonalityMessage(PropertyChangeEvent event) {
         int inactiveCardId = (int) event.getNewValue();
         return new InactivePersonalityMessage(inactiveCardId);
     }
 
-    public Message buildCoinsUpdate(PropertyChangeEvent event) {
+    /**
+     * Method buildCoinsUpdateMessage builds a message carrying the update on coins allocation, communicated through a PropertyChangeEvent.
+     * @param event PropertyChangeEvent notifying the exchange of coins.
+     * @return Message instance holding the information about the model update.
+     */
+    public static Message buildCoinsUpdateMessage(PropertyChangeEvent event) {
         try {
             ArrayList<Object> coinsChange = (ArrayList<Object>) event.getNewValue();
             int coins = (int) coinsChange.get(0);
@@ -196,13 +252,17 @@ public class  UpdateMessageBuilder {
             return new CoinsUpdateMessage(coins, player,reserveCoins);
         } catch (Exception e) {
             e.printStackTrace();
+            //TODO: vedere come risolvere
         }
         return null;
     }
 
-    //in teoria questo messaggio può essere mandato solo quando viene usato una lobbyPersonality o una BanPersonality
-    //quindi costruisco due messaggi con attributi diversi nei due casi
-    public Message buildPersonalityUsageMessage(PropertyChangeEvent event) {
+    /**
+     * Method buildPersonalityUsageMessage  builds a message carrying the update on a Personality card's usage, communicated through a PropertyChangeEvent.
+     * @param event PropertyChangeEvent notifying the usage of a Personality card.
+     * @return Message instance holding the information about the model update.
+     */
+    public static Message buildPersonalityUsageMessage(PropertyChangeEvent event) {
         Personality modelPersonality = (Personality) event.getNewValue();
         int cardId = modelPersonality.getCharacterId();
         if (modelPersonality instanceof LobbyPersonality)

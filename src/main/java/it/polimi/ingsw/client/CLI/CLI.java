@@ -102,7 +102,6 @@ public class CLI implements Runnable,UI{
                 }
             }
         }
-        //creare eccezione ad hoc
         catch (QuitException e){
             try {
                 clientSocket.send(new DisconnectMessage("Chiudo"));

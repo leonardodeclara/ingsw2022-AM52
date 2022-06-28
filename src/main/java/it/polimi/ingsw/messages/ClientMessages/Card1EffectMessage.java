@@ -1,6 +1,5 @@
 package it.polimi.ingsw.messages.ClientMessages;
 
-
 import it.polimi.ingsw.messages.Message;
 
 public class Card1EffectMessage implements Message {

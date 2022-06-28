@@ -1,4 +1,4 @@
-package it.polimi.ingsw.messages.ClientMessages;
+package it.polimi.ingsw.messages.UpdateMessages;
 
 import it.polimi.ingsw.client.CLI.GameBoard;
 import it.polimi.ingsw.messages.UpdateMessage;
@@ -8,10 +8,6 @@ public class ActivePersonalityMessage implements UpdateMessage {
 
     public ActivePersonalityMessage(int activeCardId){
         this.activeCardId=activeCardId;
-    }
-
-    public int getActiveCardId() {
-        return activeCardId;
     }
 
     @Override

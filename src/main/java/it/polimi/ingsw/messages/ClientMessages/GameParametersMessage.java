@@ -11,10 +11,6 @@ public class GameParametersMessage implements Message {
         this.expertGame = expertGame;
     }
 
-    public GameParametersMessage(){
-
-    }
-
     public int getNumberPlayers() {
         return numberPlayers;
     }

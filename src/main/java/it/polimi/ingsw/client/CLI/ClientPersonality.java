@@ -6,6 +6,11 @@ import it.polimi.ingsw.model.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * Class ClientPersonality holds basic information about a Personality state in order to render its content through CLI and GUI interfaces.
+ * It carries information about its cost, whether it has been used or not and whether it's active or not.
+ * Student tiles are memorised for Lobby personality student tiles, ban counts for Ban Personality.
+ */
 public class ClientPersonality implements Serializable {
     static final long serialVersionUID = 42L;
     private final int cardId;
@@ -16,6 +21,13 @@ public class ClientPersonality implements Serializable {
     private ArrayList<Color> students;
     private String description;
 
+    /**
+     * Constructor ClientPersonality receives as input an representing an id, an integer representing a cost and a flag
+     * showing whether it has also been used and creates a ClientPersonality instance.
+     * @param cardID identification number for the Personality card.
+     * @param hasBeenUsed true if it has already been used, false otherwise.
+     * @param cost card cost.
+     */
     public ClientPersonality(Integer cardID, Boolean hasBeenUsed, Integer cost) {
         cardId = cardID;
         this.hasBeenUsed = hasBeenUsed;
@@ -26,10 +38,16 @@ public class ClientPersonality implements Serializable {
         description=Constants.personalityDescription(cardID);
     }
 
+    /**
+     * Method printDescription prints a description of the card's effect.
+     */
     private void printDescription(){
         System.out.print(description);
     }
 
+    /**
+     * Method print prints Persoanlity's content on CLI interfaces.
+     */
     public void print(){
         System.out.print("ID: "+cardId + " " +"Costo: "+cost+ " ");
         if(students.size() > 0){
@@ -47,6 +65,9 @@ public class ClientPersonality implements Serializable {
         printDescription();
     }
 
+    /**
+     * Method updateCost increments the card's cost according to its usage.
+     */
     public void updateCost(){
         if(!hasBeenUsed){
             cost+=1;

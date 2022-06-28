@@ -8,7 +8,7 @@ import it.polimi.ingsw.client.ClientMessageBuilder;
 import it.polimi.ingsw.client.ClientSocket;
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.*;
-import it.polimi.ingsw.messages.ClientMessages.ActivePersonalityMessage;
+import it.polimi.ingsw.messages.UpdateMessages.ActivePersonalityMessage;
 import it.polimi.ingsw.messages.ServerMessages.ClientStateMessage;
 import it.polimi.ingsw.messages.ServerMessages.ErrorMessage;
 import it.polimi.ingsw.messages.UpdateMessages.*;

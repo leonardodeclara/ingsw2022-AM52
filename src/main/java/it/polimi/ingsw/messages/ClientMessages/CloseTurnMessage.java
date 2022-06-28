@@ -3,13 +3,10 @@ package it.polimi.ingsw.messages.ClientMessages;
 import it.polimi.ingsw.messages.Message;
 
 public class CloseTurnMessage implements Message {
-    String closeturnmessage;
+    String closeTurnMessage;
 
-    public CloseTurnMessage(String closeturnmessage) {
-        this.closeturnmessage = closeturnmessage;
+    public CloseTurnMessage(String closeTurnMessage) {
+        this.closeTurnMessage = closeTurnMessage;
     }
 
-    public String getCloseturnmessage() {
-        return closeturnmessage;
-    }
 }
