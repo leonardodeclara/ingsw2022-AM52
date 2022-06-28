@@ -22,6 +22,12 @@ import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+
+/**
+ * Class CLI represents the main class for the Client Command Line Interface component.
+ * It handles messages coming from ClientSocket, parses input text from player and
+ * prints context and error messages accordingly to the client current state
+ */
 public class CLI implements Runnable,UI{
     private final Scanner inputStream;
     private final PrintStream outputStream;
@@ -51,10 +57,22 @@ public class CLI implements Runnable,UI{
         this.clientSocket = clientSocket;
     }
 
+    /**
+     * Method setNextState set the current client state to a new one
+     * given as parameter. After that it prints the new context message
+     * @param newState is the new state
+     */
     public void setNextState(ClientState newState){
         currentState = newState;
         visualizeContextMessage();
     }
+
+    /**
+     * Method run instantiates the client socket and
+     * while it's active parses input text from player
+     * If input is valid, a message is built accordingly to client state
+     * and passed to client socket to be sent to the server
+     */
     public void run(){
         try {
             instantiateSocket();
@@ -99,6 +117,13 @@ public class CLI implements Runnable,UI{
         System.out.println("Qui muore il thread della cli");
     }
 
+    /**
+     * Method handleMessageFromServer receives a Message instance from ClientSocket and react accordingly to the message type.
+     * @param receivedMessage received from server.
+     * If the message is instance of ClientStateMessage, handleMessageFromServer changes the current client state
+     * If the message is instance of ErrorMessage, handleMessageFromServer prints the error message accordingly to the current client state
+     * If the message is instance of UpdateMessage, handleMessageFromServer updates the GameBoard instance
+     */
     public void handleMessageFromServer(Message receivedMessage){
         //System.out.println("Ho ricevuto dal server un messaggio di " + (receivedMessage.getClass().toString()));
         if(receivedMessage instanceof ClientStateMessage){
@@ -114,7 +139,10 @@ public class CLI implements Runnable,UI{
 
     }
 
-
+    /**
+     * Method instantiateSocket asks player for IP and port and tries to instantiate a client socket
+     * on a new thread with the input parameters. If connection fails an error message is print
+     */
     public void instantiateSocket() throws IOException {
         boolean connectionAccepted = false;
         while(!connectionAccepted){
@@ -132,40 +160,64 @@ public class CLI implements Runnable,UI{
         }
     }
 
-    //stampo solo gli elementi di gioco che dipendono dal numero di giocatori e dalla modalità
+    /**
+     * Method prepareView initializes GameBoard instance with game parameters
+     * @param data contains game parameters
+     */
     public void prepareView(ArrayList<Object> data){
         GB.setNumberOfPlayers((Integer)data.get(0));
         GB.setExpertGame((Boolean)data.get(1));
         inputParser.setIsExpert((Boolean)data.get(1));
     }
 
+    /**
+     * Method updateView updates GameBoard using contents of a message passed as parameter
+     * @param updateMessage is the message which contains contents needed for the update
+     */
     public void updateView(Message updateMessage) {
         ((UpdateMessage) updateMessage).update(GB);
     }
 
-
+    /**
+     * Method visualizeContextMessage prints a context message accordingly to the current client state
+     */
     private void visualizeContextMessage(){
         ArrayList<String> texts = currentState.getCLIContextMessage(GB);
         for(String text : texts)
             outputStream.println(text);
     }
+
+    /**
+     * Method visualizeServerErrorMessage prints a server error message accordingly to the current client state
+     */
     private void visualizeServerErrorMessage(){
         ArrayList<String> texts = currentState.getServerErrorMessage();
         for(String text : texts)
             outputStream.println(text);
     }
 
+    /**
+     * Method visualizeInputErrorMessage prints an input error message accordingly to the current client state
+     */
     private void visualizeInputErrorMessage(){
         ArrayList<String> texts = currentState.getInputErrorMessage();
         for(String text : texts)
             outputStream.println(text);
     }
 
+    /**
+     * Method visualizeCustomMessage prints a custom message accordingly to parameter string
+     * @param customMessage  is the message to print on the output stream
+     */
     public void visualizeCustomMessage(String customMessage){
         outputStream.println(customMessage);
     }
 
 
+    /**
+     * Method askIP asks the player for the server IP
+     * @return ip as a string
+     */
     public String askIP(){
         String ip;
         outputStream.println("Benvenuto!");
@@ -176,6 +228,10 @@ public class CLI implements Runnable,UI{
         return ip;
     }
 
+    /**
+     * Method askPort asks the player for the server port
+     * @return port as a string
+     */
     public int askPort(){ //ogni metodo di CLI richiede gli input e gestisce gli errori base (tipo scrivo davide come porta per il server)
         boolean validInput = false; //si potrebbe fare la stessa cosa con while(1) e break ma così è più elegante
         String input;
@@ -196,6 +252,10 @@ public class CLI implements Runnable,UI{
         return port;
     }
 
+    /**
+     * Method handleClosingServer handles server crash by printing a message
+     * and closing the JVM
+     */
     @Override
     public void handleClosingServer() {
         System.out.println("Il server è crashato");
