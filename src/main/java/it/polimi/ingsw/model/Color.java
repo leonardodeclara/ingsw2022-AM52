@@ -1,22 +1,18 @@
 package it.polimi.ingsw.model;
 
-import java.util.HashMap;
-
 /**
  * Colors which identifies students and teachers' objects.
  */
 public enum Color {
-    PINK (0,"ROSA"), GREEN (1,"VERDE"), BLUE(2,"BLU"), YELLOW(3,"GIALLO"), RED(4,"ROSSO");
+    PINK (0), GREEN (1), BLUE(2), YELLOW(3), RED(4);
     private final int index;
-    private final String translation;
 
     /**
      * Constructor creates a new color instance.
      * @param index: number representative for the color's index.
      */
-    Color(int index,String translation) {
+    Color(int index) {
         this.index=index;
-        this.translation = translation;
     }
 
     /**
@@ -26,14 +22,4 @@ public enum Color {
         return index;
     }
 
-    public static Color getById(int index) {
-        for(Color c : values()) {
-            if(c.index == index) return c;
-        }
-        return null;
-    }
-
-    public String translateToItalian(){
-        return translation;
-    }
 }

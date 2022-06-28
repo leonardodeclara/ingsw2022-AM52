@@ -32,7 +32,6 @@ public class Server {
         clientHandlerCounter=0;
     }
 
-
     /**
      * It handles the first messages sent by a player in order to register its name and its choice
      * for the number of players and game mode.
