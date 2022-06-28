@@ -60,17 +60,14 @@ public class ClientSocket implements Runnable{
         try{
             while(active){
                 Message receivedMessage = (Message) in.readObject();
-                System.out.println("Ho ricevuto lato client "+receivedMessage);
                 if (!(receivedMessage instanceof Ping))
                     cli.handleMessageFromServer(receivedMessage);
             }
         }
         catch(SocketTimeoutException | EOFException exception ){
-            System.out.println("ClientSocket: catchata eccezione "+exception.getClass().toString());
             cli.handleClosingServer();
         }
         catch (IOException | ClassNotFoundException exception){
-            System.out.println("ClientSocket: catchata eccezione "+exception.getClass().toString());
         } finally {
             closeConnection();
 
@@ -81,12 +78,9 @@ public class ClientSocket implements Runnable{
         out.reset();
         out.writeObject(msg);
         out.flush();
-        if (!(msg instanceof  Ping) )
-            System.out.println("Ho mandato un messaggio");
     }
 
     private void closeConnection(){
-        System.out.println("Chiudo il thread del clientSocket");
         try{
             in.close();
             out.close();

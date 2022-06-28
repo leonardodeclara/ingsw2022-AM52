@@ -12,7 +12,10 @@ import java.util.ArrayList;
 
 import static it.polimi.ingsw.Constants.*;
 
-
+/**
+ * Class GUICloud renders the cloud's elements on the screen
+ * For each cloud, a GUICloud instance is created
+ */
 public class GUICloud {
     private ClientCloud clientCloud;
     private ImageView cloudImage;
@@ -38,6 +41,10 @@ public class GUICloud {
         studentsImages = new ArrayList<>();
     }
 
+    /**
+     * Method render renders the cloud image
+     * and adds all the student images on it
+     */
     public void render(){
         gui.addElementToScene(cloudImage);
         populate();
@@ -61,6 +68,9 @@ public class GUICloud {
         }
     }
 
+    /**
+     * Method populate renders the student images on the cloud
+     */
     private void populate(){
         clearStudentsImages();
         int studentCounter = 0; //va tenuta traccia manualmente, indexOf trovava la prima occurence
@@ -79,14 +89,16 @@ public class GUICloud {
             studentImage.setFitWidth(STUDENT_IMAGE_WIDTH);
             studentsImages.add(studentImage);
             gui.addElementToScene(studentImage);
-            //System.out.println("CLOUD: renderizzo uno studente");
             studentCounter++;
         }
     }
 
+    /**
+     * Method setEvents sets up all the mouse events for
+     * cloud image
+     */
     public void setEvents(){
         cloudImage.setOnMouseClicked((MouseEvent e) -> {
-            //controller.handleClickEvent(index,Clickable.CLOUD);
             actionParser.handleSelectionEvent(index,Clickable.CLOUD,gui.getCurrentState());
             controller.handleSelectionEffect(cloudImage,Clickable.CLOUD);
         });
@@ -100,12 +112,20 @@ public class GUICloud {
 
     }
 
+    /**
+     * Method clearStudentsImages removes all the student images
+     * from the screen
+     */
     private void clearStudentsImages(){
         for(ImageView student : studentsImages){
             gui.removeElementFromScene(student);
         }
     }
 
+    /**
+     * Method clearCloud removes the cloud image
+     * from the screen
+     */
     public void clearCloud(){
         clearStudentsImages();
         gui.removeElementFromScene(cloudImage);

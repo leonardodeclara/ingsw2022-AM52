@@ -15,9 +15,10 @@ import java.util.ArrayList;
 
 import static it.polimi.ingsw.Constants.*;
 
-
-//TODO. aggiungere controllo (in controller/actionParser/qui che mi renda selezionabile solo gli studenti della carta attiva, non di tutte le carte)
-
+/**
+ * Class GUIPersonality renders the card image and elements on the screen
+ * For each card, a GUIPersonality instance is created
+ */
 public class GUIPersonality {
     private ClientPersonality personality;
     private ImageView cardImage;
@@ -47,6 +48,10 @@ public class GUIPersonality {
         initializeExtraFeatures();
     }
 
+    /**
+     * Method render renders the card image
+     * and adds all the various items images on it
+     */
     public void render(){
         gui.addElementToScene(cardImage);
         populate();
@@ -69,8 +74,12 @@ public class GUIPersonality {
         }
     }
 
+    /**
+     * Method populate renders the items images on the card
+     * This includes students,coins,bans and ACTIVE label
+     */
     private void populate(){
-        clearExtraFeatures();
+        clearFeatures();
 
         if (personality.isHasBeenUsed()){
             coinImage = new ImageView("graphics/coin.png");
@@ -104,6 +113,9 @@ public class GUIPersonality {
         }
     }
 
+    /**
+     * Method populateLobbyPersonality renders student images on the card
+     */
     private void populateLobbyPersonality(){
         ArrayList<Color> cardStudents = personality.getStudents();
         int halfAmountOfStudents=cardStudents.size()/2;
@@ -132,6 +144,9 @@ public class GUIPersonality {
         }
     }
 
+    /**
+     * Method populateBanPersonality renders ban images on the card
+     */
     private void populateBanPersonality(){
         double startY = centerY+PERSONALITY_IMAGE_HEIGHT*0.15;
         double startX = centerX;
@@ -149,6 +164,10 @@ public class GUIPersonality {
         banImage.toFront();
     }
 
+    /**
+     * Method initializeExtraFeatures adds the card description
+     * on a tooltip
+     */
     private void initializeExtraFeatures(){
         Tooltip descriptionToolTip = new Tooltip(personality.getDescription());
         descriptionToolTip.setShowDelay(Duration.seconds(0.3));
@@ -157,7 +176,11 @@ public class GUIPersonality {
         Tooltip.install(cardImage, descriptionToolTip);
     }
 
-    private void clearExtraFeatures(){
+    /**
+     * Method clearFeatures removes all the images on the card
+     * from the screen
+     */
+    private void clearFeatures(){
         //System.out.println("Qui pulisco le extra feature della carta "+cardId);
         if (personality.getStudents()!=null && personality.getStudents().size()>0)
             for(ImageView studentImage : studentsImages){
@@ -167,6 +190,10 @@ public class GUIPersonality {
         gui.removeElementFromScene(activeText);
     }
 
+    /**
+     * Method setEvents sets up all the mouse events
+     * for the card image
+     */
     public void setEvents(){
         cardImage.setOnMouseClicked((MouseEvent e) ->{
             actionParser.handleSelectionEvent(cardId,Clickable.PERSONALITY,gui.getCurrentState());
@@ -181,6 +208,10 @@ public class GUIPersonality {
         });
     }
 
+    /**
+     * Method setStudentsEvents sets up all the mouse/Drag and drop events
+     * for the student images
+     */
     public void setStudentsEvents(ImageView studentImage, int studentIndex){
         studentImage.setOnMouseClicked((MouseEvent e) -> {
             //if (personality.isActive) aggiungere controllo per cui si può clickare su uno studente se la carta è attiva
@@ -211,8 +242,13 @@ public class GUIPersonality {
         });
     }
 
+
+    /**
+     * Method clearPersonality removes up all the images associated
+     * with this card from the screen
+     */
     public void clearPersonality(){
-        clearExtraFeatures();
+        clearFeatures();
         gui.removeElementFromScene(cardImage);
     }
 

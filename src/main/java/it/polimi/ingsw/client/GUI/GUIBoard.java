@@ -16,8 +16,10 @@ import java.util.HashMap;
 
 import static it.polimi.ingsw.Constants.*;
 
-//TODO: sistemare il caso in cui provi a spostare meno di due studenti dalla lobby in MOVE_FROM_LOBBY
-
+/**
+ * Class GUIBoard renders the board's elements on the screen
+ * For each player, a GUIBoard instance is assigned
+ */
 public class GUIBoard {
     private ClientBoard clientBoard;
     private GUI gui;
@@ -50,6 +52,12 @@ public class GUIBoard {
         setTableEvents();
     }
 
+    /**
+     * Method initializeBoard sets up the hashmap which associates Color->number of students
+     * and the lobby students list
+     * These two data structures can be modified freely on client side by drag n drop events,
+     * because the copies from server are stored in GameBoard instance
+     */
     private void initializeBoard(){
         ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN)); //l'ordine è importante per gli offset del rendering
         for(Color color : tableColors){
@@ -59,6 +67,9 @@ public class GUIBoard {
         clientSideLobbyStudents.addAll(clientBoard.getLobby());
     }
 
+    /**
+     * Method setTableEvents sets up drag n drop events for the table
+     */
     private void setTableEvents(){
         tableBounds.setOnDragOver((DragEvent e) -> { //qui si avrà il check dell'action parser (se non è clickable questo evento non deve partire)
             if (e.getGestureSource() != tableBounds && e.getDragboard().hasString()) {
@@ -89,21 +100,24 @@ public class GUIBoard {
         });
     }
 
+    /**
+     * Method addStudentToTable adds a student to the hashmap numOfStudentsOnTable
+     * which stores the number of students for each color client side
+     * It also refreshes table rendered items to show the newly added student
+     * @param student color of the student to add to the hashmap
+     */
     private void addStudentToTable(Color student) {
         int numOf = numOfStudentsOnTable.get(student);
         numOfStudentsOnTable.put(student,numOf+1);
-        //System.out.println("Aggiungo in numOfStudentsOnTable di "+getClientBoard().getOwner()+" uno studente "+student);
-        for(Color s : numOfStudentsOnTable.keySet())
-            //System.out.println("C'è uno studente "+s+" in numOfStudentsOnTable");
         populateTables();
     }
 
 
-    //quando si riceve update, viene chiamato populateDashBoard con reset= true, che a sua volta per ogni GUIBoard chiama clearBoard(reset=true)
-    //reset in guiBoard fa clear di studentsInLobby e numOfStudentsInTable e li rinizializza
-
-    //quando si fa click sulla board di qualcuno, viene chiamata populateDashboard con reset=false, quella attuale viene pulita con clearBoard(reset=false) e disegnata quella nuova, ma non viene fatto il reset
-
+    /**
+     * Method populate clear all the rendered items on the board
+     * and draws them again
+     * It also sets again drag n drop events on the table
+     */
     public void populate(){
         populateTables();
         populateLobby();
@@ -115,6 +129,10 @@ public class GUIBoard {
         setTableEvents();
     }
 
+    /**
+     * Method populateTeachers adds all the teachers images to the board
+     * Each image is rendered if and only if the board's owner has that specific teacher
+     */
     private void populateTeachers(){
         int teacherCounter = 0;
         ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));
@@ -131,6 +149,15 @@ public class GUIBoard {
             teacherCounter++;
         }
     }
+
+    /**
+     * Method populateLobby adds all the student images to the lobby
+     * If a drag n drop event has removed one or more students
+     * from the lobby's students list, they will be
+     * rendered even if these are still in lobby, server-side.
+     * This is done to preview what the board will look like
+     * if the player decides to confirm his action
+     */
     private void populateLobby(){
         clearLobby();
         int studentRowCounter = 0;
@@ -146,12 +173,12 @@ public class GUIBoard {
             if(clientBoard.equals(gui.getOwningPlayerBoard())){
                 studentImage.setOnDragDetected((MouseEvent e) -> {
                     if(actionParser.canDrag(gui.getCurrentState(),Clickable.LOBBY_STUDENT)){
-                            Dragboard db = studentImage.startDragAndDrop(TransferMode.MOVE);
-                            db.setDragView(studentImage.getImage());
-                            ClipboardContent content = new ClipboardContent();
-                            content.putString(Integer.toString(finalStudentIDCounter));
-                            db.setContent(content);
-                            e.consume();
+                        Dragboard db = studentImage.startDragAndDrop(TransferMode.MOVE);
+                        db.setDragView(studentImage.getImage());
+                        ClipboardContent content = new ClipboardContent();
+                        content.putString(Integer.toString(finalStudentIDCounter));
+                        db.setContent(content);
+                        e.consume();
                     }
                 });
                 studentImage.setOnDragDone(new EventHandler<DragEvent>() {
@@ -181,7 +208,7 @@ public class GUIBoard {
 
             lobbyStudentsImages.add(studentImage);
             gui.addElementToScene(studentImage);
-            if(studentColumnCounter==4 && studentRowCounter == 0){ //fa abbastanza schifo, miglioro appena ho tempo
+            if(studentColumnCounter==4 && studentRowCounter == 0){
                 studentColumnCounter=0;
                 studentRowCounter++;
             }else{
@@ -189,57 +216,22 @@ public class GUIBoard {
             }
             studentIDCounter++;
         }
-        //bisogna associare a ogni studente della lobby un qualcosa di univoco in modo che negli eventi drag possa essere
-        //associato questo qualcosa di univoco a quello specifico studente
-
-        //l'unica cosa univoca è l'indice all'interno dell'array lobby di clientBoard.
-        //il problema è che se iteriamo lobby, dobbiamo renderizzare solo gli studenti presenti anche in studentsinlobby ma essendo color un enum
-        //è impossibile fare studentsInLobby.contains(student) perchè non terrebbe conto del numero di studenti del tipo student contenuti in studentsInLobby
-
-        //l'unica è ciclare studentsInLobby e associare l'indice nell'array all'evento drag dell'immagine di quello studente usando un hashmap
-        //che dall'indice di studentsInLobby (studentCounter) sa a cosa corrisponde in lobby.
-        //quando uno studente viene aggiunto alla table/isola è facile farlo, e lo si toglie da studentsInLobby come al solito.
-        //a quel punto però si aggiorna l'hashmap che binda gli id di lobby a quelli di studentsInLobby
-        //quindi quando si posiziona la prima volta lo studente 3 ad esempio di lobby sulla table, questo viene rimosso da studentsInLobby
-        //e si modifica questa hashmap
-        //per le isole è la stessa cosa. Nel messaggio si avrà l'id di lobby, si modifica studentsInLobby, si aggiorna l'hashmap in modo che
-        //il prossimo drag vada a buon fine
-
-
-
-        //per l'hashmap il codice di aggiornamento è
-
-
-        /*
-        l'hashmap è <studentsInLobbyIndex,lobbyID>
-         // 1 2 3 4 5 6 studentsInLobby
-            R G B B Y G
-        // 1 2 3 4 5 6 lobby
-           R G B B Y G
-        //è stato rimosso il 5 di lobby  (removedIndex)
-        // hashMap.clear()   //per sicurezza
-        //for(i=0;i<studentsInLobby.size();i++){
-            if(i<removedIndex)
-                hashMap.put(i,i)
-            if(i>=removedIndex)
-                hashMap.put(i,i+1)
-
-        // }
-
-
-        l'aggiornamento dell'hashmap avviene quando si toglie qualcosa da studentsInLobby
-        l'hashmap invece si usa quando si vuole draggare uno studente, poichè in clipboard viene messo l'id di lobby, non quello di studentsInLobby
-        ossia  hashMap.get(finalStudentIDCounter)
-         */
     }
 
+    /**
+     * Method populateTables adds all the student images to the table
+     * If a drag n drop event has added one or more students
+     * to the table's students hashmap, they will be
+     * rendered even if these are still in lobby, server-side.
+     * This is done to preview what the board will look like
+     * if the player decides to confirm his action
+     */
     private void populateTables(){
         clearTables();
         int tableCounter = 0;
         ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));
         for(Color color : tableColors){
             int numOfStudents = numOfStudentsOnTable.get(color);
-            //int numOfStudents = 10; test
             String studentImagePath = "/graphics/"+color.toString().toLowerCase()+"_student.png";
             for(int i = 0; i< numOfStudents;i++){
                 ImageView studentImage = new ImageView(studentImagePath);
@@ -259,6 +251,9 @@ public class GUIBoard {
 
     }
 
+    /**
+     * Method populateTowers adds all the towers images to the board
+     */
     private void populateTowers(){
         clearTowers();
         int towersCounter = clientBoard.getTowers();
@@ -288,6 +283,11 @@ public class GUIBoard {
 
     }
 
+    /**
+     * Method populateCoins adds a coin image to the board
+     * It also adds a tooltip which tells to the player how
+     * many coins does he have
+     */
     private void populateCoins(){
         int coinCount = clientBoard.getCoins();
         if (coinCount>0){
@@ -305,12 +305,21 @@ public class GUIBoard {
         }
     }
 
+    /**
+     * Method clearLobby removes all the lobby student images
+     * from the screen
+     */
     private void clearLobby(){
         for(ImageView student : lobbyStudentsImages)
             gui.removeElementFromScene(student);
         lobbyStudentsImages.clear();
 
     }
+
+    /**
+     * Method clearTables removes all the table student images
+     * from the screen
+     */
     private void clearTables(){
         for(ImageView student : tableStudentsImages){
             System.out.println("Rimuovo dalla board lo studente "+student.getImage().getUrl());
@@ -319,12 +328,22 @@ public class GUIBoard {
         tableStudentsImages.clear();
 
     }
+
+    /**
+     * Method clearTeachers removes all the teachers images
+     * from the screen
+     */
     private void clearTeachers(){
         for(ImageView teacher : teachersImages)
             gui.removeElementFromScene(teacher);
         teachersImages.clear();
 
     }
+
+    /**
+     * Method clearTowers removes all the towers images
+     * from the screen
+     */
     private void clearTowers(){
         for(ImageView tower : towersImages)
             gui.removeElementFromScene(tower);
@@ -335,6 +354,11 @@ public class GUIBoard {
     public ClientBoard getClientBoard(){
         return clientBoard;
     }
+
+    /**
+     * Method clearBoard removes all the board images
+     * from the screen
+     */
     public void clearBoard(boolean reset){
         clearLobby();
         clearTables();
@@ -351,6 +375,13 @@ public class GUIBoard {
         return clientSideLobbyStudents.size() != clientBoard.getLobby().size();
     }
 
+    /**
+     * Method reset clears lobby students list and table hashmap
+     * and calls initialization
+     * This is called when it's needed to synchronize board status
+     * between GUI client and server after a drag n drop event which modified
+     * the board client side
+     */
     private void reset(){
         numOfStudentsOnTable.clear();
         clientSideLobbyStudents.clear();
