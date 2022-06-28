@@ -178,7 +178,7 @@ public class GameTableController extends GUIController implements UpdatableContr
      * It also handles various selection effects for both the selected items and the CONFIRM button
      */
     public void send(){
-
+        System.out.println("CLICK SU CONFIRM");
         sendButton.setEffect(new DropShadow());
 
         if(gui.getCurrentState().equals(ClientState.END_TURN) && actionParser.getParameters().size() == 0)
@@ -491,7 +491,6 @@ public class GameTableController extends GUIController implements UpdatableContr
         for (String text: texts){
             messageForToolTip.append(text).append("\n");
         }
-
         contextMessage.setText(texts.get(0));
         Tooltip fullMessage = new Tooltip(messageForToolTip.toString());
         fullMessage.setShowDelay(Duration.seconds(0.3));

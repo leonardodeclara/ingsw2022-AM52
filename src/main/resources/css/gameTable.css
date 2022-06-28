@@ -8,11 +8,11 @@
 
 .contextMessage {
    -fx-font-family: "Hey Comic";
-   -fx-font-size: 12;
+   -fx-font-size: 13;
 }
 
 .contextMessage.label .text {
-    -fx-fill: white;
-    -fx-stroke: black;
+    -fx-fill: black;
+    -fx-stroke: white;
     -fx-stroke-width: 0.5px;
 }

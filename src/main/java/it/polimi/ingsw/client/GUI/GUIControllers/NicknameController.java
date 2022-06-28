@@ -63,6 +63,6 @@ public class NicknameController extends GUIController{
     public void handleErrorMessage(boolean fromServer) {
         alreadyPressed=false;
         nickname.clear();
-        nicknameMessage.setText("Entered nickname is not available. Please choose another one");
+        nicknameMessage.setText("Already taken! Retry");
     }
 }

@@ -172,7 +172,5 @@ public class TowerChoiceController extends GUIController implements UpdatableCon
     /**
      * Method start comes from the implemented interface UpdatableController, but in this specific case it's not used
      */
-    public void start() {
-
-    }
+    public void start() {}
 }

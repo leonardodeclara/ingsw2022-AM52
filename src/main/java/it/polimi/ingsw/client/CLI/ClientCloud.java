@@ -28,7 +28,7 @@ public class ClientCloud implements Serializable {
      * Method print prints the cloud's content on CLI interfaces.
      */
     public void print(){
-        System.out.println("NUVOLA " + getCloudIndex() + ":");
+        System.out.println("CLOUD " + getCloudIndex() + ":");
         try {
             for(Color color : Color.values()) {
                 int numberOfStudentPerColor = (int) getStudents().stream().filter(c -> c == color).count();
@@ -40,7 +40,7 @@ public class ClientCloud implements Serializable {
             System.out.println();
 
         } catch (NullPointerException e) {
-            System.out.println("no studenti");
+            System.out.println("no students");
         }
     }
     public int getCloudIndex() {

@@ -14,7 +14,7 @@
             <Image url="@../graphics/splash_screen.png" />
          </image>
       </ImageView>
-      <Text fill="WHITE" layoutX="203.0" layoutY="343.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="Rimani in attesa di altri giocatori..." wrappingWidth="275.3307800292969">
+      <Text fill="WHITE" layoutX="203.0" layoutY="343.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="Waiting for other players..." wrappingWidth="275.3307800292969">
          <font>
             <Font name="Britannic Bold" size="16.0" />
          </font>

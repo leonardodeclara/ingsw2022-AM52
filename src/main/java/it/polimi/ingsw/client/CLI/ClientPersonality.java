@@ -49,9 +49,9 @@ public class ClientPersonality implements Serializable {
      * Method print prints Personality's content on CLI interfaces.
      */
     public void print(){
-        System.out.print("ID: "+cardId + " " +"Costo: "+cost+ " ");
+        System.out.print("ID: "+cardId + " " +"COST: "+cost+ " ");
         if(students.size() > 0){
-            System.out.print("STUDENTI: ");
+            System.out.print("STUDENTS: ");
             for (Color student : students) {
                 System.out.print(Constants.getStudentsColor(student) + "■ ");
                 System.out.print(Constants.RESET);
@@ -61,7 +61,7 @@ public class ClientPersonality implements Serializable {
         if (bans>0){
             System.out.println("BANS: " + bans);
         }
-        System.out.println("DESCRIZIONE: ");
+        System.out.println("DESCRIPTION: ");
         printDescription();
     }
 

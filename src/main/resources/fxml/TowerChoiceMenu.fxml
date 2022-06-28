@@ -19,7 +19,7 @@
             <Font name="Britannic Bold" size="13.0" />
          </font>
       </Button>
-      <Text fill="WHITE" layoutX="223.0" layoutY="141.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="... ed il colore del tuo team!" wrappingWidth="223.99737548828125">
+      <Text fill="WHITE" layoutX="223.0" layoutY="141.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="... and your tower color!" wrappingWidth="223.99737548828125">
          <font>
             <Font name="Britannic Bold" size="16.0" />
          </font>
