@@ -40,6 +40,7 @@ public class Player {
     public void setDeck(ArrayList<Assistant> newDeck){
         deck.clear();
         deck.addAll(newDeck);
+        board.setWizard(deck.get(0).getWizard());
         listeners.firePropertyChange("Deck", null, this);
     }
 
@@ -49,14 +50,6 @@ public class Player {
      */
     public Board getBoard() {
         return board;
-    }
-
-    /**
-     * Method that returns the ID given to the player
-     * @return integer that represents the playerID
-     */
-    public int getPlayerId() {
-        return playerId;
     }
 
     /**
@@ -230,6 +223,8 @@ public class Player {
         listeners.addPropertyChangeListener("Deck", controller); //non sono sicuro sia un'informazione visibile a tutti
         listeners.addPropertyChangeListener("Board", controller);
     }
+
+
 }
 
 

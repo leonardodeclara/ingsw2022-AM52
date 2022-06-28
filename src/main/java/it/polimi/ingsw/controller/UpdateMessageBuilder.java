@@ -215,6 +215,8 @@ public class UpdateMessageBuilder {
         clientBoard.setStudentsTable(updatedBoard.getStudentsTable());
         clientBoard.setTeacherTable(updatedBoard.getTeacherTable());
         clientBoard.setLobby(updatedBoard.getLobby());
+        clientBoard.setWizardID(updatedBoard.getWizard());
+        System.out.println("WIZARD ID DEL GIOCATORE "+updatedOwner+" "+updatedBoard.getWizard());
         return new BoardUpdateMessage(updatedOwner, clientBoard);
     }
 

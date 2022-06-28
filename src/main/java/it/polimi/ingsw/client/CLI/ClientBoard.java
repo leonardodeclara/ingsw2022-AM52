@@ -25,6 +25,7 @@ public class ClientBoard implements Serializable {
     private Tower team;
     private int currentCard;
     private GameBoard GB;
+    private int wizardID;
 
     /**
      * Constructor ClientBoard creates the ClientBoard instance of a selected player, whose name is given as parameter.
@@ -36,6 +37,7 @@ public class ClientBoard implements Serializable {
         this.teacherTable = new ArrayList<>();
         this.lobby = new ArrayList<>();
         this.deck = new HashMap<>();
+        this.wizardID = -1;
     }
 
     /**
@@ -212,5 +214,12 @@ public class ClientBoard implements Serializable {
 
     public void setDeck(HashMap<Integer, Integer> deck) {
         this.deck = deck;
+    }
+
+    public void setWizardID(int wizardID){
+        this.wizardID = wizardID;
+    }
+    public int getWizardID() {
+        return wizardID;
     }
 }

@@ -15,6 +15,7 @@ public class Board {
     private ArrayList<Color> teacherTable;
     private ArrayList<Color> lobby;
     private int towers;
+    private int wizardID;
 
     /**
      * Constructor creates a Board instance.
@@ -226,6 +227,12 @@ public class Board {
         this.towers = towers;
     }
 
+    public int getWizard(){
+        return wizardID;
+    }
+    public void setWizard(int wizardID){
+        this.wizardID = wizardID;
+    }
     /**
      * Method hasDuplicates checks if the selected ArrayList has duplicate elements.
      * @param indexes: ArrayList carrying Integer instances that need to be checked for duplicates.

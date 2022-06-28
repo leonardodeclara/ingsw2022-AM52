@@ -31,7 +31,6 @@ import static it.polimi.ingsw.Constants.*;
 //TODO immagini per i bottoni delle board
 //TODO tasto per chiudere il gioco dopo la disconnessione
 //TODO scelta porta per il server
-//TODO gestione errore per connect menu
 /**
  * Class GameTableController implements all the logic behind the Game Table FXML Scene
  * It renders almost all the game elements, handles mouse event handling,
@@ -95,9 +94,7 @@ public class GameTableController extends GUIController implements UpdatableContr
                 localIDToPlayer.put(i,otherPlayer);
                 i++;
             }
-            renderPlayerButtonName(player1Icon, localIDToPlayer.get(1));
-            renderPlayerButtonName(player2Icon,localIDToPlayer.get(2));
-            renderPlayerButtonName(player3Icon, localIDToPlayer.get(3));
+
 
             for(ClientBoard clientBoard : gui.getClientBoards()){
                 GUIBoards.put(clientBoard,new GUIBoard(clientBoard,gui,this,tableBounds));
@@ -225,6 +222,9 @@ public class GameTableController extends GUIController implements UpdatableContr
         populateDashboard(false);
         visualizeContextMessage();
         renderSendButton();
+        renderPlayerButtonName(player1Icon, localIDToPlayer.get(1));
+        renderPlayerButtonName(player2Icon,localIDToPlayer.get(2));
+        renderPlayerButtonName(player3Icon, localIDToPlayer.get(3));
 
         if(waitTurn)
             gui.disableScene();
@@ -442,6 +442,7 @@ public class GameTableController extends GUIController implements UpdatableContr
     private void renderPlayerButtonName(ImageView playerIcon, String playerName){
         if (playerName==null) return;
         Text name;
+
         if (playerName.equals(gui.getGB().getNickname()))
             name = new Text("YOUR BOARD");
         else
@@ -456,6 +457,8 @@ public class GameTableController extends GUIController implements UpdatableContr
         Tooltip message = new Tooltip("CLICK ON THE CIRCLE TO SHOW "+playerName.toUpperCase()+"'S BOARD");
         message.setShowDelay(Duration.seconds(0.3));
         Tooltip.install(playerIcon, message);
+        int iconImageID = gui.getGB().getClientBoards().get(playerName).getWizardID() + 1;
+        playerIcon.setImage(new Image("/graphics/board_circle"+iconImageID+".png"));
     }
 
     /**

@@ -81,10 +81,10 @@ public class CLI implements Runnable,UI{
         }
 
         active = true;
-        setNextState(ClientState.CONNECT_STATE); //stato iniziale
+        setNextState(ClientState.CONNECT_STATE);
 
         try{
-            while(active) { //bisogna trovare il modo di impedire al giocatore di spammare invio
+            while(active) {
                 if (inputStream.hasNext()) {
                     playerInput = inputParser.parse(inputStream.nextLine(), currentState);
                     if (playerInput.size() > 0) {
@@ -108,12 +108,10 @@ public class CLI implements Runnable,UI{
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            System.out.println("Ora mi chiudo per quit dell'utente");
         }
         catch (EndGameException e){
-            System.out.println("Ora mi chiudo perché la partita è finita e l'utente ha scritto close");
+            System.out.println("Game is over. Closing...");
         }
-        System.out.println("Qui muore il thread della cli");
     }
 
     /**
@@ -124,16 +122,15 @@ public class CLI implements Runnable,UI{
      * If the message is instance of UpdateMessage, handleMessageFromServer updates the GameBoard instance
      */
     public void handleMessageFromServer(Message receivedMessage){
-        //System.out.println("Ho ricevuto dal server un messaggio di " + (receivedMessage.getClass().toString()));
         if(receivedMessage instanceof ClientStateMessage){
-            if(currentState.equals(ClientState.CONNECT_STATE)){ //significa che è il nome è stato approvato, quindi lo salviamo in GameBoard
+            if(currentState.equals(ClientState.CONNECT_STATE)){
                 GB.setNickname(inputParser.getNickname());
             }
-            setNextState(((ClientStateMessage) receivedMessage).getNewState()); //Se è uno stato aggiorna quello corrente
+            setNextState(((ClientStateMessage) receivedMessage).getNewState());
         }else if(receivedMessage instanceof ErrorMessage) {
-            visualizeServerErrorMessage(); //se è un errore visualizzalo
-        }else{ //messaggio di view (a esclusione)
-            updateView(receivedMessage); //se è un update della view aggiorna la view
+            visualizeServerErrorMessage();
+        }else{
+            updateView(receivedMessage);
         }
 
     }
@@ -149,7 +146,7 @@ public class CLI implements Runnable,UI{
                 String ip = askIP();
                 int port = askPort();
                 clientSocket = new ClientSocket(ip,port,this);
-                Thread socketThread = new Thread(clientSocket); //la sposti su un nuovo thread (parte run() in automatico)
+                Thread socketThread = new Thread(clientSocket);
                 socketThread.start();
                 connectionAccepted = true;
             }catch(UnknownHostException |SocketException e){
@@ -231,8 +228,8 @@ public class CLI implements Runnable,UI{
      * Method askPort asks the player for the server port
      * @return port as a string
      */
-    public int askPort(){ //ogni metodo di CLI richiede gli input e gestisce gli errori base (tipo scrivo davide come porta per il server)
-        boolean validInput = false; //si potrebbe fare la stessa cosa con while(1) e break ma così è più elegante
+    public int askPort(){
+        boolean validInput = false;
         String input;
         int port = 0;
         while(!validInput){
@@ -245,7 +242,7 @@ public class CLI implements Runnable,UI{
                 validInput = true;
             }catch(NumberFormatException e){
                 outputStream.println("La porta dovrebbe essere un numero intero, riprova");
-                validInput = false; //si può omettere, lo scrivo per chiarezza
+                validInput = false;
             }
         }
         return port;
@@ -257,8 +254,8 @@ public class CLI implements Runnable,UI{
      */
     @Override
     public void handleClosingServer() {
-        System.out.println("Il server è crashato");
-        System.exit(0); //TODO: si può far chiudere al giocatore con un messaggio (in teoria funziona cosi togliendo questa riga)
+        System.out.println("Server connection timed out. Closing...");
+        System.exit(0);
     }
 
     public static void main(String[] args) {
