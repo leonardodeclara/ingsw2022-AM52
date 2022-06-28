@@ -180,10 +180,7 @@ class GameTest {
         game.instantiateGameElements(players);
         assertEquals(7, game.getPlayerByName("mari").getBoard().getLobby().size());
         assertEquals(7, game.getPlayerByName("frizio").getBoard().getLobby().size());
-        //assertEquals(106, game.getBasket().getSize());
-        /**
-         * TODO: riattivare assert quando è terminato il testing delle condizioni di fine partita
-         */
+        assertEquals(106, game.getBasket().getSize());
     }
 
     /**
@@ -772,9 +769,6 @@ class GameTest {
         assertEquals("leo", game.getTowersOwnerName(game.getIslands().get(0), game.getPlayers()));
     }
 
-    /**
-     * TODO: sistemare metodo in modo che controlli che è manchi dal mazzo solo quella carta giocata (contains in teoria non va bene)
-     */
     @Test
     void getPlayableAssistantCardTest(){
         Game game = new Game(2);
@@ -907,9 +901,6 @@ class GameTest {
                 game.getIslands().indexOf(game.getCurrentMotherNatureIsland()));
     }
 
-    /**
-     * TODO: controllare il funzionamento
-     */
     @Test
     void isCardPlayableTest(){
         Game game = new Game(3);

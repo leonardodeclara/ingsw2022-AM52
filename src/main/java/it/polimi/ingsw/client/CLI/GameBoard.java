@@ -15,7 +15,7 @@ public class GameBoard {
     private boolean expertGame;
     private String nickname;
     private String winner;
-    private ArrayList<Integer> availableWizards; //sono 4 e a ogni propagazione diminuiscono
+    private ArrayList<Integer> availableWizards;
     private ArrayList<Tower> availableTowers;
     private ArrayList<ClientIsland> islands;
     private ArrayList<ClientCloud> clouds;
