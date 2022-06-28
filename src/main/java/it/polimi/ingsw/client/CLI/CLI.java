@@ -31,7 +31,6 @@ public class CLI implements Runnable,UI{
     private ClientState currentState;
     private InputParser inputParser;
     private ArrayList<Object> playerInput;
-    private volatile Message receivedMessage;
     private final ScheduledExecutorService executorService;
     private GameBoard GB;
 
@@ -40,15 +39,10 @@ public class CLI implements Runnable,UI{
         inputStream = new Scanner(System.in);
         outputStream = new PrintStream(System.out);
         clientMessageBuilder = new ClientMessageBuilder(this);
-        receivedMessage = null;
         executorService = Executors.newSingleThreadScheduledExecutor();
         GB = new GameBoard(outputStream);
         inputParser = new InputParser();
         inputStream.useDelimiter("\n");
-    }
-
-    public void setClientSocket(ClientSocket clientSocket) {
-        this.clientSocket = clientSocket;
     }
 
     public void setNextState(ClientState newState){

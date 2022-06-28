@@ -245,12 +245,6 @@ class ExpertGameTest {
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
     }
 
-    /**
-     * TODO: nei test commentati va modificata l'istanziazione degli elements, l'aggiunta dei player e nelle carte che giocano con l'influenza anche il confronto dei risultati dell'influenza
-     */
-    //effetto: scelto un colore, quel colore non viene considerato nel calcolo dell'influenza
-    //
-
     @Test
     void card9EffectTest() {
         ExpertGame game = new ExpertGame(2);
@@ -569,9 +563,5 @@ class ExpertGameTest {
         assertEquals(oldBasketSize-1,game.getBasket().getSize());
         //sarebbe da testare anche il caso in cui uno non ha almeno 3 pedine e mette solo quelle che ha
     }
-
-    //TODO: mancano da testare: 3,10
-    //10 già testato in board
-    //3 non si può testare nel model
 
 }
