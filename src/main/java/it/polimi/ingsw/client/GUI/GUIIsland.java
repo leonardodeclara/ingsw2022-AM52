@@ -24,6 +24,10 @@ import java.util.List;
 
 import static it.polimi.ingsw.Constants.*;
 
+/**
+ * Class GUIIsland renders the island's elements on the screen
+ * For each island, a GUIIsland instance is created
+ */
 public class GUIIsland{
     private ClientIsland clientIsland;
     private ImageView islandImage;
@@ -59,6 +63,11 @@ public class GUIIsland{
         initializeNumOfStudents();
     }
 
+    /**
+     * Method render renders the island image
+     * and populates it with students,towers and mother nature
+     * If the game is in expert mode, personality bans could also be added
+     */
     public void render(){
         gui.addElementToScene(islandImage);
         numOfStudents.clear();
@@ -87,12 +96,24 @@ public class GUIIsland{
         }
     }
 
+    /**
+     * Method clearIsland removes all the images
+     * from the island
+     */
     public void clearIsland(){ //cancella l'isola
         clearStudents();
         clearTowers();
         clearMotherNature();
         gui.removeElementFromScene(islandImage);
     }
+
+    /**
+     * Method setEvents sets up all the mouse/drag and drop events
+     * for the island image. If a student is dropped on the island,
+     * this will be rendered on it.
+     * If a student image of the same color has already been rendered, then
+     * no image will be added but the corresponding tooltip will be updated
+     */
     public void setEvents(){
         islandImage.setOnMouseClicked((MouseEvent e) -> {
             //controller.handleClickEvent(index,Clickable.ISLAND);
@@ -154,8 +175,12 @@ public class GUIIsland{
 
     }
 
-
-
+    /**
+     * Method addStudentToIsland adds to the hashmap color->number of students
+     * a new student, given by the parameter.
+     * Finally populateStudents() is called, to refresh student images and tooltips
+     * @param student is the color to add to the hashmap
+     */
     private void addStudentToIsland(Color student){
         ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
         long numberOfStudents = numOfStudents.containsKey(student) ? numOfStudents.get(student) : 0;
@@ -167,6 +192,13 @@ public class GUIIsland{
         }
 
     }
+
+    /**
+     * Method initializeNumOfStudents sets up the hashmap which associates Color->number of students
+     * according to the GameBoard current status.
+     * This data structure can be modified freely on client side by drag n drop events,
+     * because the copy from server is stored in GameBoard instance
+     */
     private void initializeNumOfStudents(){
         ClientIsland clientIsland = gui.getGB().getIslandByIndex(index);
         List<Color> distinctStudents = clientIsland.getStudents().stream().distinct().toList();
@@ -179,6 +211,15 @@ public class GUIIsland{
 
     }
 
+    /**
+     * Method populateStudents adds all the students images to the island
+     * accordingly to the client-side hashmap.
+     * If a drag n drop event has added one or more students
+     * to the island, they will be
+     * rendered even if these are not on the island, server-side.
+     * This is done to preview what the island will look like
+     * if the player decides to confirm his action
+     */
     public void populateStudents(){
         clearStudents();
         int colorCounter = 0;
@@ -203,12 +244,20 @@ public class GUIIsland{
         }
     }
 
+    /**
+     * Method clearLobby removes all the student images
+     * from the screen
+     */
     private void clearStudents(){
         for(ImageView student : students){
             gui.removeElementFromScene(student);
         }
     }
 
+    /**
+     * Method populateMotherNature adds mother nature image to the island
+     * This will be displayed if and only if this island has mother nature on it
+     */
     public void populateMotherNature(){
         double screenCenterX = gui.getScreenX()/2;
         double screenCenterY = gui.getScreenY()/2 - 15;
@@ -228,11 +277,18 @@ public class GUIIsland{
         }
     }
 
+    /**
+     * Method clearMotherNature removes mother nature image
+     * from the screen
+     */
     private void clearMotherNature(){
         gui.removeElementFromScene(motherNature);
         motherNature=null;
     }
 
+    /**
+     * Method populateTowers adds tower images to the island
+     */
     public void populateTowers(){
         clearTowers();
         if (clientIsland.getTowers()!=null && clientIsland.getTowers().size()>0){
@@ -250,6 +306,9 @@ public class GUIIsland{
         }
     }
 
+    /**
+     * Method populateBans adds personality ban images to the island
+     */
     public void populateBans(){
         clearBans();
         int banCount = clientIsland.getBans();
@@ -268,35 +327,49 @@ public class GUIIsland{
         banImage.toFront();
     }
 
+    /**
+     * Method clearBans removes personality ban images from the island
+     */
     private void clearBans() {
         gui.removeElementFromScene(banImage);
         banImage =null;
     }
-
+    /**
+     * Method clearTowers removes tower images from the island
+     */
     private void clearTowers(){
         gui.removeElementFromScene(tower);
         tower=null;
     }
 
+    /**
+     * Method setStudentsTooltip sets up/updates tooltip installed
+     * on a student image
+     * @param color is the color of the students associated with the tooltip to update
+     * @param studentImage is the student image reference on which the tooltip is installed
+     */
     private void setStudentsTooltip(Color color,ImageView studentImage){
         Tooltip tooltip = tooltips.get(color);
         long num = numOfStudents.get(color);
         if(tooltip!=null){
-            tooltip.setText("Ci sono: "+ num +" studenti "+color.translateToItalian().toLowerCase());
+            tooltip.setText("There are: "+ num +" "+color.toString().toLowerCase()+" students");
             Tooltip.install(studentImage,tooltip);
         }else{
-            Tooltip numOfStudents = new Tooltip("Ci sono: "+Long.toString(num)+" studenti "+color.translateToItalian().toLowerCase());
+            Tooltip numOfStudents = new Tooltip("There are: "+Long.toString(num)+" "+color.toString().toLowerCase()+" students");
             numOfStudents.setShowDelay(Duration.seconds(0.1));
             tooltips.put(color,numOfStudents);
             Tooltip.install(studentImage, numOfStudents);
         }
     }
 
-    //soluzione temporanea, dipende da come gestiamo la renderizzazione delle torri con i merge
+    /**
+     * Method setTowersTooltip sets up/updates tooltip installed
+     * on the tower image
+     */
     private void setTowersTooltip(){
         int towerNumber = clientIsland.getTowers().size();
         Tower towerType = clientIsland.getTowers().get(0);
-        Tooltip towersMessage = new Tooltip("Ci sono "+towerNumber+" torri "+towerType.getTranslation().toLowerCase());
+        Tooltip towersMessage = new Tooltip("There are "+towerNumber+" "+towerType.toString().toLowerCase()+" towers");
         towersMessage.setShowDelay(Duration.seconds(0.3));
         Tooltip.install(tower,towersMessage);
     }
