@@ -10,6 +10,11 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+/**
+ * Class ClientSocket handles client communication with server
+ * It receives messages from the server and passes it to higher level classes (CLI or GUI)
+ * and sends messages received from the above-mentioned higher level classes
+ */
 public class ClientSocket implements Runnable{
     private Socket socket;
     private ObjectOutputStream out;
@@ -18,13 +23,21 @@ public class ClientSocket implements Runnable{
     private int port;
     private boolean active;
     private boolean IsClientGUI;
-    private UI cli;
+    private UI ui;
     private Thread pinger;
 
-    public ClientSocket(String ip,int port, UI cli) throws IOException, SocketException {
+
+    /**
+     * Method ClientSocket sets a socket variable given ip and port
+     * It also sets a ping system to handle disconnections
+     * @param ip is socket ip as string
+     * @param port is socket port
+     * @param ui refers to higher level client class that instantiated this ClientSocket instance
+     */
+    public ClientSocket(String ip,int port, UI ui) throws IOException, SocketException {
         this.ip = ip;
         this.port = port;
-        this.cli = cli;
+        this.ui = ui;
         socket = new Socket(ip, port);
         socket.setSoTimeout(Constants.TIMEOUT);
         out = new ObjectOutputStream(socket.getOutputStream());
@@ -32,10 +45,8 @@ public class ClientSocket implements Runnable{
         active= true;
         pinger = new Thread(() ->{
             try {
-                //rivedere gestione active
                 while(active){
                     Thread.sleep(Constants.PING_PERIOD);
-                    //System.out.println("mando ping");
                     send(new Ping());
                 }
             } catch (InterruptedException | IOException e) {
@@ -45,27 +56,24 @@ public class ClientSocket implements Runnable{
     }
 
     /**
-     * TODO: per ora la fine partita è gestita con la chiusura di tutto lato server, che manda un messaggio di tipo Disconnect.
-     * Bisogna gestirlo opportunamente e far chiudere in qualche modo la cli/gui perché per ora bisogna scrivere comunque quit
+     * Method run starts the ping system and while is active passes incoming messages
+     * to ui class
+     *If runtime exception is catched, closes connection and calls ui for disconnection handling
      */
-
     @Override
     public void run() {
-        //System.out.println("Thread del client socket partito");
         active=true;
-        //Sezione pinger
-
         pinger.start();
 
         try{
             while(active){
                 Message receivedMessage = (Message) in.readObject();
                 if (!(receivedMessage instanceof Ping))
-                    cli.handleMessageFromServer(receivedMessage);
+                    ui.handleMessageFromServer(receivedMessage);
             }
         }
         catch(SocketTimeoutException | EOFException exception ){
-            cli.handleClosingServer();
+            ui.handleClosingServer();
         }
         catch (IOException | ClassNotFoundException exception){
         } finally {
@@ -74,12 +82,19 @@ public class ClientSocket implements Runnable{
         }
     }
 
+    /**
+     * Method send sends an incoming message instance to the server
+     * @param msg is the message to send
+     */
     public synchronized void send(Message msg) throws IOException {
         out.reset();
         out.writeObject(msg);
         out.flush();
     }
 
+    /**
+     * Method closeConnection closes input stream,output stream and socket
+     */
     private void closeConnection(){
         try{
             in.close();
