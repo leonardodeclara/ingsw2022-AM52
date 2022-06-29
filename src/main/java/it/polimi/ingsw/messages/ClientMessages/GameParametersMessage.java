@@ -2,6 +2,11 @@ package it.polimi.ingsw.messages.ClientMessages;
 
 import it.polimi.ingsw.messages.Message;
 
+/**
+ * This message is sent from Client to Server to notify the number of players
+ * and game mode choosen by the player
+ */
+
 public class GameParametersMessage implements Message {
     int numberPlayers;
     boolean expertGame;
