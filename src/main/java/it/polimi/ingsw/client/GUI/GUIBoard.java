@@ -71,9 +71,13 @@ public class GUIBoard {
      * Method setTableEvents sets up drag n drop events for the table
      */
     private void setTableEvents(){
-        tableBounds.setOnDragOver((DragEvent e) -> { //qui si avrà il check dell'action parser (se non è clickable questo evento non deve partire)
+        tableBounds.setOnDragOver((DragEvent e) -> {
             if (e.getGestureSource() != tableBounds && e.getDragboard().hasString()) {
-                e.acceptTransferModes(TransferMode.MOVE);
+                Dragboard db = e.getDragboard();
+                int studentID = Integer.parseInt(db.getString());
+                Color student = clientBoard.getLobby().get(studentID);
+                if(numOfStudentsOnTable.get(student) < 10)
+                    e.acceptTransferModes(TransferMode.MOVE);
             }
 
             e.consume();

@@ -146,6 +146,11 @@ public class GameTableController extends GUIController implements UpdatableContr
     public void handleErrorMessage(boolean fromServer){
         List<String> texts= fromServer ? gui.getCurrentState().getServerErrorMessage() : gui.getCurrentState().getInputErrorMessage();
 
+        if(gui.getCurrentState().equals(ClientState.MOVE_FROM_LOBBY)){
+            renderIslands();
+            populateDashboard(false);
+        }
+
         contextMessage.setText(texts.get(0));
         Timer timer = new Timer();
         TimerTask task = new TimerTask()
@@ -157,13 +162,11 @@ public class GameTableController extends GUIController implements UpdatableContr
                     @Override
                     public void run() {
                         visualizeContextMessage();
-                        renderIslands();
-                        populateDashboard(false);
                     }
                 });
             }
         };
-        timer.schedule(task, 2000L);
+        timer.schedule(task, 1000L);
     }
 
     /**

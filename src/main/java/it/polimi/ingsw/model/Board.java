@@ -199,7 +199,7 @@ public class Board {
      * @return true if the part of table corresponding to the color is full, false otherwise
      */
     public boolean isTableFull(Color color, int toBeAdded){
-        return studentsTable.get(color) + toBeAdded == Constants.MAX_TABLE_SIZE ? true : false;
+        return studentsTable.get(color) + toBeAdded == Constants.MAX_TABLE_SIZE;
     }
 
     /**
