@@ -3,9 +3,18 @@ package it.polimi.ingsw.messages.UpdateMessages;
 import it.polimi.ingsw.client.CLI.GameBoard;
 import it.polimi.ingsw.messages.UpdateMessage;
 
+/**
+ * This message is going to be broadcast to all players in game
+ * and notifies that a cloud has been emptied
+ */
+
 //messaggio che notifica che una nuvola è stata svuotata
 public class CloudUpdateMessage implements UpdateMessage {
     int cloudIndex;
+
+    /**
+     * @param cloudIndex index of the cloud that has been emptied
+     */
 
     public CloudUpdateMessage(int cloudIndex) {
         this.cloudIndex = cloudIndex;
