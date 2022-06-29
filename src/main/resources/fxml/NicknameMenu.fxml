@@ -20,6 +20,11 @@
             <Font name="Britannic Bold" size="16.0" />
          </font>
       </Text>
+      <Text id="errorMessage" fx:id="errorMessage" fill="WHITE" layoutX="266.0" layoutY="204.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="Nickname not available!" visible="false" wrappingWidth="173.99737548828125">
+         <font>
+            <Font name="Britannic Bold" size="16.0" />
+         </font>
+      </Text>
       <Button id="confirmButton" fx:id="confirmButton" layoutX="287.0" layoutY="313.0" mnemonicParsing="false" onAction="#authenticate" prefHeight="35.0" prefWidth="95.0" styleClass="confirmButton" stylesheets="@../css/gameMenu.css">
          <font>
             <Font name="Britannic Bold" size="13.0" />

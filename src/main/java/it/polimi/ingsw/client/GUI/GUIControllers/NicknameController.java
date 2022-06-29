@@ -26,6 +26,7 @@ public class NicknameController extends GUIController{
     @FXML
     private TextField nickname;
     public Text nicknameMessage;
+    public Text errorMessage;
     private boolean alreadyPressed = false;
 
     /**
@@ -79,14 +80,14 @@ public class NicknameController extends GUIController{
 
                     @Override
                     public void run() {
-                        nicknameMessage.setTextAlignment(TextAlignment.CENTER);
-                        nicknameMessage.setText("Choose your nickname!");
+                        nicknameMessage.setVisible(true);
+                        errorMessage.setVisible(false);
                     }
                 });
             }
         };
         timer.schedule(task, 2000L);
-        nicknameMessage.setTextAlignment(TextAlignment.CENTER);
-        nicknameMessage.setText("Name not available!");
+        nicknameMessage.setVisible(false);
+        errorMessage.setVisible(true);
     }
 }
