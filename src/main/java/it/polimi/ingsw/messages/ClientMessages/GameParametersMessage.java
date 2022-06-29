@@ -11,6 +11,10 @@ public class GameParametersMessage implements Message {
     int numberPlayers;
     boolean expertGame;
 
+    /**
+     * @param numberPlayers number of players of the game. It can be 2 or 3
+     * @param expertGame boolean value indicating if the game is in expert mode
+     */
     public GameParametersMessage(int numberPlayers,boolean expertGame){
         this.numberPlayers = numberPlayers;
         this.expertGame = expertGame;
