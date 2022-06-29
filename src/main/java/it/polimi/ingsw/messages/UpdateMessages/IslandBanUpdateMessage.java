@@ -16,10 +16,6 @@ public class IslandBanUpdateMessage implements UpdateMessage {
         return islandId;
     }
 
-    public int getBanCount() {
-        return banCount;
-    }
-
     @Override
     public void update(GameBoard GB) {
         GB.setIslandBans(islandId,banCount);

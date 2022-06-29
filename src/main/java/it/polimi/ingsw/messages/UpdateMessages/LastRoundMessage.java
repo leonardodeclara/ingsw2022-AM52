@@ -10,9 +10,6 @@ public class LastRoundMessage implements UpdateMessage {
         this.lastRoundMessage = lastRoundMessage;
     }
 
-    public String getLastRoundMessage() {
-        return lastRoundMessage;
-    }
 
     @Override
     public void update(GameBoard GB) {

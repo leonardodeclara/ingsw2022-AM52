@@ -14,7 +14,7 @@
             <Image url="@../graphics/splash_screen.png" />
          </image>
       </ImageView>
-      <Text fill="WHITE" layoutX="220.0" layoutY="133.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="Scegli quale mazzo vuoi usare..." wrappingWidth="241.3306884765625">
+      <Text fill="WHITE" layoutX="220.0" layoutY="133.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="Choose your wizard deck.." wrappingWidth="241.3306884765625">
          <font>
             <Font name="Britannic Bold" size="16.0" />
          </font>

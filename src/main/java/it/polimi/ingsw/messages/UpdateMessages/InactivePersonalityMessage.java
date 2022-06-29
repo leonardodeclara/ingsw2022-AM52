@@ -10,10 +10,6 @@ public class InactivePersonalityMessage implements UpdateMessage {
         this.inactiveCardId=inactiveCardId;
     }
 
-    public int getInactiveCardId() {
-        return inactiveCardId;
-    }
-
     @Override
     public void update(GameBoard GB) {
         GB.resetActivePersonality(inactiveCardId);

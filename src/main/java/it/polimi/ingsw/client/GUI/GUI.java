@@ -165,7 +165,7 @@ public class GUI extends Application implements UI{
     }
 
     /**
-     * Method setupScenes initializes all the scenes and controllers, saving them in <FXML Path, Scene> and <Scene, Controller> hashmaps
+     * Method setupScenes initializes all the scenes and controllers, saving them in FXML Path-Scene and Scene-Controller hashmaps
      */
     public void setupScenes() throws IOException {
         for(String path : fxmlPaths){

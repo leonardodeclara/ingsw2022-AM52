@@ -12,10 +12,6 @@ public class EndGameMessage implements UpdateMessage {
         this.winnerName = winnerName;
     }
 
-    public String getWinnerName() {
-        return winnerName;
-    }
-
     @Override
     public void update(GameBoard GB){
         GB.setWinner(winnerName);}

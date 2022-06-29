@@ -55,7 +55,7 @@ public class ClientBoard implements Serializable {
     }
 
     /**
-     * Method print prints the board's content on CLI interfaces.
+     * Method print prints board's content on CLI interfaces.
      */
     public void print(){
         if (owner.equalsIgnoreCase(GB.getNickname()))
@@ -123,7 +123,7 @@ public class ClientBoard implements Serializable {
 
         if(GB.getNickname().equals(getOwner())){
             for(Map.Entry<Integer,Integer> entry : getDeck().entrySet()){
-                System.out.println("CARTA ASSISTENTE "+entry.getKey()+":"+"(priorità: "+entry.getKey()+",numero mosse: "+entry.getValue()+")");
+                System.out.println("ASSISTANT CARD "+entry.getKey()+":"+"(priority: "+entry.getKey()+",moves: "+entry.getValue()+")");
             }
         }
     }

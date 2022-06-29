@@ -80,8 +80,6 @@ public class GameBoard {
         }
         if(expertGame){
             this.personalities = new ArrayList<>(personalities);
-            for (ClientPersonality card: this.personalities)
-                System.out.println("GameBoard: una delle carte personaggio è "+card.getCardID());
             coins=20-numberOfPlayers;
         }
     }
@@ -107,7 +105,7 @@ public class GameBoard {
      * Method printClientBoards prints the school boards' content on CLI interfaces.
      */
     private void printClientBoards(){ //sarebbe meglio se ogni componente avesse un metodo print e qui venisse chiamato solo quello
-        outputStream.println("*****************************************BOARDS DEI GIOCATORI*****************************************************");
+        outputStream.println("*****************************************PLAYERS' BOARDS*****************************************************");
         for(ClientBoard clientBoard : clientBoards.values()){
             clientBoard.print();
         }
@@ -118,7 +116,7 @@ public class GameBoard {
      * Method printIslands prints islands' content on CLI interfaces.
      */
     private void printIslands() {
-        outputStream.println("*****************************************ISOLE*****************************************");
+        outputStream.println("*****************************************ISLANDS*****************************************");
         for (ClientIsland island : islands) {
             island.print();
         }
@@ -129,11 +127,11 @@ public class GameBoard {
      * Method printClouds prints clouds' content on CLI interfaces.
      */
     private void printClouds(){
-        outputStream.println("*****************************************NUVOLE*****************************************");
+        outputStream.println("*****************************************CLOUDS*****************************************");
         for (ClientCloud cloud : clouds){
             cloud.print();
         }
-        outputStream.println("\n");
+        outputStream.println();
     }
 
     /**

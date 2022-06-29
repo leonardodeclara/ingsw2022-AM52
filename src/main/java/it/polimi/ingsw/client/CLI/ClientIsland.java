@@ -36,10 +36,10 @@ public class ClientIsland implements Serializable {
     }
 
     /**
-     * Method print prints the island's content on CLI interfaces.
+     * Method print prints island's content on CLI interfaces.
      */
     public void print(){
-        System.out.println("ISOLA " + getIslandIndex() + ":");
+        System.out.println("ISLAND " + getIslandIndex() + ":");
         System.out.print("STUDENTS ON THE ISLAND: ");
         for (Color color : students) {
             try{

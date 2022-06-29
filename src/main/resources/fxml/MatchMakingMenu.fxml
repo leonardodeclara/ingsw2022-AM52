@@ -15,12 +15,12 @@
             <Image url="@../graphics/splash_screen.png" />
          </image>
       </ImageView>
-      <Text fill="WHITE" layoutX="116.0" layoutY="217.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="Numero Giocatori" wrappingWidth="138.6640625">
+      <Text fill="WHITE" layoutX="116.0" layoutY="217.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="Number of players" wrappingWidth="138.6640625">
          <font>
             <Font name="Britannic Bold" size="16.0" />
          </font>
       </Text>
-      <Text fill="WHITE" layoutX="122.0" layoutY="258.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="Tipologia Partita" wrappingWidth="126.6640625">
+      <Text fill="WHITE" layoutX="122.0" layoutY="258.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.25" text="Game mode" wrappingWidth="126.6640625">
          <font>
             <Font name="Britannic Bold" size="16.0" />
          </font>

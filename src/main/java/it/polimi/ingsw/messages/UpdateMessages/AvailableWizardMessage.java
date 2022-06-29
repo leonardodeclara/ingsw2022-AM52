@@ -12,10 +12,6 @@ public class AvailableWizardMessage implements UpdateMessage {
         this.remainingWizards = remainingWizards;
     }
 
-    public ArrayList<Integer> getRemainingWizards(){
-        return remainingWizards;
-    }
-
     @Override
     public void update(GameBoard GB) {
         GB.setAvailableWizards(remainingWizards);

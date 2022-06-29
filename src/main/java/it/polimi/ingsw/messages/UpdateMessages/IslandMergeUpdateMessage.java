@@ -13,10 +13,6 @@ public class IslandMergeUpdateMessage implements UpdateMessage {
         this.updatedClientIslands=updatedClientIslands;
     }
 
-    public ArrayList<ClientIsland> getUpdatedClientIslands() {
-        return updatedClientIslands;
-    }
-
     @Override
     public void update(GameBoard GB) {
         GB.setIslands(updatedClientIslands);

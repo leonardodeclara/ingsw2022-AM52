@@ -8,11 +8,19 @@ import static it.polimi.ingsw.Constants.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Class ActionParser handles players' input received as a result of clicks on GUI elements.
+ * According to the client state and the clicked element it performs different actions, from input validation to selections registry.
+ * Clicked elements are memorised inside parameters attribute, from which a Message to server will be built.
+ */
 public class ActionParser {
     private HashMap<ClientState,ArrayList<Clickable>> stateToClickableList;
     private ArrayList<Object> parameters;
     private int playersNumber;
 
+    /**
+     * Constructor ActionParser creates a new ActionParser instance. A HashMap containing the list of Clickable elements for each client state is added to the new instance.
+     */
     public ActionParser(){
         stateToClickableList = new HashMap<>();
         for(ClientState state : ClientState.values()){
@@ -21,6 +29,12 @@ public class ActionParser {
         parameters= new ArrayList<>();
     }
 
+    /**
+     * Method canClick verifies if the Clickable element received as input can be clicked according to current client state.
+     * @param state ClientState instance defining the actions that can be performed by the client.
+     * @param clickedElement Clickable element selected by the client through a click.
+     * @return true if the element can be clicked on, false otherwise.
+     */
     public boolean canClick(ClientState state,Clickable clickedElement){
         try{
             return stateToClickableList.get(state).contains(clickedElement);
@@ -30,7 +44,12 @@ public class ActionParser {
         }
     }
 
-
+    /**
+     * Method canDrag verifies if the Clickable element received as input can be dragged from its current position according to current client state.
+     * @param state ClientState instance defining the actions that can be performed by the client.
+     * @param clickedElement Clickable element selected by the client through a click.
+     * @return true if the element can be clicked on, false otherwise.
+     */
     public boolean canDrag(ClientState state, Clickable clickedElement){
         if (canClick(state, clickedElement)){
             switch (state){
@@ -50,18 +69,14 @@ public class ActionParser {
         return false;
     }
 
-    //metodo che si occupa di gestire l'accumulo dei dati inseriti in base allo stato del client
-    //stato diverso implica modo diverso di gestire i click
-    //in input prende ciò che è stato cliccato e lo stato del client
-    //selection deve necessariamente essere un arrayList di Object perché certe azioni (drag and drop) restituiscono più elementi selezionati
-    public void handleSelectionEvent(ArrayList<Object> selection,  ClientState state){
-        //MANCA CONTROLLO CAN CLICK-CAN DRAG
-        //MA IN TEORIA C'È PRIMA CHE IL METODO VENGA CHIAMATO PERCHÉ GLI UNICI CASI IN CUI VIENE CHIAMATO QUESTO METODO
-        // É QUANDO C'È UN DRAG AND DROP. vedere GUIBoard e GUIIsland
-
+    /**
+     * Method handleSelectionEvent receives a list of clicked elements and the client's current state, according to which selections are memorized differently.
+     * @param selection ArrayList of selected elements.
+     * @param state  ClientState instance defining the actions that can be performed by the client.
+     */
+    public void handleSelectionEvent(ArrayList<Object> selection, ClientState state){
         switch (state){
             case MOVE_FROM_LOBBY -> {
-                //pulisco l'array di parameters
                 if ((parameters.size() == 0 || (parameters.get(0) instanceof Boolean))){
                     clearSelectedParameters();
                     ArrayList<Integer> studentIDs = new ArrayList<>();
@@ -73,7 +88,6 @@ public class ActionParser {
                 } else {
                     ((ArrayList<Integer>) parameters.get(0)).add((Integer)selection.get(0));
                     ((ArrayList<Integer>) parameters.get(1)).add((Integer)selection.get(1));
-                    //(ArrayList<Integer>) parameters.get(x)) può essere inserito in un metodo a parte che prende in input x
                 }
             }
 
@@ -87,13 +101,16 @@ public class ActionParser {
 
     }
 
-    //metodo che viene cliccato per eventi a click "singoli" (pick cloud, move mn,ecc)
+    /**
+     * Method handleSelectionEvent receives a clicked element and the client's current state, according to which selection is handled differently.
+     * @param selection selected element.
+     * @param clickedElement Clickable type of the clicked element.
+     * @param state  ClientState instance defining the actions that can be performed by the client.
+     */
     public void handleSelectionEvent(Object selection, Clickable clickedElement, ClientState state){
         if (canClick(state,clickedElement)){
             switch (state) {
                 case MOVE_MOTHER_NATURE, PICK_CLOUD, END_TURN -> {
-                    //POSSO SCEGLIERE UNA CARTA PERSONAGGIO SOLO SE NON HO GIA SCELTO QUALCOS'ALTRO (PEDINE,ISOLE,NUVOLE)
-                    //PERÒ IN QUESTO MODO BISOGNA INSERIRE UN SISTEMA DI UNCLICK
                     if (clickedElement.equals(Clickable.PERSONALITY)){
                         System.out.println("ACTION PARSER: click sulla carta personaggio,pulisco i parametri ");
                         if ((parameters.size() > 0 && (parameters.get(0) instanceof Boolean)) || parameters.size() == 0) {
@@ -102,7 +119,7 @@ public class ActionParser {
                             parameters.add(1, selection);
                         }
                     }
-                    else //selezione normale di isole, o nuvole
+                    else
                     {
                         if (parameters.size() > 0)
                             clearSelectedParameters();
@@ -118,14 +135,12 @@ public class ActionParser {
                             parameters.add(1, selection);
                         }
                     }
-
                 }
-                case CHOOSE_ISLAND_FOR_CARD_3,CHOOSE_ISLAND_FOR_CARD_5,CHOOSE_STUDENT_FOR_CARD_11 -> {
+                case CHOOSE_ISLAND_FOR_CARD_3,CHOOSE_ISLAND_FOR_CARD_5,CHOOSE_STUDENT_FOR_CARD_11,CHOOSE_COLOR_FOR_CARD_9,CHOOSE_COLOR_FOR_CARD_12 -> {
                     if (parameters.size() > 0)
                         clearSelectedParameters();
                     parameters.add(selection);
                 }
-                //situazione tricky, devono arrivare max tre indici di cardStudent e max tre indici di lobbyStudent
                 case SWAP_STUDENTS_FOR_CARD_7 -> {
                     if (parameters.size()==0){
                         ArrayList<Integer> studentCardIDs = new ArrayList<>();
@@ -137,12 +152,11 @@ public class ActionParser {
                         System.out.println("ACTION PARSER: sono in stato carta 7 e ho selezionato uno studente della lobby");
                         ((ArrayList<Integer>) parameters.get(1)).add((Integer) selection);
                     }
-                    else //necessariamente dovrei finirci se ho clickato su uno studente della carta
+                    else
                     {
                         System.out.println("ACTION PARSER: sono in stato carta 7 e ho selezionato uno studente della carta");
                         ((ArrayList<Integer>) parameters.get(0)).add((Integer) selection);
                     }
-                    //il numero di parametri non è un problema perché dovrebbe venire controllato lato server
                 }
                 case CHOOSE_STUDENTS_FOR_CARD_10 -> {
                     if (parameters.size()==0){
@@ -155,19 +169,12 @@ public class ActionParser {
                         System.out.println("ACTION PARSER: sono in stato carta 7 e ho selezionato uno studente della lobby");
                         ((ArrayList<Color>) parameters.get(0)).add((Color) selection);
                     }
-                    else //necessariamente dovrei finirci se ho clickato su uno studente della lobby
+                    else
                     {
                         System.out.println("ACTION PARSER: sono in stato carta 7 e ho selezionato uno studente della carta");
                         ((ArrayList<Integer>) parameters.get(1)).add((Integer) selection);
                     }
                 }
-                case CHOOSE_COLOR_FOR_CARD_9,CHOOSE_COLOR_FOR_CARD_12 ->{
-                    if (parameters.size()>0)
-                        clearSelectedParameters();
-                    parameters.add(selection);
-                }
-
-                //vedere se si può togliere
                 default -> {
                     if (parameters.size() > 0)
                         clearSelectedParameters();
@@ -180,33 +187,30 @@ public class ActionParser {
 
     }
 
-    //chiamato dopo aver mandato un messaggio
+    /**
+     * Method clearSelectedParameters deletes clicked elements that have been memorized in order for a message to be built.
+     */
     public void clearSelectedParameters(){
         parameters.clear();
     }
 
-
-    public ArrayList<Object> parse(ClientState state,ArrayList<Integer> clickedIDs){
-            switch(state){
-                case PLAY_ASSISTANT_CARD -> {
-                    return parseAssistantCard(clickedIDs);
-                }
-            }
-            return null;
-    }
-
-    public ArrayList<Object> parseAssistantCard(ArrayList<Integer> clickedIDs){
-        ArrayList<Object> data = new ArrayList<>();
-        data.add(clickedIDs.get(0));
-        return data;
-    }
-
+    /**
+     * Method parseNickname receives a String representing a nickname and adds it to an ArrayList in order for a message to be built.
+     * @param nickname chosen player name.
+     * @return ArrayList where the player's selection is memorized.
+     */
     public ArrayList<Object> parseNickname(String nickname){
         ArrayList<Object> data = new ArrayList<>();
         data.add(nickname);
-        return  data;
+        return data;
     }
 
+    /**
+     * Method parseNickname receives the player's choice for game parameters and adds them to an ArrayList in order for a message to be built.
+     * @param numOfPlayers chosen number of players.
+     * @param expertGame chosen game mode.
+     * @return ArrayList where the player's selection is memorized.
+     */
     public ArrayList<Object> parseNewGameParameters(int numOfPlayers, boolean expertGame){
         ArrayList<Object> data = new ArrayList<>();
         data.add(numOfPlayers);
@@ -214,24 +218,41 @@ public class ActionParser {
         return data;
     }
 
+    /**
+     * Method parseNickname receives the player's choice for a wizard deck and adds it to an ArrayList in order for a message to be built.
+     * @param wizard chosen wizard deck identification number.
+     * @return ArrayList where the player's selection is memorized.
+     */
     public ArrayList<Object> parseWizardChoice(int wizard){
         ArrayList<Object> data = new ArrayList<>();
         data.add(wizard);
         return data;
     }
 
+    /**
+     * Method parseNickname receives the player's choice for a tower team and adds it to an ArrayList in order for a message to be built.
+     * @param tower chosen tower team.
+     * @return ArrayList where the player's selection is memorized.
+     */
     public ArrayList<Object> parseTowerChoice(Tower tower){
         ArrayList<Object> data = new ArrayList<>();
         data.add(tower);
         return data;
     }
 
+    /**
+     * Method getParameters returns the list of elements which have been legally selected by the player.
+     * @return ArrayList of selected elements.
+     */
     public ArrayList<Object> getParameters() {
         return parameters;
     }
 
+    /**
+     * Method setPlayersNumber sets playersNumber attribute, a necessary element in order to properly verify players' selections.
+     * @param playersNumber game's number of players.
+     */
     public void setPlayersNumber(int playersNumber){
         this.playersNumber=playersNumber;
-        System.out.println("ACTION PARSER: numeri di giocatori per questa partita: "+this.playersNumber);
     }
 }

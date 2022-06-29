@@ -174,7 +174,7 @@ public class ExpertGame extends Game {
      * @param island: instance of the island on which I want to calculate influence
      * @param players: list of all the players of the game
      * @param bannedColor: Color that I want to exclude from the influence count
-     * @return ArrayList<Integer>: list of integer that represents the influence of each players on that island
+     * @return map that represents the influence of each players on that island.
      */
     protected HashMap<String,Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players,Color bannedColor){
         int infl = 0;
@@ -224,8 +224,6 @@ public class ExpertGame extends Game {
                 personalities.add(extractedCard);
             }
         }
-        for (Personality card: personalities)
-            System.out.println("ExpertGame: ho estratto la carta "+card.getCharacterId());
     }
 
     /**
@@ -236,6 +234,8 @@ public class ExpertGame extends Game {
         if (activePersonality!=null){
             return false;
         }
+        if (!areCardRequirementsSatisfied(cardId))
+            return false;
         int playedCardIndex=-1;
         for (Personality card: personalities){
             if (card.getCharacterId()==cardId){
@@ -267,6 +267,20 @@ public class ExpertGame extends Game {
         catch (IndexOutOfBoundsException exception){
             return false;
         }
+    }
+
+    /**
+     * Method areCardRequirementsSatisfied verifies that preconditions for the activation of a Personality are satisfied.
+     * @param cardId Personality identification number.
+     * @return true if the requirements are satisfied, false otherwise.
+     */
+    private boolean areCardRequirementsSatisfied(int cardId){
+        int lobbySize = currentPlayer.getBoard().getLobby().size();
+        if (cardId==10 && (currentPlayer.getBoard().isTableEmpty() || lobbySize==0))
+            return false;
+        if (cardId==7 && lobbySize==0)
+            return false;
+        else return true;
     }
 
     /**
@@ -378,8 +392,6 @@ public class ExpertGame extends Game {
             return false;
     }
 
-    //da finire e poi testare
-    //controlla input parser per vedere se con 1,2,3 ecc.. swap funziona
     /**
      * Implements Personality 10's effect by swapping up to two students' tiles between the active player's lobby and table.
      * @param tableStudents: color of the tiles being moved from the board's table.

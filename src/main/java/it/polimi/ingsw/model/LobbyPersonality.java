@@ -43,7 +43,7 @@ public class LobbyPersonality extends Personality{
 
     /**
      * Method that returns the list of students placed on the card
-     * @return ArrayList<>: list containing the students placed on the card
+     * @return ArrayList containing the students placed on the card
      */
     public ArrayList<Color> getStudents() {
         return new ArrayList<>(students);
