@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.GUI.GUIControllers;
 
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.Message;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -9,6 +10,10 @@ import javafx.scene.effect.Bloom;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Class NicknameController implements all the logic behind the Nickname Menu FXML Scene
@@ -49,6 +54,8 @@ public class NicknameController extends GUIController{
                 Message message = clientMessageBuilder.buildMessageFromPlayerInput(actionParser.parseNickname(stringNickname), ClientState.CONNECT_STATE);
                 gui.passToSocket(message);
                 alreadyPressed = true;
+            }else{
+                handleErrorMessage(false);
             }
         }
 
@@ -63,6 +70,23 @@ public class NicknameController extends GUIController{
     public void handleErrorMessage(boolean fromServer) {
         alreadyPressed=false;
         nickname.clear();
-        nicknameMessage.setText("Nickname not available!");
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask()
+        {
+            public void run()
+            {
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        nicknameMessage.setTextAlignment(TextAlignment.CENTER);
+                        nicknameMessage.setText("Choose your nickname!");
+                    }
+                });
+            }
+        };
+        timer.schedule(task, 2000L);
+        nicknameMessage.setTextAlignment(TextAlignment.CENTER);
+        nicknameMessage.setText("Name not available!");
     }
 }

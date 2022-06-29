@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.Constants;
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.messages.*;
 import it.polimi.ingsw.messages.ClientMessages.GameParametersMessage;
@@ -9,6 +10,8 @@ import it.polimi.ingsw.messages.ServerMessages.ErrorKind;
 import it.polimi.ingsw.messages.ServerMessages.ErrorMessage;
 
 import java.util.*;
+
+import static it.polimi.ingsw.Constants.MAX_NICKNAME_LENGTH;
 
 /**
  * Server class is the main class on the server side: it manages the connection's setup phase up to the game's start;
@@ -163,6 +166,8 @@ public class Server {
      * @return true if the choice is legal, false otherwise.
      */
     public boolean isNicknameAvailable(String nickname){
+        if(nickname.length() > MAX_NICKNAME_LENGTH)
+            return false;
         for (Map.Entry<Integer,String> entry: idToNicknameMap.entrySet())
             if (entry.getValue().equalsIgnoreCase(nickname))
                 return false;
@@ -242,7 +247,26 @@ public class Server {
 
     public static void main(String[] args) {
         Server server = new Server();
-        ServerSocketConnection serverSocket = new ServerSocketConnection(1234,server);
+        System.out.println(Constants.Logo);
+        System.out.println("Please, choose a port to run your server on");
+
+        boolean validInput = false;
+        String input;
+        int port = 0;
+        Scanner inputStream = new Scanner(System.in);
+
+        while(!validInput){
+            try{
+                input = inputStream.nextLine();
+                input = input.replaceAll("\s","");
+                port = Integer.parseInt(input);
+                validInput = true;
+            }catch(NumberFormatException e){
+                System.out.println("The chosen port is not in a valid format! Try again");
+                validInput = false;
+            }
+        }
+        ServerSocketConnection serverSocket = new ServerSocketConnection(port,server);
         server.setServerSocket(serverSocket);
         serverSocket.run();
     }

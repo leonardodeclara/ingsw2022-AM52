@@ -7,6 +7,7 @@ import java.util.HashMap;
 public class Constants {
     public static final int MIN_NUMBER_OF_PLAYERS = 2;
     public static final int MAX_NUMBER_OF_PLAYERS = 3;
+    public static final int MAX_NICKNAME_LENGTH = 16;
     public static final int NUM_PLAYABLE_PERSONALITY_CARDS = 3;
     public static final int NUM_EXISTING_PERSONALITY_CARDS = 12;
     public static final String DRAW = "isDraw";
