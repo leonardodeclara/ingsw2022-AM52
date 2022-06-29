@@ -224,8 +224,6 @@ public class ExpertGame extends Game {
                 personalities.add(extractedCard);
             }
         }
-        for (Personality card: personalities)
-            System.out.println("ExpertGame: ho estratto la carta "+card.getCharacterId());
     }
 
     /**

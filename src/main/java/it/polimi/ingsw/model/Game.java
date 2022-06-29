@@ -443,11 +443,8 @@ public class Game {
     protected void mergeIslands(Island island){
         int islandId = islands.indexOf(island);
         int mergerId;
-        System.out.println("Sono sull'isola "+island.getIslandIndex() + ", indice nell'array islands: "+islands.indexOf(island));
-        Island leftIsland = islands.get((islandId + islands.size() - 1)%islands.size()); //previous island
-        Island rightIsland = islands.get((islandId+1)%islands.size()); //next island
-        System.out.println("Isola a dx: "+rightIsland.getIslandIndex() + ", indice nell'array islands: "+islands.indexOf(rightIsland));
-        System.out.println("Isola a sx: "+leftIsland.getIslandIndex() + ", indice nell'array islands: "+islands.indexOf(leftIsland));
+        Island leftIsland = islands.get((islandId + islands.size() - 1)%islands.size());
+        Island rightIsland = islands.get((islandId+1)%islands.size());
 
        if(leftIsland.getOwnerTeam() != null){
             if(leftIsland.getOwnerTeam().equals(island.getOwnerTeam())){
