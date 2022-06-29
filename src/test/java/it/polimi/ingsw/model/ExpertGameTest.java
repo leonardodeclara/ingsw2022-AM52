@@ -358,9 +358,11 @@ class ExpertGameTest {
 
         game.setCurrentPlayer("leo");
         game.getPlayerByName("leo").setCoins(20);
+        if (game.getPersonalities().get(0).getCharacterId()!=10){
         assertFalse(game.setActivePersonality(0));
         assertTrue(game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
         assertFalse(game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
+        }
     }
 
     @Test
