@@ -236,6 +236,8 @@ public class ExpertGame extends Game {
         if (activePersonality!=null){
             return false;
         }
+        if (!areCardRequirementsSatisfied(cardId))
+            return false;
         int playedCardIndex=-1;
         for (Personality card: personalities){
             if (card.getCharacterId()==cardId){
@@ -267,6 +269,20 @@ public class ExpertGame extends Game {
         catch (IndexOutOfBoundsException exception){
             return false;
         }
+    }
+
+    /**
+     * Method areCardRequirementsSatisfied verifies that preconditions for the activation of a Personality are satisfied.
+     * @param cardId Personality identification number.
+     * @return true if the requirements are satisfied, false otherwise.
+     */
+    private boolean areCardRequirementsSatisfied(int cardId){
+        int lobbySize = currentPlayer.getBoard().getLobby().size();
+        if (cardId==10 && (currentPlayer.getBoard().isTableEmpty() || lobbySize==0))
+            return false;
+        if (cardId==7 && lobbySize==0)
+            return false;
+        else return true;
     }
 
     /**
@@ -378,8 +394,6 @@ public class ExpertGame extends Game {
             return false;
     }
 
-    //da finire e poi testare
-    //controlla input parser per vedere se con 1,2,3 ecc.. swap funziona
     /**
      * Implements Personality 10's effect by swapping up to two students' tiles between the active player's lobby and table.
      * @param tableStudents: color of the tiles being moved from the board's table.

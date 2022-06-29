@@ -175,6 +175,11 @@ public class ActionParser {
                         ((ArrayList<Integer>) parameters.get(1)).add((Integer) selection);
                     }
                 }
+                default -> {
+                    if (parameters.size() > 0)
+                        clearSelectedParameters();
+                    parameters.add(selection);
+                }
             }
         }
         else

@@ -243,4 +243,15 @@ public class Board {
         return (indexes.stream().distinct().count()!=indexes.size());
     }
 
+    /**
+     * Method isTableEmpty verifies if the board's table has no students.
+     * @return true if there are no student tiles in the table,false otherwise.
+     */
+    public boolean isTableEmpty(){
+        for (Color color: Color.values())
+            if (studentsTable.get(color)!=0)
+                return false;
+        return true;
+    }
+
 }
