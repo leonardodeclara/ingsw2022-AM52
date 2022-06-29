@@ -22,8 +22,6 @@ public class CoinsUpdateMessage implements UpdateMessage {
         return player;
     }
 
-    public int getReserveCoins() {return reserveCoins;}
-
     @Override
     public void update(GameBoard GB) {
         GB.updateCoins(coins, player,reserveCoins);

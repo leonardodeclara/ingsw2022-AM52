@@ -494,7 +494,7 @@ public class Game {
      * If there is a draw of influence there's no change about the island's owner
      * @param island: reference to the island on I want to calculate influence
      * @param influences: map of the calculated influences for each player on that island
-     * @return HashMap<String, String>: Hashmap that contains the information about a possible draw about the influence
+     * @return Hashmap that contains the information about a possible draw about the influence
      * and the PlayerID of the Owner
      */
     protected HashMap<String,String> calculateIslandOwner(Island island,HashMap<String,Integer> influences){
@@ -580,21 +580,21 @@ public class Game {
     }
 
     /**
-     * @return ArrayList<color>: list of teachers in the game
+     * @return list of teachers in the game
      *     */
     public ArrayList<Color> getTeachers() {
         return teachers;
     }
 
     /**
-     * @return ArrayList<island>: list of islands in the game
+     * @return list of islands in the game
      */
     public ArrayList<Island> getIslands() {
         return islands;
     }
 
     /**
-     * @return ArrayList<Cloud>: list of Clouds in the game
+     * @return list of Clouds in the game
      */
     public ArrayList<Cloud> getClouds() {
         return clouds;
@@ -608,14 +608,14 @@ public class Game {
     }
 
     /**
-     * @return ArrayList<Player>: list of players of the game
+     * @return list of players of the game
      */
     public ArrayList<Player> getPlayers() {
         return players;
     }
 
     /**
-     * @return HashMap<Integer,Assistant>: List of Assistant Cards that have been played on a turn
+     * @return map of Assistant Cards that have been played on a turn by each player.
      *     */
     public HashMap<String,Assistant> getCurrentTurnAssistantCards(){
         return currentTurnAssistantCards;
@@ -623,7 +623,7 @@ public class Game {
 
     /**
      * Method that returns the ID of the Clouds that are empty
-     * @return ArrayList<Integer>: list of the CloudID of the empty clouds
+     * @return list of the CloudID of the empty clouds
      */
     public ArrayList<Integer> GetEmptyCloudsID(){
         ArrayList<Integer> emptyClouds = new ArrayList<>();
@@ -637,7 +637,7 @@ public class Game {
     /**
      * Method that returns the list of the Assistant card that have not been played yet
      * @param nickname: name given to the player,TO DO
-     * @return ArrayList<Assistant>: list of Assistant Card that are still playable
+     * @return list of Assistant Card that are still playable
      */
     public ArrayList<Assistant> getPlayableAssistantCards(String nickname){
         return getPlayerByName(nickname).getDeck();
@@ -661,7 +661,7 @@ public class Game {
 
     /**
      * This method returns the entire list of Assistant cards of the game
-     * @return ArrayList<Assistant>: list of Assistant cards
+     * @return list of Assistant cards
      */
     public ArrayList<Assistant> getAssistantDecks() {
         return assistantDecks;
@@ -738,7 +738,7 @@ public class Game {
 
     /**
      * Method that returns a Map that identifies the player that is the owner of a given color teacher
-     * @return HashMap<Color, Player>: Map that associates at every color the owner of its corresponding teacher
+     * @return map that associates at every color the owner of its corresponding teacher
      */
     public HashMap<Color, Player> getTeachersOwners() {
         return teachersOwners;
@@ -776,7 +776,7 @@ public class Game {
 
     /**
      * Method getNumOfPlayers returns the number of players playing.
-     * @return: number of of players playing.
+     * @return number of  players playing.
      */
     public int getNumOfPlayers() {
         return numOfPlayers;

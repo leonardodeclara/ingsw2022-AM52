@@ -44,6 +44,7 @@ public class Board {
     /**
      * Remove a student object from the board's lobby
      * @param student: student instance being removed to the board's lobby
+     * @return true if the student has been correctly removed, false otherwise.
      */
     public boolean removeFromLobby(Color student){
         if(lobby.contains(student)){
@@ -160,7 +161,7 @@ public class Board {
 
     /**
      * Method that returns the list of the students that are in the board's lobby
-     * @return ArrayList<Color>: list of the students from the lobby
+     * @return list of the students from the lobby
      */
     public ArrayList<Color> getLobby() {
         return new ArrayList<>(lobby);
@@ -178,7 +179,7 @@ public class Board {
 
     /**
      * Method that returns the number of the students in the Table divided by color
-     * @return HashMap<Color, Integer>: Map that associates every student's color with the number of students
+     * @return Map that associates every student's color with the number of students
      * of that color
      */
     public HashMap<Color, Integer> getStudentsTable() {
@@ -187,7 +188,7 @@ public class Board {
 
     /**
      * Method that returns the list of teacher in the table
-     * @return ArrayList<Color>: ArrayList of teacher
+     * @return ArrayList of teacher
      */
     public ArrayList<Color> getTeacherTable() {
         return new ArrayList<>(teacherTable);

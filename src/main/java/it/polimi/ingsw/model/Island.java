@@ -53,7 +53,7 @@ public class Island {
 
     /**
      * Method getTowers extracts the list of towers placed on the island.
-     * @return ArrayList<Tower>: list containing the towers placed by eligible players.
+     * @return ArrayList of Tower, containing the towers placed by eligible players.
      */
     public ArrayList<Tower> getTowers() {
         return towers;
@@ -109,7 +109,7 @@ public class Island {
 
     /**
      * This method removes the island's towers, emptying the relative arraylist.
-     * @return ArrayList<Tower>: containing the former island's towers.
+     * @return ArrayList of Tower, containing the former island's towers.
      */
     public ArrayList<Tower> removeTower(){
         ArrayList<Tower> removedTowers = new ArrayList<>(towers);
@@ -121,7 +121,7 @@ public class Island {
     /**
      * This method is responsible for the merging of two eligible islands,
      * adding the "merged" island's content to the "merging" one.
-     * @param merged:  island whose towers and students get added to the calling island.
+     * @param merged island whose towers and students get added to the calling island.
      */
     public void merge(Island merged){
         students.addAll(merged.getStudents());
@@ -132,8 +132,8 @@ public class Island {
 
     /**
      * This method extracts the list of the students of a chosen color that are on the island
-     * @param c: color of students I want to get the list of
-     * @return ArrayList<Color>: list containing the Color students placed on the island
+     * @param c color of students I want to get the list of
+     * @return ArrayList of Color containing the Color students placed on the island
      */
     public ArrayList<Color> getStudentsOfColor(Color c) {
         ArrayList<Color> studentsOfColor = new ArrayList<>();

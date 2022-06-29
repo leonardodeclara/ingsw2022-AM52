@@ -12,10 +12,6 @@ public class CurrentTurnAssistantCardsUpdateMessage implements UpdateMessage {
         this.currentTurnAssistantCards = currentTurnAssistantCards;
     }
 
-    public HashMap<String, Integer> getCurrentTurnAssistantCards() {
-        return currentTurnAssistantCards;
-    }
-
     @Override
     public void update(GameBoard GB) {
         GB.setTurnCard(currentTurnAssistantCards);

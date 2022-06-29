@@ -104,6 +104,7 @@ public class ActionParser {
     /**
      * Method handleSelectionEvent receives a clicked element and the client's current state, according to which selection is handled differently.
      * @param selection selected element.
+     * @param clickedElement Clickable type of the clicked element.
      * @param state  ClientState instance defining the actions that can be performed by the client.
      */
     public void handleSelectionEvent(Object selection, Clickable clickedElement, ClientState state){

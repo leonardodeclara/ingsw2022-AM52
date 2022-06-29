@@ -174,7 +174,7 @@ public class ExpertGame extends Game {
      * @param island: instance of the island on which I want to calculate influence
      * @param players: list of all the players of the game
      * @param bannedColor: Color that I want to exclude from the influence count
-     * @return ArrayList<Integer>: list of integer that represents the influence of each players on that island
+     * @return map that represents the influence of each players on that island.
      */
     protected HashMap<String,Integer> calculateStudentsInfluences(Island island,ArrayList<Player> players,Color bannedColor){
         int infl = 0;

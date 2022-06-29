@@ -24,15 +24,10 @@ public class GameInstantiationMessage implements UpdateMessage {
         this.boards= new HashMap<>(boards);
         this.personalities = new ArrayList<>(personalities);
     }
+
     public ArrayList<ClientIsland> getIslands() {
         return islands;
     }
-
-    public HashMap<String,ClientBoard> getBoards() {
-        return boards;
-    }
-
-    public ArrayList<ClientPersonality> getPersonalities() {return personalities;}
 
     @Override
     public void update(GameBoard GB) {

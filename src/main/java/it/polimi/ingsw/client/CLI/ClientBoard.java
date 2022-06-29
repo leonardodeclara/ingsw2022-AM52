@@ -55,7 +55,7 @@ public class ClientBoard implements Serializable {
     }
 
     /**
-     * Method print prints the board's content on CLI interfaces.
+     * Method print prints board's content on CLI interfaces.
      */
     public void print(){
         if (owner.equalsIgnoreCase(GB.getNickname()))

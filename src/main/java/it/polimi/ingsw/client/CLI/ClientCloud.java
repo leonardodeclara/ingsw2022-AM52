@@ -25,7 +25,7 @@ public class ClientCloud implements Serializable {
     }
 
     /**
-     * Method print prints the cloud's content on CLI interfaces.
+     * Method print prints cloud's content on CLI interfaces.
      */
     public void print(){
         System.out.println("CLOUD " + getCloudIndex() + ":");
