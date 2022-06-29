@@ -13,9 +13,6 @@ public class AvailableTowerMessage implements UpdateMessage {
         this.remainingTowers = remainingTowers;
     }
 
-    public ArrayList<Tower> getRemainingTowers(){
-        return remainingTowers;
-    }
 
     @Override
     public void update(GameBoard GB) {
