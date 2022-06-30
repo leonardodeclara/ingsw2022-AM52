@@ -198,11 +198,11 @@ public enum ClientState {
             int playersNumber = GB.getNumberOfPlayers();
             if (playersNumber==Constants.MIN_NUMBER_OF_PLAYERS){
                 texts.add("Choose three students to move from your lobby to your table or an island.");
-                texts.add("For example, write move x,y,z to table,1,2 to move x to the table, y to island 1 and z to island 2");
+                texts.add("For example, write move x,y,z in table,1,2 to move x to the table, y to island 1 and z to island 2");
             }
             else if (playersNumber==Constants.MAX_NUMBER_OF_PLAYERS){
                 texts.add("Choose four students to move from your lobby to your table or an island.");
-                texts.add("For example, write move x,y,w,z, to table,table,1,2 to move x and y to the table, w to island 1 and z to island 2");
+                texts.add("For example, write move x,y,w,z, in table,table,1,2 to move x and y to the table, w to island 1 and z to island 2");
             }
 
             if (GB.isExpertGame() && !GB.isPersonalityCardBeenPlayed())
