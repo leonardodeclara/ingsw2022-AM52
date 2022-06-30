@@ -117,7 +117,7 @@ public class ClientHandler implements Runnable {
             out.flush();
         }
         catch (IOException e){
-            e.printStackTrace();
+            System.out.println("Connection reset by peer. No reset needed");
         }
     }
 
