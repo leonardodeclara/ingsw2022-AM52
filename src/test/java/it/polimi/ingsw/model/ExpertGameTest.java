@@ -341,6 +341,7 @@ class ExpertGameTest {
         game.getPlayerByName("leo").setCoins(20);
         ArrayList<Personality> playableCards= game.getPersonalities();
         int idOfPlayedCard= playableCards.get(0).getCharacterId();
+        game.getPlayerByName("leo").addToBoardTable(Color.BLUE);
         assertTrue(game.setActivePersonality(idOfPlayedCard));
         assertEquals(idOfPlayedCard, game.getActivePersonality().getCharacterId());
         assertEquals(2, game.getPersonalities().size());
@@ -358,9 +359,13 @@ class ExpertGameTest {
 
         game.setCurrentPlayer("leo");
         game.getPlayerByName("leo").setCoins(20);
+        for (int i = 0; i<3;i++){
+            game.getPlayerByName("leo").addToBoardTable(Color.BLUE);
+        }
         assertFalse(game.setActivePersonality(0));
         assertTrue(game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
         assertFalse(game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
+
     }
 
     @Test
@@ -376,6 +381,7 @@ class ExpertGameTest {
         playableCards.get(0).updateCost();
         game.setCurrentPlayer("leo");
         game.getPlayerByName("leo").setCoins(20);
+        game.getPlayerByName("leo").addToBoardTable(Color.RED);
         assertTrue(game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
         game.resetActivePersonality();
         assertEquals(3, game.getPersonalities().size());

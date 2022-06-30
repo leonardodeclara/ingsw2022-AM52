@@ -446,27 +446,26 @@ public class Game {
         Island leftIsland = islands.get((islandId + islands.size() - 1)%islands.size());
         Island rightIsland = islands.get((islandId+1)%islands.size());
 
-       if(leftIsland.getOwnerTeam() != null){
-            if(leftIsland.getOwnerTeam().equals(island.getOwnerTeam())){
-                if(leftIsland.getIslandIndex() < island.getIslandIndex()){
-                    if (island.equals(currentMotherNatureIsland))
-                        currentMotherNatureIsland=leftIsland;
-                    mergerId = leftIsland.getIslandIndex();
-                    leftIsland.merge(island);
-                    islands.remove(island);
-                }else{
-                    if (leftIsland.equals(currentMotherNatureIsland))
-                        currentMotherNatureIsland=leftIsland;
-                    mergerId = island.getIslandIndex();
-                    island.merge(leftIsland);
-                    islands.remove(leftIsland);
-                }
-
-                listeners.firePropertyChange("Merge", null, new ArrayList<>(islands));
-            }
-        }
-
-        if(rightIsland.getOwnerTeam() != null){
+       if(leftIsland.getOwnerTeam() != null) {
+           if (leftIsland.getOwnerTeam().equals(island.getOwnerTeam())) {
+               if (leftIsland.getIslandIndex() < island.getIslandIndex()) {
+                   if (island.equals(currentMotherNatureIsland))
+                       currentMotherNatureIsland = leftIsland;
+                   mergerId = leftIsland.getIslandIndex();
+                   leftIsland.merge(island);
+                   islands.remove(island);
+               } else {
+                   if (leftIsland.equals(currentMotherNatureIsland))
+                       currentMotherNatureIsland = island;
+                   mergerId = island.getIslandIndex();
+                   island.merge(leftIsland);
+                   islands.remove(leftIsland);
+               }
+               listeners.firePropertyChange("Merge", null, new ArrayList<>(islands));
+           }
+       }
+       island = currentMotherNatureIsland;
+       if(rightIsland.getOwnerTeam() != null){
             if(rightIsland.getOwnerTeam().equals(island.getOwnerTeam())){
                 if(rightIsland.getIslandIndex() < island.getIslandIndex()){
                     if (island.equals(currentMotherNatureIsland))
@@ -483,7 +482,7 @@ public class Game {
                 }
                 listeners.firePropertyChange("Merge", null, new ArrayList<>(islands));
             }
-        }
+       }
     }
 
     /**

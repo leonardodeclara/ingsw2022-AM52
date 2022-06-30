@@ -89,14 +89,14 @@ public class GameBoard {
      */
     public void print(){
         if(outputStream!=null){
-            outputStream.print("\033[H\033[2J");
-            outputStream.flush();
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
             printClientBoards();
             printClouds();
             printIslands();
             if (isExpertGame()){
                 outputStream.println("BANK'S COINS: " + coins);
-                printPersonalityCards(); //sistemare, deve stampare solo le carte estratte, non tutte
+                printPersonalityCards();
             }
         }
     }
