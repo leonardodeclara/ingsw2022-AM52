@@ -145,7 +145,7 @@ public class CLI implements Runnable,UI{
                 socketThread.start();
                 connectionAccepted = true;
             }catch(UnknownHostException |SocketException e){
-                visualizeCustomMessage("Connessione fallita. Scegli un altro server o riprova più tardi");
+                visualizeCustomMessage("Connection could not be established! Choose a different server or try later.");
                 connectionAccepted = false;
             }
         }
@@ -211,8 +211,8 @@ public class CLI implements Runnable,UI{
      */
     public String askIP(){
         String ip;
-        outputStream.println("Benvenuto!");
-        outputStream.println("Inserisci l'indirizzo ip del server: ");
+        outputStream.println("Welcome to the magic world of Eriantys!");
+        outputStream.println("Enter server ip: ");
         outputStream.println(">");
         ip = inputStream.nextLine();
         ip = ip.replaceAll("\s","");
@@ -229,14 +229,14 @@ public class CLI implements Runnable,UI{
         int port = 0;
         while(!validInput){
             try{
-                outputStream.println("Inserisci la porta del server: ");
+                outputStream.println("Enter port number: ");
                 outputStream.println(">");
                 input = inputStream.nextLine();
                 input = input.replaceAll("\s","");
                 port = Integer.parseInt(input);
                 validInput = true;
             }catch(NumberFormatException e){
-                outputStream.println("La porta dovrebbe essere un numero intero, riprova");
+                outputStream.println("Port number should be an integer. Retry");
                 validInput = false;
             }
         }

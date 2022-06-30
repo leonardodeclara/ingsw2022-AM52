@@ -247,8 +247,8 @@ public class Server {
 
     public static void main(String[] args) {
         Server server = new Server();
-        System.out.println(Constants.Logo);
-        System.out.println("Please, choose a port to run your server on");
+        System.out.println("Please, choose a port to run your server on:");
+        System.out.println(">");
 
         boolean validInput = false;
         String input;
