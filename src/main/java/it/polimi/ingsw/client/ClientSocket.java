@@ -16,15 +16,15 @@ import java.net.SocketTimeoutException;
  * and sends messages received from the above-mentioned higher level classes
  */
 public class ClientSocket implements Runnable{
-    private Socket socket;
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
+    private final Socket socket;
+    private final ObjectOutputStream out;
+    private final ObjectInputStream in;
     private String ip;
     private int port;
     private boolean active;
     private boolean IsClientGUI;
-    private UI ui;
-    private Thread pinger;
+    private final UI ui;
+    private final Thread pinger;
 
 
     /**
@@ -51,6 +51,7 @@ public class ClientSocket implements Runnable{
                 }
             } catch (InterruptedException | IOException e) {
                 System.out.println("Morto il thread del ping");
+                ui.handleClosingServer();
             }
         });
     }
@@ -58,7 +59,7 @@ public class ClientSocket implements Runnable{
     /**
      * Method run starts the ping system and while is active passes incoming messages
      * to ui class
-     *If runtime exception is catched, closes connection and calls ui for disconnection handling
+     *If runtime exception is caught, closes connection and calls ui for disconnection handling
      */
     @Override
     public void run() {
@@ -72,10 +73,9 @@ public class ClientSocket implements Runnable{
                     ui.handleMessageFromServer(receivedMessage);
             }
         }
-        catch(SocketTimeoutException | EOFException exception ){
+        catch(SocketTimeoutException | EOFException | SocketException exception ){
             ui.handleClosingServer();
-        }
-        catch (IOException | ClassNotFoundException exception){
+        } catch (IOException | ClassNotFoundException ignored){
         } finally {
             closeConnection();
 
