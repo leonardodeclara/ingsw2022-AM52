@@ -79,6 +79,8 @@ Eryantis CLI client can be executed by typing the following command:
 ```
 java -jar AM52-Client.jar -cli
 ```
+In order to properly render CLI elements on Windows OS it is advised to execute the programme on terminals providing emulation for ANSI escape elements, such as ConEmu. 
+
 #### GUI
 Eryantis GUI client can be executed in three ways:
 
