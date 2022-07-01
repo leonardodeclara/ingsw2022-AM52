@@ -829,6 +829,7 @@ class GameTest {
         island1.setOwner(game.getPlayerByName("leoviatano"));
         leftIsland.setOwner(game.getPlayerByName("leoviatano"));
         rightIsland.setOwner(game.getPlayerByName("frizio"));
+        game.setCurrentMotherNatureIsland(island1);
         game.mergeIslands(island1);
         assertEquals(11,game.islands.size());
         assertEquals(game.getPlayerByName("leoviatano"),island1.getOwner());

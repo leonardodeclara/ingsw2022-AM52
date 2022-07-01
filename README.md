@@ -1,12 +1,19 @@
 # Prova Finale Ingegneria del Software 2022
 ## Gruppo AM52
-### Davide Capobianco [(@CDCapobianco)]<br> cirodavide.capobianco@mail.polimi.it <br>
-### Leonardo De Clara [(@leonardodeclara)]<br> leonardo.declara@mail.polimi.it <br>
-### Marianna Dragonetti [(@mariannadragonetti)] <br>marianna.dragonetti@mail.polimi.it
+**Davide Capobianco** [@CDCapobianco](https://github.com/CDCapobianco) <br> cirodavide.capobianco@mail.polimi.it <br>
+**Leonardo De Clara** [@leonardodeclara](https://github.com/leonardodeclara) <br> leonardo.declara@mail.polimi.it <br>
+**Marianna Dragonetti** [@mariannadragonetti](https://github.com/mariannadragonetti) <br>marianna.dragonetti@mail.polimi.it
 
-The following projects consists of the MVC (Model-View-Controller) implementation of a distributed system made up of a server and multiple clients.
-The server is able to manage multiples games and multiple clients connected through socket connections.
-The game can be played through a command line interface (CLI) or a graphical user interface (GUI).
+## Eriantys Board Game
+<img src="https://www.craniocreations.it/wp-content/uploads/2021/06/Eriantys_scatolaFrontombra.png" width=192px height=192px align="right"> 
+
+Eriantys Board Game is the final test of **"Software Engineering"**, held at Politecnico di Milano (2021/2022).<br>
+Game rules are available [here](https://craniointernational.com/2021/wp-content/uploads/2021/06/Eriantys_rules_small.pdf).
+
+##Project specification
+The following projects consists of the MVC (Model-View-Controller) implementation of a distributed system made up of a server and multiple clients.<br>
+The server is able to manage multiples games and multiple clients connected through socket connections. <br>
+The game can be played through a command line interface (CLI) or a graphical user interface (GUI). <br>
 
 
 
@@ -14,8 +21,8 @@ The game can be played through a command line interface (CLI) or a graphical use
 
 ### UML
 The UML diagrams linked below represent the first design of our model and the designs produced at the end of the project.
-- [Initial UML]()
-- [Final UML]()
+- [Initial UML](https://github.com/leonardodeclara/ingsw2022-AM52/blob/master/deliverables/Initial_model_UML.png)
+- [Final UML](https://github.com/leonardodeclara/ingsw2022-AM52/tree/master/deliverables/Final%20UML)
 
 ### JavaDocs
 The project's Javadocs can be found at the following [link]().
@@ -23,7 +30,12 @@ The project's Javadocs can be found at the following [link]().
 ### Test Coverage report
 JUnit's coverage report is available at the following [link]().
 
-### Libraries
+### Tools and Libraries
+**Astah** - UML diagrams.<br>
+**Intellij IDEA Ultimate** - IDE. <br>
+**Maven** - Build automation tool used primarily for Java projects.<br>
+**JavaFX** - Java library for graphical user interfaces.<br>
+**JUnit** - Unit testing framework.<br>
 
 
 ### Features
@@ -48,7 +60,11 @@ JUnit's coverage report is available at the following [link]().
 | Persistence      | 🔴 |
 | Resilience       | 🔴 |
 
-## Compilation and execution
+#### Legend
+[🔴]() Not Implemented <br>
+[🟢]() Implemented
+
+## Execution
 
 ### Jars
 Jars can be downloaded from the following link: [Jars]().
@@ -72,7 +88,7 @@ java -jar AM52-Client.jar
 ```
 java -jar AM52-Client.jar -gui
 ```
-### Eriantys Server
+### Server
 In order to execute the game's server the following command is required:
 ```
 java -jar AM52-Server.jar 

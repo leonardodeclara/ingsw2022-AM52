@@ -36,11 +36,11 @@ public class ServerSocketConnection implements Runnable {
     public void acceptClientConnections(ServerSocket serverSocket) {
         while (serverRunning) {
             try {
-                System.out.println("In attesa...");
+                System.out.println("Waiting...");
                 Socket socket = serverSocket.accept();
                 socket.setSoTimeout(Constants.TIMEOUT);
                 ClientHandler clientHandler = new ClientHandler(socket, server);
-                System.out.println("Connessione avvenuta con successo");
+                System.out.println("Established connection");
                 executorService.submit(clientHandler);
 
             } catch (IOException e) {
