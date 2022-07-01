@@ -27,8 +27,13 @@ The UML diagrams linked below represent the first design of our model and the de
 ### JavaDocs
 The project's Javadocs can be found at the following [link]().
 
-### Test Coverage report
-JUnit's coverage report is available at the following [link]().
+### Model Test Coverage report
+
+| Package |Coverage Criteria |
+|:-----------------------|:------------------|:------------------------------------:|
+| Model | Class | 13/13 (100%)
+| Model | Methods | 175/187 (93%)
+| Model | Lines | 764/839 (91%)
 
 ### Tools and Libraries
 **Astah** - UML diagrams.<br>
