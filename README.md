@@ -10,7 +10,7 @@
 Eriantys Board Game is the final test of **"Software Engineering"**, held at Politecnico di Milano (2021/2022).<br>
 Game rules are available [here](https://craniointernational.com/2021/wp-content/uploads/2021/06/Eriantys_rules_small.pdf).<br>
 
-##Project specification
+## Project specification
 The following projects consists of the MVC (Model-View-Controller) implementation of a distributed system made up of a server and multiple clients.<br>
 The server is able to manage multiples games and multiple clients connected through socket connections. <br>
 The game can be played through a command line interface (CLI) or a graphical user interface (GUI). <br>
