@@ -100,11 +100,11 @@ public class ClientBoard implements Serializable {
         try {
             for (int i = 0; i < getTowers(); i++) {
                 if (getTeam().equals(Tower.BLACK))
-                    System.out.print("█ ");
+                    System.out.print(Constants.BLUE + Constants.FILLED_RECTANGLE+ " ");
                 else if (getTeam().equals(Tower.WHITE))
-                    System.out.print("█ ");
+                    System.out.print(Constants.WHITE + Constants.FILLED_RECTANGLE+ " ");
                 else if (getTeam().equals(Tower.GREY))
-                    System.out.print(Constants.GREY + "█ ");
+                    System.out.print(Constants.CYAN +Constants.FILLED_RECTANGLE+ " ");
             }
             System.out.print("\n");
             System.out.print(Constants.RESET);
