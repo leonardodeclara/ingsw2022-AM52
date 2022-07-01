@@ -1,0 +1,173 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ServerSocketConnection</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: ServerSocketConnection (it.polimi.ingsw.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ServerSocketConnection</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.controller;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.Constants;
+<i class="no-highlight">4</i>&nbsp;
+<i class="no-highlight">5</i>&nbsp;import java.io.IOException;
+<i class="no-highlight">6</i>&nbsp;import java.net.ServerSocket;
+<i class="no-highlight">7</i>&nbsp;import java.net.Socket;
+<i class="no-highlight">8</i>&nbsp;import java.util.concurrent.ExecutorService;
+<i class="no-highlight">9</i>&nbsp;import java.util.concurrent.Executors;
+<i class="no-highlight">10</i>&nbsp;
+<i class="no-highlight">11</i>&nbsp;public class ServerSocketConnection implements Runnable {
+<i class="no-highlight">12</i>&nbsp;    private final int port;
+<i class="no-highlight">13</i>&nbsp;    private final ExecutorService executorService;
+<i class="no-highlight">14</i>&nbsp;    private final Server server;
+<i class="no-highlight">15</i>&nbsp;    private final boolean serverRunning;
+<i class="no-highlight">16</i>&nbsp;
+<i class="no-highlight">17</i>&nbsp;    /**
+<i class="no-highlight">18</i>&nbsp;     * Constructor SocketServer creates a new SocketServer instance.
+<i class="no-highlight">19</i>&nbsp;     *
+<i class="no-highlight">20</i>&nbsp;     * @param port of type int - the port on which server will listen.
+<i class="no-highlight">21</i>&nbsp;     * @param server of type Server - the main server object.
+<i class="no-highlight">22</i>&nbsp;     */
+<b class="nc"><i class="no-highlight">23</i>&nbsp;    public ServerSocketConnection(int port, Server server) {</b>
+<b class="nc"><i class="no-highlight">24</i>&nbsp;        this.server = server;</b>
+<b class="nc"><i class="no-highlight">25</i>&nbsp;        this.port = port;</b>
+<b class="nc"><i class="no-highlight">26</i>&nbsp;        executorService = Executors.newCachedThreadPool();</b>
+<b class="nc"><i class="no-highlight">27</i>&nbsp;        serverRunning =true;</b>
+<i class="no-highlight">28</i>&nbsp;    }
+<i class="no-highlight">29</i>&nbsp;
+<i class="no-highlight">30</i>&nbsp;    /**
+<i class="no-highlight">31</i>&nbsp;     * Method acceptConnections handles the process of accepting connections from clients and is responsible for the
+<i class="no-highlight">32</i>&nbsp;     * creations of new threads, one for each connection. Each thread is kept alive until client disconnection.
+<i class="no-highlight">33</i>&nbsp;     *
+<i class="no-highlight">34</i>&nbsp;     * @param serverSocket of type ServerSocket - the server socket, which accepts connections.
+<i class="no-highlight">35</i>&nbsp;     */
+<i class="no-highlight">36</i>&nbsp;    public void acceptClientConnections(ServerSocket serverSocket) {
+<b class="nc"><i class="no-highlight">37</i>&nbsp;        while (serverRunning) {</b>
+<i class="no-highlight">38</i>&nbsp;            try {
+<b class="nc"><i class="no-highlight">39</i>&nbsp;                System.out.println(&quot;Waiting...&quot;);</b>
+<b class="nc"><i class="no-highlight">40</i>&nbsp;                Socket socket = serverSocket.accept();</b>
+<b class="nc"><i class="no-highlight">41</i>&nbsp;                socket.setSoTimeout(Constants.TIMEOUT);</b>
+<b class="nc"><i class="no-highlight">42</i>&nbsp;                ClientHandler clientHandler = new ClientHandler(socket, server);</b>
+<b class="nc"><i class="no-highlight">43</i>&nbsp;                System.out.println(&quot;Established connection&quot;);</b>
+<b class="nc"><i class="no-highlight">44</i>&nbsp;                executorService.submit(clientHandler);</b>
+<i class="no-highlight">45</i>&nbsp;
+<b class="nc"><i class="no-highlight">46</i>&nbsp;            } catch (IOException e) {</b>
+<b class="nc"><i class="no-highlight">47</i>&nbsp;                System.err.println(&quot;Error: &quot; + e.getMessage());</b>
+<b class="nc"><i class="no-highlight">48</i>&nbsp;            }</b>
+<i class="no-highlight">49</i>&nbsp;        }
+<i class="no-highlight">50</i>&nbsp;    }
+<i class="no-highlight">51</i>&nbsp;
+<i class="no-highlight">52</i>&nbsp;    /**
+<i class="no-highlight">53</i>&nbsp;     * Method run is the runnable method which instantiates a new socket on server side.
+<i class="no-highlight">54</i>&nbsp;     */
+<i class="no-highlight">55</i>&nbsp;    @Override
+<i class="no-highlight">56</i>&nbsp;    public void run() {
+<i class="no-highlight">57</i>&nbsp;        try {
+<b class="nc"><i class="no-highlight">58</i>&nbsp;            ServerSocket serverSocket = new ServerSocket(port);</b>
+<b class="nc"><i class="no-highlight">59</i>&nbsp;            System.out.println(&quot;Started Listening&quot;);</b>
+<b class="nc"><i class="no-highlight">60</i>&nbsp;            acceptClientConnections(serverSocket);</b>
+<b class="nc"><i class="no-highlight">61</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i class="no-highlight">62</i>&nbsp;            e.printStackTrace();</b>
+<b class="nc"><i class="no-highlight">63</i>&nbsp;            System.err.println(&quot;Error during Socket initialization, quitting...&quot;);</b>
+<b class="nc"><i class="no-highlight">64</i>&nbsp;            System.exit(0);</b>
+<b class="nc"><i class="no-highlight">65</i>&nbsp;        }</b>
+<i class="no-highlight">66</i>&nbsp;    }
+<i class="no-highlight">67</i>&nbsp;
+<i class="no-highlight">68</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 15:57</div>
+</div>
+</body>
+</html>

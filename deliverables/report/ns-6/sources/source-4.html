@@ -1,0 +1,186 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Lobby</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: Lobby (it.polimi.ingsw.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Lobby</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/12)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.controller;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import java.util.ArrayList;
+<i class="no-highlight">4</i>&nbsp;
+<i class="no-highlight">5</i>&nbsp;/**
+<i class="no-highlight">6</i>&nbsp; * This class manages the phase between the connection of a client and the beginning of a new game.
+<i class="no-highlight">7</i>&nbsp; * According to the game parameters selected a newly connected client is being added to a Lobby instance, where he will wait for a new game to start.
+<i class="no-highlight">8</i>&nbsp; */
+<i class="no-highlight">9</i>&nbsp;public class Lobby {
+<i class="no-highlight">10</i>&nbsp;    private ArrayList&lt;String&gt; players;
+<i class="no-highlight">11</i>&nbsp;    private int numberPlayersRequired;
+<i class="no-highlight">12</i>&nbsp;    private boolean expertGame;
+<i class="no-highlight">13</i>&nbsp;    private boolean shouldStart;
+<i class="no-highlight">14</i>&nbsp;
+<i class="no-highlight">15</i>&nbsp;    /**
+<i class="no-highlight">16</i>&nbsp;     * Constructor Lobby creates a new Lobby instance and sets the game parameters accordingly to the choice of the client.
+<i class="no-highlight">17</i>&nbsp;     * @param numberPlayersRequired: number of players that will take part in the game.
+<i class="no-highlight">18</i>&nbsp;     * @param expertGame: game mode, it can be expert or base.
+<i class="no-highlight">19</i>&nbsp;     */
+<b class="nc"><i class="no-highlight">20</i>&nbsp;    public Lobby(int numberPlayersRequired, boolean expertGame) {</b>
+<b class="nc"><i class="no-highlight">21</i>&nbsp;        this.numberPlayersRequired = numberPlayersRequired;</b>
+<b class="nc"><i class="no-highlight">22</i>&nbsp;        this.expertGame = expertGame;</b>
+<b class="nc"><i class="no-highlight">23</i>&nbsp;        players = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">24</i>&nbsp;        this.shouldStart = false;</b>
+<i class="no-highlight">25</i>&nbsp;    }
+<i class="no-highlight">26</i>&nbsp;
+<i class="no-highlight">27</i>&nbsp;    /**
+<i class="no-highlight">28</i>&nbsp;     * Method addToLobby adds a new player name to the list of players waiting in the lobby.
+<i class="no-highlight">29</i>&nbsp;     * @param nickname: name of the player added to the lobby.
+<i class="no-highlight">30</i>&nbsp;     */
+<i class="no-highlight">31</i>&nbsp;    public void addToLobby(String nickname){
+<b class="nc"><i class="no-highlight">32</i>&nbsp;        players.add(nickname);</b>
+<i class="no-highlight">33</i>&nbsp;    }
+<i class="no-highlight">34</i>&nbsp;
+<i class="no-highlight">35</i>&nbsp;    /**
+<i class="no-highlight">36</i>&nbsp;     * Method checkIfShouldStart sets the shouldStart attribute based on  the number of players in the lobby.
+<i class="no-highlight">37</i>&nbsp;     */
+<i class="no-highlight">38</i>&nbsp;    public void checkIfShouldStart(){
+<b class="nc"><i class="no-highlight">39</i>&nbsp;        shouldStart = players.size() == numberPlayersRequired;</b>
+<i class="no-highlight">40</i>&nbsp;    }
+<i class="no-highlight">41</i>&nbsp;
+<i class="no-highlight">42</i>&nbsp;    /**
+<i class="no-highlight">43</i>&nbsp;     * Method getNumberPlayersRequired returns the maximum number of players that will be added to the lobby.
+<i class="no-highlight">44</i>&nbsp;     * @return the maximum number of players that will be added to the lobby.
+<i class="no-highlight">45</i>&nbsp;     */
+<i class="no-highlight">46</i>&nbsp;    public int getNumberPlayersRequired() {
+<b class="nc"><i class="no-highlight">47</i>&nbsp;        return numberPlayersRequired;</b>
+<i class="no-highlight">48</i>&nbsp;    }
+<i class="no-highlight">49</i>&nbsp;
+<i class="no-highlight">50</i>&nbsp;    /**
+<i class="no-highlight">51</i>&nbsp;     * Method getShouldStart returns the boolean attribute that determines if there are enough players in order to start a new game.
+<i class="no-highlight">52</i>&nbsp;     * @return true if the maximum number of players has been reached, false otherwise.
+<i class="no-highlight">53</i>&nbsp;     */
+<i class="no-highlight">54</i>&nbsp;    public boolean getShouldStart(){
+<b class="nc"><i class="no-highlight">55</i>&nbsp;        return shouldStart;</b>
+<i class="no-highlight">56</i>&nbsp;    }
+<i class="no-highlight">57</i>&nbsp;
+<i class="no-highlight">58</i>&nbsp;    /**
+<i class="no-highlight">59</i>&nbsp;     * Method getPlayers returns a list containing of nicknames of the players admitted to the lobby.
+<i class="no-highlight">60</i>&nbsp;     * @return the list of nicknames of the players waiting.
+<i class="no-highlight">61</i>&nbsp;     */
+<i class="no-highlight">62</i>&nbsp;    public ArrayList&lt;String&gt; getPlayers() {
+<b class="nc"><i class="no-highlight">63</i>&nbsp;        return new ArrayList&lt;&gt;(players);</b>
+<i class="no-highlight">64</i>&nbsp;    }
+<i class="no-highlight">65</i>&nbsp;
+<i class="no-highlight">66</i>&nbsp;    /**
+<i class="no-highlight">67</i>&nbsp;     * Method removePlayer removes the player with nickname playerName from the lobby.
+<i class="no-highlight">68</i>&nbsp;     * @param playerName: name of the player being removed from the lobby.
+<i class="no-highlight">69</i>&nbsp;     */
+<i class="no-highlight">70</i>&nbsp;    public void removePlayer(String playerName){
+<b class="nc"><i class="no-highlight">71</i>&nbsp;        players.remove(playerName);</b>
+<i class="no-highlight">72</i>&nbsp;    }
+<i class="no-highlight">73</i>&nbsp;
+<i class="no-highlight">74</i>&nbsp;    /**
+<i class="no-highlight">75</i>&nbsp;     * Method isExpertGame returns the value of expertGame attribute stating the expected game mode.
+<i class="no-highlight">76</i>&nbsp;     * @return the game mode setted for this lobby.
+<i class="no-highlight">77</i>&nbsp;     */
+<i class="no-highlight">78</i>&nbsp;    public boolean isExpertGame() {
+<b class="nc"><i class="no-highlight">79</i>&nbsp;        return expertGame;</b>
+<i class="no-highlight">80</i>&nbsp;    }
+<i class="no-highlight">81</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 15:57</div>
+</div>
+</body>
+</html>

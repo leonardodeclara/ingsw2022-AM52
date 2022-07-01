@@ -1,0 +1,379 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Server</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: Server (it.polimi.ingsw.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Server</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/100)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.controller;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.Constants;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.client.ClientState;
+<i class="no-highlight">5</i>&nbsp;import it.polimi.ingsw.messages.*;
+<i class="no-highlight">6</i>&nbsp;import it.polimi.ingsw.messages.ClientMessages.GameParametersMessage;
+<i class="no-highlight">7</i>&nbsp;import it.polimi.ingsw.messages.ClientMessages.LoginRequestMessage;
+<i class="no-highlight">8</i>&nbsp;import it.polimi.ingsw.messages.ServerMessages.ClientStateMessage;
+<i class="no-highlight">9</i>&nbsp;import it.polimi.ingsw.messages.ServerMessages.ErrorKind;
+<i class="no-highlight">10</i>&nbsp;import it.polimi.ingsw.messages.ServerMessages.ErrorMessage;
+<i class="no-highlight">11</i>&nbsp;
+<i class="no-highlight">12</i>&nbsp;import java.util.*;
+<i class="no-highlight">13</i>&nbsp;
+<i class="no-highlight">14</i>&nbsp;import static it.polimi.ingsw.Constants.MAX_NICKNAME_LENGTH;
+<i class="no-highlight">15</i>&nbsp;
+<i class="no-highlight">16</i>&nbsp;/**
+<i class="no-highlight">17</i>&nbsp; * Server class is the main class on the server side: it manages the connection&#39;s setup phase up to the game&#39;s start;
+<i class="no-highlight">18</i>&nbsp; * it also handles the registration of clients.
+<i class="no-highlight">19</i>&nbsp; */
+<i class="no-highlight">20</i>&nbsp;public class Server {
+<i class="no-highlight">21</i>&nbsp;    private ServerSocketConnection serverSocket;
+<i class="no-highlight">22</i>&nbsp;    private HashMap&lt;Integer,String&gt; idToNicknameMap;
+<i class="no-highlight">23</i>&nbsp;    private HashMap&lt;String, ClientHandler&gt; nameToHandlerMap;
+<i class="no-highlight">24</i>&nbsp;    private ArrayList&lt;Lobby&gt; lobbies;
+<i class="no-highlight">25</i>&nbsp;    private HashMap&lt;String, GameHandler&gt; playerToGameMap;
+<i class="no-highlight">26</i>&nbsp;    private ArrayList&lt;GameHandler&gt; gameHandlers;
+<i class="no-highlight">27</i>&nbsp;    private int clientHandlerCounter;
+<i class="no-highlight">28</i>&nbsp;
+<b class="nc"><i class="no-highlight">29</i>&nbsp;    public Server(){</b>
+<b class="nc"><i class="no-highlight">30</i>&nbsp;        idToNicknameMap= new HashMap&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">31</i>&nbsp;        nameToHandlerMap= new HashMap&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">32</i>&nbsp;        lobbies = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">33</i>&nbsp;        playerToGameMap = new HashMap&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">34</i>&nbsp;        gameHandlers = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">35</i>&nbsp;        clientHandlerCounter=0;</b>
+<i class="no-highlight">36</i>&nbsp;    }
+<i class="no-highlight">37</i>&nbsp;
+<i class="no-highlight">38</i>&nbsp;    /**
+<i class="no-highlight">39</i>&nbsp;     * It handles the first messages sent by a player in order to register its name and its choice
+<i class="no-highlight">40</i>&nbsp;     * for the number of players and game mode.
+<i class="no-highlight">41</i>&nbsp;     * @param message: message sent by the client.
+<i class="no-highlight">42</i>&nbsp;     * @param sender: ClientHandler instance of the client sending data.
+<i class="no-highlight">43</i>&nbsp;     */
+<i class="no-highlight">44</i>&nbsp;    public synchronized void handleMessage(Message message, ClientHandler sender){
+<b class="nc"><i class="no-highlight">45</i>&nbsp;        if (message instanceof LoginRequestMessage)</b>
+<b class="nc"><i class="no-highlight">46</i>&nbsp;            handleLogin((LoginRequestMessage) message, sender);</b>
+<b class="nc"><i class="no-highlight">47</i>&nbsp;        else if (message instanceof GameParametersMessage)</b>
+<b class="nc"><i class="no-highlight">48</i>&nbsp;            handleGameParameters((GameParametersMessage)message,sender );</b>
+<i class="no-highlight">49</i>&nbsp;    }
+<i class="no-highlight">50</i>&nbsp;
+<i class="no-highlight">51</i>&nbsp;    /**
+<i class="no-highlight">52</i>&nbsp;     * It handles a client&#39;s name choice: if the choice is valid, the server registers it and sends a new message to client,
+<i class="no-highlight">53</i>&nbsp;     * asking for game parameters, otherwise it sends a error message.
+<i class="no-highlight">54</i>&nbsp;     * @param message: LoginRequestMessage instance sent by the client.
+<i class="no-highlight">55</i>&nbsp;     * @param sender: ClientHandler instance of the client sending data.
+<i class="no-highlight">56</i>&nbsp;     */
+<i class="no-highlight">57</i>&nbsp;    public void handleLogin(LoginRequestMessage message, ClientHandler sender){
+<b class="nc"><i class="no-highlight">58</i>&nbsp;        String nickname = message.getPlayerNickname();</b>
+<b class="nc"><i class="no-highlight">59</i>&nbsp;        if(isNicknameAvailable(nickname)){</b>
+<b class="nc"><i class="no-highlight">60</i>&nbsp;            sender.setID(clientHandlerCounter);</b>
+<b class="nc"><i class="no-highlight">61</i>&nbsp;            clientHandlerCounter++;</b>
+<b class="nc"><i class="no-highlight">62</i>&nbsp;            registerPlayer(nickname,sender.getID());</b>
+<b class="nc"><i class="no-highlight">63</i>&nbsp;            registerClientConnection(nickname, sender);</b>
+<b class="nc"><i class="no-highlight">64</i>&nbsp;            sender.sendMessage(new ClientStateMessage(ClientState.INSERT_NEW_GAME_PARAMETERS));</b>
+<i class="no-highlight">65</i>&nbsp;        }else{
+<b class="nc"><i class="no-highlight">66</i>&nbsp;            ErrorMessage error = new ErrorMessage(ErrorKind.INVALID_NICKNAME);</b>
+<b class="nc"><i class="no-highlight">67</i>&nbsp;            sender.sendMessage(error);</b>
+<i class="no-highlight">68</i>&nbsp;        }
+<i class="no-highlight">69</i>&nbsp;    }
+<i class="no-highlight">70</i>&nbsp;
+<i class="no-highlight">71</i>&nbsp;    /**
+<i class="no-highlight">72</i>&nbsp;     * It handles a client&#39;s choice for number of players and game mode by adding him to a lobby accordingly
+<i class="no-highlight">73</i>&nbsp;     * to his game parameters&#39; selection.
+<i class="no-highlight">74</i>&nbsp;     * @param message: GameParametersMessage instance sent by the client.
+<i class="no-highlight">75</i>&nbsp;     * @param sender: ClientHandler instance of the client sending data.
+<i class="no-highlight">76</i>&nbsp;     */
+<i class="no-highlight">77</i>&nbsp;    public void handleGameParameters(GameParametersMessage message, ClientHandler sender){
+<b class="nc"><i class="no-highlight">78</i>&nbsp;        boolean expertGame = message.isExpertGame();</b>
+<b class="nc"><i class="no-highlight">79</i>&nbsp;        int numberOfPlayers = message.getNumberPlayers();</b>
+<b class="nc"><i class="no-highlight">80</i>&nbsp;        Lobby matchingLobby = joinLobby(sender.getID(),numberOfPlayers,expertGame);</b>
+<b class="nc"><i class="no-highlight">81</i>&nbsp;        if(matchingLobby.getShouldStart()){</b>
+<b class="nc"><i class="no-highlight">82</i>&nbsp;            createMatch(matchingLobby);</b>
+<i class="no-highlight">83</i>&nbsp;        } else {
+<b class="nc"><i class="no-highlight">84</i>&nbsp;            sender.sendMessage(new ClientStateMessage(ClientState.WAIT_IN_LOBBY));</b>
+<i class="no-highlight">85</i>&nbsp;        }
+<i class="no-highlight">86</i>&nbsp;    }
+<i class="no-highlight">87</i>&nbsp;
+<i class="no-highlight">88</i>&nbsp;    /**
+<i class="no-highlight">89</i>&nbsp;     * It adds a client to a game&#39;s lobby: if there&#39;s already a lobby matching the chosen game parameters
+<i class="no-highlight">90</i>&nbsp;     * it allows the client to join it, otherwise it creates a new one and adds the client to it.
+<i class="no-highlight">91</i>&nbsp;     * @param playerID: identification for the active client&#39;s ClientHandler.
+<i class="no-highlight">92</i>&nbsp;     * @param numberPlayers: client&#39;s choice for the game&#39;s number of players.
+<i class="no-highlight">93</i>&nbsp;     * @param expertGame: client&#39;s choice for the game mode.
+<i class="no-highlight">94</i>&nbsp;     * @return the Lobby instance to which the client has been added.
+<i class="no-highlight">95</i>&nbsp;     */
+<i class="no-highlight">96</i>&nbsp;    public Lobby joinLobby(int playerID, int numberPlayers, boolean expertGame){
+<i class="no-highlight">97</i>&nbsp;        try{
+<b class="nc"><i class="no-highlight">98</i>&nbsp;            Lobby matchingLobby = getMatchingLobby(numberPlayers,expertGame);</b>
+<b class="nc"><i class="no-highlight">99</i>&nbsp;            matchingLobby.addToLobby(idToNicknameMap.get(playerID));</b>
+<b class="nc"><i class="no-highlight">100</i>&nbsp;            matchingLobby.checkIfShouldStart();</b>
+<b class="nc"><i class="no-highlight">101</i>&nbsp;            return matchingLobby;</b>
+<i class="no-highlight">102</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">103</i>&nbsp;        catch (NoSuchElementException e){</b>
+<b class="nc"><i class="no-highlight">104</i>&nbsp;            Lobby newLobby = new Lobby(numberPlayers,expertGame);</b>
+<b class="nc"><i class="no-highlight">105</i>&nbsp;            newLobby.addToLobby(idToNicknameMap.get(playerID));</b>
+<b class="nc"><i class="no-highlight">106</i>&nbsp;            lobbies.add(newLobby);</b>
+<b class="nc"><i class="no-highlight">107</i>&nbsp;            return newLobby;</b>
+<i class="no-highlight">108</i>&nbsp;        }
+<i class="no-highlight">109</i>&nbsp;    }
+<i class="no-highlight">110</i>&nbsp;
+<i class="no-highlight">111</i>&nbsp;    /**
+<i class="no-highlight">112</i>&nbsp;     * It creates a new match accordingly to the lobby&#39;s parameters: a GameHandler is created and the lobby&#39;s
+<i class="no-highlight">113</i>&nbsp;     * clients are added to it. The now-empty lobby is also removed from the active lobbies list.
+<i class="no-highlight">114</i>&nbsp;     * @param lobby: Lobby instance to which the clients belong to.
+<i class="no-highlight">115</i>&nbsp;     */
+<i class="no-highlight">116</i>&nbsp;    private void createMatch(Lobby lobby){
+<b class="nc"><i class="no-highlight">117</i>&nbsp;        ArrayList&lt;String&gt; players = lobby.getPlayers();</b>
+<b class="nc"><i class="no-highlight">118</i>&nbsp;        boolean expert = lobby.isExpertGame();</b>
+<b class="nc"><i class="no-highlight">119</i>&nbsp;        lobbies.remove(lobby);</b>
+<b class="nc"><i class="no-highlight">120</i>&nbsp;        HashMap&lt;String, ClientHandler&gt; playerInGame = selectLobbyPlayers(players);</b>
+<b class="nc"><i class="no-highlight">121</i>&nbsp;        GameHandler gameHandler = new GameHandler(this,playerInGame,expert);</b>
+<b class="nc"><i class="no-highlight">122</i>&nbsp;        gameHandlers.add(gameHandler);</b>
+<b class="nc"><i class="no-highlight">123</i>&nbsp;        for (String player : players) {</b>
+<b class="nc"><i class="no-highlight">124</i>&nbsp;            playerToGameMap.put(player,gameHandler);</b>
+<b class="nc"><i class="no-highlight">125</i>&nbsp;        }</b>
+<b class="nc"><i class="no-highlight">126</i>&nbsp;        ArrayList&lt;ClientHandler&gt; clientHandlers = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">127</i>&nbsp;        for (String nickname : players){</b>
+<b class="nc"><i class="no-highlight">128</i>&nbsp;            clientHandlers.add(nameToHandlerMap.get(nickname));</b>
+<b class="nc"><i class="no-highlight">129</i>&nbsp;        }</b>
+<b class="nc"><i class="no-highlight">130</i>&nbsp;        for(ClientHandler ch : clientHandlers)</b>
+<b class="nc"><i class="no-highlight">131</i>&nbsp;            ch.setGameHandler(gameHandler);</b>
+<i class="no-highlight">132</i>&nbsp;
+<b class="nc"><i class="no-highlight">133</i>&nbsp;        gameHandler.startGame();</b>
+<i class="no-highlight">134</i>&nbsp;    }
+<i class="no-highlight">135</i>&nbsp;
+<i class="no-highlight">136</i>&nbsp;    /**
+<i class="no-highlight">137</i>&nbsp;     * It selects the Nickname-ClientHandler association of the clients that belong to a lobby.
+<i class="no-highlight">138</i>&nbsp;     * @param lobbyPlayers: names of the clients that belong to a lobby.
+<i class="no-highlight">139</i>&nbsp;     * @return a hashmap with the association Nickname-ClientHandler for the lobby&#39;s players.
+<i class="no-highlight">140</i>&nbsp;     */
+<i class="no-highlight">141</i>&nbsp;    private HashMap&lt;String,ClientHandler&gt; selectLobbyPlayers(ArrayList&lt;String&gt; lobbyPlayers){
+<b class="nc"><i class="no-highlight">142</i>&nbsp;        HashMap&lt;String, ClientHandler&gt; inGamePlayers = new HashMap&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">143</i>&nbsp;        for (String nickname : nameToHandlerMap.keySet()){</b>
+<b class="nc"><i class="no-highlight">144</i>&nbsp;            if(lobbyPlayers.contains(nickname))</b>
+<b class="nc"><i class="no-highlight">145</i>&nbsp;                inGamePlayers.put(nickname, nameToHandlerMap.get(nickname));</b>
+<b class="nc"><i class="no-highlight">146</i>&nbsp;        }</b>
+<b class="nc"><i class="no-highlight">147</i>&nbsp;        return inGamePlayers;</b>
+<i class="no-highlight">148</i>&nbsp;    }
+<i class="no-highlight">149</i>&nbsp;
+<i class="no-highlight">150</i>&nbsp;    /**
+<i class="no-highlight">151</i>&nbsp;     * It selects the active lobby that matches the parameters given as input.
+<i class="no-highlight">152</i>&nbsp;     * @param numberPlayers: chosen number of players.
+<i class="no-highlight">153</i>&nbsp;     * @param expertGame: chosen game mode.
+<i class="no-highlight">154</i>&nbsp;     * @return a Lobby instance matching the parameters.
+<i class="no-highlight">155</i>&nbsp;     */
+<i class="no-highlight">156</i>&nbsp;    private Lobby getMatchingLobby(int numberPlayers, boolean expertGame){
+<b class="nc"><i class="no-highlight">157</i>&nbsp;        return lobbies.stream()</b>
+<b class="nc"><i class="no-highlight">158</i>&nbsp;                .filter(x -&gt; x.getNumberPlayersRequired() == numberPlayers &amp;&amp; x.isExpertGame() == expertGame)</b>
+<b class="nc"><i class="no-highlight">159</i>&nbsp;                .findFirst()</b>
+<b class="nc"><i class="no-highlight">160</i>&nbsp;                .get();</b>
+<i class="no-highlight">161</i>&nbsp;    }
+<i class="no-highlight">162</i>&nbsp;
+<i class="no-highlight">163</i>&nbsp;    /**
+<i class="no-highlight">164</i>&nbsp;     * It verifies whether a nickname&#39;s choice is valid or not by checking if there&#39;s already a client with that nickname.
+<i class="no-highlight">165</i>&nbsp;     * @param nickname: the client&#39;s chosen name.
+<i class="no-highlight">166</i>&nbsp;     * @return true if the choice is legal, false otherwise.
+<i class="no-highlight">167</i>&nbsp;     */
+<i class="no-highlight">168</i>&nbsp;    public boolean isNicknameAvailable(String nickname){
+<b class="nc"><i class="no-highlight">169</i>&nbsp;        if(nickname.length() &gt; MAX_NICKNAME_LENGTH)</b>
+<b class="nc"><i class="no-highlight">170</i>&nbsp;            return false;</b>
+<b class="nc"><i class="no-highlight">171</i>&nbsp;        for (Map.Entry&lt;Integer,String&gt; entry: idToNicknameMap.entrySet())</b>
+<b class="nc"><i class="no-highlight">172</i>&nbsp;            if (entry.getValue().equalsIgnoreCase(nickname))</b>
+<b class="nc"><i class="no-highlight">173</i>&nbsp;                return false;</b>
+<b class="nc"><i class="no-highlight">174</i>&nbsp;        return true;</b>
+<i class="no-highlight">175</i>&nbsp;    }
+<i class="no-highlight">176</i>&nbsp;
+<i class="no-highlight">177</i>&nbsp;    /**
+<i class="no-highlight">178</i>&nbsp;     * It registers a player by adding the association between the ClientHandler&#39;s ID and the client&#39;s nickname.
+<i class="no-highlight">179</i>&nbsp;     * @param nickname: name chosen by the client.
+<i class="no-highlight">180</i>&nbsp;     * @param clientHandlerID: ClientHandler&#39;s identification.
+<i class="no-highlight">181</i>&nbsp;     */
+<i class="no-highlight">182</i>&nbsp;    public void registerPlayer(String nickname,int clientHandlerID){
+<b class="nc"><i class="no-highlight">183</i>&nbsp;        idToNicknameMap.put(clientHandlerID, nickname);</b>
+<i class="no-highlight">184</i>&nbsp;    }
+<i class="no-highlight">185</i>&nbsp;
+<i class="no-highlight">186</i>&nbsp;    /**
+<i class="no-highlight">187</i>&nbsp;     * It adds a client&#39;s connection by adding the association between the client&#39;s nickname and its ClientHandler.
+<i class="no-highlight">188</i>&nbsp;     * @param nickname: name chosen by the client.
+<i class="no-highlight">189</i>&nbsp;     * @param clientConnection: client&#39;s ClientHandler.
+<i class="no-highlight">190</i>&nbsp;     */
+<i class="no-highlight">191</i>&nbsp;    public void registerClientConnection(String nickname, ClientHandler clientConnection){
+<b class="nc"><i class="no-highlight">192</i>&nbsp;        nameToHandlerMap.put(nickname, clientConnection);</b>
+<i class="no-highlight">193</i>&nbsp;    }
+<i class="no-highlight">194</i>&nbsp;
+<i class="no-highlight">195</i>&nbsp;    /**
+<i class="no-highlight">196</i>&nbsp;     * Method getIdToNicknameMap returns the HashMap containing the associations between a ClientHandler identification number
+<i class="no-highlight">197</i>&nbsp;     * and the name of the player associated with that ClientHandler.
+<i class="no-highlight">198</i>&nbsp;     * @return HashMap with the association between ClientHandler ID and player name.
+<i class="no-highlight">199</i>&nbsp;     */
+<i class="no-highlight">200</i>&nbsp;    public HashMap&lt;Integer, String&gt; getIdToNicknameMap() {
+<b class="nc"><i class="no-highlight">201</i>&nbsp;        return idToNicknameMap;</b>
+<i class="no-highlight">202</i>&nbsp;    }
+<i class="no-highlight">203</i>&nbsp;
+<i class="no-highlight">204</i>&nbsp;    /**
+<i class="no-highlight">205</i>&nbsp;     * It removes the selected ClientHandler from the server&#39;s registries. If the disconnecting player is in an active
+<i class="no-highlight">206</i>&nbsp;     * match its ClientHandler reference is removed from the HashMap with the associations between nicknames and GameHandlers.
+<i class="no-highlight">207</i>&nbsp;     * @param clientHandler: ClientHandler instance that is being removed from the server&#39;s maps. Otherwise, he is removed from a waiting lobby.
+<i class="no-highlight">208</i>&nbsp;     */
+<i class="no-highlight">209</i>&nbsp;    public synchronized void removeClientConnection(ClientHandler clientHandler){
+<b class="nc"><i class="no-highlight">210</i>&nbsp;        String clientName = idToNicknameMap.get(clientHandler.getID());</b>
+<b class="nc"><i class="no-highlight">211</i>&nbsp;        idToNicknameMap.remove(clientHandler.getID());</b>
+<i class="no-highlight">212</i>&nbsp;
+<b class="nc"><i class="no-highlight">213</i>&nbsp;        if (clientHandler.getGameHandler()!=null)</b>
+<b class="nc"><i class="no-highlight">214</i>&nbsp;            playerToGameMap.remove(clientName);</b>
+<i class="no-highlight">215</i>&nbsp;        else
+<b class="nc"><i class="no-highlight">216</i>&nbsp;            removeClientFromLobby(clientName);</b>
+<i class="no-highlight">217</i>&nbsp;
+<b class="nc"><i class="no-highlight">218</i>&nbsp;        nameToHandlerMap.remove(clientName);</b>
+<i class="no-highlight">219</i>&nbsp;
+<i class="no-highlight">220</i>&nbsp;    }
+<i class="no-highlight">221</i>&nbsp;
+<i class="no-highlight">222</i>&nbsp;    /**
+<i class="no-highlight">223</i>&nbsp;     * It removes a player from a waiting lobby by deleting his name from the players&#39; list.
+<i class="no-highlight">224</i>&nbsp;     * @param nickname: name of the player being removed.
+<i class="no-highlight">225</i>&nbsp;     */
+<i class="no-highlight">226</i>&nbsp;    public void removeClientFromLobby(String nickname){
+<b class="nc"><i class="no-highlight">227</i>&nbsp;        for (Lobby lobby: lobbies)</b>
+<b class="nc"><i class="no-highlight">228</i>&nbsp;            if (lobby.getPlayers().contains(nickname))</b>
+<b class="nc"><i class="no-highlight">229</i>&nbsp;                lobby.removePlayer(nickname);</b>
+<i class="no-highlight">230</i>&nbsp;    }
+<i class="no-highlight">231</i>&nbsp;
+<i class="no-highlight">232</i>&nbsp;    /**
+<i class="no-highlight">233</i>&nbsp;     * It removes the selected GameHandler instance from the list of gameHandlers.
+<i class="no-highlight">234</i>&nbsp;     * @param gameHandler: GameHandler instance being removed.
+<i class="no-highlight">235</i>&nbsp;     */
+<i class="no-highlight">236</i>&nbsp;    public void removeGameHandler(GameHandler gameHandler){
+<b class="nc"><i class="no-highlight">237</i>&nbsp;        gameHandlers.remove(gameHandler);</b>
+<i class="no-highlight">238</i>&nbsp;    }
+<i class="no-highlight">239</i>&nbsp;
+<i class="no-highlight">240</i>&nbsp;    /**
+<i class="no-highlight">241</i>&nbsp;     * It sets the server&#39;s serverSocket attribute to the ServerSocketConnection instance given as attribute.
+<i class="no-highlight">242</i>&nbsp;     * @param serverSocket: ServerSocketConnection instance handling the server&#39;s communication with clients.
+<i class="no-highlight">243</i>&nbsp;     */
+<i class="no-highlight">244</i>&nbsp;    public void setServerSocket(ServerSocketConnection serverSocket) {
+<b class="nc"><i class="no-highlight">245</i>&nbsp;        this.serverSocket = serverSocket;</b>
+<i class="no-highlight">246</i>&nbsp;    }
+<i class="no-highlight">247</i>&nbsp;
+<i class="no-highlight">248</i>&nbsp;    public static void main(String[] args) {
+<b class="nc"><i class="no-highlight">249</i>&nbsp;        Server server = new Server();</b>
+<b class="nc"><i class="no-highlight">250</i>&nbsp;        System.out.println(Constants.Logo);</b>
+<b class="nc"><i class="no-highlight">251</i>&nbsp;        System.out.println(&quot;Please, choose a port to run your server on:&quot;);</b>
+<b class="nc"><i class="no-highlight">252</i>&nbsp;        System.out.println(&quot;&gt;&quot;);</b>
+<i class="no-highlight">253</i>&nbsp;
+<b class="nc"><i class="no-highlight">254</i>&nbsp;        boolean validInput = false;</b>
+<i class="no-highlight">255</i>&nbsp;        String input;
+<b class="nc"><i class="no-highlight">256</i>&nbsp;        int port = 0;</b>
+<b class="nc"><i class="no-highlight">257</i>&nbsp;        Scanner inputStream = new Scanner(System.in);</b>
+<i class="no-highlight">258</i>&nbsp;
+<b class="nc"><i class="no-highlight">259</i>&nbsp;        while(!validInput){</b>
+<i class="no-highlight">260</i>&nbsp;            try{
+<b class="nc"><i class="no-highlight">261</i>&nbsp;                input = inputStream.nextLine();</b>
+<b class="nc"><i class="no-highlight">262</i>&nbsp;                input = input.replaceAll(&quot;\s&quot;,&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">263</i>&nbsp;                port = Integer.parseInt(input);</b>
+<b class="nc"><i class="no-highlight">264</i>&nbsp;                validInput = true;</b>
+<b class="nc"><i class="no-highlight">265</i>&nbsp;            }catch(NumberFormatException e){</b>
+<b class="nc"><i class="no-highlight">266</i>&nbsp;                System.out.println(&quot;The chosen port is not in a valid format! Try again&quot;);</b>
+<b class="nc"><i class="no-highlight">267</i>&nbsp;                validInput = false;</b>
+<b class="nc"><i class="no-highlight">268</i>&nbsp;            }</b>
+<i class="no-highlight">269</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">270</i>&nbsp;        ServerSocketConnection serverSocket = new ServerSocketConnection(port,server);</b>
+<b class="nc"><i class="no-highlight">271</i>&nbsp;        server.setServerSocket(serverSocket);</b>
+<b class="nc"><i class="no-highlight">272</i>&nbsp;        serverSocket.run();</b>
+<i class="no-highlight">273</i>&nbsp;    }
+<i class="no-highlight">274</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 15:57</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,633 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > GameHandler</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: GameHandler (it.polimi.ingsw.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GameHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/31)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/207)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.controller;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.client.ClientState;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.messages.*;
+<i class="no-highlight">5</i>&nbsp;import it.polimi.ingsw.messages.ClientMessages.*;
+<i class="no-highlight">6</i>&nbsp;import it.polimi.ingsw.messages.ServerMessages.ClientStateMessage;
+<i class="no-highlight">7</i>&nbsp;import it.polimi.ingsw.messages.ServerMessages.ErrorKind;
+<i class="no-highlight">8</i>&nbsp;import it.polimi.ingsw.messages.ServerMessages.ErrorMessage;
+<i class="no-highlight">9</i>&nbsp;import it.polimi.ingsw.messages.UpdateMessages.AvailableWizardMessage;
+<i class="no-highlight">10</i>&nbsp;import it.polimi.ingsw.messages.UpdateMessages.EndGameMessage;
+<i class="no-highlight">11</i>&nbsp;import it.polimi.ingsw.model.Tower;
+<i class="no-highlight">12</i>&nbsp;
+<i class="no-highlight">13</i>&nbsp;import java.beans.PropertyChangeEvent;
+<i class="no-highlight">14</i>&nbsp;import java.beans.PropertyChangeListener;
+<i class="no-highlight">15</i>&nbsp;import java.util.ArrayList;
+<i class="no-highlight">16</i>&nbsp;import java.util.HashMap;
+<i class="no-highlight">17</i>&nbsp;import java.util.Iterator;
+<i class="no-highlight">18</i>&nbsp;import java.util.Map;
+<i class="no-highlight">19</i>&nbsp;
+<i class="no-highlight">20</i>&nbsp;/**
+<i class="no-highlight">21</i>&nbsp; * GameHandler&#39;s class receives messages from clients through ClientHandler class and propagates them
+<i class="no-highlight">22</i>&nbsp; * to GameController, in order to change the model&#39;s state.
+<i class="no-highlight">23</i>&nbsp; */
+<i class="no-highlight">24</i>&nbsp;public class GameHandler implements PropertyChangeListener{
+<i class="no-highlight">25</i>&nbsp;    private GameController gameController;
+<i class="no-highlight">26</i>&nbsp;    private ServerSocketConnection serverConnection;
+<i class="no-highlight">27</i>&nbsp;    private Server server;
+<i class="no-highlight">28</i>&nbsp;    private ArrayList&lt;String&gt; players;
+<i class="no-highlight">29</i>&nbsp;    private HashMap&lt;String, ClientHandler&gt; nameToHandlerMap;
+<i class="no-highlight">30</i>&nbsp;    private boolean expertGame;
+<i class="no-highlight">31</i>&nbsp;    private ArrayList&lt;String&gt; playersOrder;
+<i class="no-highlight">32</i>&nbsp;    private Iterator&lt;String&gt; playersOrderIterator;
+<i class="no-highlight">33</i>&nbsp;
+<i class="no-highlight">34</i>&nbsp;    /**
+<i class="no-highlight">35</i>&nbsp;     * Constructor GameHandler creates a new GameHandler instance by receiving a reference to the Server,
+<i class="no-highlight">36</i>&nbsp;     * the list of clients that are taking part in the game and their relative ClientHandler reference. It also holds the mode of the new game.
+<i class="no-highlight">37</i>&nbsp;     * @param server: Server instance holding information about the clients and the server state.
+<i class="no-highlight">38</i>&nbsp;     * @param nameToHandlerMap: HashMap containing the associations between a client&#39;s nickname and his ClientHandler instance.
+<i class="no-highlight">39</i>&nbsp;     * @param expertGame: game mode for the game managed by GameHandler.
+<i class="no-highlight">40</i>&nbsp;     */
+<b class="nc"><i class="no-highlight">41</i>&nbsp;    public GameHandler(Server server,HashMap&lt;String, ClientHandler&gt; nameToHandlerMap, boolean expertGame){</b>
+<b class="nc"><i class="no-highlight">42</i>&nbsp;        this.server = server;</b>
+<b class="nc"><i class="no-highlight">43</i>&nbsp;        this.nameToHandlerMap =nameToHandlerMap;</b>
+<b class="nc"><i class="no-highlight">44</i>&nbsp;        this.expertGame=expertGame;</b>
+<b class="nc"><i class="no-highlight">45</i>&nbsp;        players = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">46</i>&nbsp;        players.addAll(nameToHandlerMap.keySet());</b>
+<b class="nc"><i class="no-highlight">47</i>&nbsp;        playersOrder = new ArrayList&lt;&gt;(players);</b>
+<b class="nc"><i class="no-highlight">48</i>&nbsp;        playersOrderIterator = playersOrder.iterator();</b>
+<i class="no-highlight">49</i>&nbsp;    }
+<i class="no-highlight">50</i>&nbsp;
+<i class="no-highlight">51</i>&nbsp;    /**
+<i class="no-highlight">52</i>&nbsp;     * It manages messages from the client by calling the proper method according the message instance.
+<i class="no-highlight">53</i>&nbsp;     * @param message: instance of the client&#39;s message
+<i class="no-highlight">54</i>&nbsp;     * @param clientHandler: ClientHandler instance of the player sending messages.
+<i class="no-highlight">55</i>&nbsp;     */
+<i class="no-highlight">56</i>&nbsp;    public void handleMessage(Message message,ClientHandler clientHandler){
+<b class="nc"><i class="no-highlight">57</i>&nbsp;        if(message instanceof WizardSelectionMessage)</b>
+<b class="nc"><i class="no-highlight">58</i>&nbsp;            handleWizardSelectionMessage((WizardSelectionMessage) message, clientHandler);</b>
+<b class="nc"><i class="no-highlight">59</i>&nbsp;        else if (message instanceof TowerSelectionMessage)</b>
+<b class="nc"><i class="no-highlight">60</i>&nbsp;            handleTowerSelectionMessage((TowerSelectionMessage)message, clientHandler);</b>
+<b class="nc"><i class="no-highlight">61</i>&nbsp;        else if(message instanceof PlayAssistantCardMessage)</b>
+<b class="nc"><i class="no-highlight">62</i>&nbsp;            handlePlayAssistantCardMessage((PlayAssistantCardMessage) message,clientHandler);</b>
+<b class="nc"><i class="no-highlight">63</i>&nbsp;        else if (message instanceof MoveStudentsFromLobbyMessage)</b>
+<b class="nc"><i class="no-highlight">64</i>&nbsp;            handleMoveStudentMessage((MoveStudentsFromLobbyMessage) message, clientHandler);</b>
+<b class="nc"><i class="no-highlight">65</i>&nbsp;        else if (message instanceof MotherNatureMoveMessage)</b>
+<b class="nc"><i class="no-highlight">66</i>&nbsp;            handleMoveMotherNatureMessage((MotherNatureMoveMessage)message,clientHandler);</b>
+<b class="nc"><i class="no-highlight">67</i>&nbsp;        else if (message instanceof CloudSelectionMessage)</b>
+<b class="nc"><i class="no-highlight">68</i>&nbsp;            handleCloudPick((CloudSelectionMessage) message, clientHandler);</b>
+<b class="nc"><i class="no-highlight">69</i>&nbsp;        else if (message instanceof CloseTurnMessage)</b>
+<b class="nc"><i class="no-highlight">70</i>&nbsp;            handleEndTurn((CloseTurnMessage) message, clientHandler);</b>
+<b class="nc"><i class="no-highlight">71</i>&nbsp;        else if (message instanceof PlayPersonalityCardMessage)</b>
+<b class="nc"><i class="no-highlight">72</i>&nbsp;            handlePlayPersonalityCard((PlayPersonalityCardMessage) message, clientHandler);</b>
+<b class="nc"><i class="no-highlight">73</i>&nbsp;        else if (message instanceof Card1EffectMessage)</b>
+<b class="nc"><i class="no-highlight">74</i>&nbsp;            handleCard1Effect((Card1EffectMessage) message, clientHandler);</b>
+<b class="nc"><i class="no-highlight">75</i>&nbsp;        else if (message instanceof Card3EffectMessage)</b>
+<b class="nc"><i class="no-highlight">76</i>&nbsp;            handleCard3Effect((Card3EffectMessage) message, clientHandler);</b>
+<b class="nc"><i class="no-highlight">77</i>&nbsp;        else if (message instanceof Card5EffectMessage)</b>
+<b class="nc"><i class="no-highlight">78</i>&nbsp;            handleCard5Effect((Card5EffectMessage) message, clientHandler);</b>
+<b class="nc"><i class="no-highlight">79</i>&nbsp;        else if (message instanceof Card7EffectMessage)</b>
+<b class="nc"><i class="no-highlight">80</i>&nbsp;            handleCard7Effect((Card7EffectMessage) message, clientHandler);</b>
+<b class="nc"><i class="no-highlight">81</i>&nbsp;        else if (message instanceof Card9EffectMessage)</b>
+<b class="nc"><i class="no-highlight">82</i>&nbsp;            handleCard9Effect((Card9EffectMessage) message, clientHandler);</b>
+<b class="nc"><i class="no-highlight">83</i>&nbsp;        else if (message instanceof Card10EffectMessage)</b>
+<b class="nc"><i class="no-highlight">84</i>&nbsp;            handleCard10Effect((Card10EffectMessage) message, clientHandler);</b>
+<b class="nc"><i class="no-highlight">85</i>&nbsp;        else if (message instanceof Card11EffectMessage)</b>
+<b class="nc"><i class="no-highlight">86</i>&nbsp;            handleCard11Effect((Card11EffectMessage) message, clientHandler);</b>
+<b class="nc"><i class="no-highlight">87</i>&nbsp;        else if (message instanceof Card12EffectMessage)</b>
+<b class="nc"><i class="no-highlight">88</i>&nbsp;            handleCard12Effect((Card12EffectMessage) message, clientHandler);</b>
+<i class="no-highlight">89</i>&nbsp;    }
+<i class="no-highlight">90</i>&nbsp;
+<i class="no-highlight">91</i>&nbsp;    /**
+<i class="no-highlight">92</i>&nbsp;     * It starts a new game by instantiating a new GameController and by setting the listener system.
+<i class="no-highlight">93</i>&nbsp;     * It also communicates to the players the model&#39;s initial status.
+<i class="no-highlight">94</i>&nbsp;     */
+<i class="no-highlight">95</i>&nbsp;    public void startGame(){
+<b class="nc"><i class="no-highlight">96</i>&nbsp;        updatePlayersOrder(players);</b>
+<b class="nc"><i class="no-highlight">97</i>&nbsp;        gameController= new GameController(expertGame, new ArrayList&lt;&gt;(players));</b>
+<b class="nc"><i class="no-highlight">98</i>&nbsp;        gameController.setUpdateListener(this);</b>
+<b class="nc"><i class="no-highlight">99</i>&nbsp;        Message gameInstantiationMessage = gameController.handleGameInstantiation();</b>
+<b class="nc"><i class="no-highlight">100</i>&nbsp;        sendAll(gameInstantiationMessage);</b>
+<b class="nc"><i class="no-highlight">101</i>&nbsp;        Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);</b>
+<b class="nc"><i class="no-highlight">102</i>&nbsp;        Message setUpPhaseStateMessage = new ClientStateMessage(ClientState.SET_UP_WIZARD_PHASE);</b>
+<b class="nc"><i class="no-highlight">103</i>&nbsp;        sendAllExcept(nameToHandlerMap.get(playersOrder.get(0)),waitStateMessage);</b>
+<b class="nc"><i class="no-highlight">104</i>&nbsp;        sendTo(playersOrder.get(0), new AvailableWizardMessage(gameController.getAvailableWizards()));</b>
+<b class="nc"><i class="no-highlight">105</i>&nbsp;        sendTo(playersOrder.get(0),setUpPhaseStateMessage);</b>
+<i class="no-highlight">106</i>&nbsp;    }
+<i class="no-highlight">107</i>&nbsp;
+<i class="no-highlight">108</i>&nbsp;    /**
+<i class="no-highlight">109</i>&nbsp;     * It manages the beginning of the planning phase of a new round: the first player is required to choose a new assistant card which will decide the action&#39;s order for the next phase.
+<i class="no-highlight">110</i>&nbsp;     * The other players are sent a message telling them to wait for their turn.
+<i class="no-highlight">111</i>&nbsp;     */
+<i class="no-highlight">112</i>&nbsp;    private void startPlanningPhase(){
+<b class="nc"><i class="no-highlight">113</i>&nbsp;        gameController.updateCloudsStudents();</b>
+<b class="nc"><i class="no-highlight">114</i>&nbsp;        Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);</b>
+<b class="nc"><i class="no-highlight">115</i>&nbsp;        Message playAssistantCardMessage = new ClientStateMessage(ClientState.PLAY_ASSISTANT_CARD);</b>
+<b class="nc"><i class="no-highlight">116</i>&nbsp;        String startingPlayer = playersOrder.get(0);</b>
+<b class="nc"><i class="no-highlight">117</i>&nbsp;        sendAllExcept(nameToHandlerMap.get(startingPlayer), waitStateMessage);</b>
+<b class="nc"><i class="no-highlight">118</i>&nbsp;        sendTo(startingPlayer, playAssistantCardMessage);</b>
+<b class="nc"><i class="no-highlight">119</i>&nbsp;        updatePlayersOrder(playersOrder);</b>
+<i class="no-highlight">120</i>&nbsp;    }
+<i class="no-highlight">121</i>&nbsp;
+<i class="no-highlight">122</i>&nbsp;    /**
+<i class="no-highlight">123</i>&nbsp;     * It manages the beginning of a new action phase by sending the highest priority&#39;s player a message notifying his status.
+<i class="no-highlight">124</i>&nbsp;     * The other players are sent a message telling them to wait for their turn.
+<i class="no-highlight">125</i>&nbsp;     */
+<i class="no-highlight">126</i>&nbsp;    private void startActionPhase(){
+<b class="nc"><i class="no-highlight">127</i>&nbsp;        Message waitStateMessage = new ClientStateMessage(ClientState.WAIT_TURN);</b>
+<b class="nc"><i class="no-highlight">128</i>&nbsp;        Message moveFromLobbyMessage = new ClientStateMessage(ClientState.MOVE_FROM_LOBBY);</b>
+<b class="nc"><i class="no-highlight">129</i>&nbsp;        ArrayList&lt;String&gt; currentTurnOrder = gameController.getActionPhaseTurnOrder();</b>
+<b class="nc"><i class="no-highlight">130</i>&nbsp;        String startingPlayer = currentTurnOrder.get(0);</b>
+<b class="nc"><i class="no-highlight">131</i>&nbsp;        gameController.setCurrentPlayer(startingPlayer);</b>
+<b class="nc"><i class="no-highlight">132</i>&nbsp;        sendAllExcept(nameToHandlerMap.get(startingPlayer),waitStateMessage);</b>
+<b class="nc"><i class="no-highlight">133</i>&nbsp;        sendTo(startingPlayer,moveFromLobbyMessage);</b>
+<b class="nc"><i class="no-highlight">134</i>&nbsp;        updatePlayersOrder(currentTurnOrder);</b>
+<i class="no-highlight">135</i>&nbsp;    }
+<i class="no-highlight">136</i>&nbsp;
+<i class="no-highlight">137</i>&nbsp;    /**
+<i class="no-highlight">138</i>&nbsp;     * It updates the order by which players are required to take action in the game.
+<i class="no-highlight">139</i>&nbsp;     * @param players: names of the active players.
+<i class="no-highlight">140</i>&nbsp;     */
+<i class="no-highlight">141</i>&nbsp;    private void updatePlayersOrder(ArrayList&lt;String&gt; players){
+<b class="nc"><i class="no-highlight">142</i>&nbsp;        playersOrder = new ArrayList&lt;&gt;(players);</b>
+<b class="nc"><i class="no-highlight">143</i>&nbsp;        playersOrderIterator = playersOrder.iterator();</b>
+<b class="nc"><i class="no-highlight">144</i>&nbsp;        playersOrderIterator.next();</b>
+<i class="no-highlight">145</i>&nbsp;    }
+<i class="no-highlight">146</i>&nbsp;
+<i class="no-highlight">147</i>&nbsp;    /**
+<i class="no-highlight">148</i>&nbsp;     * It manages the selection of a wizard card by a player: the choice is communicated to the GameController,
+<i class="no-highlight">149</i>&nbsp;     * whose response is sent back to the client.
+<i class="no-highlight">150</i>&nbsp;     * @param message: WizardSelectionMessage instance carrying the choice sent by the player.
+<i class="no-highlight">151</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">152</i>&nbsp;     */
+<i class="no-highlight">153</i>&nbsp;    private void handleWizardSelectionMessage(WizardSelectionMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">154</i>&nbsp;        int chosenWizard = message.getWizard();</b>
+<b class="nc"><i class="no-highlight">155</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">156</i>&nbsp;        Message response = gameController.updateWizardSelection(clientName, chosenWizard);</b>
+<b class="nc"><i class="no-highlight">157</i>&nbsp;        sendTo(clientName, response);</b>
+<b class="nc"><i class="no-highlight">158</i>&nbsp;        if (!(response instanceof ErrorMessage)){</b>
+<b class="nc"><i class="no-highlight">159</i>&nbsp;            sendTo(clientName, new ClientStateMessage(ClientState.SET_UP_TOWER_PHASE));</b>
+<i class="no-highlight">160</i>&nbsp;        }
+<i class="no-highlight">161</i>&nbsp;    }
+<i class="no-highlight">162</i>&nbsp;
+<i class="no-highlight">163</i>&nbsp;
+<i class="no-highlight">164</i>&nbsp;
+<i class="no-highlight">165</i>&nbsp;    /**
+<i class="no-highlight">166</i>&nbsp;     * It manages the selection of a tower color by a player: the choice is communicated to the GameController,
+<i class="no-highlight">167</i>&nbsp;     * whose response is sent back to the client.
+<i class="no-highlight">168</i>&nbsp;     * @param message: TowerSelectionMessage instance carrying the choice sent by the player.
+<i class="no-highlight">169</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">170</i>&nbsp;     */
+<i class="no-highlight">171</i>&nbsp;    private void handleTowerSelectionMessage(TowerSelectionMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">172</i>&nbsp;        Tower chosenTower = message.getTower();</b>
+<b class="nc"><i class="no-highlight">173</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">174</i>&nbsp;        Message response = gameController.updateTowerSelection(clientName, chosenTower);</b>
+<b class="nc"><i class="no-highlight">175</i>&nbsp;        sendTo(clientName, response);</b>
+<b class="nc"><i class="no-highlight">176</i>&nbsp;        if (!(response instanceof ErrorMessage)){</b>
+<b class="nc"><i class="no-highlight">177</i>&nbsp;            if (playersOrderIterator.hasNext()){</b>
+<b class="nc"><i class="no-highlight">178</i>&nbsp;                String nextPlayer = playersOrderIterator.next();</b>
+<b class="nc"><i class="no-highlight">179</i>&nbsp;                Message setUpPhaseStateMessage = new ClientStateMessage(ClientState.SET_UP_WIZARD_PHASE);</b>
+<b class="nc"><i class="no-highlight">180</i>&nbsp;                sendTo(nextPlayer, new AvailableWizardMessage(gameController.getAvailableWizards()));</b>
+<b class="nc"><i class="no-highlight">181</i>&nbsp;                sendTo(nextPlayer, setUpPhaseStateMessage);</b>
+<b class="nc"><i class="no-highlight">182</i>&nbsp;            }</b>
+<i class="no-highlight">183</i>&nbsp;            else{
+<b class="nc"><i class="no-highlight">184</i>&nbsp;                startPlanningPhase();</b>
+<i class="no-highlight">185</i>&nbsp;            }
+<i class="no-highlight">186</i>&nbsp;        }
+<i class="no-highlight">187</i>&nbsp;    }
+<i class="no-highlight">188</i>&nbsp;
+<i class="no-highlight">189</i>&nbsp;    /**
+<i class="no-highlight">190</i>&nbsp;     * It manages the selection of an assistant card by a player: the choice is communicated to the GameController,
+<i class="no-highlight">191</i>&nbsp;     * whose response is sent back to the client.
+<i class="no-highlight">192</i>&nbsp;     * @param message: PlayAssistantCardMessage instance carrying the choice sent by the player.
+<i class="no-highlight">193</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">194</i>&nbsp;     */
+<i class="no-highlight">195</i>&nbsp;    private void handlePlayAssistantCardMessage(PlayAssistantCardMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">196</i>&nbsp;        int chosenCard = message.getPriority();</b>
+<b class="nc"><i class="no-highlight">197</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">198</i>&nbsp;        Message response = gameController.updateAssistantCards(clientName, chosenCard);</b>
+<i class="no-highlight">199</i>&nbsp;
+<b class="nc"><i class="no-highlight">200</i>&nbsp;        if (!(response instanceof ErrorMessage)){</b>
+<b class="nc"><i class="no-highlight">201</i>&nbsp;            if (playersOrderIterator.hasNext()){</b>
+<b class="nc"><i class="no-highlight">202</i>&nbsp;                sendTo(clientName, response);</b>
+<b class="nc"><i class="no-highlight">203</i>&nbsp;                String nextPlayer = playersOrderIterator.next();</b>
+<b class="nc"><i class="no-highlight">204</i>&nbsp;                Message playAssistantCardMessage = new ClientStateMessage(ClientState.PLAY_ASSISTANT_CARD);</b>
+<b class="nc"><i class="no-highlight">205</i>&nbsp;                sendTo(nextPlayer,playAssistantCardMessage);</b>
+<b class="nc"><i class="no-highlight">206</i>&nbsp;            }</b>
+<b class="nc"><i class="no-highlight">207</i>&nbsp;            else startActionPhase();</b>
+<i class="no-highlight">208</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">209</i>&nbsp;        else sendTo(clientName, response);</b>
+<i class="no-highlight">210</i>&nbsp;    }
+<i class="no-highlight">211</i>&nbsp;
+<i class="no-highlight">212</i>&nbsp;    /**
+<i class="no-highlight">213</i>&nbsp;     * It manages the students&#39; movement from the board&#39;s lobby by a player: the choice is communicated to the GameController,
+<i class="no-highlight">214</i>&nbsp;     * whose response is sent back to the client.
+<i class="no-highlight">215</i>&nbsp;     * @param message: MoveStudentsFromLobbyMessage instance carrying the choice sent by the player.
+<i class="no-highlight">216</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">217</i>&nbsp;     */
+<i class="no-highlight">218</i>&nbsp;    private void handleMoveStudentMessage(MoveStudentsFromLobbyMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">219</i>&nbsp;        ArrayList&lt;Integer&gt; studentIDs = message.getStudentIndex();</b>
+<b class="nc"><i class="no-highlight">220</i>&nbsp;        ArrayList&lt;Integer&gt; destIDs = message.getDestinationIndex();</b>
+<b class="nc"><i class="no-highlight">221</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">222</i>&nbsp;        Message response = gameController.moveStudentsFromLobby(clientName, studentIDs,destIDs);</b>
+<b class="nc"><i class="no-highlight">223</i>&nbsp;        sendTo(clientName, response);</b>
+<i class="no-highlight">224</i>&nbsp;    }
+<i class="no-highlight">225</i>&nbsp;
+<i class="no-highlight">226</i>&nbsp;    /**
+<i class="no-highlight">227</i>&nbsp;     * It manages Mother Nature tile&#39;s number of steps chose by a player: the choice is communicated to the GameController,
+<i class="no-highlight">228</i>&nbsp;     * whose response is sent back to the client. If the resulting move brings the game to an end all players are commmunicated the state and the match is closed.
+<i class="no-highlight">229</i>&nbsp;     * @param message: MotherNatureMoveMessage instance carrying the choice sent by the player.
+<i class="no-highlight">230</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">231</i>&nbsp;     */
+<i class="no-highlight">232</i>&nbsp;    private void handleMoveMotherNatureMessage(MotherNatureMoveMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">233</i>&nbsp;        int steps = message.getSteps();</b>
+<b class="nc"><i class="no-highlight">234</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">235</i>&nbsp;        Message response = gameController.moveMotherNature(clientName, steps);</b>
+<b class="nc"><i class="no-highlight">236</i>&nbsp;        if (response instanceof EndGameMessage){</b>
+<b class="nc"><i class="no-highlight">237</i>&nbsp;            sendAll(response);</b>
+<b class="nc"><i class="no-highlight">238</i>&nbsp;            closeMatch();</b>
+<i class="no-highlight">239</i>&nbsp;        }
+<i class="no-highlight">240</i>&nbsp;        else {
+<b class="nc"><i class="no-highlight">241</i>&nbsp;            sendTo(clientName, response);</b>
+<i class="no-highlight">242</i>&nbsp;        }
+<i class="no-highlight">243</i>&nbsp;    }
+<i class="no-highlight">244</i>&nbsp;
+<i class="no-highlight">245</i>&nbsp;    /**
+<i class="no-highlight">246</i>&nbsp;     * It manages a cloud&#39;s selection by a player: the choice is communicated to the GameController,whose response is sent back to the client.
+<i class="no-highlight">247</i>&nbsp;     * @param message: CloudSelectionMessage instance carrying the choice sent by the player.
+<i class="no-highlight">248</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">249</i>&nbsp;     */
+<i class="no-highlight">250</i>&nbsp;    private void handleCloudPick(CloudSelectionMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">251</i>&nbsp;        int cloudIndex = message.getCloudIndex();</b>
+<b class="nc"><i class="no-highlight">252</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">253</i>&nbsp;        Message response = gameController.refillLobby(clientName, cloudIndex);</b>
+<b class="nc"><i class="no-highlight">254</i>&nbsp;        sendTo(clientName, response);</b>
+<i class="no-highlight">255</i>&nbsp;    }
+<i class="no-highlight">256</i>&nbsp;
+<i class="no-highlight">257</i>&nbsp;    /**
+<i class="no-highlight">258</i>&nbsp;     * It manages a player&#39;s turn end: he is told he needs to wait for the other players to play,
+<i class="no-highlight">259</i>&nbsp;     * while the next player is sent a message notifying him his status.
+<i class="no-highlight">260</i>&nbsp;     * @param message: CloseTurnMessage instance communicating the choice sent by the player.
+<i class="no-highlight">261</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">262</i>&nbsp;     */
+<i class="no-highlight">263</i>&nbsp;    private void handleEndTurn(CloseTurnMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">264</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">265</i>&nbsp;        if(expertGame)</b>
+<b class="nc"><i class="no-highlight">266</i>&nbsp;            gameController.resetPersonalityCard();</b>
+<b class="nc"><i class="no-highlight">267</i>&nbsp;        if (playersOrderIterator.hasNext()){</b>
+<b class="nc"><i class="no-highlight">268</i>&nbsp;            Message stateChange = new ClientStateMessage(ClientState.WAIT_TURN);</b>
+<b class="nc"><i class="no-highlight">269</i>&nbsp;            sendTo(clientName, stateChange);</b>
+<b class="nc"><i class="no-highlight">270</i>&nbsp;            String nextPlayer = playersOrderIterator.next();</b>
+<b class="nc"><i class="no-highlight">271</i>&nbsp;            gameController.setCurrentPlayer(nextPlayer);</b>
+<b class="nc"><i class="no-highlight">272</i>&nbsp;            Message moveStudentsFromLobbyMessage = new ClientStateMessage(ClientState.MOVE_FROM_LOBBY);</b>
+<b class="nc"><i class="no-highlight">273</i>&nbsp;            sendTo(nextPlayer,moveStudentsFromLobbyMessage);</b>
+<b class="nc"><i class="no-highlight">274</i>&nbsp;        }</b>
+<i class="no-highlight">275</i>&nbsp;        else
+<b class="nc"><i class="no-highlight">276</i>&nbsp;            handleEndRound();</b>
+<i class="no-highlight">277</i>&nbsp;
+<i class="no-highlight">278</i>&nbsp;    }
+<i class="no-highlight">279</i>&nbsp;
+<i class="no-highlight">280</i>&nbsp;    /**
+<i class="no-highlight">281</i>&nbsp;     * It manages player&#39;s personality card&#39;s selection: the choice is communicated to the GameController, whose response is sent back to the client.
+<i class="no-highlight">282</i>&nbsp;     * @param message: PlayPersonalityCardMessage instance carrying the personality choice.
+<i class="no-highlight">283</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">284</i>&nbsp;     */
+<i class="no-highlight">285</i>&nbsp;    private void handlePlayPersonalityCard(PlayPersonalityCardMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">286</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">287</i>&nbsp;        if(expertGame){</b>
+<b class="nc"><i class="no-highlight">288</i>&nbsp;            int cardID = message.getCardID();</b>
+<b class="nc"><i class="no-highlight">289</i>&nbsp;            Message response = gameController.playPersonalityCard(clientName, cardID,client.getCurrentClientState());</b>
+<b class="nc"><i class="no-highlight">290</i>&nbsp;            sendTo(clientName, response);</b>
+<b class="nc"><i class="no-highlight">291</i>&nbsp;        }</b>
+<i class="no-highlight">292</i>&nbsp;        else
+<i class="no-highlight">293</i>&nbsp;        {
+<b class="nc"><i class="no-highlight">294</i>&nbsp;            Message response = new ErrorMessage(ErrorKind.ILLEGAL_MOVE);</b>
+<b class="nc"><i class="no-highlight">295</i>&nbsp;            sendTo(clientName,response);</b>
+<i class="no-highlight">296</i>&nbsp;        }
+<i class="no-highlight">297</i>&nbsp;    }
+<i class="no-highlight">298</i>&nbsp;
+<i class="no-highlight">299</i>&nbsp;    /**
+<i class="no-highlight">300</i>&nbsp;     * This method is responsible for the sequence of events related to the effect of Personality 1:
+<i class="no-highlight">301</i>&nbsp;     * the player&#39;s choice is communicated to the GameController, whose response is sent back to the client.
+<i class="no-highlight">302</i>&nbsp;     * @param message Card1EffectMessage instance carrying the student and island choice made by the player.
+<i class="no-highlight">303</i>&nbsp;     * @param client ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">304</i>&nbsp;     */
+<i class="no-highlight">305</i>&nbsp;    private void handleCard1Effect(Card1EffectMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">306</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">307</i>&nbsp;        Message response = gameController.applyEffect1(message.getStudentIndex(),message.getIslandID());</b>
+<b class="nc"><i class="no-highlight">308</i>&nbsp;        if (!(response instanceof  ErrorMessage)){</b>
+<b class="nc"><i class="no-highlight">309</i>&nbsp;            response= new ClientStateMessage(client.getCurrentClientState());</b>
+<i class="no-highlight">310</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">311</i>&nbsp;        sendTo(clientName, response);</b>
+<i class="no-highlight">312</i>&nbsp;    }
+<i class="no-highlight">313</i>&nbsp;
+<i class="no-highlight">314</i>&nbsp;    /**
+<i class="no-highlight">315</i>&nbsp;     * This method is responsible for the sequence of events related to the effect of Personality 3:
+<i class="no-highlight">316</i>&nbsp;     * the player&#39;s choice is communicated to the GameController, whose response is sent back to the client.
+<i class="no-highlight">317</i>&nbsp;     * @param message: Card3EffectMessage instance carrying the island choice made by the player.
+<i class="no-highlight">318</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">319</i>&nbsp;     */
+<i class="no-highlight">320</i>&nbsp;    private void handleCard3Effect(Card3EffectMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">321</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">322</i>&nbsp;        Message response = gameController.applyEffect3(message.getIslandID());</b>
+<b class="nc"><i class="no-highlight">323</i>&nbsp;        if (response instanceof EndGameMessage){</b>
+<b class="nc"><i class="no-highlight">324</i>&nbsp;            sendAll(response);</b>
+<b class="nc"><i class="no-highlight">325</i>&nbsp;            closeMatch();</b>
+<i class="no-highlight">326</i>&nbsp;            return;
+<i class="no-highlight">327</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">328</i>&nbsp;        else if (response==null) {</b>
+<b class="nc"><i class="no-highlight">329</i>&nbsp;            response= new ClientStateMessage(client.getCurrentClientState());</b>
+<i class="no-highlight">330</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">331</i>&nbsp;        sendTo(clientName, response);</b>
+<i class="no-highlight">332</i>&nbsp;    }
+<i class="no-highlight">333</i>&nbsp;
+<i class="no-highlight">334</i>&nbsp;    /**
+<i class="no-highlight">335</i>&nbsp;     * This method is responsible for the sequence of events related to the effect of Personality 5:
+<i class="no-highlight">336</i>&nbsp;     * the player&#39;s choice is communicated to the GameController, whose response is sent back to the client.
+<i class="no-highlight">337</i>&nbsp;     * @param message: Card5EffectMessage instance carrying the island choice made by the player.
+<i class="no-highlight">338</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">339</i>&nbsp;     */
+<i class="no-highlight">340</i>&nbsp;    private void handleCard5Effect(Card5EffectMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">341</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">342</i>&nbsp;        Message response = gameController.applyEffect5(message.getIslandID());</b>
+<b class="nc"><i class="no-highlight">343</i>&nbsp;        if (!(response instanceof ErrorMessage)){</b>
+<b class="nc"><i class="no-highlight">344</i>&nbsp;            response= new ClientStateMessage(client.getCurrentClientState());</b>
+<i class="no-highlight">345</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">346</i>&nbsp;        sendTo(clientName, response);</b>
+<i class="no-highlight">347</i>&nbsp;    }
+<i class="no-highlight">348</i>&nbsp;
+<i class="no-highlight">349</i>&nbsp;    /**
+<i class="no-highlight">350</i>&nbsp;     * This method is responsible for the sequence of events related to the effect of Personality 7:
+<i class="no-highlight">351</i>&nbsp;     * the player&#39;s choice is communicated to the GameController, whose response is sent back to the client.
+<i class="no-highlight">352</i>&nbsp;     * @param message: Card7EffectMessage instance carrying the students choice made by the player.
+<i class="no-highlight">353</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">354</i>&nbsp;     */
+<i class="no-highlight">355</i>&nbsp;    private void handleCard7Effect(Card7EffectMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">356</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">357</i>&nbsp;        Message response = gameController.applyEffect7(message.getStudentsFromCard(), message.getStudentsFromLobby());</b>
+<b class="nc"><i class="no-highlight">358</i>&nbsp;        if (!(response instanceof  ErrorMessage)){</b>
+<b class="nc"><i class="no-highlight">359</i>&nbsp;            response= new ClientStateMessage(client.getCurrentClientState());</b>
+<i class="no-highlight">360</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">361</i>&nbsp;        sendTo(clientName, response);</b>
+<i class="no-highlight">362</i>&nbsp;    }
+<i class="no-highlight">363</i>&nbsp;
+<i class="no-highlight">364</i>&nbsp;    /**
+<i class="no-highlight">365</i>&nbsp;     * This method is responsible for the sequence of events related to the effect of Personality 9:
+<i class="no-highlight">366</i>&nbsp;     * the player&#39;s choice is communicated to the GameController, whose response is sent back to the client.
+<i class="no-highlight">367</i>&nbsp;     * @param message: Card9EffectMessage instance carrying the color choice made by the player.
+<i class="no-highlight">368</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">369</i>&nbsp;     */
+<i class="no-highlight">370</i>&nbsp;    private void handleCard9Effect(Card9EffectMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">371</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">372</i>&nbsp;        gameController.applyEffect9(message.getBanned());</b>
+<b class="nc"><i class="no-highlight">373</i>&nbsp;        sendTo(clientName, new ClientStateMessage(client.getCurrentClientState()));</b>
+<i class="no-highlight">374</i>&nbsp;    }
+<i class="no-highlight">375</i>&nbsp;
+<i class="no-highlight">376</i>&nbsp;    /**
+<i class="no-highlight">377</i>&nbsp;     * This method is responsible for the sequence of events related to the effect of Personality 10:
+<i class="no-highlight">378</i>&nbsp;     * the player&#39;s choice is communicated to the GameController, whose response is sent back to the client.
+<i class="no-highlight">379</i>&nbsp;     * @param message: Card10EffectMessage instance carrying the students choice made by the player.
+<i class="no-highlight">380</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">381</i>&nbsp;     */
+<i class="no-highlight">382</i>&nbsp;    private void handleCard10Effect(Card10EffectMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">383</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">384</i>&nbsp;        Message response = gameController.applyEffect10(clientName,message.getStudentsFromTable(), message.getStudentsFromLobby());</b>
+<b class="nc"><i class="no-highlight">385</i>&nbsp;        if (!(response instanceof  ErrorMessage)){</b>
+<b class="nc"><i class="no-highlight">386</i>&nbsp;            response= new ClientStateMessage(client.getCurrentClientState());</b>
+<i class="no-highlight">387</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">388</i>&nbsp;        sendTo(clientName, response);</b>
+<i class="no-highlight">389</i>&nbsp;    }
+<i class="no-highlight">390</i>&nbsp;
+<i class="no-highlight">391</i>&nbsp;    /**
+<i class="no-highlight">392</i>&nbsp;     * It handles the sequence of events related to the effect of Personality 11:
+<i class="no-highlight">393</i>&nbsp;     * the player&#39;s choice is communicated to the GameController, whose response is sent back to the client.
+<i class="no-highlight">394</i>&nbsp;     * @param message: Card11EffectMessage instance carrying the student choice made by the player.
+<i class="no-highlight">395</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">396</i>&nbsp;     */
+<i class="no-highlight">397</i>&nbsp;    private void handleCard11Effect(Card11EffectMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">398</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">399</i>&nbsp;        Message response = gameController.applyEffect11(clientName, message.getSelectedStudentIndex());</b>
+<i class="no-highlight">400</i>&nbsp;
+<b class="nc"><i class="no-highlight">401</i>&nbsp;        if (!(response instanceof  ErrorMessage)){</b>
+<b class="nc"><i class="no-highlight">402</i>&nbsp;            response= new ClientStateMessage(client.getCurrentClientState());</b>
+<i class="no-highlight">403</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">404</i>&nbsp;        sendTo(clientName, response);</b>
+<i class="no-highlight">405</i>&nbsp;    }
+<i class="no-highlight">406</i>&nbsp;
+<i class="no-highlight">407</i>&nbsp;    /**
+<i class="no-highlight">408</i>&nbsp;     * It handles the sequence of events related to the effect of Personality 12:
+<i class="no-highlight">409</i>&nbsp;     * the player&#39;s choice is communicated to the GameController, whose response is sent back to the client.
+<i class="no-highlight">410</i>&nbsp;     * @param message: Card12EffectMessage instance carrying the student choice made by the player.
+<i class="no-highlight">411</i>&nbsp;     * @param client: ClientHandler instance handling the player&#39;s connection.
+<i class="no-highlight">412</i>&nbsp;     */
+<i class="no-highlight">413</i>&nbsp;    private void handleCard12Effect(Card12EffectMessage message, ClientHandler client){
+<b class="nc"><i class="no-highlight">414</i>&nbsp;        String clientName = getNicknameFromClientID(client.getID());</b>
+<b class="nc"><i class="no-highlight">415</i>&nbsp;        Message response = gameController.applyEffect12(message.getChosenColor());</b>
+<i class="no-highlight">416</i>&nbsp;
+<b class="nc"><i class="no-highlight">417</i>&nbsp;        if (!(response instanceof  ErrorMessage)){</b>
+<b class="nc"><i class="no-highlight">418</i>&nbsp;            response= new ClientStateMessage(client.getCurrentClientState());</b>
+<i class="no-highlight">419</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">420</i>&nbsp;        sendTo(clientName, response);</b>
+<i class="no-highlight">421</i>&nbsp;    }
+<i class="no-highlight">422</i>&nbsp;
+<i class="no-highlight">423</i>&nbsp;    /**
+<i class="no-highlight">424</i>&nbsp;     * It manages the end of current round: based on the game conditions, if it was the last one it communicates
+<i class="no-highlight">425</i>&nbsp;     * the game result to all players and proceeds to close the match. Otherwise, a new planning phase takes place.
+<i class="no-highlight">426</i>&nbsp;     */
+<i class="no-highlight">427</i>&nbsp;    private void handleEndRound(){
+<b class="nc"><i class="no-highlight">428</i>&nbsp;        Message endRound = gameController.closeCurrentRound();</b>
+<b class="nc"><i class="no-highlight">429</i>&nbsp;        if (endRound instanceof EndGameMessage){</b>
+<b class="nc"><i class="no-highlight">430</i>&nbsp;            sendAll(endRound);</b>
+<b class="nc"><i class="no-highlight">431</i>&nbsp;            closeMatch();</b>
+<i class="no-highlight">432</i>&nbsp;        }
+<i class="no-highlight">433</i>&nbsp;        else{
+<b class="nc"><i class="no-highlight">434</i>&nbsp;            startPlanningPhase();</b>
+<i class="no-highlight">435</i>&nbsp;        }
+<i class="no-highlight">436</i>&nbsp;    }
+<i class="no-highlight">437</i>&nbsp;
+<i class="no-highlight">438</i>&nbsp;    /**
+<i class="no-highlight">439</i>&nbsp;     * It closes a match by communicating to all clients the game has ended. Then it proceeds to close socket
+<i class="no-highlight">440</i>&nbsp;     * connections to all clients and to remove the GameHandler&#39;s instance from the server registry.
+<i class="no-highlight">441</i>&nbsp;     */
+<i class="no-highlight">442</i>&nbsp;    public synchronized void closeMatch(){
+<b class="nc"><i class="no-highlight">443</i>&nbsp;        sendAll(new ClientStateMessage(ClientState.END_GAME));</b>
+<b class="nc"><i class="no-highlight">444</i>&nbsp;        for (ClientHandler clientHandler: nameToHandlerMap.values()){</b>
+<b class="nc"><i class="no-highlight">445</i>&nbsp;            clientHandler.closeConnection();</b>
+<b class="nc"><i class="no-highlight">446</i>&nbsp;            clientHandler.setGameHandler(null);</b>
+<b class="nc"><i class="no-highlight">447</i>&nbsp;        }</b>
+<b class="nc"><i class="no-highlight">448</i>&nbsp;        server.removeGameHandler(this);</b>
+<i class="no-highlight">449</i>&nbsp;    }
+<i class="no-highlight">450</i>&nbsp;
+<i class="no-highlight">451</i>&nbsp;    /**
+<i class="no-highlight">452</i>&nbsp;     * It sends a serialized message to a single client through socket connection.
+<i class="no-highlight">453</i>&nbsp;     * @param nickname: name of the player whom the message is being sent.
+<i class="no-highlight">454</i>&nbsp;     * @param message: Message instance being sent to the player.
+<i class="no-highlight">455</i>&nbsp;     */
+<i class="no-highlight">456</i>&nbsp;    private void sendTo(String nickname,Message message){
+<b class="nc"><i class="no-highlight">457</i>&nbsp;        ClientHandler clientHandler = nameToHandlerMap.get(nickname);</b>
+<b class="nc"><i class="no-highlight">458</i>&nbsp;        clientHandler.sendMessage(message);</b>
+<i class="no-highlight">459</i>&nbsp;    }
+<i class="no-highlight">460</i>&nbsp;
+<i class="no-highlight">461</i>&nbsp;    /**
+<i class="no-highlight">462</i>&nbsp;     * It sends a serialized message to all clients involved in the game.
+<i class="no-highlight">463</i>&nbsp;     * @param message: Message instance being sent to the players.
+<i class="no-highlight">464</i>&nbsp;     */
+<i class="no-highlight">465</i>&nbsp;    private void sendAll(Message message){
+<b class="nc"><i class="no-highlight">466</i>&nbsp;        ArrayList&lt;ClientHandler&gt; clientHandlers = new ArrayList&lt;&gt;(nameToHandlerMap.values());</b>
+<b class="nc"><i class="no-highlight">467</i>&nbsp;        for( ClientHandler clientHandler : clientHandlers){</b>
+<b class="nc"><i class="no-highlight">468</i>&nbsp;            clientHandler.sendMessage(message);</b>
+<b class="nc"><i class="no-highlight">469</i>&nbsp;        }</b>
+<i class="no-highlight">470</i>&nbsp;    }
+<i class="no-highlight">471</i>&nbsp;
+<i class="no-highlight">472</i>&nbsp;    /**
+<i class="no-highlight">473</i>&nbsp;     * It sends a serialized message to all clients except the one linked to the ClientHandler&#39;s except instance.
+<i class="no-highlight">474</i>&nbsp;     * @param except: ClientHandler&#39;s instance of the player who is being excluded from the message.
+<i class="no-highlight">475</i>&nbsp;     * @param message: Message instance being sent to all players bar one.
+<i class="no-highlight">476</i>&nbsp;     */
+<i class="no-highlight">477</i>&nbsp;    private void sendAllExcept(ClientHandler except, Message message){
+<b class="nc"><i class="no-highlight">478</i>&nbsp;        ArrayList&lt;ClientHandler&gt; clientHandlers = new ArrayList&lt;&gt;(nameToHandlerMap.values());</b>
+<b class="nc"><i class="no-highlight">479</i>&nbsp;        for( ClientHandler clientHandler : clientHandlers){</b>
+<b class="nc"><i class="no-highlight">480</i>&nbsp;            if(!clientHandler.equals(except))</b>
+<b class="nc"><i class="no-highlight">481</i>&nbsp;                clientHandler.sendMessage(message);</b>
+<b class="nc"><i class="no-highlight">482</i>&nbsp;        }</b>
+<i class="no-highlight">483</i>&nbsp;    }
+<i class="no-highlight">484</i>&nbsp;
+<i class="no-highlight">485</i>&nbsp;    /**
+<i class="no-highlight">486</i>&nbsp;     * It sets the class serverConnection attribute referencing the object responsible for the socket Connection.
+<i class="no-highlight">487</i>&nbsp;     * @param serverConnection: ServerSocketConnection&#39;s instance handling the socket.
+<i class="no-highlight">488</i>&nbsp;     */
+<i class="no-highlight">489</i>&nbsp;    public void setServer(ServerSocketConnection serverConnection) {
+<b class="nc"><i class="no-highlight">490</i>&nbsp;        this.serverConnection = serverConnection;</b>
+<i class="no-highlight">491</i>&nbsp;    }
+<i class="no-highlight">492</i>&nbsp;
+<i class="no-highlight">493</i>&nbsp;    /**
+<i class="no-highlight">494</i>&nbsp;     * It removes a ClientHandler&#39;s instance from the clientHandler&#39;s registry.
+<i class="no-highlight">495</i>&nbsp;     * @param clientHandler: ClientHandler instance that is being removed from the registry.
+<i class="no-highlight">496</i>&nbsp;     */
+<i class="no-highlight">497</i>&nbsp;    public synchronized void removeClientHandler(ClientHandler clientHandler){
+<b class="nc"><i class="no-highlight">498</i>&nbsp;        for (Map.Entry&lt;String,ClientHandler&gt; client: nameToHandlerMap.entrySet()){</b>
+<b class="nc"><i class="no-highlight">499</i>&nbsp;            if (client.getValue().equals(clientHandler)){</b>
+<b class="nc"><i class="no-highlight">500</i>&nbsp;                nameToHandlerMap.remove(client.getKey());</b>
+<i class="no-highlight">501</i>&nbsp;                return;
+<i class="no-highlight">502</i>&nbsp;            }
+<b class="nc"><i class="no-highlight">503</i>&nbsp;        }</b>
+<i class="no-highlight">504</i>&nbsp;    }
+<i class="no-highlight">505</i>&nbsp;
+<i class="no-highlight">506</i>&nbsp;    /**
+<i class="no-highlight">507</i>&nbsp;     * It extracts a player&#39;s name by its clientHandler&#39;s identification number.
+<i class="no-highlight">508</i>&nbsp;     * @param clientID: ClientHandler&#39;s identification number.
+<i class="no-highlight">509</i>&nbsp;     * @return the name of the player linked to the ClientHandler&#39;s clientId.
+<i class="no-highlight">510</i>&nbsp;     */
+<i class="no-highlight">511</i>&nbsp;    private String getNicknameFromClientID(int clientID){
+<b class="nc"><i class="no-highlight">512</i>&nbsp;        return server.getIdToNicknameMap().get(clientID);</b>
+<i class="no-highlight">513</i>&nbsp;    }
+<i class="no-highlight">514</i>&nbsp;
+<i class="no-highlight">515</i>&nbsp;    /**
+<i class="no-highlight">516</i>&nbsp;     * Method propertyChange receives an update notification from the GameController and sends all client a serialized
+<i class="no-highlight">517</i>&nbsp;     * message containing the information about the update.
+<i class="no-highlight">518</i>&nbsp;     * @param evt event of type PropertyChangeEvent
+<i class="no-highlight">519</i>&nbsp;     */
+<i class="no-highlight">520</i>&nbsp;    @Override
+<i class="no-highlight">521</i>&nbsp;    public void propertyChange(PropertyChangeEvent evt) {
+<b class="nc"><i class="no-highlight">522</i>&nbsp;        String eventName = evt.getPropertyName();</b>
+<b class="nc"><i class="no-highlight">523</i>&nbsp;        if (eventName.equals(&quot;UpdateMessage&quot;) &amp;&amp; evt.getNewValue()!=null){</b>
+<b class="nc"><i class="no-highlight">524</i>&nbsp;            Message outwardsMessage = (Message) evt.getNewValue();</b>
+<b class="nc"><i class="no-highlight">525</i>&nbsp;            sendAll(outwardsMessage);</b>
+<i class="no-highlight">526</i>&nbsp;        }
+<i class="no-highlight">527</i>&nbsp;    }
+<i class="no-highlight">528</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 15:57</div>
+</div>
+</body>
+</html>

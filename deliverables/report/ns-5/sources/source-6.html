@@ -1,0 +1,180 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > MatchMakingController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.client.GUI.GUIControllers</a>
+</div>
+
+<h1>Coverage Summary for Class: MatchMakingController (it.polimi.ingsw.client.GUI.GUIControllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MatchMakingController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/24)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.client.GUI.GUIControllers;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.client.ClientState;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.messages.Message;
+<i class="no-highlight">5</i>&nbsp;import javafx.collections.FXCollections;
+<i class="no-highlight">6</i>&nbsp;import javafx.collections.ObservableList;
+<i class="no-highlight">7</i>&nbsp;import javafx.fxml.FXML;
+<i class="no-highlight">8</i>&nbsp;import javafx.scene.control.Button;
+<i class="no-highlight">9</i>&nbsp;import javafx.scene.control.ChoiceBox;
+<i class="no-highlight">10</i>&nbsp;import javafx.scene.effect.Bloom;
+<i class="no-highlight">11</i>&nbsp;import javafx.scene.input.MouseEvent;
+<i class="no-highlight">12</i>&nbsp;import javafx.scene.text.Font;
+<i class="no-highlight">13</i>&nbsp;
+<i class="no-highlight">14</i>&nbsp;import java.util.ArrayList;
+<i class="no-highlight">15</i>&nbsp;
+<i class="no-highlight">16</i>&nbsp;/**
+<i class="no-highlight">17</i>&nbsp; * Class MatchMakingController implements all the logic behind the MatchMaking Menu FXML Scene
+<i class="no-highlight">18</i>&nbsp; * It parses parameters from ChoiceBox instances, sets up buttons&#39; styling, handles mouse events,
+<i class="no-highlight">19</i>&nbsp; * and passes built message back to the GUI instance
+<i class="no-highlight">20</i>&nbsp; */
+<b class="nc"><i class="no-highlight">21</i>&nbsp;public class MatchMakingController extends GUIController{</b>
+<i class="no-highlight">22</i>&nbsp;    @FXML
+<i class="no-highlight">23</i>&nbsp;    private ChoiceBox&lt;String&gt; numOfPlayers;
+<i class="no-highlight">24</i>&nbsp;    @FXML
+<i class="no-highlight">25</i>&nbsp;    private ChoiceBox&lt;String&gt; gameType;
+<i class="no-highlight">26</i>&nbsp;    @FXML
+<i class="no-highlight">27</i>&nbsp;    public Button confirmButton;
+<i class="no-highlight">28</i>&nbsp;
+<b class="nc"><i class="no-highlight">29</i>&nbsp;    private boolean alreadyPressed = false;</b>
+<i class="no-highlight">30</i>&nbsp;
+<i class="no-highlight">31</i>&nbsp;    /**
+<i class="no-highlight">32</i>&nbsp;     * Method initialize sets up effects for button hover events
+<i class="no-highlight">33</i>&nbsp;     * and initializes choice boxes&#39; fields
+<i class="no-highlight">34</i>&nbsp;     */
+<i class="no-highlight">35</i>&nbsp;    @FXML
+<i class="no-highlight">36</i>&nbsp;    public void initialize(){
+<b class="nc"><i class="no-highlight">37</i>&nbsp;        ObservableList&lt;String&gt; playerAvailableChoices = FXCollections.observableArrayList();</b>
+<b class="nc"><i class="no-highlight">38</i>&nbsp;        ObservableList&lt;String&gt; gameAvailableChoices = FXCollections.observableArrayList();</b>
+<b class="nc"><i class="no-highlight">39</i>&nbsp;        playerAvailableChoices.addAll(&quot;2&quot;, &quot;3&quot;);</b>
+<b class="nc"><i class="no-highlight">40</i>&nbsp;        gameAvailableChoices.addAll(&quot;Basic Rules&quot;,&quot;Expert Rules&quot;);</b>
+<b class="nc"><i class="no-highlight">41</i>&nbsp;        numOfPlayers.setItems(playerAvailableChoices);</b>
+<b class="nc"><i class="no-highlight">42</i>&nbsp;        gameType.setItems(gameAvailableChoices);</b>
+<i class="no-highlight">43</i>&nbsp;
+<i class="no-highlight">44</i>&nbsp;
+<b class="nc"><i class="no-highlight">45</i>&nbsp;        confirmButton.setEffect(null);</b>
+<b class="nc"><i class="no-highlight">46</i>&nbsp;        confirmButton.setText(&quot;SEARCH GAME&quot;);</b>
+<b class="nc"><i class="no-highlight">47</i>&nbsp;        Font font = Font.loadFont(getClass().getResourceAsStream(&quot;/fonts/Hey Comic.ttf&quot;), 10);</b>
+<b class="nc"><i class="no-highlight">48</i>&nbsp;        confirmButton.setFont(font);</b>
+<b class="nc"><i class="no-highlight">49</i>&nbsp;        confirmButton.addEventFilter(MouseEvent.MOUSE_ENTERED, e -&gt; confirmButton.setEffect(new Bloom()));</b>
+<b class="nc"><i class="no-highlight">50</i>&nbsp;        confirmButton.addEventFilter(MouseEvent.MOUSE_EXITED, e -&gt; confirmButton.setEffect(null));</b>
+<i class="no-highlight">51</i>&nbsp;    }
+<i class="no-highlight">52</i>&nbsp;
+<i class="no-highlight">53</i>&nbsp;    /**
+<i class="no-highlight">54</i>&nbsp;     * Method searchGame parses numOfPlayers and gameType parameters from ChoiceBoxes
+<i class="no-highlight">55</i>&nbsp;     * and sends them to ClientMessageBuilder to build a Message instance
+<i class="no-highlight">56</i>&nbsp;     * which is then passed to the GUI instance with passToSocket method
+<i class="no-highlight">57</i>&nbsp;     */
+<i class="no-highlight">58</i>&nbsp;    public void searchGame(){
+<b class="nc"><i class="no-highlight">59</i>&nbsp;        if(!alreadyPressed){</b>
+<b class="nc"><i class="no-highlight">60</i>&nbsp;            int numOfPlayersValue = Integer.parseInt(numOfPlayers.getSelectionModel().getSelectedItem());</b>
+<b class="nc"><i class="no-highlight">61</i>&nbsp;            actionParser.setPlayersNumber(numOfPlayersValue);</b>
+<b class="nc"><i class="no-highlight">62</i>&nbsp;            String gameTypeString = gameType.getSelectionModel().getSelectedItem();</b>
+<b class="nc"><i class="no-highlight">63</i>&nbsp;            boolean isExpert = (!gameTypeString.equals(&quot;Basic Rules&quot;));</b>
+<b class="nc"><i class="no-highlight">64</i>&nbsp;            ArrayList&lt;Object&gt; selectedMode = actionParser.parseNewGameParameters(numOfPlayersValue,isExpert);</b>
+<i class="no-highlight">65</i>&nbsp;
+<b class="nc"><i class="no-highlight">66</i>&nbsp;            Message builtMessage = clientMessageBuilder.buildMessageFromPlayerInput(selectedMode, ClientState.INSERT_NEW_GAME_PARAMETERS);</b>
+<b class="nc"><i class="no-highlight">67</i>&nbsp;            gui.passToSocket(builtMessage);</b>
+<b class="nc"><i class="no-highlight">68</i>&nbsp;            gui.prepareView(selectedMode);</b>
+<b class="nc"><i class="no-highlight">69</i>&nbsp;            alreadyPressed = true;</b>
+<i class="no-highlight">70</i>&nbsp;        }
+<i class="no-highlight">71</i>&nbsp;    }
+<i class="no-highlight">72</i>&nbsp;
+<i class="no-highlight">73</i>&nbsp;
+<i class="no-highlight">74</i>&nbsp;
+<i class="no-highlight">75</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 15:57</div>
+</div>
+</body>
+</html>

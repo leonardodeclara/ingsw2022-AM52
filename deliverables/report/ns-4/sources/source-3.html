@@ -1,0 +1,555 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > GUI</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.client.GUI</a>
+</div>
+
+<h1>Coverage Summary for Class: GUI (it.polimi.ingsw.client.GUI)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GUI</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/42)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/119)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">GUI$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/17)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">GUI$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/45)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/137)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.client.GUI;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.Constants;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.client.CLI.*;
+<i class="no-highlight">5</i>&nbsp;import it.polimi.ingsw.client.GUI.GUIControllers.GUIController;
+<i class="no-highlight">6</i>&nbsp;import it.polimi.ingsw.client.GUI.GUIControllers.UpdatableController;
+<i class="no-highlight">7</i>&nbsp;import it.polimi.ingsw.client.ClientMessageBuilder;
+<i class="no-highlight">8</i>&nbsp;import it.polimi.ingsw.client.ClientSocket;
+<i class="no-highlight">9</i>&nbsp;import it.polimi.ingsw.client.ClientState;
+<i class="no-highlight">10</i>&nbsp;import it.polimi.ingsw.messages.*;
+<i class="no-highlight">11</i>&nbsp;import it.polimi.ingsw.messages.UpdateMessages.ActivePersonalityMessage;
+<i class="no-highlight">12</i>&nbsp;import it.polimi.ingsw.messages.ServerMessages.ClientStateMessage;
+<i class="no-highlight">13</i>&nbsp;import it.polimi.ingsw.messages.ServerMessages.ErrorMessage;
+<i class="no-highlight">14</i>&nbsp;import it.polimi.ingsw.messages.UpdateMessages.*;
+<i class="no-highlight">15</i>&nbsp;import it.polimi.ingsw.model.Tower;
+<i class="no-highlight">16</i>&nbsp;import javafx.application.Application;
+<i class="no-highlight">17</i>&nbsp;import javafx.application.Platform;
+<i class="no-highlight">18</i>&nbsp;import javafx.fxml.FXMLLoader;
+<i class="no-highlight">19</i>&nbsp;import javafx.scene.Node;
+<i class="no-highlight">20</i>&nbsp;import javafx.scene.Scene;
+<i class="no-highlight">21</i>&nbsp;import javafx.scene.image.Image;
+<i class="no-highlight">22</i>&nbsp;import javafx.scene.image.ImageView;
+<i class="no-highlight">23</i>&nbsp;import javafx.scene.layout.AnchorPane;
+<i class="no-highlight">24</i>&nbsp;import javafx.scene.text.Font;
+<i class="no-highlight">25</i>&nbsp;import javafx.stage.Stage;
+<i class="no-highlight">26</i>&nbsp;import java.io.IOException;
+<i class="no-highlight">27</i>&nbsp;import java.net.SocketException;
+<i class="no-highlight">28</i>&nbsp;import java.net.UnknownHostException;
+<i class="no-highlight">29</i>&nbsp;import java.util.ArrayList;
+<i class="no-highlight">30</i>&nbsp;import java.util.Arrays;
+<i class="no-highlight">31</i>&nbsp;import java.util.HashMap;
+<i class="no-highlight">32</i>&nbsp;import java.util.List;
+<i class="no-highlight">33</i>&nbsp;
+<i class="no-highlight">34</i>&nbsp;import static it.polimi.ingsw.Constants.*;
+<i class="no-highlight">35</i>&nbsp;
+<i class="no-highlight">36</i>&nbsp;/**
+<i class="no-highlight">37</i>&nbsp; * Class GUI represents the main class for the Client Graphic Interface component. It initializes and updates the scene as well as handling messages coming
+<i class="no-highlight">38</i>&nbsp; * from ClientSocket
+<i class="no-highlight">39</i>&nbsp; */
+<i class="no-highlight">40</i>&nbsp;public class GUI extends Application implements UI{
+<i class="no-highlight">41</i>&nbsp;    private ClientState currentState;
+<i class="no-highlight">42</i>&nbsp;    private Stage stage;
+<i class="no-highlight">43</i>&nbsp;    private final HashMap&lt;String,Scene&gt; scenes;
+<i class="no-highlight">44</i>&nbsp;    private final HashMap&lt;Scene, GUIController&gt; controllers;
+<i class="no-highlight">45</i>&nbsp;    private final String[] fxmlPaths;
+<i class="no-highlight">46</i>&nbsp;    private ClientSocket clientSocket;
+<i class="no-highlight">47</i>&nbsp;    private final ClientMessageBuilder clientMessageBuilder;
+<i class="no-highlight">48</i>&nbsp;    private final ActionParser actionParser;
+<i class="no-highlight">49</i>&nbsp;    private final GameBoard GB;
+<i class="no-highlight">50</i>&nbsp;    private final ImageView greyOverlay;
+<i class="no-highlight">51</i>&nbsp;    private int wizardID;
+<i class="no-highlight">52</i>&nbsp;    private Tower team;
+<i class="no-highlight">53</i>&nbsp;    private Font gameFont;
+<i class="no-highlight">54</i>&nbsp;
+<i class="no-highlight">55</i>&nbsp;    /**
+<i class="no-highlight">56</i>&nbsp;     * Constructor GUI creates a new GUI instance.
+<i class="no-highlight">57</i>&nbsp;     */
+<b class="nc"><i class="no-highlight">58</i>&nbsp;    public GUI(){</b>
+<b class="nc"><i class="no-highlight">59</i>&nbsp;        currentState = ClientState.CONNECT_STATE;</b>
+<b class="nc"><i class="no-highlight">60</i>&nbsp;        fxmlPaths = Arrays.copyOf(Constants.fxmlPaths,Constants.fxmlPaths.length);</b>
+<b class="nc"><i class="no-highlight">61</i>&nbsp;        scenes = new HashMap&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">62</i>&nbsp;        controllers = new HashMap&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">63</i>&nbsp;        clientMessageBuilder = new ClientMessageBuilder(this);</b>
+<b class="nc"><i class="no-highlight">64</i>&nbsp;        actionParser = new ActionParser();</b>
+<b class="nc"><i class="no-highlight">65</i>&nbsp;        GB = new GameBoard();</b>
+<b class="nc"><i class="no-highlight">66</i>&nbsp;        greyOverlay = new ImageView();</b>
+<b class="nc"><i class="no-highlight">67</i>&nbsp;        greyOverlay.setImage(new Image(&quot;graphics/wait_gray_overlay.png&quot;));</b>
+<i class="no-highlight">68</i>&nbsp;    }
+<i class="no-highlight">69</i>&nbsp;
+<i class="no-highlight">70</i>&nbsp;
+<i class="no-highlight">71</i>&nbsp;    /**
+<i class="no-highlight">72</i>&nbsp;     * Method handleMessageFromServer receives a Message instance from ClientSocket and react accordingly to the message type.
+<i class="no-highlight">73</i>&nbsp;     * @param message received from server.
+<i class="no-highlight">74</i>&nbsp;     * If the message is instance of ClientStateMessage, handleMessageFromServer changes the current client state and if the current scene is updatable, it gets updated
+<i class="no-highlight">75</i>&nbsp;     * If the message is instance of ErrorMessage, handleMessageFromServer calls the current scene&#39;s controller error handling method
+<i class="no-highlight">76</i>&nbsp;     * If the message is instance of UpdateMessage, handleMessageFromServer updates the GameBoard instance and updates the scene if it&#39;s in WAIT_TURN state
+<i class="no-highlight">77</i>&nbsp;     * Since this method is called from another thread, Platform.runLater() ensures that the method is executed by this (GUI) thread to avoid run time exceptions
+<i class="no-highlight">78</i>&nbsp;     */
+<i class="no-highlight">79</i>&nbsp;    public void handleMessageFromServer(Message message){
+<b class="nc"><i class="no-highlight">80</i>&nbsp;        Platform.runLater(new Runnable() {</b>
+<i class="no-highlight">81</i>&nbsp;            @Override
+<i class="no-highlight">82</i>&nbsp;            public void run() {
+<b class="nc"><i class="no-highlight">83</i>&nbsp;                if(message instanceof ClientStateMessage){</b>
+<b class="nc"><i class="no-highlight">84</i>&nbsp;                    currentState = ((ClientStateMessage) message).getNewState();</b>
+<b class="nc"><i class="no-highlight">85</i>&nbsp;                    renderScene();</b>
+<b class="nc"><i class="no-highlight">86</i>&nbsp;                    GUIController currentController = controllers.get(stage.getScene());</b>
+<b class="nc"><i class="no-highlight">87</i>&nbsp;                    if(currentController instanceof UpdatableController){</b>
+<b class="nc"><i class="no-highlight">88</i>&nbsp;                        ((UpdatableController) currentController).update();</b>
+<i class="no-highlight">89</i>&nbsp;                    }
+<b class="nc"><i class="no-highlight">90</i>&nbsp;                }</b>
+<b class="nc"><i class="no-highlight">91</i>&nbsp;                else if (message instanceof ErrorMessage){</b>
+<b class="nc"><i class="no-highlight">92</i>&nbsp;                    GUIController currentController = controllers.get(stage.getScene());</b>
+<b class="nc"><i class="no-highlight">93</i>&nbsp;                    currentController.handleErrorMessage(true);</b>
+<b class="nc"><i class="no-highlight">94</i>&nbsp;                }</b>
+<i class="no-highlight">95</i>&nbsp;                else {
+<b class="nc"><i class="no-highlight">96</i>&nbsp;                    ((UpdateMessage) message).update(GB);</b>
+<b class="nc"><i class="no-highlight">97</i>&nbsp;                    GUIController currentController = controllers.get(stage.getScene());</b>
+<b class="nc"><i class="no-highlight">98</i>&nbsp;                    if(currentController instanceof UpdatableController &amp;&amp; currentState.equals(ClientState.WAIT_TURN)){</b>
+<b class="nc"><i class="no-highlight">99</i>&nbsp;                        if(message instanceof ActivePersonalityMessage</b>
+<i class="no-highlight">100</i>&nbsp;                                || message instanceof CloudUpdateMessage
+<i class="no-highlight">101</i>&nbsp;                                || message instanceof IslandMergeUpdateMessage
+<i class="no-highlight">102</i>&nbsp;                                || message instanceof IslandStudentsUpdateMessage
+<i class="no-highlight">103</i>&nbsp;                                || message instanceof IslandTowersUpdateMessage
+<i class="no-highlight">104</i>&nbsp;                                || message instanceof MotherNatureMovementUpdateMessage)
+<b class="nc"><i class="no-highlight">105</i>&nbsp;                        ((UpdatableController) currentController).update();</b>
+<i class="no-highlight">106</i>&nbsp;                    }
+<i class="no-highlight">107</i>&nbsp;                }
+<i class="no-highlight">108</i>&nbsp;            }
+<i class="no-highlight">109</i>&nbsp;        });
+<i class="no-highlight">110</i>&nbsp;
+<i class="no-highlight">111</i>&nbsp;    }
+<i class="no-highlight">112</i>&nbsp;
+<i class="no-highlight">113</i>&nbsp;    /**
+<i class="no-highlight">114</i>&nbsp;     * Method prepareView initializes the GameBoard with the game parameters (isExpert and numberOfPlayers)
+<i class="no-highlight">115</i>&nbsp;     * @param data received from MatchMaking controller when the player has sent game parameters
+<i class="no-highlight">116</i>&nbsp;     */
+<i class="no-highlight">117</i>&nbsp;    public void prepareView(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">118</i>&nbsp;        GB.setNumberOfPlayers((Integer)data.get(0));</b>
+<b class="nc"><i class="no-highlight">119</i>&nbsp;        GB.setExpertGame((Boolean)data.get(1));</b>
+<i class="no-highlight">120</i>&nbsp;    }
+<i class="no-highlight">121</i>&nbsp;    /**
+<i class="no-highlight">122</i>&nbsp;     * Method renderScene sets the scene accordingly to the currentState and eventually renders the wait gray screen overlay
+<i class="no-highlight">123</i>&nbsp;     * In WAIT_TURN state it also does some additional operations to assure that the next scene is loaded in the correct moment
+<i class="no-highlight">124</i>&nbsp;     */
+<i class="no-highlight">125</i>&nbsp;    private void renderScene(){
+<b class="nc"><i class="no-highlight">126</i>&nbsp;        switch (currentState) {</b>
+<i class="no-highlight">127</i>&nbsp;            case INSERT_NEW_GAME_PARAMETERS -&gt; {
+<b class="nc"><i class="no-highlight">128</i>&nbsp;                setScene(Constants.MATCHMAKING_MENU_FXML);</b>
+<b class="nc"><i class="no-highlight">129</i>&nbsp;            }</b>
+<b class="nc"><i class="no-highlight">130</i>&nbsp;            case WAIT_IN_LOBBY -&gt; setScene(Constants.LOBBY_FXML);</b>
+<i class="no-highlight">131</i>&nbsp;            case WAIT_TURN -&gt; {
+<b class="nc"><i class="no-highlight">132</i>&nbsp;                Scene currentScene = stage.getScene();</b>
+<b class="nc"><i class="no-highlight">133</i>&nbsp;                if (currentScene.equals(scenes.get(Constants.MATCHMAKING_MENU_FXML)) || currentScene.equals(scenes.get(Constants.LOBBY_FXML)))</b>
+<b class="nc"><i class="no-highlight">134</i>&nbsp;                    setScene(Constants.WIZARD_CHOICE_FXML);</b>
+<b class="nc"><i class="no-highlight">135</i>&nbsp;                if (currentScene.equals(scenes.get(Constants.TOWER_CHOICE_FXML))){</b>
+<b class="nc"><i class="no-highlight">136</i>&nbsp;                    setScene(Constants.GAME_TABLE_FXML);</b>
+<b class="nc"><i class="no-highlight">137</i>&nbsp;                    stage.centerOnScreen();</b>
+<i class="no-highlight">138</i>&nbsp;                }
+<i class="no-highlight">139</i>&nbsp;
+<b class="nc"><i class="no-highlight">140</i>&nbsp;                setSceneShouldWait(true);</b>
+<i class="no-highlight">141</i>&nbsp;
+<b class="nc"><i class="no-highlight">142</i>&nbsp;            }</b>
+<i class="no-highlight">143</i>&nbsp;            case SET_UP_WIZARD_PHASE -&gt; {
+<b class="nc"><i class="no-highlight">144</i>&nbsp;                setScene(Constants.WIZARD_CHOICE_FXML);</b>
+<b class="nc"><i class="no-highlight">145</i>&nbsp;                setSceneShouldWait(false);</b>
+<b class="nc"><i class="no-highlight">146</i>&nbsp;            }</b>
+<i class="no-highlight">147</i>&nbsp;            case SET_UP_TOWER_PHASE -&gt; {
+<b class="nc"><i class="no-highlight">148</i>&nbsp;                setScene(Constants.TOWER_CHOICE_FXML);</b>
+<b class="nc"><i class="no-highlight">149</i>&nbsp;            }</b>
+<i class="no-highlight">150</i>&nbsp;            case PLAY_ASSISTANT_CARD -&gt;{
+<b class="nc"><i class="no-highlight">151</i>&nbsp;                setScene(Constants.GAME_TABLE_FXML);</b>
+<i class="no-highlight">152</i>&nbsp;
+<b class="nc"><i class="no-highlight">153</i>&nbsp;                setSceneShouldWait(false);</b>
+<b class="nc"><i class="no-highlight">154</i>&nbsp;            }</b>
+<i class="no-highlight">155</i>&nbsp;            case MOVE_FROM_LOBBY -&gt; {
+<b class="nc"><i class="no-highlight">156</i>&nbsp;                setSceneShouldWait(false);</b>
+<b class="nc"><i class="no-highlight">157</i>&nbsp;            }</b>
+<i class="no-highlight">158</i>&nbsp;            case END_GAME -&gt; {
+<b class="nc"><i class="no-highlight">159</i>&nbsp;                setSceneShouldWait(true);</b>
+<b class="nc"><i class="no-highlight">160</i>&nbsp;                GUIController currentController = controllers.get(stage.getScene());</b>
+<b class="nc"><i class="no-highlight">161</i>&nbsp;                if(currentController instanceof UpdatableController)</b>
+<b class="nc"><i class="no-highlight">162</i>&nbsp;                    ((UpdatableController) currentController).endGame();</b>
+<i class="no-highlight">163</i>&nbsp;            }
+<i class="no-highlight">164</i>&nbsp;        }
+<i class="no-highlight">165</i>&nbsp;    }
+<i class="no-highlight">166</i>&nbsp;
+<i class="no-highlight">167</i>&nbsp;    /**
+<i class="no-highlight">168</i>&nbsp;     * Method setupScenes initializes all the scenes and controllers, saving them in FXML Path-Scene and Scene-Controller hashmaps
+<i class="no-highlight">169</i>&nbsp;     */
+<i class="no-highlight">170</i>&nbsp;    public void setupScenes() throws IOException {
+<b class="nc"><i class="no-highlight">171</i>&nbsp;        for(String path : fxmlPaths){</b>
+<b class="nc"><i class="no-highlight">172</i>&nbsp;            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(path));</b>
+<b class="nc"><i class="no-highlight">173</i>&nbsp;            Scene scene = new Scene(fxmlLoader.load());</b>
+<b class="nc"><i class="no-highlight">174</i>&nbsp;            scenes.put(path,scene);</b>
+<b class="nc"><i class="no-highlight">175</i>&nbsp;            GUIController controller = fxmlLoader.getController();</b>
+<b class="nc"><i class="no-highlight">176</i>&nbsp;            controller.setGUI(this);</b>
+<b class="nc"><i class="no-highlight">177</i>&nbsp;            controller.setClient(this.clientMessageBuilder);</b>
+<b class="nc"><i class="no-highlight">178</i>&nbsp;            controller.setActionParser(this.actionParser);</b>
+<b class="nc"><i class="no-highlight">179</i>&nbsp;            controllers.put(scene,controller);</b>
+<i class="no-highlight">180</i>&nbsp;        }
+<i class="no-highlight">181</i>&nbsp;    }
+<i class="no-highlight">182</i>&nbsp;
+<i class="no-highlight">183</i>&nbsp;    /**
+<i class="no-highlight">184</i>&nbsp;     * Method setScene changes the current scene accordingly to the fxml path received as parameter
+<i class="no-highlight">185</i>&nbsp;     * @param path represents the FXML path of the scene to load
+<i class="no-highlight">186</i>&nbsp;     */
+<i class="no-highlight">187</i>&nbsp;    public void setScene(String path){
+<b class="nc"><i class="no-highlight">188</i>&nbsp;      stage.setScene(scenes.get(path));</b>
+<b class="nc"><i class="no-highlight">189</i>&nbsp;      stage.show();</b>
+<b class="nc"><i class="no-highlight">190</i>&nbsp;      GUIController currentController = controllers.get(stage.getScene());</b>
+<b class="nc"><i class="no-highlight">191</i>&nbsp;      if(currentController instanceof UpdatableController){</b>
+<b class="nc"><i class="no-highlight">192</i>&nbsp;          ((UpdatableController)currentController).start();</b>
+<i class="no-highlight">193</i>&nbsp;      }
+<i class="no-highlight">194</i>&nbsp;    }
+<i class="no-highlight">195</i>&nbsp;
+<i class="no-highlight">196</i>&nbsp;    /**
+<i class="no-highlight">197</i>&nbsp;     * Method setSceneShouldWait calls the current scene&#39;s controller waitTurn setter, so that the update() method inside controller &quot;knows&quot;
+<i class="no-highlight">198</i>&nbsp;     * if the wait overlay should be rendered or not.
+<i class="no-highlight">199</i>&nbsp;     * @param value is true if the wait overlay should be added, false if it should be removed
+<i class="no-highlight">200</i>&nbsp;     */
+<i class="no-highlight">201</i>&nbsp;    private void setSceneShouldWait(boolean value){
+<b class="nc"><i class="no-highlight">202</i>&nbsp;        GUIController controller = controllers.get(stage.getScene());</b>
+<i class="no-highlight">203</i>&nbsp;        try{
+<b class="nc"><i class="no-highlight">204</i>&nbsp;            ((UpdatableController) controller).setWaitTurn(value);</b>
+<b class="nc"><i class="no-highlight">205</i>&nbsp;        }catch(Exception e){</b>
+<b class="nc"><i class="no-highlight">206</i>&nbsp;            e.printStackTrace();</b>
+<b class="nc"><i class="no-highlight">207</i>&nbsp;        }</b>
+<i class="no-highlight">208</i>&nbsp;
+<i class="no-highlight">209</i>&nbsp;    }
+<i class="no-highlight">210</i>&nbsp;
+<i class="no-highlight">211</i>&nbsp;    /**
+<i class="no-highlight">212</i>&nbsp;     * Method disableScene adds to the stage the gray overlay.
+<i class="no-highlight">213</i>&nbsp;     */
+<i class="no-highlight">214</i>&nbsp;    public void disableScene(){
+<b class="nc"><i class="no-highlight">215</i>&nbsp;       if(!((AnchorPane)stage.getScene().getRoot()).getChildren().contains(greyOverlay)){</b>
+<b class="nc"><i class="no-highlight">216</i>&nbsp;           ((AnchorPane)stage.getScene().getRoot()).getChildren().add(greyOverlay);</b>
+<i class="no-highlight">217</i>&nbsp;       }
+<b class="nc"><i class="no-highlight">218</i>&nbsp;        greyOverlay.toFront();</b>
+<i class="no-highlight">219</i>&nbsp;    }
+<i class="no-highlight">220</i>&nbsp;    /**
+<i class="no-highlight">221</i>&nbsp;     * Method enableScene removes from the stage the gray overlay.
+<i class="no-highlight">222</i>&nbsp;     */
+<i class="no-highlight">223</i>&nbsp;    public void enableScene(){
+<b class="nc"><i class="no-highlight">224</i>&nbsp;        ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(greyOverlay);</b>
+<i class="no-highlight">225</i>&nbsp;    }
+<i class="no-highlight">226</i>&nbsp;
+<i class="no-highlight">227</i>&nbsp;    /**
+<i class="no-highlight">228</i>&nbsp;     * Method start sets the stage reference,sets the resolution, adds the icon to the window,
+<i class="no-highlight">229</i>&nbsp;     * sets up all the scenes and the game font and finally renders the main menu
+<i class="no-highlight">230</i>&nbsp;     * @param primaryStage is the GUI instance stage
+<i class="no-highlight">231</i>&nbsp;     */
+<i class="no-highlight">232</i>&nbsp;    @Override
+<i class="no-highlight">233</i>&nbsp;    public void start(Stage primaryStage) throws IOException {
+<b class="nc"><i class="no-highlight">234</i>&nbsp;        stage = primaryStage;</b>
+<b class="nc"><i class="no-highlight">235</i>&nbsp;        stage.setOnCloseRequest(event-&gt;System.exit(0));</b>
+<i class="no-highlight">236</i>&nbsp;
+<b class="nc"><i class="no-highlight">237</i>&nbsp;        Image icon = new Image(&quot;/graphics/logo.png&quot;);</b>
+<b class="nc"><i class="no-highlight">238</i>&nbsp;        stage.getIcons().add(icon);</b>
+<b class="nc"><i class="no-highlight">239</i>&nbsp;        stage.setTitle(&quot;Eryantis&quot;);</b>
+<b class="nc"><i class="no-highlight">240</i>&nbsp;        stage.setResizable(false);</b>
+<i class="no-highlight">241</i>&nbsp;
+<b class="nc"><i class="no-highlight">242</i>&nbsp;        setupScenes();</b>
+<i class="no-highlight">243</i>&nbsp;
+<b class="nc"><i class="no-highlight">244</i>&nbsp;        setScene(MAIN_MENU_FXML);</b>
+<i class="no-highlight">245</i>&nbsp;
+<b class="nc"><i class="no-highlight">246</i>&nbsp;        gameFont = Font.loadFont(getClass().getResourceAsStream(&quot;/fonts/Hey Comic.ttf&quot;), 14);</b>
+<i class="no-highlight">247</i>&nbsp;
+<i class="no-highlight">248</i>&nbsp;
+<i class="no-highlight">249</i>&nbsp;
+<i class="no-highlight">250</i>&nbsp;
+<i class="no-highlight">251</i>&nbsp;    }
+<i class="no-highlight">252</i>&nbsp;
+<i class="no-highlight">253</i>&nbsp;
+<i class="no-highlight">254</i>&nbsp;    /**
+<i class="no-highlight">255</i>&nbsp;     * Method connect attempt a connection to the server by initializing a socket on a new thread and setting up the Nickname Menu scene
+<i class="no-highlight">256</i>&nbsp;     * @param ip represents the server ip
+<i class="no-highlight">257</i>&nbsp;     * @param portText represent the port the server is listening on converted to String type
+<i class="no-highlight">258</i>&nbsp;     */
+<i class="no-highlight">259</i>&nbsp;    public void connect(String ip, String portText) throws IOException {
+<i class="no-highlight">260</i>&nbsp;        int port;
+<i class="no-highlight">261</i>&nbsp;        try{
+<b class="nc"><i class="no-highlight">262</i>&nbsp;            port = Integer.parseInt(portText);</b>
+<b class="nc"><i class="no-highlight">263</i>&nbsp;            clientSocket = new ClientSocket(ip,port,this);</b>
+<b class="nc"><i class="no-highlight">264</i>&nbsp;            Thread socketThread = new Thread(clientSocket);</b>
+<b class="nc"><i class="no-highlight">265</i>&nbsp;            socketThread.start();</b>
+<b class="nc"><i class="no-highlight">266</i>&nbsp;            setScene(Constants.NICKNAME_MENU_FXML);</b>
+<b class="nc"><i class="no-highlight">267</i>&nbsp;        }catch(NumberFormatException | UnknownHostException | SocketException e){</b>
+<b class="nc"><i class="no-highlight">268</i>&nbsp;            GUIController controller = controllers.get(stage.getScene());</b>
+<b class="nc"><i class="no-highlight">269</i>&nbsp;            controller.handleErrorMessage(true);</b>
+<b class="nc"><i class="no-highlight">270</i>&nbsp;        }</b>
+<i class="no-highlight">271</i>&nbsp;
+<i class="no-highlight">272</i>&nbsp;    }
+<i class="no-highlight">273</i>&nbsp;
+<i class="no-highlight">274</i>&nbsp;    public void openConnectMenu(){
+<b class="nc"><i class="no-highlight">275</i>&nbsp;        setScene(Constants.CONNECT_MENU_FXML);</b>
+<i class="no-highlight">276</i>&nbsp;    }
+<i class="no-highlight">277</i>&nbsp;
+<i class="no-highlight">278</i>&nbsp;    /**
+<i class="no-highlight">279</i>&nbsp;     * Method passToSocket sends a Message instance to the clientSocket instance so that it can be sent to the server
+<i class="no-highlight">280</i>&nbsp;     * @param message represents the message to send
+<i class="no-highlight">281</i>&nbsp;     */
+<i class="no-highlight">282</i>&nbsp;    public void passToSocket(Message message){
+<i class="no-highlight">283</i>&nbsp;        try {
+<b class="nc"><i class="no-highlight">284</i>&nbsp;            clientSocket.send(message);</b>
+<b class="nc"><i class="no-highlight">285</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i class="no-highlight">286</i>&nbsp;            e.printStackTrace();</b>
+<b class="nc"><i class="no-highlight">287</i>&nbsp;        }</b>
+<i class="no-highlight">288</i>&nbsp;    }
+<i class="no-highlight">289</i>&nbsp;
+<i class="no-highlight">290</i>&nbsp;    /**
+<i class="no-highlight">291</i>&nbsp;     * Method handleClosingServer removes the WAIT_TURN gray overlay
+<i class="no-highlight">292</i>&nbsp;     * and calls the end game procedures of the current scene&#39;s controller
+<i class="no-highlight">293</i>&nbsp;     * Since this method is called from another thread, Platform.runLater() ensures that the method is executed by this (GUI) thread to avoid run time exceptions
+<i class="no-highlight">294</i>&nbsp;     */
+<i class="no-highlight">295</i>&nbsp;    @Override
+<i class="no-highlight">296</i>&nbsp;    public void handleClosingServer() {
+<b class="nc"><i class="no-highlight">297</i>&nbsp;        Platform.runLater(()-&gt;{</b>
+<b class="nc"><i class="no-highlight">298</i>&nbsp;            GUIController currentController = controllers.get(stage.getScene());</b>
+<b class="nc"><i class="no-highlight">299</i>&nbsp;            disableScene();</b>
+<b class="nc"><i class="no-highlight">300</i>&nbsp;            if(currentController instanceof UpdatableController)</b>
+<b class="nc"><i class="no-highlight">301</i>&nbsp;                ((UpdatableController) currentController).endGame();</b>
+<i class="no-highlight">302</i>&nbsp;        });
+<i class="no-highlight">303</i>&nbsp;    }
+<i class="no-highlight">304</i>&nbsp;
+<i class="no-highlight">305</i>&nbsp;    public int getNumOfPlayers(){
+<b class="nc"><i class="no-highlight">306</i>&nbsp;        return GB.getNumberOfPlayers();</b>
+<i class="no-highlight">307</i>&nbsp;    }
+<i class="no-highlight">308</i>&nbsp;
+<i class="no-highlight">309</i>&nbsp;    public ClientState getCurrentState() {
+<b class="nc"><i class="no-highlight">310</i>&nbsp;        return currentState;</b>
+<i class="no-highlight">311</i>&nbsp;    }
+<i class="no-highlight">312</i>&nbsp;
+<i class="no-highlight">313</i>&nbsp;    public ArrayList&lt;Integer&gt; getAvailableWizards(){
+<b class="nc"><i class="no-highlight">314</i>&nbsp;        return GB.getAvailableWizards();</b>
+<i class="no-highlight">315</i>&nbsp;    }
+<i class="no-highlight">316</i>&nbsp;
+<i class="no-highlight">317</i>&nbsp;    public ArrayList&lt;Tower&gt; getAvailableTowers(){
+<b class="nc"><i class="no-highlight">318</i>&nbsp;        return GB.getAvailableTowers();</b>
+<i class="no-highlight">319</i>&nbsp;    }
+<i class="no-highlight">320</i>&nbsp;
+<i class="no-highlight">321</i>&nbsp;    public ArrayList&lt;ClientIsland&gt; getIslands(){
+<b class="nc"><i class="no-highlight">322</i>&nbsp;        return GB.getIslands();</b>
+<i class="no-highlight">323</i>&nbsp;    }
+<i class="no-highlight">324</i>&nbsp;
+<i class="no-highlight">325</i>&nbsp;    public ArrayList&lt;ClientCloud&gt; getClouds(){
+<b class="nc"><i class="no-highlight">326</i>&nbsp;        return GB.getClouds();</b>
+<i class="no-highlight">327</i>&nbsp;    }
+<i class="no-highlight">328</i>&nbsp;
+<i class="no-highlight">329</i>&nbsp;    public void setWizard(int wizard){
+<b class="nc"><i class="no-highlight">330</i>&nbsp;        wizardID = wizard;</b>
+<i class="no-highlight">331</i>&nbsp;    }
+<i class="no-highlight">332</i>&nbsp;
+<i class="no-highlight">333</i>&nbsp;    public void setTeam(Tower team){
+<b class="nc"><i class="no-highlight">334</i>&nbsp;        this.team = team;</b>
+<i class="no-highlight">335</i>&nbsp;    }
+<i class="no-highlight">336</i>&nbsp;
+<i class="no-highlight">337</i>&nbsp;    public HashMap&lt;Integer,Integer&gt; getDeck(){
+<b class="nc"><i class="no-highlight">338</i>&nbsp;        String playerNickname = GB.getNickname();</b>
+<b class="nc"><i class="no-highlight">339</i>&nbsp;        return GB.getClientBoards().get(playerNickname).getDeck();</b>
+<i class="no-highlight">340</i>&nbsp;    }
+<i class="no-highlight">341</i>&nbsp;
+<i class="no-highlight">342</i>&nbsp;    public int getWizard(){
+<b class="nc"><i class="no-highlight">343</i>&nbsp;        return wizardID;</b>
+<i class="no-highlight">344</i>&nbsp;    }
+<i class="no-highlight">345</i>&nbsp;
+<b class="nc"><i class="no-highlight">346</i>&nbsp;    public String getPlayerNickname(){return GB.getNickname();}</b>
+<i class="no-highlight">347</i>&nbsp;
+<i class="no-highlight">348</i>&nbsp;    public void setPlayerNickname(String stringNickname) {
+<b class="nc"><i class="no-highlight">349</i>&nbsp;        GB.setNickname(stringNickname);</b>
+<i class="no-highlight">350</i>&nbsp;    }
+<i class="no-highlight">351</i>&nbsp;
+<i class="no-highlight">352</i>&nbsp;    public List&lt;String&gt; getOtherPlayers(){
+<b class="nc"><i class="no-highlight">353</i>&nbsp;        List&lt;String&gt; players = GB.getPlayersNicknames();</b>
+<b class="nc"><i class="no-highlight">354</i>&nbsp;        players.remove(GB.getNickname());</b>
+<b class="nc"><i class="no-highlight">355</i>&nbsp;        return players;</b>
+<i class="no-highlight">356</i>&nbsp;    }
+<i class="no-highlight">357</i>&nbsp;
+<i class="no-highlight">358</i>&nbsp;    public GameBoard getGB() {
+<b class="nc"><i class="no-highlight">359</i>&nbsp;        return GB;</b>
+<i class="no-highlight">360</i>&nbsp;    }
+<i class="no-highlight">361</i>&nbsp;
+<i class="no-highlight">362</i>&nbsp;    public HashMap&lt;String,Integer&gt; getTurnCards(){
+<b class="nc"><i class="no-highlight">363</i>&nbsp;        return GB.getTurnCards();</b>
+<i class="no-highlight">364</i>&nbsp;    }
+<i class="no-highlight">365</i>&nbsp;
+<i class="no-highlight">366</i>&nbsp;    public ArrayList&lt;ClientBoard&gt; getClientBoards(){
+<b class="nc"><i class="no-highlight">367</i>&nbsp;        return new ArrayList&lt;&gt;(GB.getClientBoards().values());</b>
+<i class="no-highlight">368</i>&nbsp;    }
+<i class="no-highlight">369</i>&nbsp;    public ClientBoard getPlayerBoard(String playerNickname){
+<b class="nc"><i class="no-highlight">370</i>&nbsp;        return GB.getClientBoards().get(playerNickname);</b>
+<i class="no-highlight">371</i>&nbsp;    }
+<b class="nc"><i class="no-highlight">372</i>&nbsp;    public ClientBoard getOwningPlayerBoard(){return GB.getOwningPlayerClientBoard();}</b>
+<i class="no-highlight">373</i>&nbsp;    public ArrayList&lt;ClientPersonality&gt; getPersonalityCards(){
+<b class="nc"><i class="no-highlight">374</i>&nbsp;        return GB.getPersonalities();</b>
+<i class="no-highlight">375</i>&nbsp;    }
+<i class="no-highlight">376</i>&nbsp;
+<i class="no-highlight">377</i>&nbsp;    public double getScreenX(){
+<b class="nc"><i class="no-highlight">378</i>&nbsp;        return ((AnchorPane)stage.getScene().getRoot()).getWidth();</b>
+<i class="no-highlight">379</i>&nbsp;    }
+<i class="no-highlight">380</i>&nbsp;
+<i class="no-highlight">381</i>&nbsp;    public double getScreenY(){
+<b class="nc"><i class="no-highlight">382</i>&nbsp;        return ((AnchorPane)stage.getScene().getRoot()).getHeight();</b>
+<i class="no-highlight">383</i>&nbsp;    }
+<i class="no-highlight">384</i>&nbsp;
+<i class="no-highlight">385</i>&nbsp;    public void addElementToScene(Node n){
+<b class="nc"><i class="no-highlight">386</i>&nbsp;        ((AnchorPane)stage.getScene().getRoot()).getChildren().add(n);</b>
+<i class="no-highlight">387</i>&nbsp;    }
+<b class="nc"><i class="no-highlight">388</i>&nbsp;    public String getWinner(){return GB.getWinner();}</b>
+<i class="no-highlight">389</i>&nbsp;    public Font getGameFont(){
+<b class="nc"><i class="no-highlight">390</i>&nbsp;        return gameFont;</b>
+<i class="no-highlight">391</i>&nbsp;    }
+<i class="no-highlight">392</i>&nbsp;    public void removeElementFromScene(Node n){
+<b class="nc"><i class="no-highlight">393</i>&nbsp;        ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(n);</b>
+<i class="no-highlight">394</i>&nbsp;    }
+<i class="no-highlight">395</i>&nbsp;
+<i class="no-highlight">396</i>&nbsp;
+<i class="no-highlight">397</i>&nbsp;
+<i class="no-highlight">398</i>&nbsp;
+<i class="no-highlight">399</i>&nbsp;
+<i class="no-highlight">400</i>&nbsp;    public static void main(String[] args) {
+<b class="nc"><i class="no-highlight">401</i>&nbsp;        launch(args);</b>
+<i class="no-highlight">402</i>&nbsp;    }
+<i class="no-highlight">403</i>&nbsp;
+<i class="no-highlight">404</i>&nbsp;
+<i class="no-highlight">405</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 15:57</div>
+</div>
+</body>
+</html>

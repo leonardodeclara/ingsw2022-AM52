@@ -1,0 +1,396 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ClientMessageBuilder</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.client</a>
+</div>
+
+<h1>Coverage Summary for Class: ClientMessageBuilder (it.polimi.ingsw.client)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientMessageBuilder</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/62)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ClientMessageBuilder$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/63)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.client;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.client.GUI.UI;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.messages.*;
+<i class="no-highlight">5</i>&nbsp;import it.polimi.ingsw.messages.ClientMessages.*;
+<i class="no-highlight">6</i>&nbsp;import it.polimi.ingsw.model.Tower;
+<i class="no-highlight">7</i>&nbsp;import it.polimi.ingsw.model.Color;
+<i class="no-highlight">8</i>&nbsp;
+<i class="no-highlight">9</i>&nbsp;import java.util.ArrayList;
+<i class="no-highlight">10</i>&nbsp;
+<i class="no-highlight">11</i>&nbsp;/**
+<i class="no-highlight">12</i>&nbsp; * Class ClientMessageBuilder receives generic arraylist of data and a clientState
+<i class="no-highlight">13</i>&nbsp; * to build state-specific messages which will be sent to the server
+<i class="no-highlight">14</i>&nbsp; */
+<i class="no-highlight">15</i>&nbsp;public class ClientMessageBuilder {
+<i class="no-highlight">16</i>&nbsp;    private ClientSocket clientSocket;
+<i class="no-highlight">17</i>&nbsp;    private InputParser inputParser;
+<i class="no-highlight">18</i>&nbsp;    private UI cli;
+<i class="no-highlight">19</i>&nbsp;    private boolean active;
+<i class="no-highlight">20</i>&nbsp;
+<b class="nc"><i class="no-highlight">21</i>&nbsp;    public ClientMessageBuilder(UI cli) {</b>
+<b class="nc"><i class="no-highlight">22</i>&nbsp;        this.cli=cli;</b>
+<b class="nc"><i class="no-highlight">23</i>&nbsp;        active = true;</b>
+<i class="no-highlight">24</i>&nbsp;    }
+<i class="no-highlight">25</i>&nbsp;
+<i class="no-highlight">26</i>&nbsp;    /**
+<i class="no-highlight">27</i>&nbsp;     * Method buildMessageFromPlayerInput calls a different message builder method accordingly to the client state
+<i class="no-highlight">28</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">29</i>&nbsp;     * @param currentState represents the client current state
+<i class="no-highlight">30</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">31</i>&nbsp;     */
+<i class="no-highlight">32</i>&nbsp;    public Message buildMessageFromPlayerInput(ArrayList&lt;Object&gt; data,ClientState currentState){
+<b class="nc"><i class="no-highlight">33</i>&nbsp;        switch (currentState){</b>
+<i class="no-highlight">34</i>&nbsp;            case CONNECT_STATE:
+<b class="nc"><i class="no-highlight">35</i>&nbsp;                if(data.size() &gt; 0)</b>
+<b class="nc"><i class="no-highlight">36</i>&nbsp;                    return buildConnectMessage(data);</b>
+<i class="no-highlight">37</i>&nbsp;            case INSERT_NEW_GAME_PARAMETERS:
+<b class="nc"><i class="no-highlight">38</i>&nbsp;                if(data.size() &gt; 1)</b>
+<b class="nc"><i class="no-highlight">39</i>&nbsp;                    return buildNewGameParametersMessage(data);</b>
+<i class="no-highlight">40</i>&nbsp;            case SET_UP_WIZARD_PHASE:
+<b class="nc"><i class="no-highlight">41</i>&nbsp;                if(data.size() &gt; 0)</b>
+<b class="nc"><i class="no-highlight">42</i>&nbsp;                    return buildWizardSelectionMessage(data);</b>
+<i class="no-highlight">43</i>&nbsp;            case SET_UP_TOWER_PHASE:
+<b class="nc"><i class="no-highlight">44</i>&nbsp;                if(data.size() &gt; 0)</b>
+<b class="nc"><i class="no-highlight">45</i>&nbsp;                    return buildTowerSelectionMessage(data);</b>
+<i class="no-highlight">46</i>&nbsp;            case PLAY_ASSISTANT_CARD:
+<b class="nc"><i class="no-highlight">47</i>&nbsp;                if(data.size() &gt; 0)</b>
+<b class="nc"><i class="no-highlight">48</i>&nbsp;                    return buildPlayAssistantCardMessage(data);</b>
+<i class="no-highlight">49</i>&nbsp;            case MOVE_FROM_LOBBY:
+<b class="nc"><i class="no-highlight">50</i>&nbsp;                if(data.size() &gt;= 2)</b>
+<b class="nc"><i class="no-highlight">51</i>&nbsp;                    if(data.get(0) instanceof Boolean)</b>
+<b class="nc"><i class="no-highlight">52</i>&nbsp;                        return buildPlayPersonalityCardMessage(data);</b>
+<i class="no-highlight">53</i>&nbsp;
+<b class="nc"><i class="no-highlight">54</i>&nbsp;                if(data.size() &gt; 0)</b>
+<b class="nc"><i class="no-highlight">55</i>&nbsp;                    return buildMoveFromLobbyMessage(data);</b>
+<i class="no-highlight">56</i>&nbsp;            case MOVE_MOTHER_NATURE:
+<b class="nc"><i class="no-highlight">57</i>&nbsp;                if(data.size() &gt;= 2)</b>
+<b class="nc"><i class="no-highlight">58</i>&nbsp;                    if(data.get(0) instanceof Boolean)</b>
+<b class="nc"><i class="no-highlight">59</i>&nbsp;                        return buildPlayPersonalityCardMessage(data);</b>
+<i class="no-highlight">60</i>&nbsp;
+<b class="nc"><i class="no-highlight">61</i>&nbsp;                if(data.size() &gt; 0)</b>
+<b class="nc"><i class="no-highlight">62</i>&nbsp;                    return buildMoveMotherNature(data);</b>
+<i class="no-highlight">63</i>&nbsp;            case PICK_CLOUD:
+<b class="nc"><i class="no-highlight">64</i>&nbsp;                if(data.size() &gt;= 2)</b>
+<b class="nc"><i class="no-highlight">65</i>&nbsp;                    if(data.get(0) instanceof Boolean)</b>
+<b class="nc"><i class="no-highlight">66</i>&nbsp;                        return buildPlayPersonalityCardMessage(data);</b>
+<i class="no-highlight">67</i>&nbsp;
+<b class="nc"><i class="no-highlight">68</i>&nbsp;                if(data.size() &gt; 0)</b>
+<b class="nc"><i class="no-highlight">69</i>&nbsp;                return buildCloudSelectionMessage(data);</b>
+<i class="no-highlight">70</i>&nbsp;            case END_TURN:
+<b class="nc"><i class="no-highlight">71</i>&nbsp;                if(data.size() &gt;= 2)</b>
+<b class="nc"><i class="no-highlight">72</i>&nbsp;                    if((Boolean) data.get(0) == true)</b>
+<b class="nc"><i class="no-highlight">73</i>&nbsp;                        return buildPlayPersonalityCardMessage(data);</b>
+<i class="no-highlight">74</i>&nbsp;
+<b class="nc"><i class="no-highlight">75</i>&nbsp;                return buildCloseTurnMessage(data);</b>
+<i class="no-highlight">76</i>&nbsp;            case CHOOSE_STUDENT_FOR_CARD_1:
+<b class="nc"><i class="no-highlight">77</i>&nbsp;                return buildCard1EffectMessage(data);</b>
+<i class="no-highlight">78</i>&nbsp;            case CHOOSE_ISLAND_FOR_CARD_3:
+<b class="nc"><i class="no-highlight">79</i>&nbsp;                return buildCard3EffectMessage(data);</b>
+<i class="no-highlight">80</i>&nbsp;            case CHOOSE_ISLAND_FOR_CARD_5:
+<b class="nc"><i class="no-highlight">81</i>&nbsp;                return buildCard5EffectMessage(data);</b>
+<i class="no-highlight">82</i>&nbsp;            case SWAP_STUDENTS_FOR_CARD_7:
+<b class="nc"><i class="no-highlight">83</i>&nbsp;                return buildCard7EffectMessage(data);</b>
+<i class="no-highlight">84</i>&nbsp;            case CHOOSE_COLOR_FOR_CARD_9:
+<b class="nc"><i class="no-highlight">85</i>&nbsp;                return buildCard9EffectMessage(data);</b>
+<i class="no-highlight">86</i>&nbsp;            case CHOOSE_STUDENTS_FOR_CARD_10:
+<b class="nc"><i class="no-highlight">87</i>&nbsp;                return buildCard10EffectMessage(data);</b>
+<i class="no-highlight">88</i>&nbsp;            case CHOOSE_STUDENT_FOR_CARD_11:
+<b class="nc"><i class="no-highlight">89</i>&nbsp;                return buildCard11EffectMessage(data);</b>
+<i class="no-highlight">90</i>&nbsp;            case CHOOSE_COLOR_FOR_CARD_12:
+<b class="nc"><i class="no-highlight">91</i>&nbsp;                return buildCard12EffectMessage(data);</b>
+<i class="no-highlight">92</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">93</i>&nbsp;        return null;</b>
+<i class="no-highlight">94</i>&nbsp;    }
+<i class="no-highlight">95</i>&nbsp;
+<i class="no-highlight">96</i>&nbsp;    /**
+<i class="no-highlight">97</i>&nbsp;     * Method buildConnectMessage builds a LoginRequestMessage which contains player&#39;s nickname
+<i class="no-highlight">98</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">99</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">100</i>&nbsp;     */
+<i class="no-highlight">101</i>&nbsp;    private Message buildConnectMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">102</i>&nbsp;        return new LoginRequestMessage((String)data.get(0));</b>
+<i class="no-highlight">103</i>&nbsp;    }
+<i class="no-highlight">104</i>&nbsp;
+<i class="no-highlight">105</i>&nbsp;    /**
+<i class="no-highlight">106</i>&nbsp;     * Method buildNewGameParameters builds a GameParametersMessage which contains expert/base flag and number of players
+<i class="no-highlight">107</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">108</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">109</i>&nbsp;     */
+<i class="no-highlight">110</i>&nbsp;    private Message buildNewGameParametersMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">111</i>&nbsp;        cli.prepareView(data);</b>
+<b class="nc"><i class="no-highlight">112</i>&nbsp;        return new GameParametersMessage((Integer)data.get(0),(Boolean)data.get(1));</b>
+<i class="no-highlight">113</i>&nbsp;    }
+<i class="no-highlight">114</i>&nbsp;
+<i class="no-highlight">115</i>&nbsp;    /**
+<i class="no-highlight">116</i>&nbsp;     * Method buildWizardSelectionMessage builds a WizardSelectionMessage which contains chosen wizard id
+<i class="no-highlight">117</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">118</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">119</i>&nbsp;     */
+<i class="no-highlight">120</i>&nbsp;    private Message buildWizardSelectionMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">121</i>&nbsp;        return new WizardSelectionMessage((int) data.get(0));</b>
+<i class="no-highlight">122</i>&nbsp;    }
+<i class="no-highlight">123</i>&nbsp;
+<i class="no-highlight">124</i>&nbsp;    /**
+<i class="no-highlight">125</i>&nbsp;     * Method buildTowerSelectionMessage builds a TowerSelectionMessage which contains chosen Tower instance
+<i class="no-highlight">126</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">127</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">128</i>&nbsp;     */
+<i class="no-highlight">129</i>&nbsp;    private Message buildTowerSelectionMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">130</i>&nbsp;        return new TowerSelectionMessage((Tower) data.get(0));</b>
+<i class="no-highlight">131</i>&nbsp;    }
+<i class="no-highlight">132</i>&nbsp;
+<i class="no-highlight">133</i>&nbsp;    /**
+<i class="no-highlight">134</i>&nbsp;     * Method buildPlayAssistantCardMessage builds a PlayAssistantCardMessage which contains chosen assistant card ID
+<i class="no-highlight">135</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">136</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">137</i>&nbsp;     */
+<i class="no-highlight">138</i>&nbsp;    private Message buildPlayAssistantCardMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">139</i>&nbsp;        return new PlayAssistantCardMessage((Integer)data.get(0));</b>
+<i class="no-highlight">140</i>&nbsp;    }
+<i class="no-highlight">141</i>&nbsp;
+<i class="no-highlight">142</i>&nbsp;    /**
+<i class="no-highlight">143</i>&nbsp;     * Method buildMoveFromLobbyMessage builds a MoveStudentsFromLobbyMessage which contains 3 lobby students ID
+<i class="no-highlight">144</i>&nbsp;     * and 3 destinations ID (where ID = islandID or -1 for the table)
+<i class="no-highlight">145</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">146</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">147</i>&nbsp;     */
+<i class="no-highlight">148</i>&nbsp;    private Message buildMoveFromLobbyMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">149</i>&nbsp;        ((ArrayList&lt;Integer&gt;) data.get(0)).stream().limit(3);</b>
+<b class="nc"><i class="no-highlight">150</i>&nbsp;        return new MoveStudentsFromLobbyMessage((ArrayList&lt;Integer&gt;) data.get(0),(ArrayList&lt;Integer&gt;) data.get(1));</b>
+<i class="no-highlight">151</i>&nbsp;    }
+<i class="no-highlight">152</i>&nbsp;
+<i class="no-highlight">153</i>&nbsp;    /**
+<i class="no-highlight">154</i>&nbsp;     * Method buildMoveMotherNature builds a MotherNatureMessage which contains destination island ID for Mother Nature
+<i class="no-highlight">155</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">156</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">157</i>&nbsp;     */
+<i class="no-highlight">158</i>&nbsp;    private Message buildMoveMotherNature(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">159</i>&nbsp;        return new MotherNatureMoveMessage((Integer) data.get(0));</b>
+<i class="no-highlight">160</i>&nbsp;    }
+<i class="no-highlight">161</i>&nbsp;
+<i class="no-highlight">162</i>&nbsp;    /**
+<i class="no-highlight">163</i>&nbsp;     * Method buildCloudSelectionMessage builds a CloudSelectionMessage which contains chosen cloud ID
+<i class="no-highlight">164</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">165</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">166</i>&nbsp;     */
+<i class="no-highlight">167</i>&nbsp;    private Message buildCloudSelectionMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">168</i>&nbsp;        return new CloudSelectionMessage((Integer) data.get(0));</b>
+<i class="no-highlight">169</i>&nbsp;    }
+<i class="no-highlight">170</i>&nbsp;
+<i class="no-highlight">171</i>&nbsp;    /**
+<i class="no-highlight">172</i>&nbsp;     * Method buildPlayPersonalityMessage builds a PlayPersonalityCardMessage which contains chosen personality card ID
+<i class="no-highlight">173</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">174</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">175</i>&nbsp;     */
+<i class="no-highlight">176</i>&nbsp;    private Message buildPlayPersonalityCardMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">177</i>&nbsp;        return new PlayPersonalityCardMessage((Integer) data.get(1));</b>
+<i class="no-highlight">178</i>&nbsp;    }
+<i class="no-highlight">179</i>&nbsp;
+<i class="no-highlight">180</i>&nbsp;    /**
+<i class="no-highlight">181</i>&nbsp;     * Method buildCloseTurnMessage builds a CloseTurnMessage which contains the end turn keyword
+<i class="no-highlight">182</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">183</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">184</i>&nbsp;     */
+<i class="no-highlight">185</i>&nbsp;    private Message buildCloseTurnMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">186</i>&nbsp;        return new CloseTurnMessage((String) data.get(0));</b>
+<i class="no-highlight">187</i>&nbsp;    }
+<i class="no-highlight">188</i>&nbsp;
+<i class="no-highlight">189</i>&nbsp;    /**
+<i class="no-highlight">190</i>&nbsp;     * Method buildCard1EffectMessage builds a Card1EffectMessage which contains chosen students and island ID
+<i class="no-highlight">191</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">192</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">193</i>&nbsp;     */
+<i class="no-highlight">194</i>&nbsp;    private Message buildCard1EffectMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">195</i>&nbsp;        return new Card1EffectMessage((Integer) data.get(0), (Integer) data.get(1));</b>
+<i class="no-highlight">196</i>&nbsp;    }
+<i class="no-highlight">197</i>&nbsp;
+<i class="no-highlight">198</i>&nbsp;    /**
+<i class="no-highlight">199</i>&nbsp;     * Method buildCard3EffectMessage builds a Card3EffectMessage which contains chosen island ID
+<i class="no-highlight">200</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">201</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">202</i>&nbsp;     */
+<i class="no-highlight">203</i>&nbsp;    private Message buildCard3EffectMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">204</i>&nbsp;        return new Card3EffectMessage((Integer) data.get(0));</b>
+<i class="no-highlight">205</i>&nbsp;    }
+<i class="no-highlight">206</i>&nbsp;
+<i class="no-highlight">207</i>&nbsp;    /**
+<i class="no-highlight">208</i>&nbsp;     * Method buildCard5EffectMessage builds a Card5EffectMessage which contains chosen island ID
+<i class="no-highlight">209</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">210</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">211</i>&nbsp;     */
+<i class="no-highlight">212</i>&nbsp;    private Message buildCard5EffectMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">213</i>&nbsp;        return new Card5EffectMessage((Integer) data.get(0));</b>
+<i class="no-highlight">214</i>&nbsp;    }
+<i class="no-highlight">215</i>&nbsp;
+<i class="no-highlight">216</i>&nbsp;    /**
+<i class="no-highlight">217</i>&nbsp;     * Method buildCard7EffectMessage builds a Card7EffectMessage which contains chosen students ID from board lobby and card lobby
+<i class="no-highlight">218</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">219</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">220</i>&nbsp;     */
+<i class="no-highlight">221</i>&nbsp;    private Message buildCard7EffectMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">222</i>&nbsp;        return new Card7EffectMessage((ArrayList&lt;Integer&gt;) data.get(0),(ArrayList&lt;Integer&gt;)data.get(1));</b>
+<i class="no-highlight">223</i>&nbsp;    }
+<i class="no-highlight">224</i>&nbsp;
+<i class="no-highlight">225</i>&nbsp;    /**
+<i class="no-highlight">226</i>&nbsp;     * Method buildCard9EffectMessage builds a Card9EffectMessage which contains the banned color
+<i class="no-highlight">227</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">228</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">229</i>&nbsp;     */
+<i class="no-highlight">230</i>&nbsp;    private Message buildCard9EffectMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">231</i>&nbsp;        return new Card9EffectMessage((Color) data.get(0));</b>
+<i class="no-highlight">232</i>&nbsp;    }
+<i class="no-highlight">233</i>&nbsp;
+<i class="no-highlight">234</i>&nbsp;    /**
+<i class="no-highlight">235</i>&nbsp;     * Method buildCard10EffectMessage builds a Card10EffectMessage which contains chosen students ID from lobby and table
+<i class="no-highlight">236</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">237</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">238</i>&nbsp;     */
+<i class="no-highlight">239</i>&nbsp;    private Message buildCard10EffectMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">240</i>&nbsp;        return new Card10EffectMessage((ArrayList&lt;Color&gt;) data.get(0),(ArrayList&lt;Integer&gt;)data.get(1));</b>
+<i class="no-highlight">241</i>&nbsp;    }
+<i class="no-highlight">242</i>&nbsp;
+<i class="no-highlight">243</i>&nbsp;    /**
+<i class="no-highlight">244</i>&nbsp;     * Method buildCard11EffectMessage builds a Card11EffectMessage which contains chosen student ID
+<i class="no-highlight">245</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">246</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">247</i>&nbsp;     */
+<i class="no-highlight">248</i>&nbsp;    private Message buildCard11EffectMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">249</i>&nbsp;        return new Card11EffectMessage((Integer)data.get(0));</b>
+<i class="no-highlight">250</i>&nbsp;    }
+<i class="no-highlight">251</i>&nbsp;
+<i class="no-highlight">252</i>&nbsp;    /**
+<i class="no-highlight">253</i>&nbsp;     * Method buildCard12EffectMessage builds a Card12EffectMessage which contains banned color
+<i class="no-highlight">254</i>&nbsp;     * @param data contains the informations to wrap into the message
+<i class="no-highlight">255</i>&nbsp;     * @return message to send to the server
+<i class="no-highlight">256</i>&nbsp;     */
+<i class="no-highlight">257</i>&nbsp;    private Message buildCard12EffectMessage(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">258</i>&nbsp;        return new Card12EffectMessage((Color)data.get(0));</b>
+<i class="no-highlight">259</i>&nbsp;    }
+<i class="no-highlight">260</i>&nbsp;}
+<i class="no-highlight">261</i>&nbsp;
+<i class="no-highlight">262</i>&nbsp;
+<i class="no-highlight">263</i>&nbsp;
+<i class="no-highlight">264</i>&nbsp;
+<i class="no-highlight">265</i>&nbsp;
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 15:57</div>
+</div>
+</body>
+</html>

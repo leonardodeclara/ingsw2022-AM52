@@ -1,0 +1,183 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Personality</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.model</a>
+</div>
+
+<h1>Coverage Summary for Class: Personality (it.polimi.ingsw.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Personality</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85,7%
+  </span>
+  <span class="absValue">
+    (6/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92,3%
+  </span>
+  <span class="absValue">
+    (12/13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.model;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.controller.GameController;
+<i class="no-highlight">4</i>&nbsp;
+<i class="no-highlight">5</i>&nbsp;import java.beans.PropertyChangeSupport;
+<i class="no-highlight">6</i>&nbsp;
+<i class="no-highlight">7</i>&nbsp;/**
+<i class="no-highlight">8</i>&nbsp; * This class represents the Personality card.
+<i class="no-highlight">9</i>&nbsp; * Players can use Personality card in expert game mode.
+<i class="no-highlight">10</i>&nbsp; * Each player can use 3 Personality card during the game.
+<i class="no-highlight">11</i>&nbsp; */
+<i class="no-highlight">12</i>&nbsp;public class Personality {
+<i class="no-highlight">13</i>&nbsp;    private final int characterId;
+<i class="no-highlight">14</i>&nbsp;    private boolean hasBeenUsed;
+<i class="no-highlight">15</i>&nbsp;    private int cost;
+<i class="no-highlight">16</i>&nbsp;    protected PropertyChangeSupport listeners;
+<i class="no-highlight">17</i>&nbsp;
+<i class="no-highlight">18</i>&nbsp;    /**
+<i class="no-highlight">19</i>&nbsp;     * Constructor creates a Personality card instance
+<i class="no-highlight">20</i>&nbsp;     * @param id: unique identifier for the Personality card
+<i class="no-highlight">21</i>&nbsp;     */
+<b class="fc"><i class="no-highlight">22</i>&nbsp;    public Personality(int id){</b>
+<b class="fc"><i class="no-highlight">23</i>&nbsp;        characterId=id;</b>
+<b class="fc"><i class="no-highlight">24</i>&nbsp;        cost=id%3==0? 3: id%3;</b>
+<b class="fc"><i class="no-highlight">25</i>&nbsp;        hasBeenUsed=false;</b>
+<b class="fc"><i class="no-highlight">26</i>&nbsp;        listeners= new PropertyChangeSupport(this);</b>
+<i class="no-highlight">27</i>&nbsp;    }
+<i class="no-highlight">28</i>&nbsp;
+<i class="no-highlight">29</i>&nbsp;    /**
+<i class="no-highlight">30</i>&nbsp;     * This method update the cost of a Personality card when the card is used
+<i class="no-highlight">31</i>&nbsp;     */
+<i class="no-highlight">32</i>&nbsp;    public void updateCost(){
+<b class="fc"><i class="no-highlight">33</i>&nbsp;        if(!hasBeenUsed){</b>
+<b class="fc"><i class="no-highlight">34</i>&nbsp;            cost+=1;</b>
+<b class="fc"><i class="no-highlight">35</i>&nbsp;            setHasBeenUsed(true);</b>
+<i class="no-highlight">36</i>&nbsp;        }
+<i class="no-highlight">37</i>&nbsp;    }
+<i class="no-highlight">38</i>&nbsp;
+<i class="no-highlight">39</i>&nbsp;    /**
+<i class="no-highlight">40</i>&nbsp;     * Method that return the ID of the card
+<i class="no-highlight">41</i>&nbsp;     * @return the unique identifier of the card
+<i class="no-highlight">42</i>&nbsp;     */
+<i class="no-highlight">43</i>&nbsp;    public int getCharacterId() {
+<b class="fc"><i class="no-highlight">44</i>&nbsp;        return characterId;</b>
+<i class="no-highlight">45</i>&nbsp;    }
+<i class="no-highlight">46</i>&nbsp;
+<i class="no-highlight">47</i>&nbsp;    /**
+<i class="no-highlight">48</i>&nbsp;     * Method that says if a card has been used or not
+<i class="no-highlight">49</i>&nbsp;     * @return true if the card has been used and false if it hasn&#39;t been used
+<i class="no-highlight">50</i>&nbsp;     */
+<i class="no-highlight">51</i>&nbsp;    public boolean isHasBeenUsed() {
+<b class="fc"><i class="no-highlight">52</i>&nbsp;        return hasBeenUsed;</b>
+<i class="no-highlight">53</i>&nbsp;    }
+<i class="no-highlight">54</i>&nbsp;
+<i class="no-highlight">55</i>&nbsp;    /**
+<i class="no-highlight">56</i>&nbsp;     * This method set hasBeenUsed to true or false according to whether the card has been used or not
+<i class="no-highlight">57</i>&nbsp;     * @param hasBeenUsed: truth value regarding the use of the card
+<i class="no-highlight">58</i>&nbsp;     */
+<i class="no-highlight">59</i>&nbsp;    public void setHasBeenUsed(boolean hasBeenUsed) {
+<b class="fc"><i class="no-highlight">60</i>&nbsp;        this.hasBeenUsed = hasBeenUsed;</b>
+<i class="no-highlight">61</i>&nbsp;    }
+<i class="no-highlight">62</i>&nbsp;
+<i class="no-highlight">63</i>&nbsp;    /**
+<i class="no-highlight">64</i>&nbsp;     * Method that return the cost of the card
+<i class="no-highlight">65</i>&nbsp;     * @return the number that identifies the cost of the card according to the update
+<i class="no-highlight">66</i>&nbsp;     */
+<i class="no-highlight">67</i>&nbsp;    public int getCost() {
+<b class="fc"><i class="no-highlight">68</i>&nbsp;        return cost;</b>
+<i class="no-highlight">69</i>&nbsp;    }
+<i class="no-highlight">70</i>&nbsp;
+<i class="no-highlight">71</i>&nbsp;    /**
+<i class="no-highlight">72</i>&nbsp;     * Metod setPropertyChangeListener sets the Personality&#39;s  state listeners.
+<i class="no-highlight">73</i>&nbsp;     * @param controller: controller instance listening to the game&#39;s changes.
+<i class="no-highlight">74</i>&nbsp;     */
+<i class="no-highlight">75</i>&nbsp;    public void setPropertyChangeListener(GameController controller){
+<b class="nc"><i class="no-highlight">76</i>&nbsp;        listeners.addPropertyChangeListener(&quot;PersonalityUsage&quot;,controller);</b>
+<i class="no-highlight">77</i>&nbsp;    }
+<i class="no-highlight">78</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 15:57</div>
+</div>
+</body>
+</html>

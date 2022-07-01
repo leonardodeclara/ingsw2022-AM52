@@ -1,0 +1,575 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > GameBoard</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.client.CLI</a>
+</div>
+
+<h1>Coverage Summary for Class: GameBoard (it.polimi.ingsw.client.CLI)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GameBoard</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76%
+  </span>
+  <span class="absValue">
+    (38/50)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    62,9%
+  </span>
+  <span class="absValue">
+    (100/159)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.client.CLI;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.model.Color;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.model.Tower;
+<i class="no-highlight">5</i>&nbsp;
+<i class="no-highlight">6</i>&nbsp;import java.io.PrintStream;
+<i class="no-highlight">7</i>&nbsp;import java.util.*;
+<i class="no-highlight">8</i>&nbsp;
+<i class="no-highlight">9</i>&nbsp;/**
+<i class="no-highlight">10</i>&nbsp; * Class GameBoard holds basic information about the game state in order to render its content through CLI and GUI interfaces.
+<i class="no-highlight">11</i>&nbsp; * If carries information about game parameters as the players&#39; number and the game mode and game elements such as islands, clouds and boards.
+<i class="no-highlight">12</i>&nbsp; */
+<i class="no-highlight">13</i>&nbsp;public class GameBoard {
+<i class="no-highlight">14</i>&nbsp;    private int numberOfPlayers;
+<i class="no-highlight">15</i>&nbsp;    private boolean expertGame;
+<i class="no-highlight">16</i>&nbsp;    private String nickname;
+<i class="no-highlight">17</i>&nbsp;    private String winner;
+<i class="no-highlight">18</i>&nbsp;    private ArrayList&lt;Integer&gt; availableWizards;
+<i class="no-highlight">19</i>&nbsp;    private ArrayList&lt;Tower&gt; availableTowers;
+<i class="no-highlight">20</i>&nbsp;    private ArrayList&lt;ClientIsland&gt; islands;
+<i class="no-highlight">21</i>&nbsp;    private ArrayList&lt;ClientCloud&gt; clouds;
+<i class="no-highlight">22</i>&nbsp;    private HashMap&lt;String,ClientBoard&gt; clientBoards;
+<i class="no-highlight">23</i>&nbsp;    private ArrayList&lt;ClientPersonality&gt; personalities;
+<i class="no-highlight">24</i>&nbsp;    private ClientPersonality activePersonality;
+<i class="no-highlight">25</i>&nbsp;    private PrintStream outputStream;
+<i class="no-highlight">26</i>&nbsp;    private int coins;
+<i class="no-highlight">27</i>&nbsp;
+<i class="no-highlight">28</i>&nbsp;    /**
+<i class="no-highlight">29</i>&nbsp;     * Constructor GameBoard creates a GameBoard instance by receiving as input a PrintStream object.
+<i class="no-highlight">30</i>&nbsp;     * @param outputStream PrintStream instance to which game elements are printed on CLI interfaces.
+<i class="no-highlight">31</i>&nbsp;     */
+<b class="nc"><i class="no-highlight">32</i>&nbsp;    public GameBoard(PrintStream outputStream){</b>
+<b class="nc"><i class="no-highlight">33</i>&nbsp;        availableWizards = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">34</i>&nbsp;        availableTowers = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">35</i>&nbsp;        islands = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">36</i>&nbsp;        clouds = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">37</i>&nbsp;        clientBoards = new HashMap&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">38</i>&nbsp;        personalities = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">39</i>&nbsp;        availableWizards.add(1);</b>
+<b class="nc"><i class="no-highlight">40</i>&nbsp;        availableWizards.add(2);</b>
+<b class="nc"><i class="no-highlight">41</i>&nbsp;        availableWizards.add(3);</b>
+<b class="nc"><i class="no-highlight">42</i>&nbsp;        availableWizards.add(4);</b>
+<b class="nc"><i class="no-highlight">43</i>&nbsp;        this.outputStream = outputStream;</b>
+<i class="no-highlight">44</i>&nbsp;    }
+<i class="no-highlight">45</i>&nbsp;
+<i class="no-highlight">46</i>&nbsp;    /**
+<i class="no-highlight">47</i>&nbsp;     * Constructor GameBoard creates a GameBoard instance.
+<i class="no-highlight">48</i>&nbsp;     */
+<b class="fc"><i class="no-highlight">49</i>&nbsp;    public GameBoard(){</b>
+<b class="fc"><i class="no-highlight">50</i>&nbsp;        availableWizards = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i class="no-highlight">51</i>&nbsp;        availableTowers = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i class="no-highlight">52</i>&nbsp;        islands = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i class="no-highlight">53</i>&nbsp;        clouds = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i class="no-highlight">54</i>&nbsp;        clientBoards = new HashMap&lt;&gt;();</b>
+<b class="fc"><i class="no-highlight">55</i>&nbsp;        personalities = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i class="no-highlight">56</i>&nbsp;        availableWizards.add(0);</b>
+<b class="fc"><i class="no-highlight">57</i>&nbsp;        availableWizards.add(1);</b>
+<b class="fc"><i class="no-highlight">58</i>&nbsp;        availableWizards.add(2);</b>
+<b class="fc"><i class="no-highlight">59</i>&nbsp;        availableWizards.add(3);</b>
+<i class="no-highlight">60</i>&nbsp;    }
+<i class="no-highlight">61</i>&nbsp;
+<i class="no-highlight">62</i>&nbsp;    /**
+<i class="no-highlight">63</i>&nbsp;     * Method instantiateGameElements adds newly instantiated game elements to GameBoard in order to show them on GUI and CLI.
+<i class="no-highlight">64</i>&nbsp;     * @param newIslands ClientIsland instances representing Island tiles.
+<i class="no-highlight">65</i>&nbsp;     * @param boards ClientBoard instances representing School boards.
+<i class="no-highlight">66</i>&nbsp;     * @param personalities ClientPersonality instances representing Personality cards.
+<i class="no-highlight">67</i>&nbsp;     */
+<i class="no-highlight">68</i>&nbsp;    public void instantiateGameElements(ArrayList&lt;ClientIsland&gt; newIslands,
+<i class="no-highlight">69</i>&nbsp;                                        HashMap&lt;String,ClientBoard&gt; boards,
+<i class="no-highlight">70</i>&nbsp;                                        ArrayList&lt;ClientPersonality&gt; personalities){
+<b class="fc"><i class="no-highlight">71</i>&nbsp;        islands.addAll(newIslands);</b>
+<b class="fc"><i class="no-highlight">72</i>&nbsp;        for (String player: boards.keySet()){</b>
+<b class="fc"><i class="no-highlight">73</i>&nbsp;            boards.get(player).setGB(this);</b>
+<b class="fc"><i class="no-highlight">74</i>&nbsp;            boards.get(player).setWizardID(-1);</b>
+<b class="fc"><i class="no-highlight">75</i>&nbsp;            clientBoards.put(player, boards.get(player));</b>
+<b class="fc"><i class="no-highlight">76</i>&nbsp;        }</b>
+<i class="no-highlight">77</i>&nbsp;
+<b class="fc"><i class="no-highlight">78</i>&nbsp;        for(int i = 0; i &lt; numberOfPlayers; i++){</b>
+<b class="fc"><i class="no-highlight">79</i>&nbsp;            clouds.add(new ClientCloud(i));</b>
+<i class="no-highlight">80</i>&nbsp;        }
+<b class="fc"><i class="no-highlight">81</i>&nbsp;        if(expertGame){</b>
+<b class="fc"><i class="no-highlight">82</i>&nbsp;            this.personalities = new ArrayList&lt;&gt;(personalities);</b>
+<b class="fc"><i class="no-highlight">83</i>&nbsp;            coins=20-numberOfPlayers;</b>
+<i class="no-highlight">84</i>&nbsp;        }
+<i class="no-highlight">85</i>&nbsp;    }
+<i class="no-highlight">86</i>&nbsp;
+<i class="no-highlight">87</i>&nbsp;    /**
+<i class="no-highlight">88</i>&nbsp;     * Method print shows the entirety of game elements on CLI interfaces.
+<i class="no-highlight">89</i>&nbsp;     */
+<i class="no-highlight">90</i>&nbsp;    public void print(){
+<b class="nc"><i class="no-highlight">91</i>&nbsp;        if(outputStream!=null){</b>
+<b class="nc"><i class="no-highlight">92</i>&nbsp;            System.out.print(&quot;\033[H\033[2J&quot;);</b>
+<b class="nc"><i class="no-highlight">93</i>&nbsp;            System.out.flush();</b>
+<b class="nc"><i class="no-highlight">94</i>&nbsp;            printClientBoards();</b>
+<b class="nc"><i class="no-highlight">95</i>&nbsp;            printClouds();</b>
+<b class="nc"><i class="no-highlight">96</i>&nbsp;            printIslands();</b>
+<b class="nc"><i class="no-highlight">97</i>&nbsp;            if (isExpertGame()){</b>
+<b class="nc"><i class="no-highlight">98</i>&nbsp;                outputStream.println(&quot;BANK&#39;S COINS: &quot; + coins);</b>
+<b class="nc"><i class="no-highlight">99</i>&nbsp;                printPersonalityCards();</b>
+<i class="no-highlight">100</i>&nbsp;            }
+<i class="no-highlight">101</i>&nbsp;        }
+<i class="no-highlight">102</i>&nbsp;    }
+<i class="no-highlight">103</i>&nbsp;
+<i class="no-highlight">104</i>&nbsp;    /**
+<i class="no-highlight">105</i>&nbsp;     * Method printClientBoards prints the school boards&#39; content on CLI interfaces.
+<i class="no-highlight">106</i>&nbsp;     */
+<i class="no-highlight">107</i>&nbsp;    private void printClientBoards(){
+<b class="nc"><i class="no-highlight">108</i>&nbsp;        outputStream.println(&quot;*****************************************PLAYERS&#39; BOARDS*****************************************************&quot;);</b>
+<b class="nc"><i class="no-highlight">109</i>&nbsp;        for(ClientBoard clientBoard : clientBoards.values()){</b>
+<b class="nc"><i class="no-highlight">110</i>&nbsp;            clientBoard.print();</b>
+<b class="nc"><i class="no-highlight">111</i>&nbsp;        }</b>
+<b class="nc"><i class="no-highlight">112</i>&nbsp;        outputStream.println();</b>
+<i class="no-highlight">113</i>&nbsp;    }
+<i class="no-highlight">114</i>&nbsp;
+<i class="no-highlight">115</i>&nbsp;    /**
+<i class="no-highlight">116</i>&nbsp;     * Method printIslands prints islands&#39; content on CLI interfaces.
+<i class="no-highlight">117</i>&nbsp;     */
+<i class="no-highlight">118</i>&nbsp;    private void printIslands() {
+<b class="nc"><i class="no-highlight">119</i>&nbsp;        outputStream.println(&quot;*****************************************ISLANDS*****************************************&quot;);</b>
+<b class="nc"><i class="no-highlight">120</i>&nbsp;        for (ClientIsland island : islands) {</b>
+<b class="nc"><i class="no-highlight">121</i>&nbsp;            island.print();</b>
+<b class="nc"><i class="no-highlight">122</i>&nbsp;        }</b>
+<b class="nc"><i class="no-highlight">123</i>&nbsp;        outputStream.println(&quot;\n&quot;);</b>
+<i class="no-highlight">124</i>&nbsp;    }
+<i class="no-highlight">125</i>&nbsp;
+<i class="no-highlight">126</i>&nbsp;    /**
+<i class="no-highlight">127</i>&nbsp;     * Method printClouds prints clouds&#39; content on CLI interfaces.
+<i class="no-highlight">128</i>&nbsp;     */
+<i class="no-highlight">129</i>&nbsp;    private void printClouds(){
+<b class="nc"><i class="no-highlight">130</i>&nbsp;        outputStream.println(&quot;*****************************************CLOUDS*****************************************&quot;);</b>
+<b class="nc"><i class="no-highlight">131</i>&nbsp;        for (ClientCloud cloud : clouds){</b>
+<b class="nc"><i class="no-highlight">132</i>&nbsp;            cloud.print();</b>
+<b class="nc"><i class="no-highlight">133</i>&nbsp;        }</b>
+<b class="nc"><i class="no-highlight">134</i>&nbsp;        outputStream.println();</b>
+<i class="no-highlight">135</i>&nbsp;    }
+<i class="no-highlight">136</i>&nbsp;
+<i class="no-highlight">137</i>&nbsp;    /**
+<i class="no-highlight">138</i>&nbsp;     * Method printPersonalityCards prints personalities&#39; content on CLI interfaces.
+<i class="no-highlight">139</i>&nbsp;     */
+<i class="no-highlight">140</i>&nbsp;   private void printPersonalityCards(){
+<b class="nc"><i class="no-highlight">141</i>&nbsp;        outputStream.println(&quot;AVAILABLE PERSONALITY CARDS:&quot;);</b>
+<b class="nc"><i class="no-highlight">142</i>&nbsp;        for(ClientPersonality personality : personalities){</b>
+<b class="nc"><i class="no-highlight">143</i>&nbsp;            personality.print();</b>
+<b class="nc"><i class="no-highlight">144</i>&nbsp;        }</b>
+<b class="nc"><i class="no-highlight">145</i>&nbsp;       outputStream.println();</b>
+<b class="nc"><i class="no-highlight">146</i>&nbsp;        if(activePersonality!=null)</b>
+<b class="nc"><i class="no-highlight">147</i>&nbsp;            outputStream.println(&quot;ACTIVE PERSONALITY CARD:&quot;+activePersonality.getCardID());</b>
+<i class="no-highlight">148</i>&nbsp;    }
+<i class="no-highlight">149</i>&nbsp;
+<i class="no-highlight">150</i>&nbsp;    /**
+<i class="no-highlight">151</i>&nbsp;     * Method setTurnCard sets the content of current turn assistant cards in order to show them on interfaces.
+<i class="no-highlight">152</i>&nbsp;     * @param playersCards player-card associations.
+<i class="no-highlight">153</i>&nbsp;     */
+<i class="no-highlight">154</i>&nbsp;    public void setTurnCard(HashMap&lt;String,Integer&gt; playersCards){
+<b class="fc"><i class="no-highlight">155</i>&nbsp;        if (playersCards.isEmpty())</b>
+<b class="nc"><i class="no-highlight">156</i>&nbsp;            for (String player: clientBoards.keySet())</b>
+<b class="nc"><i class="no-highlight">157</i>&nbsp;                clientBoards.get(player).setCurrentCard(0);</b>
+<i class="no-highlight">158</i>&nbsp;        else
+<b class="fc"><i class="no-highlight">159</i>&nbsp;            for (Map.Entry&lt;String,Integer&gt; playerToCard: playersCards.entrySet()){</b>
+<b class="fc"><i class="no-highlight">160</i>&nbsp;                clientBoards.get(playerToCard.getKey()).setCurrentCard(playerToCard.getValue());</b>
+<b class="fc"><i class="no-highlight">161</i>&nbsp;                if (clientBoards.get(playerToCard.getKey()).getDeck().containsKey(playerToCard.getValue()))</b>
+<b class="fc"><i class="no-highlight">162</i>&nbsp;                    clientBoards.get(playerToCard.getKey()).getDeck().remove(playerToCard.getValue());</b>
+<b class="fc"><i class="no-highlight">163</i>&nbsp;                }</b>
+<i class="no-highlight">164</i>&nbsp;    }
+<i class="no-highlight">165</i>&nbsp;
+<i class="no-highlight">166</i>&nbsp;    /**
+<i class="no-highlight">167</i>&nbsp;     * Method setTurnCard sets selected players&#39; assistant deck content.
+<i class="no-highlight">168</i>&nbsp;     * @param cards priority-number of moves association of player&#39;s cards.
+<i class="no-highlight">169</i>&nbsp;     */
+<i class="no-highlight">170</i>&nbsp;    public void setPlayerDeck(String player, HashMap&lt;Integer, Integer&gt; cards){
+<b class="nc"><i class="no-highlight">171</i>&nbsp;        clientBoards.get(player).setDeck(cards);</b>
+<i class="no-highlight">172</i>&nbsp;    }
+<i class="no-highlight">173</i>&nbsp;
+<i class="no-highlight">174</i>&nbsp;    /**
+<i class="no-highlight">175</i>&nbsp;     * Method setIslandStudents sets students tiles for the selected island
+<i class="no-highlight">176</i>&nbsp;     * @param islandIndex island&#39;s identification number.
+<i class="no-highlight">177</i>&nbsp;     * @param students island&#39;s new student tiles.
+<i class="no-highlight">178</i>&nbsp;     */
+<i class="no-highlight">179</i>&nbsp;    public void setIslandStudents(int islandIndex, ArrayList&lt;Color&gt; students){
+<b class="fc"><i class="no-highlight">180</i>&nbsp;        getIslandByIndex(islandIndex).setStudents(students);</b>
+<i class="no-highlight">181</i>&nbsp;    }
+<i class="no-highlight">182</i>&nbsp;
+<i class="no-highlight">183</i>&nbsp;    /**
+<i class="no-highlight">184</i>&nbsp;     * Method setIslandTowers sets the selected island&#39;s towers.
+<i class="no-highlight">185</i>&nbsp;     * @param islandIndex island&#39;s identification number.
+<i class="no-highlight">186</i>&nbsp;     * @param towers island&#39;s new towers count.
+<i class="no-highlight">187</i>&nbsp;     */
+<i class="no-highlight">188</i>&nbsp;    public void setIslandTowers(int islandIndex, ArrayList&lt;Tower&gt; towers){
+<b class="fc"><i class="no-highlight">189</i>&nbsp;        getIslandByIndex(islandIndex).setTowers(towers);</b>
+<i class="no-highlight">190</i>&nbsp;    }
+<i class="no-highlight">191</i>&nbsp;
+<i class="no-highlight">192</i>&nbsp;    /**
+<i class="no-highlight">193</i>&nbsp;     * Method emptyCloud clears a cloud&#39;s students content.
+<i class="no-highlight">194</i>&nbsp;     * @param cloudIndex cloud&#39;s identification number.
+<i class="no-highlight">195</i>&nbsp;     */
+<i class="no-highlight">196</i>&nbsp;    public void emptyCloud(int cloudIndex){
+<b class="fc"><i class="no-highlight">197</i>&nbsp;        getCloudByIndex(cloudIndex).getStudents().clear();</b>
+<i class="no-highlight">198</i>&nbsp;
+<i class="no-highlight">199</i>&nbsp;    }
+<i class="no-highlight">200</i>&nbsp;
+<i class="no-highlight">201</i>&nbsp;    /**
+<i class="no-highlight">202</i>&nbsp;     * Method changeMNPosition changes the island&#39;s Mother Nature flag, denoting its presence.
+<i class="no-highlight">203</i>&nbsp;     * @param islandIndex island&#39;s identification number.
+<i class="no-highlight">204</i>&nbsp;     */
+<i class="no-highlight">205</i>&nbsp;    public void changeMNPosition(int islandIndex){
+<b class="fc"><i class="no-highlight">206</i>&nbsp;        islands.stream().filter(ClientIsland::isMotherNature).findFirst().ifPresent(oldMNIsland -&gt; oldMNIsland.setMotherNature(false));</b>
+<b class="fc"><i class="no-highlight">207</i>&nbsp;        getIslandByIndex(islandIndex).setMotherNature(true);</b>
+<i class="no-highlight">208</i>&nbsp;    }
+<i class="no-highlight">209</i>&nbsp;
+<i class="no-highlight">210</i>&nbsp;    /**
+<i class="no-highlight">211</i>&nbsp;     * Method setUpdatedClientBoard updates a player&#39;s board content.
+<i class="no-highlight">212</i>&nbsp;     * @param player name of the player whose board is being updated.
+<i class="no-highlight">213</i>&nbsp;     * @param clientBoard board instance carrying the updated information.
+<i class="no-highlight">214</i>&nbsp;     */
+<i class="no-highlight">215</i>&nbsp;    public void setUpdatedClientBoard(String player, ClientBoard clientBoard){
+<b class="fc"><i class="no-highlight">216</i>&nbsp;        ClientBoard board = clientBoards.get(player);</b>
+<b class="fc"><i class="no-highlight">217</i>&nbsp;        board.setStudentsTable(clientBoard.getStudentsTable());</b>
+<b class="fc"><i class="no-highlight">218</i>&nbsp;        board.setLobby(clientBoard.getLobby());</b>
+<b class="fc"><i class="no-highlight">219</i>&nbsp;        board.setTeacherTable(clientBoard.getTeacherTable());</b>
+<b class="fc"><i class="no-highlight">220</i>&nbsp;        board.setTowers(clientBoard.getTowers());</b>
+<b class="fc"><i class="no-highlight">221</i>&nbsp;        board.setTeam(clientBoard.getTeam());</b>
+<b class="fc"><i class="no-highlight">222</i>&nbsp;        board.setWizardID(clientBoard.getWizardID());</b>
+<i class="no-highlight">223</i>&nbsp;    }
+<i class="no-highlight">224</i>&nbsp;
+<i class="no-highlight">225</i>&nbsp;    /**
+<i class="no-highlight">226</i>&nbsp;     * Method updateCoins updates a player&#39;s coins count and the bank&#39;s coins count.
+<i class="no-highlight">227</i>&nbsp;     * @param coins updated player&#39;s coins count.
+<i class="no-highlight">228</i>&nbsp;     * @param player player whose coins count is being updated.
+<i class="no-highlight">229</i>&nbsp;     * @param reserveCoins updated bank&#39;s coins count.
+<i class="no-highlight">230</i>&nbsp;     */
+<i class="no-highlight">231</i>&nbsp;    public void updateCoins(int coins, String player, int reserveCoins){
+<b class="fc"><i class="no-highlight">232</i>&nbsp;        clientBoards.get(player).setCoins(coins);</b>
+<b class="fc"><i class="no-highlight">233</i>&nbsp;        this.coins = reserveCoins;</b>
+<i class="no-highlight">234</i>&nbsp;    }
+<i class="no-highlight">235</i>&nbsp;
+<i class="no-highlight">236</i>&nbsp;    /**
+<i class="no-highlight">237</i>&nbsp;     * Method setIslandBans sets the selected island&#39;s bans count.
+<i class="no-highlight">238</i>&nbsp;     * @param islandId island&#39;s identification number.
+<i class="no-highlight">239</i>&nbsp;     * @param bansCount island&#39; bans count.
+<i class="no-highlight">240</i>&nbsp;     */
+<i class="no-highlight">241</i>&nbsp;    public void setIslandBans(int islandId, int bansCount){
+<b class="fc"><i class="no-highlight">242</i>&nbsp;        getIslandByIndex(islandId).setBans(bansCount);</b>
+<i class="no-highlight">243</i>&nbsp;    }
+<i class="no-highlight">244</i>&nbsp;
+<i class="no-highlight">245</i>&nbsp;    /**
+<i class="no-highlight">246</i>&nbsp;     * Method getIslandByIndex returns the island whose identification number is equal to the input parameter.
+<i class="no-highlight">247</i>&nbsp;     * @param index island&#39;s identification number.
+<i class="no-highlight">248</i>&nbsp;     * @return ClientIsland instance whose identification number is equal to the input parameter, null if not found.
+<i class="no-highlight">249</i>&nbsp;     */
+<i class="no-highlight">250</i>&nbsp;    public ClientIsland getIslandByIndex(int index){
+<b class="fc"><i class="no-highlight">251</i>&nbsp;        for (ClientIsland island : islands){</b>
+<b class="fc"><i class="no-highlight">252</i>&nbsp;            if (island.getIslandIndex()==index)</b>
+<b class="fc"><i class="no-highlight">253</i>&nbsp;                return island;</b>
+<b class="fc"><i class="no-highlight">254</i>&nbsp;        }</b>
+<b class="nc"><i class="no-highlight">255</i>&nbsp;        return null;</b>
+<i class="no-highlight">256</i>&nbsp;    }
+<i class="no-highlight">257</i>&nbsp;
+<i class="no-highlight">258</i>&nbsp;    /**
+<i class="no-highlight">259</i>&nbsp;     * Method getCloudByIndex returns the island whose identification number is equal to the input parameter.
+<i class="no-highlight">260</i>&nbsp;     * @param index cloud&#39;s identification number.
+<i class="no-highlight">261</i>&nbsp;     * @return ClientCloud instance whose identification number is equal to the input parameter, null if not found.
+<i class="no-highlight">262</i>&nbsp;     */
+<i class="no-highlight">263</i>&nbsp;    public ClientCloud getCloudByIndex(int index){
+<b class="fc"><i class="no-highlight">264</i>&nbsp;        for (ClientCloud cloud: clouds){</b>
+<b class="fc"><i class="no-highlight">265</i>&nbsp;            if (cloud.getCloudIndex()==index)</b>
+<b class="fc"><i class="no-highlight">266</i>&nbsp;                return cloud;</b>
+<b class="nc"><i class="no-highlight">267</i>&nbsp;        }</b>
+<b class="nc"><i class="no-highlight">268</i>&nbsp;        return null;</b>
+<i class="no-highlight">269</i>&nbsp;    }
+<i class="no-highlight">270</i>&nbsp;
+<i class="no-highlight">271</i>&nbsp;    /**
+<i class="no-highlight">272</i>&nbsp;     * Method getPlayersNicknames returns the list of players&#39; names.
+<i class="no-highlight">273</i>&nbsp;     * @return list containg the names of the players taking part in the game.
+<i class="no-highlight">274</i>&nbsp;     */
+<i class="no-highlight">275</i>&nbsp;    public List&lt;String&gt; getPlayersNicknames() {
+<b class="fc"><i class="no-highlight">276</i>&nbsp;        List&lt;String&gt; players = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i class="no-highlight">277</i>&nbsp;        players.addAll(clientBoards.keySet());</b>
+<b class="fc"><i class="no-highlight">278</i>&nbsp;        return players;</b>
+<i class="no-highlight">279</i>&nbsp;    }
+<i class="no-highlight">280</i>&nbsp;
+<i class="no-highlight">281</i>&nbsp;    /**
+<i class="no-highlight">282</i>&nbsp;     * Method getPersonalityById returns the Personality whose identification number is equal to the input parameter.
+<i class="no-highlight">283</i>&nbsp;     * @param cardId Personality&#39;s identification number.
+<i class="no-highlight">284</i>&nbsp;     * @return ClientPersonality instance whose identification number is equal to the input parameter, null if not found.
+<i class="no-highlight">285</i>&nbsp;     */
+<i class="no-highlight">286</i>&nbsp;    public ClientPersonality getPersonalityById(int cardId){
+<b class="fc"><i class="no-highlight">287</i>&nbsp;        for (ClientPersonality personality: personalities)</b>
+<b class="fc"><i class="no-highlight">288</i>&nbsp;            if (personality.getCardID()==cardId)</b>
+<b class="fc"><i class="no-highlight">289</i>&nbsp;                return personality;</b>
+<b class="nc"><i class="no-highlight">290</i>&nbsp;        return null;</b>
+<i class="no-highlight">291</i>&nbsp;    }
+<i class="no-highlight">292</i>&nbsp;
+<i class="no-highlight">293</i>&nbsp;    /**
+<i class="no-highlight">294</i>&nbsp;     * Method isPersonalityCardBeenPlayed checks whether a Personality Card has been actived during current turn.
+<i class="no-highlight">295</i>&nbsp;     * @return true if a card has been actived, false otherwise.
+<i class="no-highlight">296</i>&nbsp;     */
+<i class="no-highlight">297</i>&nbsp;    public boolean isPersonalityCardBeenPlayed(){
+<b class="nc"><i class="no-highlight">298</i>&nbsp;        return activePersonality != null;</b>
+<i class="no-highlight">299</i>&nbsp;    }
+<i class="no-highlight">300</i>&nbsp;
+<i class="no-highlight">301</i>&nbsp;    /**
+<i class="no-highlight">302</i>&nbsp;     * Method setActivePersonality sets the Personality card with identification number activatedPersonality to active.
+<i class="no-highlight">303</i>&nbsp;     * It also updates its cost in order to make it visible to all players.
+<i class="no-highlight">304</i>&nbsp;     * @param activatedPersonality newly activated card identification number.
+<i class="no-highlight">305</i>&nbsp;     */
+<i class="no-highlight">306</i>&nbsp;    public void setActivePersonality(int activatedPersonality) {
+<b class="fc"><i class="no-highlight">307</i>&nbsp;        Optional&lt;ClientPersonality&gt; activeCard = personalities.stream()</b>
+<b class="fc"><i class="no-highlight">308</i>&nbsp;                                                .filter(clientPersonality -&gt; clientPersonality.getCardID() == activatedPersonality)</b>
+<b class="fc"><i class="no-highlight">309</i>&nbsp;                                                .findFirst();</b>
+<b class="fc"><i class="no-highlight">310</i>&nbsp;        if(activeCard.isPresent()){</b>
+<b class="fc"><i class="no-highlight">311</i>&nbsp;            activePersonality = activeCard.get();</b>
+<b class="fc"><i class="no-highlight">312</i>&nbsp;            activePersonality.updateCost();</b>
+<b class="fc"><i class="no-highlight">313</i>&nbsp;            activePersonality.setActive(true);</b>
+<i class="no-highlight">314</i>&nbsp;        }
+<i class="no-highlight">315</i>&nbsp;
+<i class="no-highlight">316</i>&nbsp;    }
+<i class="no-highlight">317</i>&nbsp;
+<i class="no-highlight">318</i>&nbsp;    /**
+<i class="no-highlight">319</i>&nbsp;     * Method visualizeLastRoundMessage shows a message communicating players that current round is the final one.
+<i class="no-highlight">320</i>&nbsp;     * @param message LastRoundMessage content.
+<i class="no-highlight">321</i>&nbsp;     */
+<i class="no-highlight">322</i>&nbsp;    public void visualizeLastRoundMessage(String message){
+<b class="nc"><i class="no-highlight">323</i>&nbsp;        if (outputStream!=null)</b>
+<b class="nc"><i class="no-highlight">324</i>&nbsp;            outputStream.println(message);</b>
+<i class="no-highlight">325</i>&nbsp;    }
+<i class="no-highlight">326</i>&nbsp;
+<i class="no-highlight">327</i>&nbsp;    /**
+<i class="no-highlight">328</i>&nbsp;     * Method resetActivePersonality updates personalities status in order to let playrs know that a card is no longer active.
+<i class="no-highlight">329</i>&nbsp;     * @param inactivePersonality newly deactivated card identification number.
+<i class="no-highlight">330</i>&nbsp;     */
+<i class="no-highlight">331</i>&nbsp;    public void resetActivePersonality(int inactivePersonality){
+<b class="fc"><i class="no-highlight">332</i>&nbsp;        activePersonality.setActive(false);</b>
+<b class="fc"><i class="no-highlight">333</i>&nbsp;        this.activePersonality = null;</b>
+<i class="no-highlight">334</i>&nbsp;    }
+<i class="no-highlight">335</i>&nbsp;
+<i class="no-highlight">336</i>&nbsp;    /**
+<i class="no-highlight">337</i>&nbsp;     * Method updatePersonality updates a Personality card features, such as student tiles and bans.
+<i class="no-highlight">338</i>&nbsp;     * @param cardId updated Personality&#39;s identification number.
+<i class="no-highlight">339</i>&nbsp;     * @param students updated Personality&#39;s students tiles.
+<i class="no-highlight">340</i>&nbsp;     * @param bans updated Personality&#39;s bans count.
+<i class="no-highlight">341</i>&nbsp;     */
+<i class="no-highlight">342</i>&nbsp;    public void updatePersonality(int cardId, ArrayList&lt;Color&gt; students, int bans){
+<b class="fc"><i class="no-highlight">343</i>&nbsp;        for (ClientPersonality card: personalities)</b>
+<b class="fc"><i class="no-highlight">344</i>&nbsp;            if (cardId==card.getCardID()){</b>
+<b class="fc"><i class="no-highlight">345</i>&nbsp;                if (students!=null)</b>
+<b class="fc"><i class="no-highlight">346</i>&nbsp;                    card.setStudents(students);</b>
+<b class="nc"><i class="no-highlight">347</i>&nbsp;                else if (bans!=-1)</b>
+<b class="nc"><i class="no-highlight">348</i>&nbsp;                    card.setBans(bans);</b>
+<i class="no-highlight">349</i>&nbsp;            }
+<i class="no-highlight">350</i>&nbsp;    }
+<i class="no-highlight">351</i>&nbsp;
+<i class="no-highlight">352</i>&nbsp;    /**
+<i class="no-highlight">353</i>&nbsp;     * Method getMotherNatureDistance computes the distance as number of steps from current Mother Nature&#39;s island and
+<i class="no-highlight">354</i>&nbsp;     * the island with identification number islandId.
+<i class="no-highlight">355</i>&nbsp;     * @param islandId island&#39;s identification number.
+<i class="no-highlight">356</i>&nbsp;     * @return number of steps from current Mother Nature&#39;s island and islandId island.
+<i class="no-highlight">357</i>&nbsp;     */
+<i class="no-highlight">358</i>&nbsp;    public int getMotherNatureDistance(int islandId){
+<b class="fc"><i class="no-highlight">359</i>&nbsp;        int destinationIndex = islands.indexOf(getIslandByIndex(islandId));</b>
+<i class="no-highlight">360</i>&nbsp;        int fromIndex;
+<b class="fc"><i class="no-highlight">361</i>&nbsp;        for (ClientIsland island: islands)</b>
+<b class="fc"><i class="no-highlight">362</i>&nbsp;            if (island.isMotherNature()){</b>
+<b class="fc"><i class="no-highlight">363</i>&nbsp;                fromIndex =islands.indexOf(island);</b>
+<b class="fc"><i class="no-highlight">364</i>&nbsp;                if (fromIndex&lt;destinationIndex)</b>
+<b class="fc"><i class="no-highlight">365</i>&nbsp;                    return destinationIndex-fromIndex;</b>
+<b class="fc"><i class="no-highlight">366</i>&nbsp;                else if (fromIndex&gt;destinationIndex)</b>
+<b class="fc"><i class="no-highlight">367</i>&nbsp;                    return (islands.size()-(fromIndex-destinationIndex));</b>
+<i class="no-highlight">368</i>&nbsp;            }
+<b class="nc"><i class="no-highlight">369</i>&nbsp;        return -1;</b>
+<i class="no-highlight">370</i>&nbsp;    }
+<i class="no-highlight">371</i>&nbsp;
+<i class="no-highlight">372</i>&nbsp;    /**
+<i class="no-highlight">373</i>&nbsp;     * Method getTurnCards returns the association between players and their current round&#39;s Assistant card.
+<i class="no-highlight">374</i>&nbsp;     * @return HashMap with player-card associations.
+<i class="no-highlight">375</i>&nbsp;     */
+<i class="no-highlight">376</i>&nbsp;    public HashMap&lt;String, Integer&gt; getTurnCards(){
+<b class="fc"><i class="no-highlight">377</i>&nbsp;        HashMap&lt;String,Integer&gt; playerToCards =new HashMap&lt;&gt;();</b>
+<b class="fc"><i class="no-highlight">378</i>&nbsp;        for (Map.Entry&lt;String,ClientBoard&gt; playerToBoard: clientBoards.entrySet())</b>
+<b class="fc"><i class="no-highlight">379</i>&nbsp;            playerToCards.put(playerToBoard.getKey(), playerToBoard.getValue().getCurrentCard());</b>
+<b class="fc"><i class="no-highlight">380</i>&nbsp;        return playerToCards;</b>
+<i class="no-highlight">381</i>&nbsp;    }
+<i class="no-highlight">382</i>&nbsp;
+<i class="no-highlight">383</i>&nbsp;    public ClientPersonality getActivePersonality() {
+<b class="fc"><i class="no-highlight">384</i>&nbsp;        return activePersonality;</b>
+<i class="no-highlight">385</i>&nbsp;    }
+<i class="no-highlight">386</i>&nbsp;
+<i class="no-highlight">387</i>&nbsp;    public void setNumberOfPlayers(int numberOfPlayers) {
+<b class="fc"><i class="no-highlight">388</i>&nbsp;        this.numberOfPlayers = numberOfPlayers;</b>
+<i class="no-highlight">389</i>&nbsp;    }
+<i class="no-highlight">390</i>&nbsp;
+<i class="no-highlight">391</i>&nbsp;    public void setExpertGame(boolean expertGame) {
+<b class="fc"><i class="no-highlight">392</i>&nbsp;        this.expertGame = expertGame;</b>
+<i class="no-highlight">393</i>&nbsp;    }
+<i class="no-highlight">394</i>&nbsp;
+<i class="no-highlight">395</i>&nbsp;    public void setAvailableWizards(ArrayList&lt;Integer&gt; availableWizards) {
+<b class="fc"><i class="no-highlight">396</i>&nbsp;        this.availableWizards = availableWizards;</b>
+<i class="no-highlight">397</i>&nbsp;    }
+<i class="no-highlight">398</i>&nbsp;
+<i class="no-highlight">399</i>&nbsp;    public void setAvailableTowers(ArrayList&lt;Tower&gt; availableTowers) {
+<b class="fc"><i class="no-highlight">400</i>&nbsp;        this.availableTowers = availableTowers;</b>
+<i class="no-highlight">401</i>&nbsp;    }
+<i class="no-highlight">402</i>&nbsp;
+<i class="no-highlight">403</i>&nbsp;    public void setIslands(ArrayList&lt;ClientIsland&gt; islands) {
+<b class="fc"><i class="no-highlight">404</i>&nbsp;        this.islands = islands;</b>
+<i class="no-highlight">405</i>&nbsp;    }
+<i class="no-highlight">406</i>&nbsp;
+<i class="no-highlight">407</i>&nbsp;    public void setClouds(ArrayList&lt;ClientCloud&gt; clouds) {
+<b class="fc"><i class="no-highlight">408</i>&nbsp;        this.clouds = clouds;</b>
+<i class="no-highlight">409</i>&nbsp;    }
+<i class="no-highlight">410</i>&nbsp;
+<i class="no-highlight">411</i>&nbsp;    public void setCoins(int coins) {
+<b class="fc"><i class="no-highlight">412</i>&nbsp;        this.coins = coins;</b>
+<i class="no-highlight">413</i>&nbsp;    }
+<i class="no-highlight">414</i>&nbsp;
+<i class="no-highlight">415</i>&nbsp;    public String getWinner() {
+<b class="nc"><i class="no-highlight">416</i>&nbsp;        return winner;</b>
+<i class="no-highlight">417</i>&nbsp;    }
+<i class="no-highlight">418</i>&nbsp;
+<i class="no-highlight">419</i>&nbsp;    public int getNumberOfPlayers() {
+<b class="fc"><i class="no-highlight">420</i>&nbsp;        return numberOfPlayers;</b>
+<i class="no-highlight">421</i>&nbsp;    }
+<i class="no-highlight">422</i>&nbsp;
+<i class="no-highlight">423</i>&nbsp;    public boolean isExpertGame() {
+<b class="fc"><i class="no-highlight">424</i>&nbsp;        return expertGame;</b>
+<i class="no-highlight">425</i>&nbsp;    }
+<i class="no-highlight">426</i>&nbsp;
+<i class="no-highlight">427</i>&nbsp;    public ArrayList&lt;Integer&gt; getAvailableWizards() {
+<b class="fc"><i class="no-highlight">428</i>&nbsp;        return availableWizards;</b>
+<i class="no-highlight">429</i>&nbsp;    }
+<i class="no-highlight">430</i>&nbsp;
+<i class="no-highlight">431</i>&nbsp;    public ArrayList&lt;Tower&gt; getAvailableTowers() {
+<b class="fc"><i class="no-highlight">432</i>&nbsp;        return availableTowers;</b>
+<i class="no-highlight">433</i>&nbsp;    }
+<i class="no-highlight">434</i>&nbsp;
+<i class="no-highlight">435</i>&nbsp;    public String getNickname() {
+<b class="nc"><i class="no-highlight">436</i>&nbsp;        return nickname;</b>
+<i class="no-highlight">437</i>&nbsp;    }
+<i class="no-highlight">438</i>&nbsp;
+<i class="no-highlight">439</i>&nbsp;    public void setNickname(String nickname) {
+<b class="fc"><i class="no-highlight">440</i>&nbsp;        this.nickname = nickname;</b>
+<i class="no-highlight">441</i>&nbsp;    }
+<i class="no-highlight">442</i>&nbsp;
+<i class="no-highlight">443</i>&nbsp;    public int getCoins() {
+<b class="fc"><i class="no-highlight">444</i>&nbsp;        return coins;</b>
+<i class="no-highlight">445</i>&nbsp;    }
+<i class="no-highlight">446</i>&nbsp;
+<i class="no-highlight">447</i>&nbsp;    public ArrayList&lt;ClientCloud&gt; getClouds() {
+<b class="fc"><i class="no-highlight">448</i>&nbsp;        return clouds;</b>
+<i class="no-highlight">449</i>&nbsp;    }
+<i class="no-highlight">450</i>&nbsp;
+<i class="no-highlight">451</i>&nbsp;    public HashMap&lt;String,ClientBoard&gt; getClientBoards() {
+<b class="fc"><i class="no-highlight">452</i>&nbsp;        return clientBoards;</b>
+<i class="no-highlight">453</i>&nbsp;    }
+<i class="no-highlight">454</i>&nbsp;
+<b class="fc"><i class="no-highlight">455</i>&nbsp;    public ClientBoard getOwningPlayerClientBoard(){return clientBoards.get(nickname);}</b>
+<i class="no-highlight">456</i>&nbsp;
+<i class="no-highlight">457</i>&nbsp;    public ArrayList&lt;ClientPersonality&gt; getPersonalities() {
+<b class="fc"><i class="no-highlight">458</i>&nbsp;        return personalities;</b>
+<i class="no-highlight">459</i>&nbsp;    }
+<i class="no-highlight">460</i>&nbsp;
+<i class="no-highlight">461</i>&nbsp;    public ArrayList&lt;ClientIsland&gt; getIslands() {
+<b class="fc"><i class="no-highlight">462</i>&nbsp;        return islands;</b>
+<i class="no-highlight">463</i>&nbsp;    }
+<i class="no-highlight">464</i>&nbsp;
+<i class="no-highlight">465</i>&nbsp;    public void setWinner(String winner){
+<b class="nc"><i class="no-highlight">466</i>&nbsp;        this.winner=winner;</b>
+<i class="no-highlight">467</i>&nbsp;    }
+<i class="no-highlight">468</i>&nbsp;}
+<i class="no-highlight">469</i>&nbsp;
+<i class="no-highlight">470</i>&nbsp;
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 15:57</div>
+</div>
+</body>
+</html>

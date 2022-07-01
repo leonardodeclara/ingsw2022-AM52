@@ -1,0 +1,369 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > CLI</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.client.CLI</a>
+</div>
+
+<h1>Coverage Summary for Class: CLI (it.polimi.ingsw.client.CLI)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CLI</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/94)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.client.CLI;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.Constants;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.client.ClientMessageBuilder;
+<i class="no-highlight">5</i>&nbsp;import it.polimi.ingsw.client.ClientSocket;
+<i class="no-highlight">6</i>&nbsp;import it.polimi.ingsw.client.ClientState;
+<i class="no-highlight">7</i>&nbsp;import it.polimi.ingsw.client.GUI.UI;
+<i class="no-highlight">8</i>&nbsp;import it.polimi.ingsw.client.InputParser;
+<i class="no-highlight">9</i>&nbsp;import it.polimi.ingsw.exceptions.EndGameException;
+<i class="no-highlight">10</i>&nbsp;import it.polimi.ingsw.exceptions.QuitException;
+<i class="no-highlight">11</i>&nbsp;import it.polimi.ingsw.messages.*;
+<i class="no-highlight">12</i>&nbsp;import it.polimi.ingsw.messages.ServerMessages.ClientStateMessage;
+<i class="no-highlight">13</i>&nbsp;import it.polimi.ingsw.messages.ServerMessages.DisconnectMessage;
+<i class="no-highlight">14</i>&nbsp;import it.polimi.ingsw.messages.ServerMessages.ErrorMessage;
+<i class="no-highlight">15</i>&nbsp;
+<i class="no-highlight">16</i>&nbsp;import java.io.IOException;
+<i class="no-highlight">17</i>&nbsp;import java.io.PrintStream;
+<i class="no-highlight">18</i>&nbsp;import java.net.SocketException;
+<i class="no-highlight">19</i>&nbsp;import java.net.UnknownHostException;
+<i class="no-highlight">20</i>&nbsp;import java.util.ArrayList;
+<i class="no-highlight">21</i>&nbsp;import java.util.Scanner;
+<i class="no-highlight">22</i>&nbsp;import java.util.concurrent.Executors;
+<i class="no-highlight">23</i>&nbsp;import java.util.concurrent.ScheduledExecutorService;
+<i class="no-highlight">24</i>&nbsp;
+<i class="no-highlight">25</i>&nbsp;
+<i class="no-highlight">26</i>&nbsp;/**
+<i class="no-highlight">27</i>&nbsp; * Class CLI represents the main class for the Client Command Line Interface component.
+<i class="no-highlight">28</i>&nbsp; * It handles messages coming from ClientSocket, parses input text from player and
+<i class="no-highlight">29</i>&nbsp; * prints context and error messages accordingly to the client current state
+<i class="no-highlight">30</i>&nbsp; */
+<i class="no-highlight">31</i>&nbsp;public class CLI implements Runnable,UI{
+<i class="no-highlight">32</i>&nbsp;    private final Scanner inputStream;
+<i class="no-highlight">33</i>&nbsp;    private final PrintStream outputStream;
+<i class="no-highlight">34</i>&nbsp;    private boolean active;
+<i class="no-highlight">35</i>&nbsp;    private ClientMessageBuilder clientMessageBuilder;
+<i class="no-highlight">36</i>&nbsp;    private ClientSocket clientSocket;
+<i class="no-highlight">37</i>&nbsp;    private ClientState currentState;
+<i class="no-highlight">38</i>&nbsp;    private InputParser inputParser;
+<i class="no-highlight">39</i>&nbsp;    private ArrayList&lt;Object&gt; playerInput;
+<i class="no-highlight">40</i>&nbsp;    private final ScheduledExecutorService executorService;
+<i class="no-highlight">41</i>&nbsp;    private GameBoard GB;
+<i class="no-highlight">42</i>&nbsp;
+<i class="no-highlight">43</i>&nbsp;
+<b class="nc"><i class="no-highlight">44</i>&nbsp;    public CLI() {</b>
+<b class="nc"><i class="no-highlight">45</i>&nbsp;        inputStream = new Scanner(System.in);</b>
+<b class="nc"><i class="no-highlight">46</i>&nbsp;        outputStream = new PrintStream(System.out);</b>
+<b class="nc"><i class="no-highlight">47</i>&nbsp;        clientMessageBuilder = new ClientMessageBuilder(this);</b>
+<b class="nc"><i class="no-highlight">48</i>&nbsp;        executorService = Executors.newSingleThreadScheduledExecutor();</b>
+<b class="nc"><i class="no-highlight">49</i>&nbsp;        GB = new GameBoard(outputStream);</b>
+<b class="nc"><i class="no-highlight">50</i>&nbsp;        inputParser = new InputParser();</b>
+<b class="nc"><i class="no-highlight">51</i>&nbsp;        inputStream.useDelimiter(&quot;\n&quot;);</b>
+<i class="no-highlight">52</i>&nbsp;    }
+<i class="no-highlight">53</i>&nbsp;
+<i class="no-highlight">54</i>&nbsp;    /**
+<i class="no-highlight">55</i>&nbsp;     * Method setNextState set the current client state to a new one
+<i class="no-highlight">56</i>&nbsp;     * given as parameter. After that it prints the new context message
+<i class="no-highlight">57</i>&nbsp;     * @param newState is the new state
+<i class="no-highlight">58</i>&nbsp;     */
+<i class="no-highlight">59</i>&nbsp;    public void setNextState(ClientState newState){
+<b class="nc"><i class="no-highlight">60</i>&nbsp;        currentState = newState;</b>
+<b class="nc"><i class="no-highlight">61</i>&nbsp;        visualizeContextMessage();</b>
+<i class="no-highlight">62</i>&nbsp;    }
+<i class="no-highlight">63</i>&nbsp;
+<i class="no-highlight">64</i>&nbsp;
+<i class="no-highlight">65</i>&nbsp;    /**
+<i class="no-highlight">66</i>&nbsp;     * Method run instantiates the client socket and
+<i class="no-highlight">67</i>&nbsp;     * while it&#39;s active parses input text from player
+<i class="no-highlight">68</i>&nbsp;     * If input is valid, a message is built accordingly to client state
+<i class="no-highlight">69</i>&nbsp;     * and passed to client socket to be sent to the server
+<i class="no-highlight">70</i>&nbsp;     */
+<i class="no-highlight">71</i>&nbsp;    public void run(){
+<i class="no-highlight">72</i>&nbsp;        try {
+<b class="nc"><i class="no-highlight">73</i>&nbsp;            instantiateSocket();</b>
+<b class="nc"><i class="no-highlight">74</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i class="no-highlight">75</i>&nbsp;            e.printStackTrace();</b>
+<b class="nc"><i class="no-highlight">76</i>&nbsp;        }</b>
+<i class="no-highlight">77</i>&nbsp;
+<b class="nc"><i class="no-highlight">78</i>&nbsp;        active = true;</b>
+<b class="nc"><i class="no-highlight">79</i>&nbsp;        setNextState(ClientState.CONNECT_STATE);</b>
+<i class="no-highlight">80</i>&nbsp;
+<i class="no-highlight">81</i>&nbsp;        try{
+<b class="nc"><i class="no-highlight">82</i>&nbsp;            while(active) {</b>
+<b class="nc"><i class="no-highlight">83</i>&nbsp;                if (inputStream.hasNext()) {</b>
+<b class="nc"><i class="no-highlight">84</i>&nbsp;                    playerInput = inputParser.parse(inputStream.nextLine(), currentState);</b>
+<b class="nc"><i class="no-highlight">85</i>&nbsp;                    if (playerInput.size() &gt; 0) {</b>
+<b class="nc"><i class="no-highlight">86</i>&nbsp;                        Message messageToSend = clientMessageBuilder.buildMessageFromPlayerInput(playerInput, currentState);</b>
+<i class="no-highlight">87</i>&nbsp;                        try {
+<b class="nc"><i class="no-highlight">88</i>&nbsp;                            clientSocket.send(messageToSend);</b>
+<b class="nc"><i class="no-highlight">89</i>&nbsp;                        } catch (IOException e) {</b>
+<b class="nc"><i class="no-highlight">90</i>&nbsp;                            e.printStackTrace();</b>
+<b class="nc"><i class="no-highlight">91</i>&nbsp;                        }</b>
+<b class="nc"><i class="no-highlight">92</i>&nbsp;                    }</b>
+<i class="no-highlight">93</i>&nbsp;                    else{
+<b class="nc"><i class="no-highlight">94</i>&nbsp;                        visualizeInputErrorMessage();</b>
+<b class="nc"><i class="no-highlight">95</i>&nbsp;                        visualizeContextMessage();</b>
+<i class="no-highlight">96</i>&nbsp;                    }
+<i class="no-highlight">97</i>&nbsp;                }
+<i class="no-highlight">98</i>&nbsp;            }
+<i class="no-highlight">99</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">100</i>&nbsp;        catch (QuitException e){</b>
+<i class="no-highlight">101</i>&nbsp;            try {
+<b class="nc"><i class="no-highlight">102</i>&nbsp;                clientSocket.send(new DisconnectMessage(&quot;Chiudo&quot;));</b>
+<b class="nc"><i class="no-highlight">103</i>&nbsp;            } catch (IOException ex) {</b>
+<b class="nc"><i class="no-highlight">104</i>&nbsp;                ex.printStackTrace();</b>
+<b class="nc"><i class="no-highlight">105</i>&nbsp;            }</b>
+<i class="no-highlight">106</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">107</i>&nbsp;        catch (EndGameException e){</b>
+<b class="nc"><i class="no-highlight">108</i>&nbsp;            System.out.println(&quot;Game is over. Closing...&quot;);</b>
+<b class="nc"><i class="no-highlight">109</i>&nbsp;        }</b>
+<i class="no-highlight">110</i>&nbsp;    }
+<i class="no-highlight">111</i>&nbsp;
+<i class="no-highlight">112</i>&nbsp;    /**
+<i class="no-highlight">113</i>&nbsp;     * Method handleMessageFromServer receives a Message instance from ClientSocket and react accordingly to the message type.
+<i class="no-highlight">114</i>&nbsp;     * @param receivedMessage received from server.
+<i class="no-highlight">115</i>&nbsp;     * If the message is instance of ClientStateMessage, handleMessageFromServer changes the current client state
+<i class="no-highlight">116</i>&nbsp;     * If the message is instance of ErrorMessage, handleMessageFromServer prints the error message accordingly to the current client state
+<i class="no-highlight">117</i>&nbsp;     * If the message is instance of UpdateMessage, handleMessageFromServer updates the GameBoard instance
+<i class="no-highlight">118</i>&nbsp;     */
+<i class="no-highlight">119</i>&nbsp;    public void handleMessageFromServer(Message receivedMessage){
+<b class="nc"><i class="no-highlight">120</i>&nbsp;        if(receivedMessage instanceof ClientStateMessage){</b>
+<b class="nc"><i class="no-highlight">121</i>&nbsp;            if(currentState.equals(ClientState.CONNECT_STATE)){</b>
+<b class="nc"><i class="no-highlight">122</i>&nbsp;                GB.setNickname(inputParser.getNickname());</b>
+<i class="no-highlight">123</i>&nbsp;            }
+<b class="nc"><i class="no-highlight">124</i>&nbsp;            setNextState(((ClientStateMessage) receivedMessage).getNewState());</b>
+<b class="nc"><i class="no-highlight">125</i>&nbsp;        }else if(receivedMessage instanceof ErrorMessage) {</b>
+<b class="nc"><i class="no-highlight">126</i>&nbsp;            visualizeServerErrorMessage();</b>
+<i class="no-highlight">127</i>&nbsp;        }else{
+<b class="nc"><i class="no-highlight">128</i>&nbsp;            updateView(receivedMessage);</b>
+<i class="no-highlight">129</i>&nbsp;        }
+<i class="no-highlight">130</i>&nbsp;
+<i class="no-highlight">131</i>&nbsp;    }
+<i class="no-highlight">132</i>&nbsp;
+<i class="no-highlight">133</i>&nbsp;    /**
+<i class="no-highlight">134</i>&nbsp;     * Method instantiateSocket asks player for IP and port and tries to instantiate a client socket
+<i class="no-highlight">135</i>&nbsp;     * on a new thread with the input parameters. If connection fails an error message is print
+<i class="no-highlight">136</i>&nbsp;     */
+<i class="no-highlight">137</i>&nbsp;    public void instantiateSocket() throws IOException {
+<b class="nc"><i class="no-highlight">138</i>&nbsp;        boolean connectionAccepted = false;</b>
+<b class="nc"><i class="no-highlight">139</i>&nbsp;        while(!connectionAccepted){</b>
+<i class="no-highlight">140</i>&nbsp;            try{
+<b class="nc"><i class="no-highlight">141</i>&nbsp;                String ip = askIP();</b>
+<b class="nc"><i class="no-highlight">142</i>&nbsp;                int port = askPort();</b>
+<b class="nc"><i class="no-highlight">143</i>&nbsp;                clientSocket = new ClientSocket(ip,port,this);</b>
+<b class="nc"><i class="no-highlight">144</i>&nbsp;                Thread socketThread = new Thread(clientSocket);</b>
+<b class="nc"><i class="no-highlight">145</i>&nbsp;                socketThread.start();</b>
+<b class="nc"><i class="no-highlight">146</i>&nbsp;                connectionAccepted = true;</b>
+<b class="nc"><i class="no-highlight">147</i>&nbsp;            }catch(UnknownHostException |SocketException e){</b>
+<b class="nc"><i class="no-highlight">148</i>&nbsp;                visualizeCustomMessage(&quot;Connection could not be established! Choose a different server or try later.&quot;);</b>
+<b class="nc"><i class="no-highlight">149</i>&nbsp;                connectionAccepted = false;</b>
+<b class="nc"><i class="no-highlight">150</i>&nbsp;            }</b>
+<i class="no-highlight">151</i>&nbsp;        }
+<i class="no-highlight">152</i>&nbsp;    }
+<i class="no-highlight">153</i>&nbsp;
+<i class="no-highlight">154</i>&nbsp;    /**
+<i class="no-highlight">155</i>&nbsp;     * Method prepareView initializes GameBoard instance with game parameters
+<i class="no-highlight">156</i>&nbsp;     * @param data contains game parameters
+<i class="no-highlight">157</i>&nbsp;     */
+<i class="no-highlight">158</i>&nbsp;    public void prepareView(ArrayList&lt;Object&gt; data){
+<b class="nc"><i class="no-highlight">159</i>&nbsp;        GB.setNumberOfPlayers((Integer)data.get(0));</b>
+<b class="nc"><i class="no-highlight">160</i>&nbsp;        GB.setExpertGame((Boolean)data.get(1));</b>
+<b class="nc"><i class="no-highlight">161</i>&nbsp;        inputParser.setIsExpert((Boolean)data.get(1));</b>
+<i class="no-highlight">162</i>&nbsp;    }
+<i class="no-highlight">163</i>&nbsp;
+<i class="no-highlight">164</i>&nbsp;    /**
+<i class="no-highlight">165</i>&nbsp;     * Method updateView updates GameBoard using contents of a message passed as parameter
+<i class="no-highlight">166</i>&nbsp;     * @param updateMessage is the message which contains contents needed for the update
+<i class="no-highlight">167</i>&nbsp;     */
+<i class="no-highlight">168</i>&nbsp;    public void updateView(Message updateMessage) {
+<b class="nc"><i class="no-highlight">169</i>&nbsp;        ((UpdateMessage) updateMessage).update(GB);</b>
+<i class="no-highlight">170</i>&nbsp;    }
+<i class="no-highlight">171</i>&nbsp;
+<i class="no-highlight">172</i>&nbsp;    /**
+<i class="no-highlight">173</i>&nbsp;     * Method visualizeContextMessage prints a context message accordingly to the current client state
+<i class="no-highlight">174</i>&nbsp;     */
+<i class="no-highlight">175</i>&nbsp;    private void visualizeContextMessage(){
+<b class="nc"><i class="no-highlight">176</i>&nbsp;        ArrayList&lt;String&gt; texts = currentState.getCLIContextMessage(GB);</b>
+<b class="nc"><i class="no-highlight">177</i>&nbsp;        for(String text : texts)</b>
+<b class="nc"><i class="no-highlight">178</i>&nbsp;            outputStream.println(text);</b>
+<i class="no-highlight">179</i>&nbsp;    }
+<i class="no-highlight">180</i>&nbsp;
+<i class="no-highlight">181</i>&nbsp;    /**
+<i class="no-highlight">182</i>&nbsp;     * Method visualizeServerErrorMessage prints a server error message accordingly to the current client state
+<i class="no-highlight">183</i>&nbsp;     */
+<i class="no-highlight">184</i>&nbsp;    private void visualizeServerErrorMessage(){
+<b class="nc"><i class="no-highlight">185</i>&nbsp;        ArrayList&lt;String&gt; texts = currentState.getServerErrorMessage();</b>
+<b class="nc"><i class="no-highlight">186</i>&nbsp;        for(String text : texts)</b>
+<b class="nc"><i class="no-highlight">187</i>&nbsp;            outputStream.println(text);</b>
+<i class="no-highlight">188</i>&nbsp;    }
+<i class="no-highlight">189</i>&nbsp;
+<i class="no-highlight">190</i>&nbsp;    /**
+<i class="no-highlight">191</i>&nbsp;     * Method visualizeInputErrorMessage prints an input error message accordingly to the current client state
+<i class="no-highlight">192</i>&nbsp;     */
+<i class="no-highlight">193</i>&nbsp;    private void visualizeInputErrorMessage(){
+<b class="nc"><i class="no-highlight">194</i>&nbsp;        ArrayList&lt;String&gt; texts = currentState.getInputErrorMessage();</b>
+<b class="nc"><i class="no-highlight">195</i>&nbsp;        for(String text : texts)</b>
+<b class="nc"><i class="no-highlight">196</i>&nbsp;            outputStream.println(text);</b>
+<i class="no-highlight">197</i>&nbsp;    }
+<i class="no-highlight">198</i>&nbsp;
+<i class="no-highlight">199</i>&nbsp;    /**
+<i class="no-highlight">200</i>&nbsp;     * Method visualizeCustomMessage prints a custom message accordingly to parameter string
+<i class="no-highlight">201</i>&nbsp;     * @param customMessage  is the message to print on the output stream
+<i class="no-highlight">202</i>&nbsp;     */
+<i class="no-highlight">203</i>&nbsp;    public void visualizeCustomMessage(String customMessage){
+<b class="nc"><i class="no-highlight">204</i>&nbsp;        outputStream.println(customMessage);</b>
+<i class="no-highlight">205</i>&nbsp;    }
+<i class="no-highlight">206</i>&nbsp;
+<i class="no-highlight">207</i>&nbsp;
+<i class="no-highlight">208</i>&nbsp;    /**
+<i class="no-highlight">209</i>&nbsp;     * Method askIP asks the player for the server IP
+<i class="no-highlight">210</i>&nbsp;     * @return ip as a string
+<i class="no-highlight">211</i>&nbsp;     */
+<i class="no-highlight">212</i>&nbsp;    public String askIP(){
+<i class="no-highlight">213</i>&nbsp;        String ip;
+<b class="nc"><i class="no-highlight">214</i>&nbsp;        outputStream.println(&quot;Welcome to the magic world of Eriantys!&quot;);</b>
+<b class="nc"><i class="no-highlight">215</i>&nbsp;        outputStream.println(&quot;Enter server ip: &quot;);</b>
+<b class="nc"><i class="no-highlight">216</i>&nbsp;        outputStream.println(&quot;&gt;&quot;);</b>
+<b class="nc"><i class="no-highlight">217</i>&nbsp;        ip = inputStream.nextLine();</b>
+<b class="nc"><i class="no-highlight">218</i>&nbsp;        ip = ip.replaceAll(&quot;\s&quot;,&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">219</i>&nbsp;        return ip;</b>
+<i class="no-highlight">220</i>&nbsp;    }
+<i class="no-highlight">221</i>&nbsp;
+<i class="no-highlight">222</i>&nbsp;    /**
+<i class="no-highlight">223</i>&nbsp;     * Method askPort asks the player for the server port
+<i class="no-highlight">224</i>&nbsp;     * @return port as a string
+<i class="no-highlight">225</i>&nbsp;     */
+<i class="no-highlight">226</i>&nbsp;    public int askPort(){
+<b class="nc"><i class="no-highlight">227</i>&nbsp;        boolean validInput = false;</b>
+<i class="no-highlight">228</i>&nbsp;        String input;
+<b class="nc"><i class="no-highlight">229</i>&nbsp;        int port = 0;</b>
+<b class="nc"><i class="no-highlight">230</i>&nbsp;        while(!validInput){</b>
+<i class="no-highlight">231</i>&nbsp;            try{
+<b class="nc"><i class="no-highlight">232</i>&nbsp;                outputStream.println(&quot;Enter port number: &quot;);</b>
+<b class="nc"><i class="no-highlight">233</i>&nbsp;                outputStream.println(&quot;&gt;&quot;);</b>
+<b class="nc"><i class="no-highlight">234</i>&nbsp;                input = inputStream.nextLine();</b>
+<b class="nc"><i class="no-highlight">235</i>&nbsp;                input = input.replaceAll(&quot;\s&quot;,&quot;&quot;);</b>
+<b class="nc"><i class="no-highlight">236</i>&nbsp;                port = Integer.parseInt(input);</b>
+<b class="nc"><i class="no-highlight">237</i>&nbsp;                validInput = true;</b>
+<b class="nc"><i class="no-highlight">238</i>&nbsp;            }catch(NumberFormatException e){</b>
+<b class="nc"><i class="no-highlight">239</i>&nbsp;                outputStream.println(&quot;Port number should be an integer. Retry&quot;);</b>
+<b class="nc"><i class="no-highlight">240</i>&nbsp;                validInput = false;</b>
+<b class="nc"><i class="no-highlight">241</i>&nbsp;            }</b>
+<i class="no-highlight">242</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">243</i>&nbsp;        return port;</b>
+<i class="no-highlight">244</i>&nbsp;    }
+<i class="no-highlight">245</i>&nbsp;
+<i class="no-highlight">246</i>&nbsp;    /**
+<i class="no-highlight">247</i>&nbsp;     * Method handleClosingServer handles server crash by printing a message
+<i class="no-highlight">248</i>&nbsp;     * and closing the JVM
+<i class="no-highlight">249</i>&nbsp;     */
+<i class="no-highlight">250</i>&nbsp;    @Override
+<i class="no-highlight">251</i>&nbsp;    public void handleClosingServer() {
+<b class="nc"><i class="no-highlight">252</i>&nbsp;        System.out.println(&quot;Server connection timed out. Closing...&quot;);</b>
+<b class="nc"><i class="no-highlight">253</i>&nbsp;        System.exit(0);</b>
+<i class="no-highlight">254</i>&nbsp;    }
+<i class="no-highlight">255</i>&nbsp;
+<i class="no-highlight">256</i>&nbsp;    public static void main(String[] args) {
+<b class="nc"><i class="no-highlight">257</i>&nbsp;        CLI cli = new CLI();</b>
+<i class="no-highlight">258</i>&nbsp;
+<b class="nc"><i class="no-highlight">259</i>&nbsp;        System.out.println(Constants.Logo);</b>
+<b class="nc"><i class="no-highlight">260</i>&nbsp;        cli.run();</b>
+<i class="no-highlight">261</i>&nbsp;
+<i class="no-highlight">262</i>&nbsp;    }
+<i class="no-highlight">263</i>&nbsp;
+<i class="no-highlight">264</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 15:57</div>
+</div>
+</body>
+</html>

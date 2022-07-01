@@ -1,0 +1,542 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > GUIBoard</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">it.polimi.ingsw.client.GUI</a>
+</div>
+
+<h1>Coverage Summary for Class: GUIBoard (it.polimi.ingsw.client.GUI)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GUIBoard</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/164)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">GUIBoard$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">GUIBoard$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/28)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/186)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package it.polimi.ingsw.client.GUI;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import it.polimi.ingsw.client.CLI.ClientBoard;
+<i class="no-highlight">4</i>&nbsp;import it.polimi.ingsw.client.GUI.GUIControllers.GameTableController;
+<i class="no-highlight">5</i>&nbsp;import it.polimi.ingsw.model.Color;
+<i class="no-highlight">6</i>&nbsp;import javafx.event.EventHandler;
+<i class="no-highlight">7</i>&nbsp;import javafx.scene.control.Tooltip;
+<i class="no-highlight">8</i>&nbsp;import javafx.scene.effect.DropShadow;
+<i class="no-highlight">9</i>&nbsp;import javafx.scene.image.ImageView;
+<i class="no-highlight">10</i>&nbsp;import javafx.scene.input.*;
+<i class="no-highlight">11</i>&nbsp;import javafx.util.Duration;
+<i class="no-highlight">12</i>&nbsp;
+<i class="no-highlight">13</i>&nbsp;import java.util.ArrayList;
+<i class="no-highlight">14</i>&nbsp;import java.util.Arrays;
+<i class="no-highlight">15</i>&nbsp;import java.util.HashMap;
+<i class="no-highlight">16</i>&nbsp;
+<i class="no-highlight">17</i>&nbsp;import static it.polimi.ingsw.Constants.*;
+<i class="no-highlight">18</i>&nbsp;
+<i class="no-highlight">19</i>&nbsp;/**
+<i class="no-highlight">20</i>&nbsp; * Class GUIBoard renders the board&#39;s elements on the screen
+<i class="no-highlight">21</i>&nbsp; * For each player, a GUIBoard instance is assigned
+<i class="no-highlight">22</i>&nbsp; */
+<i class="no-highlight">23</i>&nbsp;public class GUIBoard {
+<i class="no-highlight">24</i>&nbsp;    private ClientBoard clientBoard;
+<i class="no-highlight">25</i>&nbsp;    private GUI gui;
+<i class="no-highlight">26</i>&nbsp;    private ActionParser actionParser;
+<i class="no-highlight">27</i>&nbsp;    private GameTableController controller;
+<i class="no-highlight">28</i>&nbsp;    private String playerName;
+<i class="no-highlight">29</i>&nbsp;    private ArrayList&lt;ImageView&gt; teachersImages;
+<i class="no-highlight">30</i>&nbsp;    private ArrayList&lt;ImageView&gt; towersImages;
+<i class="no-highlight">31</i>&nbsp;    private ArrayList&lt;ImageView&gt; tableStudentsImages;
+<i class="no-highlight">32</i>&nbsp;    private ArrayList&lt;ImageView&gt; lobbyStudentsImages;
+<i class="no-highlight">33</i>&nbsp;    private ImageView tableBounds;
+<i class="no-highlight">34</i>&nbsp;    private ImageView coinImage;
+<i class="no-highlight">35</i>&nbsp;    private HashMap&lt;Color,Integer&gt; numOfStudentsOnTable;
+<i class="no-highlight">36</i>&nbsp;    private ArrayList&lt;Color&gt; clientSideLobbyStudents;
+<i class="no-highlight">37</i>&nbsp;
+<b class="nc"><i class="no-highlight">38</i>&nbsp;    public GUIBoard(ClientBoard clientBoard,GUI gui,GameTableController controller,ImageView tableBounds){</b>
+<b class="nc"><i class="no-highlight">39</i>&nbsp;        this.clientBoard = clientBoard;</b>
+<b class="nc"><i class="no-highlight">40</i>&nbsp;        this.gui = gui;</b>
+<b class="nc"><i class="no-highlight">41</i>&nbsp;        this.controller = controller;</b>
+<b class="nc"><i class="no-highlight">42</i>&nbsp;        this.actionParser= controller.getActionParser();</b>
+<b class="nc"><i class="no-highlight">43</i>&nbsp;        this.playerName = clientBoard.getOwner();</b>
+<b class="nc"><i class="no-highlight">44</i>&nbsp;        this.tableBounds = tableBounds;</b>
+<b class="nc"><i class="no-highlight">45</i>&nbsp;        numOfStudentsOnTable = new HashMap&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">46</i>&nbsp;        teachersImages = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">47</i>&nbsp;        towersImages = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">48</i>&nbsp;        tableStudentsImages = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">49</i>&nbsp;        lobbyStudentsImages = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">50</i>&nbsp;        clientSideLobbyStudents = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">51</i>&nbsp;        initializeBoard();</b>
+<b class="nc"><i class="no-highlight">52</i>&nbsp;        setTableEvents();</b>
+<i class="no-highlight">53</i>&nbsp;    }
+<i class="no-highlight">54</i>&nbsp;
+<i class="no-highlight">55</i>&nbsp;    /**
+<i class="no-highlight">56</i>&nbsp;     * Method initializeBoard sets up the hashmap which associates Color-&gt;number of students
+<i class="no-highlight">57</i>&nbsp;     * and the lobby students list
+<i class="no-highlight">58</i>&nbsp;     * These two data structures can be modified freely on client side by drag n drop events,
+<i class="no-highlight">59</i>&nbsp;     * because the copies from server are stored in GameBoard instance
+<i class="no-highlight">60</i>&nbsp;     */
+<i class="no-highlight">61</i>&nbsp;    private void initializeBoard(){
+<b class="nc"><i class="no-highlight">62</i>&nbsp;        ArrayList&lt;Color&gt; tableColors = new ArrayList&lt;&gt;(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));</b>
+<b class="nc"><i class="no-highlight">63</i>&nbsp;        for(Color color : tableColors){</b>
+<b class="nc"><i class="no-highlight">64</i>&nbsp;            numOfStudentsOnTable.put(color,clientBoard.getStudentsTable().get(color));</b>
+<b class="nc"><i class="no-highlight">65</i>&nbsp;        }</b>
+<i class="no-highlight">66</i>&nbsp;
+<b class="nc"><i class="no-highlight">67</i>&nbsp;        clientSideLobbyStudents.addAll(clientBoard.getLobby());</b>
+<i class="no-highlight">68</i>&nbsp;    }
+<i class="no-highlight">69</i>&nbsp;
+<i class="no-highlight">70</i>&nbsp;    /**
+<i class="no-highlight">71</i>&nbsp;     * Method setTableEvents sets up drag n drop events for the table
+<i class="no-highlight">72</i>&nbsp;     */
+<i class="no-highlight">73</i>&nbsp;    private void setTableEvents(){
+<b class="nc"><i class="no-highlight">74</i>&nbsp;        tableBounds.setOnDragOver((DragEvent e) -&gt; {</b>
+<b class="nc"><i class="no-highlight">75</i>&nbsp;            if (e.getGestureSource() != tableBounds &amp;&amp; e.getDragboard().hasString()) {</b>
+<b class="nc"><i class="no-highlight">76</i>&nbsp;                Dragboard db = e.getDragboard();</b>
+<b class="nc"><i class="no-highlight">77</i>&nbsp;                int studentID = Integer.parseInt(db.getString());</b>
+<b class="nc"><i class="no-highlight">78</i>&nbsp;                Color student = clientBoard.getLobby().get(studentID);</b>
+<b class="nc"><i class="no-highlight">79</i>&nbsp;                if(numOfStudentsOnTable.get(student) &lt; 10)</b>
+<b class="nc"><i class="no-highlight">80</i>&nbsp;                    e.acceptTransferModes(TransferMode.MOVE);</b>
+<i class="no-highlight">81</i>&nbsp;            }
+<i class="no-highlight">82</i>&nbsp;
+<b class="nc"><i class="no-highlight">83</i>&nbsp;            e.consume();</b>
+<i class="no-highlight">84</i>&nbsp;        });
+<b class="nc"><i class="no-highlight">85</i>&nbsp;        tableBounds.setOnDragDropped(new EventHandler&lt;DragEvent&gt;() {</b>
+<i class="no-highlight">86</i>&nbsp;            public void handle(DragEvent event) {
+<b class="nc"><i class="no-highlight">87</i>&nbsp;                Dragboard db = event.getDragboard();</b>
+<b class="nc"><i class="no-highlight">88</i>&nbsp;                boolean success = false;</b>
+<b class="nc"><i class="no-highlight">89</i>&nbsp;                if (db.hasString()) {</b>
+<b class="nc"><i class="no-highlight">90</i>&nbsp;                    ClientBoard clientBoard = gui.getOwningPlayerBoard();</b>
+<b class="nc"><i class="no-highlight">91</i>&nbsp;                    int studentID = Integer.parseInt(db.getString());</b>
+<b class="nc"><i class="no-highlight">92</i>&nbsp;                    Color student = clientBoard.getLobby().get(studentID);</b>
+<b class="nc"><i class="no-highlight">93</i>&nbsp;                    addStudentToTable(student);</b>
+<b class="nc"><i class="no-highlight">94</i>&nbsp;                    success = true;</b>
+<b class="nc"><i class="no-highlight">95</i>&nbsp;                    ArrayList&lt;Object&gt; selection = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i class="no-highlight">96</i>&nbsp;                    selection.add(studentID);</b>
+<b class="nc"><i class="no-highlight">97</i>&nbsp;                    selection.add(ISLAND_ID_NOT_RECEIVED);</b>
+<b class="nc"><i class="no-highlight">98</i>&nbsp;                    actionParser.handleSelectionEvent(selection, gui.getCurrentState());</b>
+<i class="no-highlight">99</i>&nbsp;                }
+<b class="nc"><i class="no-highlight">100</i>&nbsp;                event.setDropCompleted(success);</b>
+<i class="no-highlight">101</i>&nbsp;
+<b class="nc"><i class="no-highlight">102</i>&nbsp;                event.consume();</b>
+<i class="no-highlight">103</i>&nbsp;            }
+<i class="no-highlight">104</i>&nbsp;        });
+<i class="no-highlight">105</i>&nbsp;    }
+<i class="no-highlight">106</i>&nbsp;
+<i class="no-highlight">107</i>&nbsp;    /**
+<i class="no-highlight">108</i>&nbsp;     * Method addStudentToTable adds a student to the hashmap numOfStudentsOnTable
+<i class="no-highlight">109</i>&nbsp;     * which stores the number of students for each color client side
+<i class="no-highlight">110</i>&nbsp;     * It also refreshes table rendered items to show the newly added student
+<i class="no-highlight">111</i>&nbsp;     * @param student color of the student to add to the hashmap
+<i class="no-highlight">112</i>&nbsp;     */
+<i class="no-highlight">113</i>&nbsp;    private void addStudentToTable(Color student) {
+<b class="nc"><i class="no-highlight">114</i>&nbsp;        int numOf = numOfStudentsOnTable.get(student);</b>
+<b class="nc"><i class="no-highlight">115</i>&nbsp;        numOfStudentsOnTable.put(student,numOf+1);</b>
+<b class="nc"><i class="no-highlight">116</i>&nbsp;        populateTables();</b>
+<i class="no-highlight">117</i>&nbsp;    }
+<i class="no-highlight">118</i>&nbsp;
+<i class="no-highlight">119</i>&nbsp;
+<i class="no-highlight">120</i>&nbsp;    /**
+<i class="no-highlight">121</i>&nbsp;     * Method populate clear all the rendered items on the board
+<i class="no-highlight">122</i>&nbsp;     * and draws them again
+<i class="no-highlight">123</i>&nbsp;     * It also sets again drag n drop events on the table
+<i class="no-highlight">124</i>&nbsp;     */
+<i class="no-highlight">125</i>&nbsp;    public void populate(){
+<b class="nc"><i class="no-highlight">126</i>&nbsp;        populateTables();</b>
+<b class="nc"><i class="no-highlight">127</i>&nbsp;        populateLobby();</b>
+<b class="nc"><i class="no-highlight">128</i>&nbsp;        populateTowers();</b>
+<b class="nc"><i class="no-highlight">129</i>&nbsp;        populateTeachers();</b>
+<b class="nc"><i class="no-highlight">130</i>&nbsp;        if (gui.getGB().isExpertGame()){</b>
+<b class="nc"><i class="no-highlight">131</i>&nbsp;            populateCoins();</b>
+<i class="no-highlight">132</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">133</i>&nbsp;        setTableEvents();</b>
+<i class="no-highlight">134</i>&nbsp;    }
+<i class="no-highlight">135</i>&nbsp;
+<i class="no-highlight">136</i>&nbsp;    /**
+<i class="no-highlight">137</i>&nbsp;     * Method populateTeachers adds all the teachers images to the board
+<i class="no-highlight">138</i>&nbsp;     * Each image is rendered if and only if the board&#39;s owner has that specific teacher
+<i class="no-highlight">139</i>&nbsp;     */
+<i class="no-highlight">140</i>&nbsp;    private void populateTeachers(){
+<b class="nc"><i class="no-highlight">141</i>&nbsp;        int teacherCounter = 0;</b>
+<b class="nc"><i class="no-highlight">142</i>&nbsp;        ArrayList&lt;Color&gt; tableColors = new ArrayList&lt;&gt;(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));</b>
+<b class="nc"><i class="no-highlight">143</i>&nbsp;        for(Color teacher : tableColors){</b>
+<b class="nc"><i class="no-highlight">144</i>&nbsp;            if(clientBoard.getTeacherTable().contains(teacher)){</b>
+<b class="nc"><i class="no-highlight">145</i>&nbsp;                ImageView teachersImage = new ImageView(&quot;/graphics/&quot;+teacher.toString().toLowerCase()+&quot;_teacher.png&quot;);</b>
+<b class="nc"><i class="no-highlight">146</i>&nbsp;                teachersImage.setFitWidth(TEACHER_BOARD_WIDTH);</b>
+<b class="nc"><i class="no-highlight">147</i>&nbsp;                teachersImage.setFitHeight(TEACHER_BOARD_HEIGHT);</b>
+<b class="nc"><i class="no-highlight">148</i>&nbsp;                teachersImage.setX(TEACHER_BOARD_START_X+teacherCounter*STUDENT_TABLE_HGAP);</b>
+<b class="nc"><i class="no-highlight">149</i>&nbsp;                teachersImage.setY(TEACHER_BOARD_START_Y);</b>
+<b class="nc"><i class="no-highlight">150</i>&nbsp;                teachersImages.add(teachersImage);</b>
+<b class="nc"><i class="no-highlight">151</i>&nbsp;                gui.addElementToScene(teachersImage);</b>
+<i class="no-highlight">152</i>&nbsp;            }
+<b class="nc"><i class="no-highlight">153</i>&nbsp;            teacherCounter++;</b>
+<b class="nc"><i class="no-highlight">154</i>&nbsp;        }</b>
+<i class="no-highlight">155</i>&nbsp;    }
+<i class="no-highlight">156</i>&nbsp;
+<i class="no-highlight">157</i>&nbsp;    /**
+<i class="no-highlight">158</i>&nbsp;     * Method populateLobby adds all the student images to the lobby
+<i class="no-highlight">159</i>&nbsp;     * If a drag n drop event has removed one or more students
+<i class="no-highlight">160</i>&nbsp;     * from the lobby&#39;s students list, they will be
+<i class="no-highlight">161</i>&nbsp;     * rendered even if these are still in lobby, server-side.
+<i class="no-highlight">162</i>&nbsp;     * This is done to preview what the board will look like
+<i class="no-highlight">163</i>&nbsp;     * if the player decides to confirm his action
+<i class="no-highlight">164</i>&nbsp;     */
+<i class="no-highlight">165</i>&nbsp;    private void populateLobby(){
+<b class="nc"><i class="no-highlight">166</i>&nbsp;        clearLobby();</b>
+<b class="nc"><i class="no-highlight">167</i>&nbsp;        int studentRowCounter = 0;</b>
+<b class="nc"><i class="no-highlight">168</i>&nbsp;        int studentColumnCounter = 0;</b>
+<b class="nc"><i class="no-highlight">169</i>&nbsp;        int studentIDCounter = 0;</b>
+<b class="nc"><i class="no-highlight">170</i>&nbsp;        for(Color student : clientSideLobbyStudents){</b>
+<b class="nc"><i class="no-highlight">171</i>&nbsp;            ImageView studentImage = new ImageView(&quot;/graphics/&quot;+student.toString().toLowerCase()+&quot;_student.png&quot;);</b>
+<b class="nc"><i class="no-highlight">172</i>&nbsp;            studentImage.setFitWidth(STUDENT_TABLE_WIDTH);</b>
+<b class="nc"><i class="no-highlight">173</i>&nbsp;            studentImage.setFitHeight(STUDENT_TABLE_HEIGHT);</b>
+<b class="nc"><i class="no-highlight">174</i>&nbsp;            studentImage.setX(STUDENT_BOARD_START_X+studentColumnCounter*STUDENT_TABLE_HGAP);</b>
+<b class="nc"><i class="no-highlight">175</i>&nbsp;            studentImage.setY(STUDENT_LOBBY_START_Y+studentRowCounter*STUDENT_LOBBY_VGAP);</b>
+<b class="nc"><i class="no-highlight">176</i>&nbsp;            int finalStudentIDCounter = studentIDCounter;</b>
+<b class="nc"><i class="no-highlight">177</i>&nbsp;            if(clientBoard.equals(gui.getOwningPlayerBoard())){</b>
+<b class="nc"><i class="no-highlight">178</i>&nbsp;                studentImage.setOnDragDetected((MouseEvent e) -&gt; {</b>
+<b class="nc"><i class="no-highlight">179</i>&nbsp;                    if(actionParser.canDrag(gui.getCurrentState(),Clickable.LOBBY_STUDENT)){</b>
+<b class="nc"><i class="no-highlight">180</i>&nbsp;                        Dragboard db = studentImage.startDragAndDrop(TransferMode.MOVE);</b>
+<b class="nc"><i class="no-highlight">181</i>&nbsp;                        db.setDragView(studentImage.getImage());</b>
+<b class="nc"><i class="no-highlight">182</i>&nbsp;                        ClipboardContent content = new ClipboardContent();</b>
+<b class="nc"><i class="no-highlight">183</i>&nbsp;                        content.putString(Integer.toString(finalStudentIDCounter));</b>
+<b class="nc"><i class="no-highlight">184</i>&nbsp;                        db.setContent(content);</b>
+<b class="nc"><i class="no-highlight">185</i>&nbsp;                        e.consume();</b>
+<i class="no-highlight">186</i>&nbsp;                    }
+<i class="no-highlight">187</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">188</i>&nbsp;                studentImage.setOnDragDone(new EventHandler&lt;DragEvent&gt;() {</b>
+<i class="no-highlight">189</i>&nbsp;                    public void handle(DragEvent event) {
+<b class="nc"><i class="no-highlight">190</i>&nbsp;                        if (event.getTransferMode() == TransferMode.MOVE) {</b>
+<b class="nc"><i class="no-highlight">191</i>&nbsp;                            int removedIndex = clientSideLobbyStudents.indexOf(student);</b>
+<b class="nc"><i class="no-highlight">192</i>&nbsp;                            clientSideLobbyStudents.remove(student);</b>
+<b class="nc"><i class="no-highlight">193</i>&nbsp;                            lobbyStudentsImages.remove(studentImage);</b>
+<b class="nc"><i class="no-highlight">194</i>&nbsp;                            gui.removeElementFromScene(studentImage);</b>
+<i class="no-highlight">195</i>&nbsp;                        }
+<b class="nc"><i class="no-highlight">196</i>&nbsp;                        event.consume();</b>
+<i class="no-highlight">197</i>&nbsp;                    }
+<i class="no-highlight">198</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">199</i>&nbsp;                studentImage.setOnMouseEntered((MouseEvent e) -&gt; {</b>
+<b class="nc"><i class="no-highlight">200</i>&nbsp;                    controller.handleHoverEvent(studentImage, Clickable.LOBBY_STUDENT);</b>
+<i class="no-highlight">201</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">202</i>&nbsp;                studentImage.setOnMouseExited((MouseEvent e) -&gt; {</b>
+<b class="nc"><i class="no-highlight">203</i>&nbsp;                    if (studentImage.getEffect()==null || !(DropShadow.class).equals(studentImage.getEffect().getClass()))</b>
+<b class="nc"><i class="no-highlight">204</i>&nbsp;                        studentImage.setEffect(null);</b>
+<i class="no-highlight">205</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">206</i>&nbsp;                studentImage.setOnMouseClicked((MouseEvent e)-&gt;{</b>
+<b class="nc"><i class="no-highlight">207</i>&nbsp;                    actionParser.handleSelectionEvent(finalStudentIDCounter,Clickable.LOBBY_STUDENT, gui.getCurrentState());</b>
+<b class="nc"><i class="no-highlight">208</i>&nbsp;                    controller.handleSelectionEffect(studentImage,Clickable.LOBBY_STUDENT);</b>
+<i class="no-highlight">209</i>&nbsp;                });
+<i class="no-highlight">210</i>&nbsp;            }
+<i class="no-highlight">211</i>&nbsp;
+<b class="nc"><i class="no-highlight">212</i>&nbsp;            lobbyStudentsImages.add(studentImage);</b>
+<b class="nc"><i class="no-highlight">213</i>&nbsp;            gui.addElementToScene(studentImage);</b>
+<b class="nc"><i class="no-highlight">214</i>&nbsp;            if(studentColumnCounter==4 &amp;&amp; studentRowCounter == 0){</b>
+<b class="nc"><i class="no-highlight">215</i>&nbsp;                studentColumnCounter=0;</b>
+<b class="nc"><i class="no-highlight">216</i>&nbsp;                studentRowCounter++;</b>
+<i class="no-highlight">217</i>&nbsp;            }else{
+<b class="nc"><i class="no-highlight">218</i>&nbsp;                studentColumnCounter++;</b>
+<i class="no-highlight">219</i>&nbsp;            }
+<b class="nc"><i class="no-highlight">220</i>&nbsp;            studentIDCounter++;</b>
+<b class="nc"><i class="no-highlight">221</i>&nbsp;        }</b>
+<i class="no-highlight">222</i>&nbsp;    }
+<i class="no-highlight">223</i>&nbsp;
+<i class="no-highlight">224</i>&nbsp;    /**
+<i class="no-highlight">225</i>&nbsp;     * Method populateTables adds all the student images to the table
+<i class="no-highlight">226</i>&nbsp;     * If a drag n drop event has added one or more students
+<i class="no-highlight">227</i>&nbsp;     * to the table&#39;s students hashmap, they will be
+<i class="no-highlight">228</i>&nbsp;     * rendered even if these are still in lobby, server-side.
+<i class="no-highlight">229</i>&nbsp;     * This is done to preview what the board will look like
+<i class="no-highlight">230</i>&nbsp;     * if the player decides to confirm his action
+<i class="no-highlight">231</i>&nbsp;     */
+<i class="no-highlight">232</i>&nbsp;    private void populateTables(){
+<b class="nc"><i class="no-highlight">233</i>&nbsp;        clearTables();</b>
+<b class="nc"><i class="no-highlight">234</i>&nbsp;        int tableCounter = 0;</b>
+<b class="nc"><i class="no-highlight">235</i>&nbsp;        ArrayList&lt;Color&gt; tableColors = new ArrayList&lt;&gt;(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));</b>
+<b class="nc"><i class="no-highlight">236</i>&nbsp;        for(Color color : tableColors){</b>
+<b class="nc"><i class="no-highlight">237</i>&nbsp;            int numOfStudents = numOfStudentsOnTable.get(color);</b>
+<b class="nc"><i class="no-highlight">238</i>&nbsp;            String studentImagePath = &quot;/graphics/&quot;+color.toString().toLowerCase()+&quot;_student.png&quot;;</b>
+<b class="nc"><i class="no-highlight">239</i>&nbsp;            for(int i = 0; i&lt; numOfStudents;i++){</b>
+<b class="nc"><i class="no-highlight">240</i>&nbsp;                ImageView studentImage = new ImageView(studentImagePath);</b>
+<b class="nc"><i class="no-highlight">241</i>&nbsp;                studentImage.setFitWidth(STUDENT_TABLE_WIDTH);</b>
+<b class="nc"><i class="no-highlight">242</i>&nbsp;                studentImage.setFitHeight(STUDENT_TABLE_HEIGHT);</b>
+<b class="nc"><i class="no-highlight">243</i>&nbsp;                studentImage.setX(STUDENT_BOARD_START_X+tableCounter*STUDENT_TABLE_HGAP);</b>
+<b class="nc"><i class="no-highlight">244</i>&nbsp;                studentImage.setY(STUDENT_TABLE_START_Y+i*STUDENT_TABLE_VGAP);</b>
+<b class="nc"><i class="no-highlight">245</i>&nbsp;                studentImage.setOnMouseClicked((MouseEvent e) -&gt; {</b>
+<b class="nc"><i class="no-highlight">246</i>&nbsp;                    actionParser.handleSelectionEvent(color,Clickable.TABLE_STUDENT,gui.getCurrentState());</b>
+<b class="nc"><i class="no-highlight">247</i>&nbsp;                    controller.handleSelectionEffect(studentImage,Clickable.TABLE_STUDENT);</b>
+<i class="no-highlight">248</i>&nbsp;                });
+<b class="nc"><i class="no-highlight">249</i>&nbsp;                tableStudentsImages.add(studentImage);</b>
+<b class="nc"><i class="no-highlight">250</i>&nbsp;                gui.addElementToScene(studentImage);</b>
+<i class="no-highlight">251</i>&nbsp;            }
+<b class="nc"><i class="no-highlight">252</i>&nbsp;            tableCounter++;</b>
+<b class="nc"><i class="no-highlight">253</i>&nbsp;        }</b>
+<i class="no-highlight">254</i>&nbsp;
+<i class="no-highlight">255</i>&nbsp;    }
+<i class="no-highlight">256</i>&nbsp;
+<i class="no-highlight">257</i>&nbsp;    /**
+<i class="no-highlight">258</i>&nbsp;     * Method populateTowers adds all the towers images to the board
+<i class="no-highlight">259</i>&nbsp;     */
+<i class="no-highlight">260</i>&nbsp;    private void populateTowers(){
+<b class="nc"><i class="no-highlight">261</i>&nbsp;        clearTowers();</b>
+<b class="nc"><i class="no-highlight">262</i>&nbsp;        int towersCounter = clientBoard.getTowers();</b>
+<i class="no-highlight">263</i>&nbsp;        int halfTowersCounter;
+<i class="no-highlight">264</i>&nbsp;        double offsetY,offsetX;
+<b class="nc"><i class="no-highlight">265</i>&nbsp;        if (gui.getNumOfPlayers()==3){</b>
+<b class="nc"><i class="no-highlight">266</i>&nbsp;            offsetX=TOWER_TABLE_HGAP;</b>
+<b class="nc"><i class="no-highlight">267</i>&nbsp;            halfTowersCounter=3;</b>
+<i class="no-highlight">268</i>&nbsp;        }
+<i class="no-highlight">269</i>&nbsp;        else{
+<b class="nc"><i class="no-highlight">270</i>&nbsp;            offsetX=TOWER_TABLE_HGAP*0.75;</b>
+<b class="nc"><i class="no-highlight">271</i>&nbsp;            halfTowersCounter=4;</b>
+<i class="no-highlight">272</i>&nbsp;        }
+<b class="nc"><i class="no-highlight">273</i>&nbsp;        String towerColor = clientBoard.getTeam().toString().toLowerCase();</b>
+<b class="nc"><i class="no-highlight">274</i>&nbsp;        for (int i = 0; i&lt;towersCounter;i++){</b>
+<b class="nc"><i class="no-highlight">275</i>&nbsp;            ImageView towerImage = new ImageView(&quot;graphics/&quot;+towerColor+&quot;_board_tower.png&quot;);</b>
+<b class="nc"><i class="no-highlight">276</i>&nbsp;            towerImage.setFitHeight(TOWER_IMAGE_HEIGHT);</b>
+<b class="nc"><i class="no-highlight">277</i>&nbsp;            towerImage.setFitWidth(TOWER_IMAGE_WIDTH);</b>
+<b class="nc"><i class="no-highlight">278</i>&nbsp;            towerImage.setX(TOWER_IMAGE_START_X +(i%(halfTowersCounter))*offsetX);</b>
+<b class="nc"><i class="no-highlight">279</i>&nbsp;            offsetY= i&gt;=halfTowersCounter? TOWER_TABLE_VGAP: 0;</b>
+<b class="nc"><i class="no-highlight">280</i>&nbsp;            towerImage.setY(TOWER_IMAGE_START_Y + offsetY);</b>
+<b class="nc"><i class="no-highlight">281</i>&nbsp;            towerImage.setPreserveRatio(true);</b>
+<b class="nc"><i class="no-highlight">282</i>&nbsp;            towersImages.add(towerImage);</b>
+<b class="nc"><i class="no-highlight">283</i>&nbsp;            gui.addElementToScene(towerImage);</b>
+<i class="no-highlight">284</i>&nbsp;
+<i class="no-highlight">285</i>&nbsp;        }
+<i class="no-highlight">286</i>&nbsp;
+<i class="no-highlight">287</i>&nbsp;    }
+<i class="no-highlight">288</i>&nbsp;
+<i class="no-highlight">289</i>&nbsp;    /**
+<i class="no-highlight">290</i>&nbsp;     * Method populateCoins adds a coin image to the board
+<i class="no-highlight">291</i>&nbsp;     * It also adds a tooltip which tells to the player how
+<i class="no-highlight">292</i>&nbsp;     * many coins does he have
+<i class="no-highlight">293</i>&nbsp;     */
+<i class="no-highlight">294</i>&nbsp;    private void populateCoins(){
+<b class="nc"><i class="no-highlight">295</i>&nbsp;        int coinCount = clientBoard.getCoins();</b>
+<b class="nc"><i class="no-highlight">296</i>&nbsp;        if (coinCount&gt;0){</b>
+<b class="nc"><i class="no-highlight">297</i>&nbsp;            coinImage = new ImageView(&quot;/graphics/coin.png&quot;);</b>
+<b class="nc"><i class="no-highlight">298</i>&nbsp;            coinImage.setX(COIN_BOARD_START_X);</b>
+<b class="nc"><i class="no-highlight">299</i>&nbsp;            coinImage.setY(COIN_BOARD_START_Y);</b>
+<b class="nc"><i class="no-highlight">300</i>&nbsp;            coinImage.setFitWidth(COIN_IMAGE_WIDTH);</b>
+<b class="nc"><i class="no-highlight">301</i>&nbsp;            coinImage.setFitHeight(COIN_IMAGE_HEIGHT);</b>
+<b class="nc"><i class="no-highlight">302</i>&nbsp;            coinImage.setPreserveRatio(true);</b>
+<b class="nc"><i class="no-highlight">303</i>&nbsp;            Tooltip numOfCoins = new Tooltip((&quot;AVAILABLE COINS: &quot;+coinCount));</b>
+<b class="nc"><i class="no-highlight">304</i>&nbsp;            numOfCoins.setShowDelay(Duration.seconds(0.3));</b>
+<b class="nc"><i class="no-highlight">305</i>&nbsp;            Tooltip.install(coinImage, numOfCoins);</b>
+<b class="nc"><i class="no-highlight">306</i>&nbsp;            gui.addElementToScene(coinImage);</b>
+<b class="nc"><i class="no-highlight">307</i>&nbsp;            coinImage.toFront();</b>
+<i class="no-highlight">308</i>&nbsp;        }
+<i class="no-highlight">309</i>&nbsp;    }
+<i class="no-highlight">310</i>&nbsp;
+<i class="no-highlight">311</i>&nbsp;    /**
+<i class="no-highlight">312</i>&nbsp;     * Method clearLobby removes all the lobby student images
+<i class="no-highlight">313</i>&nbsp;     * from the screen
+<i class="no-highlight">314</i>&nbsp;     */
+<i class="no-highlight">315</i>&nbsp;    private void clearLobby(){
+<b class="nc"><i class="no-highlight">316</i>&nbsp;        for(ImageView student : lobbyStudentsImages)</b>
+<b class="nc"><i class="no-highlight">317</i>&nbsp;            gui.removeElementFromScene(student);</b>
+<b class="nc"><i class="no-highlight">318</i>&nbsp;        lobbyStudentsImages.clear();</b>
+<i class="no-highlight">319</i>&nbsp;
+<i class="no-highlight">320</i>&nbsp;    }
+<i class="no-highlight">321</i>&nbsp;
+<i class="no-highlight">322</i>&nbsp;    /**
+<i class="no-highlight">323</i>&nbsp;     * Method clearTables removes all the table student images
+<i class="no-highlight">324</i>&nbsp;     * from the screen
+<i class="no-highlight">325</i>&nbsp;     */
+<i class="no-highlight">326</i>&nbsp;    private void clearTables(){
+<b class="nc"><i class="no-highlight">327</i>&nbsp;        for(ImageView student : tableStudentsImages){</b>
+<b class="nc"><i class="no-highlight">328</i>&nbsp;            gui.removeElementFromScene(student);</b>
+<b class="nc"><i class="no-highlight">329</i>&nbsp;        }</b>
+<b class="nc"><i class="no-highlight">330</i>&nbsp;        tableStudentsImages.clear();</b>
+<i class="no-highlight">331</i>&nbsp;
+<i class="no-highlight">332</i>&nbsp;    }
+<i class="no-highlight">333</i>&nbsp;
+<i class="no-highlight">334</i>&nbsp;    /**
+<i class="no-highlight">335</i>&nbsp;     * Method clearTeachers removes all the teachers images
+<i class="no-highlight">336</i>&nbsp;     * from the screen
+<i class="no-highlight">337</i>&nbsp;     */
+<i class="no-highlight">338</i>&nbsp;    private void clearTeachers(){
+<b class="nc"><i class="no-highlight">339</i>&nbsp;        for(ImageView teacher : teachersImages)</b>
+<b class="nc"><i class="no-highlight">340</i>&nbsp;            gui.removeElementFromScene(teacher);</b>
+<b class="nc"><i class="no-highlight">341</i>&nbsp;        teachersImages.clear();</b>
+<i class="no-highlight">342</i>&nbsp;
+<i class="no-highlight">343</i>&nbsp;    }
+<i class="no-highlight">344</i>&nbsp;
+<i class="no-highlight">345</i>&nbsp;    /**
+<i class="no-highlight">346</i>&nbsp;     * Method clearTowers removes all the towers images
+<i class="no-highlight">347</i>&nbsp;     * from the screen
+<i class="no-highlight">348</i>&nbsp;     */
+<i class="no-highlight">349</i>&nbsp;    private void clearTowers(){
+<b class="nc"><i class="no-highlight">350</i>&nbsp;        for(ImageView tower : towersImages)</b>
+<b class="nc"><i class="no-highlight">351</i>&nbsp;            gui.removeElementFromScene(tower);</b>
+<b class="nc"><i class="no-highlight">352</i>&nbsp;        towersImages.clear();</b>
+<i class="no-highlight">353</i>&nbsp;
+<i class="no-highlight">354</i>&nbsp;    }
+<i class="no-highlight">355</i>&nbsp;
+<i class="no-highlight">356</i>&nbsp;    public ClientBoard getClientBoard(){
+<b class="nc"><i class="no-highlight">357</i>&nbsp;        return clientBoard;</b>
+<i class="no-highlight">358</i>&nbsp;    }
+<i class="no-highlight">359</i>&nbsp;
+<i class="no-highlight">360</i>&nbsp;    /**
+<i class="no-highlight">361</i>&nbsp;     * Method clearBoard removes all the board images
+<i class="no-highlight">362</i>&nbsp;     * from the screen
+<i class="no-highlight">363</i>&nbsp;     */
+<i class="no-highlight">364</i>&nbsp;    public void clearBoard(boolean reset){
+<b class="nc"><i class="no-highlight">365</i>&nbsp;        clearLobby();</b>
+<b class="nc"><i class="no-highlight">366</i>&nbsp;        clearTables();</b>
+<b class="nc"><i class="no-highlight">367</i>&nbsp;        clearTeachers();</b>
+<b class="nc"><i class="no-highlight">368</i>&nbsp;        clearTowers();</b>
+<b class="nc"><i class="no-highlight">369</i>&nbsp;        gui.removeElementFromScene(coinImage);</b>
+<i class="no-highlight">370</i>&nbsp;
+<b class="nc"><i class="no-highlight">371</i>&nbsp;        if(reset)</b>
+<b class="nc"><i class="no-highlight">372</i>&nbsp;            reset();</b>
+<i class="no-highlight">373</i>&nbsp;
+<i class="no-highlight">374</i>&nbsp;    }
+<i class="no-highlight">375</i>&nbsp;
+<i class="no-highlight">376</i>&nbsp;    public boolean isLobbyModified(){
+<b class="nc"><i class="no-highlight">377</i>&nbsp;        return clientSideLobbyStudents.size() != clientBoard.getLobby().size();</b>
+<i class="no-highlight">378</i>&nbsp;    }
+<i class="no-highlight">379</i>&nbsp;
+<i class="no-highlight">380</i>&nbsp;    /**
+<i class="no-highlight">381</i>&nbsp;     * Method reset clears lobby students list and table hashmap
+<i class="no-highlight">382</i>&nbsp;     * and calls initialization
+<i class="no-highlight">383</i>&nbsp;     * This is called when it&#39;s needed to synchronize board status
+<i class="no-highlight">384</i>&nbsp;     * between GUI client and server after a drag n drop event which modified
+<i class="no-highlight">385</i>&nbsp;     * the board client side
+<i class="no-highlight">386</i>&nbsp;     */
+<i class="no-highlight">387</i>&nbsp;    private void reset(){
+<b class="nc"><i class="no-highlight">388</i>&nbsp;        numOfStudentsOnTable.clear();</b>
+<b class="nc"><i class="no-highlight">389</i>&nbsp;        clientSideLobbyStudents.clear();</b>
+<b class="nc"><i class="no-highlight">390</i>&nbsp;        initializeBoard();</b>
+<i class="no-highlight">391</i>&nbsp;    }
+<i class="no-highlight">392</i>&nbsp;}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-07-01 15:57</div>
+</div>
+</body>
+</html>
