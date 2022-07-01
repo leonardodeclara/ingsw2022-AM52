@@ -5,7 +5,7 @@
 **Marianna Dragonetti** [@mariannadragonetti](https://github.com/mariannadragonetti) <br>marianna.dragonetti@mail.polimi.it
 
 ## Eriantys Board Game
-<img src="https://www.craniocreations.it/wp-content/uploads/2021/06/Eriantys_scatolaFrontombra.png" width=192px height=192px align="right"/>
+<img src="https://www.craniocreations.it/wp-content/uploads/2021/06/Eriantys_scatolaFrontombra.png" width=200px height=200px align="right"/>
 
 Eriantys Board Game is the final test of **"Software Engineering"**, held at Politecnico di Milano (2021/2022).<br>
 Game rules are available [here](https://craniointernational.com/2021/wp-content/uploads/2021/06/Eriantys_rules_small.pdf).<br>
