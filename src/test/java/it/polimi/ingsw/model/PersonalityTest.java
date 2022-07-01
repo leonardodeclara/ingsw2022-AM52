@@ -6,6 +6,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PersonalityTest {
 
+    /**
+     * Test pastUsageTest verifies that correct Personality's update after usage.
+     */
     @Test
     void pastUsageTest(){
         Personality card = new Personality(2);
@@ -16,6 +19,9 @@ class PersonalityTest {
         assertEquals(2,card.getCost());
     }
 
+    /**
+     * Test lobbyPersonalityTest verifies the correct instantiation of students tiles onto Lobby Personalities.
+     */
     @Test
     void lobbyPersonalityTest(){
         LobbyPersonality card = new LobbyPersonality(1);
@@ -32,6 +38,9 @@ class PersonalityTest {
         assertEquals(6, card.getStudents().size());
     }
 
+    /**
+     * Test costChange verifies the correct update of Personality's cost after usage.
+     */
     @Test
     void costChangeTest(){
         Personality card = new Personality(2);
@@ -40,6 +49,9 @@ class PersonalityTest {
         assertTrue(card.isHasBeenUsed());
     }
 
+    /**
+     * Test banPersonalityTest verifies the correct instantiation of ban tiles onto Ban PErsonalities.
+     */
     @Test
     void banPersonalityTest(){
         BanPersonality card = new BanPersonality(5);

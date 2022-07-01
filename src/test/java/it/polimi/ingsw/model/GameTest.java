@@ -19,6 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameTest {
 
+    /**
+     * Method gameSetup is a utility method the presets a game instance in order to avoid repeated instantiations of Game's objects.
+     * @param playersNumber number of players to be added to Game.
+     * @return Game instance used to test game conditions.
+     */
     Game gameSetup(int playersNumber){
         Game game = new Game(playersNumber);
         ArrayList<String> players = new ArrayList<>();
@@ -29,6 +34,7 @@ class GameTest {
         game.instantiateGameElements(players);
         return game;
     }
+
     /**
      * This method aims at verifying the correct insertion of players to the game.
      */
@@ -42,6 +48,21 @@ class GameTest {
         game.addPlayers(players);
         assertEquals(3, game.getPlayers().size());
         assertThrows(Exception.class, ()->game.addPlayers(players));
+    }
+
+    /**
+     * Test nullPlayerNameTest verifies that invalid players are not added to a game's instance.
+     */
+    @Test
+    void nullPlayerNameTest(){
+        Game game = new Game(2);
+        ArrayList<String> players = new ArrayList<>();
+        players.add("frizio");
+        players.add("mari");
+        game.instantiateGameElements(players);
+        game.getPlayerByName("frizio").setTeam(Tower.GREY);
+        game.getPlayerByName("mari").setTeam(Tower.WHITE);
+        assertNull(game.getPlayerByName("leo"));
     }
 
     /**
@@ -229,18 +250,19 @@ class GameTest {
         Assistant a0 = new Assistant(2,4,1);
         Assistant a1 = new Assistant(4,8,2);
 
-        game.playAssistantCard("leo",4); //giochiamo a2
-        game.playAssistantCard("mari",8); //giochiamo a1
-        //ci si assicura che a1,a2 siano stati rimossi dai rispettivi deck
+        game.playAssistantCard("leo",4);
+        game.playAssistantCard("mari",8);
         assertEquals(9,game.getPlayerByName("leo").getDeck().size() );
         assertEquals(9,game.getPlayerByName("mari").getDeck().size() );
         assertEquals(false,game.getPlayerByName("leo").getDeck().contains(a0));
         assertEquals(false,game.getPlayerByName("mari").getDeck().contains(a1));
-        //Ci si assicura che a1,a2 ora siano nelle celle dell'hashmap corrispondenti agli id dei giocatori che le hanno giocate
         assertEquals(a0.getPriority(),game.getCurrentTurnAssistantCards().get("leo").getPriority());
         assertEquals(a1.getPriority(),game.getCurrentTurnAssistantCards().get("mari").getPriority());
     }
 
+    /**
+     * Test lastAssistantCard verifies the correct setting of last round conditions after a player plays his last assistant card.
+     */
     @Test
     void lastAssistantCardTest(){
         Game game = new Game(2);
@@ -288,9 +310,9 @@ class GameTest {
         for(int i = 0;i<7;i++)
             game.getPlayerByName("mari").addToBoardLobby(Color.YELLOW);
 
-        for(int i = 0;i<10;i++) //riempie completamente la table rossa di "leo"
+        for(int i = 0;i<10;i++)
             game.getPlayerByName("leo").addToBoardTable(Color.RED);
-        for(int i = 0;i<10;i++) //riempie completamente la table blu di "mari"
+        for(int i = 0;i<10;i++)
             game.getPlayerByName("mari").addToBoardTable(Color.BLUE);
 
         assertTrue(game.isMoveStudentFromLobbyLegal(game.getPlayerByName("leo"), 7, 3,null));
@@ -415,7 +437,7 @@ class GameTest {
         ArrayList<Integer> destinations= new ArrayList<>();
         ArrayList<Integer> studentsIndexes= new ArrayList<>();
         for (int i = 0;i<3;i++){
-            studentsIndexes.add(i+7); //seleziono i tre studenti extra aggiunti alla lobby
+            studentsIndexes.add(i+7);
             destinations.add(Constants.ISLAND_ID_NOT_RECEIVED);
             game.getPlayerByName("leo").addToBoardLobby(Color.RED);
         }
@@ -567,10 +589,8 @@ class GameTest {
         assertEquals(game.getPlayerByName("frizio"), testedIsland.getOwner());
     }
 
-    //test senza torri e con pareggi
-
     /**
-     * This method verifies the correct calculation of the influence excluding the towers
+     * This method verifies the correct calculation of the influence excluding the towers.
      */
     @Test
     void CalculateInfluenceWithTowersTest(){
@@ -603,8 +623,6 @@ class GameTest {
         game.getIslands().get(0).addStudent(Color.YELLOW);
         assertEquals("mari",game.calculateInfluence(game.getIslands().get(0)).get("Player Name"));
     }
-
-    //test con torri e senza pareggi
 
     /**
      * Method that verifies the correct calculation of influence excluding the draw cases
@@ -726,7 +744,7 @@ class GameTest {
     }
 
     /**
-     * This method
+     * This method verifies the correct setting of last round conditions as a result of basket's emptiness.
      */
     @Test
     void lastRoundTest(){
@@ -742,18 +760,9 @@ class GameTest {
         assertTrue(game.isLastRound());
     }
 
-    @Test
-    void nullPlayerNameTest(){
-        Game game = new Game(2);
-        ArrayList<String> players = new ArrayList<>();
-        players.add("frizio");
-        players.add("mari");
-        game.instantiateGameElements(players);
-        game.getPlayerByName("frizio").setTeam(Tower.GREY);
-        game.getPlayerByName("mari").setTeam(Tower.WHITE);
-        assertNull(game.getPlayerByName("leo"));
-    }
-
+    /**
+     * Test islandOwnerTest verifies the correct setting of an island's owner and the resulting possibility of moving towers onto it.
+     */
     @Test
     void islandOwnerTest(){
         Game game = new Game(2);
@@ -769,6 +778,9 @@ class GameTest {
         assertEquals("leo", game.getTowersOwnerName(game.getIslands().get(0), game.getPlayers()));
     }
 
+    /**
+     * Method getPlayableAssistantCardTest verifies the correct update of a player's Assistant deck after a play assistand card phase.
+     */
     @Test
     void getPlayableAssistantCardTest(){
         Game game = new Game(2);
@@ -785,6 +797,9 @@ class GameTest {
     }
 
 
+    /**
+     * Method mergeTwoIslandsTest verifies the correct merge of two islands as a result of towers' placement onto neighbour islands.
+     */
     @Test
     void mergeTwoIslandsTest(){
         Game game = new Game(2);
@@ -821,9 +836,11 @@ class GameTest {
         assertEquals(oldNumbersOfStudent[0] + leftIsland.getStudentsOfColor(Color.RED).size(),island1.getStudentsOfColor(Color.RED).size());
         assertEquals(oldNumbersOfStudent[1] + leftIsland.getStudentsOfColor(Color.PINK).size(),island1.getStudentsOfColor(Color.PINK).size());
         assertEquals(oldNumbersOfStudent[2] + leftIsland.getStudentsOfColor(Color.BLUE).size(),island1.getStudentsOfColor(Color.BLUE).size()); //expected 3, actual 4
-        //aggiungere caso in cui mergia 3 isole invece di 2
     }
 
+    /**
+     * Test moveAndInfluenceTest verifies the correct execution of a combined action of Mother nature movement and influence computation, as planned during action phase.
+     */
     @Test
     void moveAndInfluenceTest(){
         Game game = new Game(2);
@@ -855,9 +872,6 @@ class GameTest {
         game.calculateInfluence(dest);
         assertEquals("leoviatano", dest.getOwner().getNickname());
         assertEquals(11,game.getIslands().size());
-        //Struttura del test: trovo madre natura, nella isola dopo ci piazzo una torre di leo
-        //poi muovo madre natura di due posizioni  e chiamo calculateInfluence in modo da fare merge
-        //poi faccio spostare a frizio madre natura e controllo che sia finita al posto giusto
     }
 
     /**
@@ -901,6 +915,10 @@ class GameTest {
                 game.getIslands().indexOf(game.getCurrentMotherNatureIsland()));
     }
 
+    /**
+     * Test isCardPlayableTest verifies the correct update of Assistant cards that can be played by each player.
+     * It is also tested the case of player having a single, already played card.
+     */
     @Test
     void isCardPlayableTest(){
         Game game = new Game(3);
@@ -940,16 +958,17 @@ class GameTest {
         deck2.clear();
         deck2.add(deck2FirstElement);
         deck2.add(deck2SecondElement);
-        //a leoviatano rimangono solo carte già giocate da altri, quindi può giocarne una qualunque
         assertEquals(true,game.isCardPlayable(deck2.get(0),deck2));
         assertEquals(true,game.isCardPlayable(deck2.get(1),deck2));
-        //a mari viene lasciata in mano solo una carta e la deve giocare per forza non avendone altre
         Assistant deck0FirstElement = deck0.get(0);
         deck0.clear();
         deck0.add(deck0FirstElement);
         assertEquals(true,game.isCardPlayable(deck0.get(0),deck0));
     }
 
+    /**
+     * Test cloudEmptinessTest verifies the correct refill of cloud students when basket is empty: if a cloud cannot be fully refilled then no students are added to it.
+     */
     @Test
     void cloudEmptinessTest(){
         Game game = new Game(3);
@@ -967,6 +986,9 @@ class GameTest {
         assertEquals(2, game.getClouds().get(2).getStudents().size());
     }
 
+    /**
+     * Test resetAssistantCardTest verifies the correct reset of current turn's assistant cards at the end of a game round.
+     */
     @Test
     void resetAssistantCardTest(){
         Game game = new Game(3);
@@ -986,6 +1008,9 @@ class GameTest {
         assertEquals(0,game.getCurrentTurnAssistantCards().size());
     }
 
+    /**
+     * Test actionPhaseOrderTest verifies the correct setting of action phase order as a result of assistant cards' selection.
+     */
     @Test
     void actionPhaseOrderTest(){
         Game game = new Game(3);
@@ -1006,9 +1031,6 @@ class GameTest {
         order.add(2, "mari");
         assertEquals(order,game.getActionPhasePlayerOrder());
     }
-    /*
-    TODO: aggiungere test che verifichi il corretto merge con una isola a dx
-     */
 
     /**
      * This test helps verifying that a student tile is not choosen more than once in a movement.

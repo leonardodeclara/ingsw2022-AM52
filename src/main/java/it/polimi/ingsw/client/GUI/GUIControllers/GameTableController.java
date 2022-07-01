@@ -28,9 +28,8 @@ import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.Constants.*;
 
-//TODO immagini per i bottoni delle board
 //TODO tasto per chiudere il gioco dopo la disconnessione
-//TODO scelta porta per il server
+
 /**
  * Class GameTableController implements all the logic behind the Game Table FXML Scene
  * It renders almost all the game elements, handles mouse event handling,
@@ -178,7 +177,6 @@ public class GameTableController extends GUIController implements UpdatableContr
      * It also handles various selection effects for both the selected items and the CONFIRM button
      */
     public void send(){
-        System.out.println("CLICK SU CONFIRM");
         sendButton.setEffect(new DropShadow());
 
         if(gui.getCurrentState().equals(ClientState.END_TURN) && actionParser.getParameters().size() == 0)

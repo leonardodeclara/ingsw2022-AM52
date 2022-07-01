@@ -106,6 +106,9 @@ class IslandTest {
         assertTrue(merger.isMotherNature());
     }
 
+    /**
+     * Test islandBanTest verifies the correct application and removal of ban tiles.
+     */
     @Test
     void islandBanTest(){
         Island island= new Island(1);

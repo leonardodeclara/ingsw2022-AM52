@@ -216,7 +216,6 @@ public class UpdateMessageBuilder {
         clientBoard.setTeacherTable(updatedBoard.getTeacherTable());
         clientBoard.setLobby(updatedBoard.getLobby());
         clientBoard.setWizardID(updatedBoard.getWizard());
-        System.out.println("WIZARD ID DEL GIOCATORE "+updatedOwner+" "+updatedBoard.getWizard());
         return new BoardUpdateMessage(updatedOwner, clientBoard);
     }
 
@@ -252,10 +251,7 @@ public class UpdateMessageBuilder {
             String player = (String) coinsChange.get(1);
             int reserveCoins = (int) coinsChange.get(2);
             return new CoinsUpdateMessage(coins, player,reserveCoins);
-        } catch (Exception e) {
-            e.printStackTrace();
-            //TODO: vedere come risolvere
-        }
+        } catch (Exception ignored) {}
         return null;
     }
 

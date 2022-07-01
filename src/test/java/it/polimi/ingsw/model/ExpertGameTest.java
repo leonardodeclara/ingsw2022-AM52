@@ -13,6 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ExpertGameTest {
 
+    /**
+     * Test instantiateGameElementsTest verifies the correct instantiation of ExpertGame's elements such as coins.
+     */
     @Test
     void instantiateGameElementsTest() {
         ExpertGame game = new ExpertGame(3);
@@ -24,6 +27,9 @@ class ExpertGameTest {
         assertEquals(17,game.getCoins());
     }
 
+    /**
+     * Test personalityExtractionTest verifies the correct amount of Personality cards is extracted. It also checks for invalid identification numbers.
+     */
     @Test
     void personalityExtractionTest(){
         ExpertGame game = new ExpertGame(3);
@@ -44,6 +50,9 @@ class ExpertGameTest {
         }
     }
 
+    /**
+     * Test moveStudentsWithCoinsTest verifies that coins are correctly added to players' boards when a color's table has 3x student tiles.
+     */
     @Test
     void moveStudentsWithCoinsTest(){
         ExpertGame game = new ExpertGame(3);
@@ -58,7 +67,7 @@ class ExpertGameTest {
         ArrayList<Integer> studentIndexes = new ArrayList<>();
         ArrayList<Integer> destinationsIds = new ArrayList<>();
 
-        for (int i = 0;i<4;i++) leo.addToBoardLobby(Color.BLUE); //mossa illegale, ma è per testare la table
+        for (int i = 0;i<4;i++) leo.addToBoardLobby(Color.BLUE);
         for (int i = 0; i< 4;i++){
             studentIndexes.add(i+9);
             destinationsIds.add(Constants.ISLAND_ID_NOT_RECEIVED);
@@ -70,6 +79,10 @@ class ExpertGameTest {
     }
 
 
+    /**
+     * Test modifiedTeacherMovementTest verifies the correct application of Personality 2 effect:
+     * the player who has activated the card can now gain a teacher even with equal number of students of that color than current owner.
+     */
     @Test
     void modifiedTeacherMovementTest() {
         ExpertGame game = new ExpertGame(2);
@@ -111,6 +124,9 @@ class ExpertGameTest {
         assertTrue(game.getPlayerByName("mari").getBoard().getTeacherTable().contains(Color.YELLOW));
     }
 
+    /**
+     * Test moveMotherNatureForCard4 verifies the correct application of Personality 4 effect: during this turn Mother Nature can move two islands further than expected.
+     */
     @Test
     void moveMotherNatureForCard4() {
         ExpertGame game = new ExpertGame(2);
@@ -131,6 +147,9 @@ class ExpertGameTest {
         assertEquals(game.getIslands().get(newMNIsland.getIslandIndex()), game.currentMotherNatureIsland);
     }
 
+    /**
+     * Test calculateInfluenceForCard6 verifies the correct application of Personality 6 effect: islands' towers are ignored during influence's computation.
+     */
     @Test
     void calculateInfluenceForCard6() {
         ExpertGame game = new ExpertGame(2);
@@ -169,6 +188,9 @@ class ExpertGameTest {
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
     }
 
+    /**
+     * Test card8EffectTest verifies the correct execution of Personality 8 effect: during this turn the player who has actived the card has 2 bonus points during influence computation.
+     */
     @Test
     void card8EffectTest() {
         ExpertGame game = new ExpertGame(2);
@@ -184,33 +206,35 @@ class ExpertGameTest {
                 mnPosition=i;
         }
         game.setCurrentPlayer("mari");
-        //testo il calcolo dell'influenza su due isole vuote
         HashMap<String,String> result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
-        assertEquals("mari",result.get("Player Name")); //mari 3 (torre + 2 bonus)
+        assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
-        //riempio le isole e ricalcolo l'influenza
         game.getIslands().get(mnPosition).addStudent(Color.RED);
         game.getIslands().get(mnPosition).addStudent(Color.PINK);
         game.getIslands().get(mnPosition).addStudent(Color.YELLOW);
         game.getPlayerByName("leo").addTeacherToBoard(Color.RED);
         game.getPlayerByName("mari").addTeacherToBoard(Color.PINK);
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition)); //mari 4 - leo 1
-        assertEquals("mari",result.get("Player Name"));
-        assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
-        game.getPlayerByName("leo").addTeacherToBoard(Color.YELLOW);
-        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));//mari 4 - leo 2
-        assertEquals("mari",result.get("Player Name"));
-        assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
-        game.getIslands().get(mnPosition).addStudent(Color.YELLOW); //mari 4 - leo 3
         result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
-        game.getIslands().get(mnPosition).addStudent(Color.RED);//mari 4 - leo 4
+        game.getPlayerByName("leo").addTeacherToBoard(Color.YELLOW);
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
+        assertEquals("mari",result.get("Player Name"));
+        assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
+        game.getIslands().get(mnPosition).addStudent(Color.YELLOW);
+        result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
+        assertEquals("mari",result.get("Player Name"));
+        assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
+        game.getIslands().get(mnPosition).addStudent(Color.RED);
         result=game.calculateInfluenceForCard8(game.getIslands().get(mnPosition));
         assertEquals("mari",result.get("Player Name"));
         assertEquals(Constants.DRAW, result.get("Is Draw"));
     }
 
+    /**
+     * Test card8EffectTest verifies the correct execution of Personality 8 effect:
+     * during this turn the player who has activated the card has 2 bonus points during influence computation. Towers are also considered in this test for a more complete scenario.
+     */
     @Test
     void card8EffectWithTowersTest() {
         ExpertGame game = new ExpertGame(2);
@@ -245,6 +269,10 @@ class ExpertGameTest {
         assertEquals(Constants.NO_DRAW,result.get("Is Draw"));
     }
 
+    /**
+     * Test card9EffectTest verifies the correct execution of Personality 9 effect:
+     * during this turn a banned color is not considered during influence computation.
+     */
     @Test
     void card9EffectTest() {
         ExpertGame game = new ExpertGame(2);
@@ -259,7 +287,6 @@ class ExpertGameTest {
             if(game.getIslands().get(i).isMotherNature())
                 mnPosition=i;
         }
-        //testo il calcolo dell'influenza su due isole vuote
         game.setBannedColor(Color.GREEN);
         HashMap<String, String> result=game.calculateInfluenceForCard9(game.getIslands().get(mnPosition));
         assertNull(result.get("Player Name"));
@@ -267,20 +294,19 @@ class ExpertGameTest {
         game.setBannedColor( Color.GREEN);
         result = game.calculateInfluenceForCard9(game.getIslands().get((mnPosition+6)%12));
         assertNull(result.get("Player Name"));
-        assertEquals( Constants.DRAW,result.get("Is Draw"));//pareggio + proprietario era null, rimane null
-        //riempio le isole e ricalcolo l'influenza
+        assertEquals( Constants.DRAW,result.get("Is Draw"));
         game.getIslands().get(mnPosition).addStudent(Color.BLUE);
         game.getIslands().get(mnPosition).addStudent(Color.PINK);
         game.getIslands().get(mnPosition).addStudent(Color.YELLOW);
         game.getPlayerByName("frizio").addTeacherToBoard(Color.BLUE);
         game.getPlayerByName("mari").addTeacherToBoard(Color.PINK);
         game.setBannedColor(Color.BLUE);
-        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition));  //mari 1, frizio 0 ->mari mette una torre (2-0)
+        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition));
         assertEquals("mari",result.get("Player Name"));
         assertEquals( Constants.NO_DRAW, result.get("Is Draw"));
         game.getIslands().get(mnPosition).addStudent(Color.BLUE);
         game.setBannedColor(Color.PINK);
-        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition)); //mari 1, frizio 2 -> mari toglie una torre e la mette frizio (0-3)
+        result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition));
         assertEquals("frizio",result.get("Player Name"));
         assertEquals( Constants.NO_DRAW, result.get("Is Draw"));
         game.getPlayerByName("frizio").addTeacherToBoard(Color.YELLOW);
@@ -288,9 +314,13 @@ class ExpertGameTest {
         result = game.calculateInfluenceForCard9(game.getIslands().get(mnPosition));
         assertEquals("frizio",result.get("Player Name"));
         assertEquals( Constants.NO_DRAW, result.get("Is Draw"));
-        //dovrei testare anche con le torri
     }
 
+    /**
+     * Test card9EffectTest verifies the correct execution of Personality 9 effect:
+     * during this turn a banned color is not considered during influence computation.
+     * Towers are also considered for a more complete and complex scenario.
+     */
     @Test
     void card9EffectWithTowersTest() {
         ExpertGame game = new ExpertGame(2);
@@ -312,7 +342,6 @@ class ExpertGameTest {
         HashMap<String,String> result=game.calculateInfluenceForCard9(game.getIslands().get(mnPosition));
         assertEquals("leo", result.get("Player Name"));
         assertEquals( Constants.NO_DRAW, result.get("Is Draw"));
-        //riempio le isole e ricalcolo l'influenza
         game.getIslands().get(mnPosition).addStudent(Color.BLUE);
         game.getIslands().get(mnPosition).addStudent(Color.PINK);
         game.getIslands().get(mnPosition).addStudent(Color.YELLOW);
@@ -329,6 +358,9 @@ class ExpertGameTest {
     }
 
 
+    /**
+     * Test personalityCardManagementTest verifies the correct activation of a generic Personality card and its removal from personalities ArrayList.
+     */
     @Test
     void personalityCardManagementTest(){
         ExpertGame game = new ExpertGame(3);
@@ -347,6 +379,9 @@ class ExpertGameTest {
         assertEquals(2, game.getPersonalities().size());
     }
 
+    /**
+     * Test invalidPersonalitySelectionTest verifies that no more than one Personality is activated during a player's turn.
+     */
     @Test
     void invalidPersonalitySelectionTest(){
         ExpertGame game = new ExpertGame(3);
@@ -354,20 +389,20 @@ class ExpertGameTest {
         players.add("leo");
         players.add("mari");
         players.add("frizio");
-
         game.instantiateGameElements(players);
-
         game.setCurrentPlayer("leo");
         game.getPlayerByName("leo").setCoins(20);
         for (int i = 0; i<3;i++){
-            game.getPlayerByName("leo").addToBoardTable(Color.BLUE);
-        }
+            game.getPlayerByName("leo").addToBoardTable(Color.BLUE);}
         assertFalse(game.setActivePersonality(0));
         assertTrue(game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
         assertFalse(game.setActivePersonality(game.getPersonalities().get(0).getCharacterId()));
 
     }
 
+    /**
+     * Test personalityResetTest verifies the correct deactivation of a Personality card at the end of a player's turn.
+     */
     @Test
     void personalityResetTest(){
         ExpertGame game = new ExpertGame(3);
@@ -391,6 +426,11 @@ class ExpertGameTest {
         assertNull(game.getActivePersonality());
     }
 
+    /**
+     * Test card1EffectsTest verifies the correct execution of Personality 1 effect: the movement
+     * of a student tile from the active card to the selected island is checked. Invalid inputs are also properly tested.
+     * In case of basket's emptiness the activation of last round mode is also checked.
+     */
     @Test
     void card1EffectsTest(){
         ExpertGame game = new ExpertGame(2);
@@ -407,7 +447,6 @@ class ExpertGameTest {
             game.getPersonalities().add(new LobbyPersonality(1));
             for (int i = 0; i<4;i++)
                 ((LobbyPersonality) game.getPersonalities().get(3)).addStudent(game.getBasket().pickStudent());
-                //se non era già tra le carte pescate allora sarà la quarta dell'arraylist
         }
         assertTrue(game.setActivePersonality(1));
         assertFalse(game.executeCard1Effect(4,1));
@@ -420,13 +459,15 @@ class ExpertGameTest {
         assertEquals(oldIslandStudents+1,game.getIslandById(1).getStudents().size());
         assertEquals(selectedStudent, game.getIslandById(1).getStudents().get(oldIslandStudents));
         assertEquals(oldBasketSize-1,game.getBasket().getSize());
-        //si potrebbe testare il caso in cui il sacchetto sia vuoto,
-        // quindi il numero di studenti effettivi non è quello stabilito a priori
         game.setBasket(new Basket(new int[]{0,0,0,0,0}));
         assertTrue(game.executeCard1Effect(0,1));
         assertTrue(game.isLastRound());
     }
 
+    /**
+     * Test card5EffectTest verifies the correct execution of Personality 5 effect, that is the placement of a ban tile on the chosen island.
+     * The ban's removal is also tested.
+     */
     @Test
     void card5EffectTest(){
         ExpertGame game = new ExpertGame(2);
@@ -447,9 +488,15 @@ class ExpertGameTest {
         assertTrue(game.executeCard5Effect(1));
         assertEquals(1,game.getIslandById(1).getBans());
         assertEquals(3,((BanPersonality)game.getActivePersonality()).getBans());
-        //testare casi limite
+        game.resetIslandBan(game.getIslandById(1));
+        assertEquals(0,game.getIslandById(1).getBans());
+        assertEquals(4,((BanPersonality)game.getActivePersonality()).getBans());
     }
 
+    /**
+     * Test card7EffectTest verifies the correct execution of Personality 7 effect: the correct students' movements from the card to active player's lobby is tested.
+     * Invalid inputs are also checked in order to avoid the erratic students' placements.
+     */
     @Test
     void card7EffectTest(){
         ExpertGame game = new ExpertGame(2);
@@ -464,7 +511,7 @@ class ExpertGameTest {
             selectedPersonalitiesIds.add(personality.getCharacterId());
         if (!selectedPersonalitiesIds.contains(7)) {
             game.getPersonalities().add(new LobbyPersonality(7));
-            for (int i = 0; i<6;i++) //lobbySize di 6
+            for (int i = 0; i<6;i++)
                 ((LobbyPersonality) game.getPersonalities().get(3)).addStudent(game.getBasket().pickStudent());
         }
         assertTrue(game.setActivePersonality(7));
@@ -472,7 +519,6 @@ class ExpertGameTest {
 
         ArrayList<Color> selectedLobbyStudents= new ArrayList<>();
         ArrayList<Color> selectedCardStudents= new ArrayList<>();
-        //mi salvo gli studenti che andrò a spostare per le assert
         for (int i = 0; i<3;i++){
             selectedLobbyStudents.add(i,game.getPlayerByName("leo").getBoard().getLobbyStudent(i));
             selectedCardStudents.add(i,activeCard.getStudent(i));
@@ -481,25 +527,29 @@ class ExpertGameTest {
         ArrayList<Integer> cardIndexes = new ArrayList<>();
         for (int i=0; i<3;i++) cardIndexes.add(i);
         ArrayList<Integer> lobbyIndexes = new ArrayList<>(cardIndexes);
-        lobbyIndexes.set(2,7); //indice di lobby sbagliato
+        lobbyIndexes.set(2,7);
         assertFalse(game.executeCard7Effect(cardIndexes,lobbyIndexes));
         lobbyIndexes.set(2,2);
-        cardIndexes.set(2,6);//indice di card sbagliato
+        cardIndexes.set(2,6);
         assertFalse(game.executeCard7Effect(cardIndexes,lobbyIndexes));
         cardIndexes.set(2,2);
-        cardIndexes.add(3,4); //quattro indici per gli studenti sulla carta
+        cardIndexes.add(3,4);
         assertFalse(game.executeCard7Effect(cardIndexes,lobbyIndexes));
         cardIndexes.remove(3);
         assertTrue(game.executeCard7Effect(cardIndexes,lobbyIndexes));
         int newLobbySize = game.getPlayerByName("leo").getBoard().getLobby().size();
         assertEquals(oldLobbySize,newLobbySize);
         assertEquals(activeCard.getLobbySize(),activeCard.getStudents().size());
-        for (int i=0;i<3;i++){ //tutti gli inserimenti sono in coda, sia in lobby sia sulla carta
+        for (int i=0;i<3;i++){
             assertTrue(game.getPlayerByName("leo").getBoard().getLobby().contains(selectedCardStudents.get(i)));
             assertTrue( activeCard.getStudents().contains(selectedLobbyStudents.get(i)));
         }
     }
 
+    /**
+     * Test card12EffectTest verifies the correct execution of Personality 12 effect:
+     * up to three chosen color's students are removed from each players table. Those who have fewer than three are removed all the remaining.
+     */
     @Test
     void card12EffectTest(){
         ExpertGame game = new ExpertGame(3);
@@ -534,9 +584,12 @@ class ExpertGameTest {
         assertEquals(1, game.getPlayerByName("mari").getBoard().getTableNumberOfStudents(Color.RED));
         assertEquals(0, game.getPlayerByName("frizio").getBoard().getTableNumberOfStudents(Color.RED));
         assertEquals(oldBasketSize+9,game.getBasket().getSize());
-        //testare casi limite
     }
 
+    /**
+     * Test card11EffectTest verifies the correct execution of Personality 11 effect: selected student is moved from Personality to the player's table.
+     * Invalid inputs are correctly refused and Personality students' lobby is refilled as planned.
+     */
     @Test
     void card11EffectTest(){
         ExpertGame game = new ExpertGame(2);
@@ -554,7 +607,6 @@ class ExpertGameTest {
             game.getPersonalities().add(new LobbyPersonality(11));
             for (int i = 0; i<4;i++)
                 ((LobbyPersonality) game.getPersonalities().get(3)).addStudent(game.getBasket().pickStudent());
-                //se non era già tra le carte pescate allora sarà la quarta dell'arraylist
         }
         assertTrue(game.setActivePersonality(11));
 
@@ -567,7 +619,5 @@ class ExpertGameTest {
         assertEquals(oldTableSize+1, game.getPlayerByName("leo").getBoard().getTableNumberOfStudents(selectedStudent));
         assertEquals(4, ((LobbyPersonality) game.getActivePersonality()).getStudents().size());
         assertEquals(oldBasketSize-1,game.getBasket().getSize());
-        //sarebbe da testare anche il caso in cui uno non ha almeno 3 pedine e mette solo quelle che ha
     }
-
 }

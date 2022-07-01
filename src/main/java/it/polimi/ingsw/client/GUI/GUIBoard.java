@@ -187,7 +187,6 @@ public class GUIBoard {
                 });
                 studentImage.setOnDragDone(new EventHandler<DragEvent>() {
                     public void handle(DragEvent event) {
-                        //System.out.println("Drag completato, tolgo lo studente dalla lobby");
                         if (event.getTransferMode() == TransferMode.MOVE) {
                             int removedIndex = clientSideLobbyStudents.indexOf(student);
                             clientSideLobbyStudents.remove(student);
@@ -326,7 +325,6 @@ public class GUIBoard {
      */
     private void clearTables(){
         for(ImageView student : tableStudentsImages){
-            System.out.println("Rimuovo dalla board lo studente "+student.getImage().getUrl());
             gui.removeElementFromScene(student);
         }
         tableStudentsImages.clear();

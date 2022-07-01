@@ -467,10 +467,10 @@ public class ExpertGame extends Game {
     }
 
 
-    //carta 5 ha un effetto ""prolungato": il ban viene inserito nel turno di chi la gioca,
-    //ma resta sull'isola finché qualcuno non ci finisce sopra
-    //se si finisce sull'isola nel turno in cui la si è giocata allora si usa activePlayer
-    //altrimenti bisogna cercare nell'array personalities
+    /**
+     * Method resetIslandBan removes a ban tile from the selected island as a result of MotherNature's placement.
+     * @param island island from which a ban tile is being removed.
+     */
     public void resetIslandBan(Island island){
         island.removeBan();
         if (activePersonality instanceof BanPersonality)

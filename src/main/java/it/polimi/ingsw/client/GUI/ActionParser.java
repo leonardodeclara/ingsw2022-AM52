@@ -112,7 +112,6 @@ public class ActionParser {
             switch (state) {
                 case MOVE_MOTHER_NATURE, PICK_CLOUD, END_TURN -> {
                     if (clickedElement.equals(Clickable.PERSONALITY)){
-                        System.out.println("ACTION PARSER: click sulla carta personaggio,pulisco i parametri ");
                         if ((parameters.size() > 0 && (parameters.get(0) instanceof Boolean)) || parameters.size() == 0) {
                             clearSelectedParameters();
                             parameters.add(0, true);
@@ -128,7 +127,6 @@ public class ActionParser {
                 }
                 case MOVE_FROM_LOBBY ->{
                     if (clickedElement.equals(Clickable.PERSONALITY)){
-                        System.out.println("ACTION PARSER: click sulla carta personaggio,pulisco i parametri ");
                         if ((parameters.size() > 0 && (parameters.get(0) instanceof Boolean)) || parameters.size() == 0) {
                             clearSelectedParameters();
                             parameters.add(0, true);
@@ -149,12 +147,10 @@ public class ActionParser {
                         parameters.add(1,studentLobbyIDs);
                     }
                     if (clickedElement.equals(Clickable.LOBBY_STUDENT)) {
-                        System.out.println("ACTION PARSER: sono in stato carta 7 e ho selezionato uno studente della lobby");
                         ((ArrayList<Integer>) parameters.get(1)).add((Integer) selection);
                     }
                     else
                     {
-                        System.out.println("ACTION PARSER: sono in stato carta 7 e ho selezionato uno studente della carta");
                         ((ArrayList<Integer>) parameters.get(0)).add((Integer) selection);
                     }
                 }
@@ -166,12 +162,10 @@ public class ActionParser {
                         parameters.add(1,lobbyStudentIDs);
                     }
                     if (clickedElement.equals(Clickable.TABLE_STUDENT)) {
-                        System.out.println("ACTION PARSER: sono in stato carta 7 e ho selezionato uno studente della lobby");
                         ((ArrayList<Color>) parameters.get(0)).add((Color) selection);
                     }
                     else
                     {
-                        System.out.println("ACTION PARSER: sono in stato carta 7 e ho selezionato uno studente della carta");
                         ((ArrayList<Integer>) parameters.get(1)).add((Integer) selection);
                     }
                 }
@@ -183,7 +177,7 @@ public class ActionParser {
             }
         }
         else
-            System.out.println("Non puoi cliccare "+clickedElement+" se sei in "+state);
+            System.out.println("Can't click on "+clickedElement+" if in "+state);
 
     }
 

@@ -32,7 +32,7 @@ public class ClientHandler implements Runnable {
      * Constructor ClientHandler creates a new ClientHandler instance.
      * @param socket: Socket instance through which the server is connected to the client.
      * @param server: Server instance holding information about the clients and the server state.
-     * @throws IOException //TODO
+     * @throws IOException
      */
     public ClientHandler(Socket socket, Server server) throws IOException {
         this.socket = socket;
@@ -41,7 +41,6 @@ public class ClientHandler implements Runnable {
         out = new ObjectOutputStream(socket.getOutputStream());
     }
 
-    //TODO Rivedere
     /**
      * It loops continuing to read and handle messages sent by the client: as the loop's break it closes the connection
      * to client and eventually terminates the active match.
@@ -49,28 +48,25 @@ public class ClientHandler implements Runnable {
      */
     public void run() {
         try {
-            // Leggo l'input dal player, lo deserializzo, lo mando a gameHandler, mando la rispost al player
             while (true) {
                 Message receivedMessage = (Message) in.readObject();
                 readMessage(receivedMessage); }
         }
-        catch (QuitException | EOFException | SocketTimeoutException e) //capire perché viene lanciata una EOF exception quando chiudo brutalmente il client
+        catch (QuitException | EOFException | SocketTimeoutException e)
         {
-            System.out.println(ID + " si è disconnesso da solo. Chiudo la connessione e chiudo la partita");
+            System.out.println("Client "+ID + " has disconnected. Closing connection..");
             if (gameHandler != null) gameHandler.removeClientHandler(this);
             closeConnection();
             if (gameHandler != null) gameHandler.closeMatch();
         }
-        catch (SocketException e) //se chiudo da server la connessione viene lanciata una SocketException
+        catch (SocketException e)
         {
-            System.out.println("Qualcuno si è disconnesso chiudo la connessione con il client " + ID);
-            //e.printStackTrace(); //for debugging
+            System.out.println("Closing connection with Client " + ID);
             if (gameHandler != null) gameHandler.closeMatch();
-            //closeConnection();
         }
         catch (ClassNotFoundException | IOException e)
         {
-                e.printStackTrace();
+            System.out.println("Closing thread");
         }
     }
 
@@ -83,18 +79,15 @@ public class ClientHandler implements Runnable {
         if (message instanceof Ping){
             sendMessage(new Ping());
         }
-        else if (message instanceof LoginRequestMessage) //manda al server, fase di connessione
+        else if (message instanceof LoginRequestMessage)
         {
-            System.out.println("ClientHandler: è arrivato un messaggio di loginRequest");
             server.handleMessage(message,this);
         }
-        else if (message instanceof GameParametersMessage) //manda al server, fase di connessione
+        else if (message instanceof GameParametersMessage)
         {
-            System.out.println("ClientHandler: è arrivato un messaggio di gameParameters");
             server.handleMessage(message,this);
         }
         else if (message instanceof DisconnectMessage){
-            System.out.println("ClientHandler: è arrivato un messaggio di Disconnect");
             throw new QuitException();
         }
         else
@@ -108,7 +101,6 @@ public class ClientHandler implements Runnable {
      */
     public synchronized void sendMessage(Message message){
         try{
-            System.out.println("Sono CH " + ID + " e sto mandando un messaggio " + (message.getClass().toString()));
             if(message instanceof ClientStateMessage)
                 if (((ClientStateMessage) message).getNewState().getOptionalID()==0)
                     currentClientState = ((ClientStateMessage) message).getNewState();
@@ -126,7 +118,6 @@ public class ClientHandler implements Runnable {
      * Ultimately it closes the communication's endpoint.
      */
     public void closeConnection() {
-        System.out.println("ClientHandler "+ ID+ ": tolgo i miei riferimenti dal server e poi chiudo la socket");
         server.removeClientConnection(this);
         try {
             socket.close();
@@ -134,7 +125,6 @@ public class ClientHandler implements Runnable {
         catch (IOException e){
             System.err.println(e.getMessage());
         }
-        System.out.println("ClientHandler, closeConnection: chiusa la connessione con " + ID);
     }
 
 

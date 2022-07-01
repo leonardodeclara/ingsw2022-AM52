@@ -312,10 +312,7 @@ public class GameBoard {
             activePersonality.updateCost();
             activePersonality.setActive(true);
         }
-        else
-            new Throwable().printStackTrace();
-        //TODO: rivedere
-        // non dovrebbe mai accadere quindi mettiamo eccezione così nel caso in runtime salta fuori un bug
+
     }
 
     /**

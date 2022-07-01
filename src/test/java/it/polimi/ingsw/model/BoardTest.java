@@ -78,6 +78,10 @@ class BoardTest {
         assertEquals(1, board.getStudentsTable().get(Color.BLUE));
     }
 
+    /**
+     * Test firstSwitchStudentsTest verifies the action of students' switching between table and lobby works as required:
+     * invalid indexes and parameters are rejected and the correct students are changed of positions.
+     */
     @Test
     void firstSwitchStudentsTest() {
         Board board = new Board();
@@ -120,6 +124,10 @@ class BoardTest {
         assertEquals(oldLobbySize,board.getLobby().size());
     }
 
+    /**
+     * Test secondSwitchStudentsTest verifies the action of students' switching between table and lobby works as required:
+     * invalid students are not moved and the whole action is not accepted.
+     */
     @Test
     void secondSwitchStudentsTest(){
         Board board = new Board();
@@ -135,10 +143,10 @@ class BoardTest {
             fromLobby.add(i);
             fromTable.add(Color.GREEN);
         }
-        assertFalse(board.switchStudents(fromTable,fromLobby)); //tolgo 2 green ma ne ho 1
+        assertFalse(board.switchStudents(fromTable,fromLobby));
         fromTable.set(0,Color.BLUE);
         fromTable.set(1,Color.YELLOW);
-        assertFalse(board.switchStudents(fromTable,fromLobby)); //tolgo 1 blue che non ho
+        assertFalse(board.switchStudents(fromTable,fromLobby));
         fromTable.clear();
         fromTable.add(Color.GREEN);
         fromTable.add(Color.YELLOW);
@@ -149,7 +157,7 @@ class BoardTest {
         for (int i = 0; i<2; i++){
             fromLobby.add(i);
         }
-        assertFalse(board.switchStudents(fromTable,fromLobby)); //provo a spostare un blue nella table ma è piena
+        assertFalse(board.switchStudents(fromTable,fromLobby));
         fromLobby.clear();
         fromTable.clear();
         for (int i = 0; i<2;i++){
@@ -157,7 +165,7 @@ class BoardTest {
             fromLobby.add(i+1);
         }
         int oldLobbySize = board.getLobby().size();
-        assertTrue(board.switchStudents(fromTable,fromLobby)); //sposto due blue dalla table e un red e un pink dalla lobby
+        assertTrue(board.switchStudents(fromTable,fromLobby));
         assertEquals(8,board.getTableNumberOfStudents(Color.BLUE));
         assertEquals(1,board.getTableNumberOfStudents(Color.PINK));
         assertEquals(1,board.getTableNumberOfStudents(Color.RED));
@@ -315,7 +323,7 @@ class BoardTest {
     }
 
     /**
-     * This test helps verifying that a student tile is not choosen more than once in a movement.
+     * This test helps to verify that a student tile is not choosen more than once in a movement.
      */
     @Test
     void hasDuplicatesTest(){

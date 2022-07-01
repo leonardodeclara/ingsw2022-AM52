@@ -8,8 +8,6 @@ import it.polimi.ingsw.model.Tower;
 
 import java.util.ArrayList;
 
-//TODO: sistemare tutti i printStackTrace
-
 /**
  * Class InputParser handles players' input from CLI and interprets it accordingly to the Client State.
  * The object created from it are transferred to ClientMessageBuilder in order to build a message to Server.
@@ -139,9 +137,7 @@ public class InputParser {
         try{
             chosenDeckID = Integer.parseInt(input);
             data.add(chosenDeckID);
-        }catch(NumberFormatException e){
-            e.printStackTrace();
-        }
+        }catch(NumberFormatException ignored){}
     }
 
     /**
@@ -172,9 +168,7 @@ public class InputParser {
                     cardID = Integer.parseInt(words[2]);
                     if(cardID >= 1 && cardID <= 10)
                         data.add(cardID);
-                }catch(NumberFormatException e){
-                    e.printStackTrace();
-                }
+                }catch(NumberFormatException ignored){}
             }
         }
     }
@@ -224,9 +218,7 @@ public class InputParser {
                         steps = Integer.parseInt(words[2]);
                         data.add(steps);
                         return;
-                    }catch(NumberFormatException e){
-                        e.printStackTrace();
-                    }
+                    }catch(NumberFormatException ignored){}
                 }
             }
         }
@@ -247,9 +239,7 @@ public class InputParser {
                     cloudIndex=Integer.parseInt(words[2]);
                     data.add(cloudIndex);
                     return;
-                } catch (NumberFormatException e){
-                    e.printStackTrace();
-                }
+                } catch (NumberFormatException ignored){}
         }
 
         if(isExpert)
@@ -284,9 +274,7 @@ public class InputParser {
                     cardID = Integer.parseInt(words[2]);
                     data.add(true);
                     data.add(cardID);
-                }catch(NumberFormatException e){
-                    e.printStackTrace();
-                }
+                }catch(NumberFormatException ignored){}
         }
     }
 
@@ -306,9 +294,7 @@ public class InputParser {
                     data.add(islandId);
                     return;
                 }
-                catch (NumberFormatException e){
-                    e.printStackTrace();
-                }
+                catch (NumberFormatException ignored){}
             }
         }
     }
@@ -326,9 +312,7 @@ public class InputParser {
                     islandId = Integer.parseInt(words[2]);
                     data.add(islandId);
                 }
-                catch (NumberFormatException e){
-                    e.printStackTrace();
-                }
+                catch (NumberFormatException ignored){}
             }
         }
     }
@@ -346,9 +330,7 @@ public class InputParser {
                     islandId = Integer.parseInt(words[1]);
                     data.add(islandId);
                 }
-                catch (NumberFormatException e){
-                    e.printStackTrace();
-                }
+                catch (NumberFormatException ignored){}
             }
         }
     }
@@ -443,9 +425,7 @@ public class InputParser {
                     data.add(studentIndex);
                     return;
                 }
-                catch (NumberFormatException e){
-                    e.printStackTrace();
-                }
+                catch (NumberFormatException ignored){}
             }
         }
     }
@@ -491,7 +471,6 @@ public class InputParser {
      */
     private boolean parseQuitInput(String input){
         if (input.equalsIgnoreCase("quit")){
-            System.out.println("Ha scritto quit!");
             return true;
         }
         return false;
@@ -509,7 +488,6 @@ public class InputParser {
         ArrayList<Integer> decrementedIndexes = new ArrayList<>();
         for (int index: indexes){
             decrementedIndexes.add(index-1);
-            System.out.println("indice aggiornato in modo che lo legga il server: "+ (index-1));
         }
         return decrementedIndexes;
     }

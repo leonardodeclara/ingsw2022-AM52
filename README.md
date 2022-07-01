@@ -14,17 +14,16 @@ The game can be played through a command line interface (CLI) or a graphical use
 
 ### UML
 The UML diagrams linked below represent the first design of our model and the designs produced at the end of the project.
-I seguenti diagrammi delle classi rappresentano rispettivamente il modello iniziale sviluppato durante la fase di progettazione e i diagrammi del prodotto finale nelle parti critiche riscontrate.
 - [Initial UML]()
 - [Final UML]()
 
 ### JavaDocs
-
+The project's Javadocs can be found at the following [link]().
 
 ### Test Coverage report
+JUnit's coverage report is available at the following [link]().
 
-
-### Libreries
+### Libraries
 
 
 ### Features
@@ -59,23 +58,23 @@ Jars can be downloaded from the following link: [Jars]().
 #### CLI
 Eryantis CLI client can be executed by typing the following command:
 ```
-java -jar EriantysClient -cli
+java -jar AM52-Client.jar -cli
 ```
 #### GUI
 Eryantis GUI client can be executed in three ways:
 
-- by double clicking on  ```EriantysClient.jar```
+- by double clicking on  ```AM52-Client.jar```
 - by typing the following command:
 ```
-java -jar EriantysClient.jar
+java -jar AM52-Client.jar
 ```
 - by typing the following command:
 ```
-java -jar EriantysClient.jar -gui
+java -jar AM52-Client.jar -gui
 ```
-### Santorini Server
+### Eriantys Server
 In order to execute the game's server the following command is required:
 ```
-java -jar EriantysServer.jar -port <port_number>
+java -jar AM52-Server.jar 
 ```
-where ``` <port_number> ``` represents the server port. By default its value is 1024.
+Then a port number has to be entered in order to start server's execution.

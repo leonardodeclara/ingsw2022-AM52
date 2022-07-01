@@ -50,7 +50,6 @@ public class ClientSocket implements Runnable{
                     send(new Ping());
                 }
             } catch (InterruptedException | IOException e) {
-                System.out.println("Morto il thread del ping");
                 ui.handleClosingServer();
             }
         });
@@ -102,7 +101,7 @@ public class ClientSocket implements Runnable{
             socket.close();
         }
         catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Socket error..");
         }
     }
 

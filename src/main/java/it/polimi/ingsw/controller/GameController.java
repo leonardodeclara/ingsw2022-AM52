@@ -51,9 +51,7 @@ public class GameController implements PropertyChangeListener {
         availableTowers = new ArrayList<>();
         availableTowers.addAll(Arrays.asList(Tower.values()));
         playerToWizardMap = new HashMap<>();
-
         changeGameRulesForPersonalityCard(0);
-        System.out.println("GameController: mi sono istanziato");
     }
 
     /**
@@ -64,7 +62,6 @@ public class GameController implements PropertyChangeListener {
     public Message handleGameInstantiation(){
         game.instantiateGameElements(players);
         game.setPropertyChangeListeners(this);
-        System.out.println("GC: ho impostato correttamente i primi gameElements e ho settato i PropertyChange");
         return UpdateMessageBuilder.buildGameInstantiationMessage(game);
     }
 
@@ -75,12 +72,10 @@ public class GameController implements PropertyChangeListener {
      * @return a message relative to the next game phase if the selection is legal, an ErrorMessage instance otherwise.
      */
     public Message updateWizardSelection(String player, Integer wizard){
-        System.out.println("Maghi disponibili lato server: "+availableWizards);
         if (availableWizards.contains(wizard)){
             game.giveAssistantDeck(player, wizard);
             playerToWizardMap.put(player, wizard);
             availableWizards.remove(wizard);
-            System.out.println("GameController: ho aggiornato i mazzi disponibili togliendo il deck " + wizard);
             return new AvailableTowerMessage(availableTowers);
         }
         else
@@ -94,11 +89,9 @@ public class GameController implements PropertyChangeListener {
      * @return a message relative to the next game phase if the selection is legal, an ErrorMessage instance otherwise.
      */
     public Message updateTowerSelection(String player, Tower tower){
-        System.out.println("Torri disponibili lato server: "+availableTowers);
         if (availableTowers.contains(tower)){
             game.getPlayerByName(player).setTeam(tower);
             availableTowers.remove(tower);
-            System.out.println("GameController: ho aggiornato le torri disponibili togliendo " + tower.toString());
             return new ClientStateMessage(ClientState.WAIT_TURN);
         }
         else
@@ -394,7 +387,6 @@ public class GameController implements PropertyChangeListener {
      */
     @Override
     public void propertyChange(PropertyChangeEvent event) {
-        System.out.println("GC: è stato invocato il mio propertyChange");
         String eventName = event.getPropertyName();
         Message toSend = null;
         switch (eventName) {
@@ -445,7 +437,6 @@ public class GameController implements PropertyChangeListener {
                 break;
         }
         if (toSend!=null){
-            System.out.println("GC: ho generato un messaggio di update valido: ora lo passo a GH");
             listener.firePropertyChange("UpdateMessage", null, toSend);
         }
     }
