@@ -29,8 +29,8 @@ The project's Javadocs can be found at the following [link]().
 
 ### Model Test Coverage report
 
-| Package |Coverage Criteria |
-|:-----------------------|:------------------|
+| Package |Coverage Criteria | Percentage |
+|:-----------------------|:------------------|:------------------|
 | Model | Class | 13/13 (100%)
 | Model | Methods | 175/187 (93%)
 | Model | Lines | 764/839 (91%)
