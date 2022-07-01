@@ -12,7 +12,7 @@
 }
 
 .contextMessage.label .text {
-    -fx-fill: black;
-    -fx-stroke: white;
+    -fx-fill: white;
+    -fx-stroke: black;
     -fx-stroke-width: 0.5px;
 }
