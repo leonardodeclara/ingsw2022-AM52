@@ -53,7 +53,7 @@ public class GameHandler implements PropertyChangeListener{
      * @param message: instance of the client's message
      * @param clientHandler: ClientHandler instance of the player sending messages.
      */
-    public void handleMessage(Message message,ClientHandler clientHandler){ //visitor pure qua
+    public void handleMessage(Message message,ClientHandler clientHandler){
         if(message instanceof WizardSelectionMessage)
             handleWizardSelectionMessage((WizardSelectionMessage) message, clientHandler);
         else if (message instanceof TowerSelectionMessage)
@@ -264,11 +264,11 @@ public class GameHandler implements PropertyChangeListener{
         String clientName = getNicknameFromClientID(client.getID());
         if(expertGame)
             gameController.resetPersonalityCard();
-        if (playersOrderIterator.hasNext()){ //se il giocatore che ha giocato non è l'ultimo allora avanza di uno l'iterator, altrimenti manda a tutti il messaggio
+        if (playersOrderIterator.hasNext()){
             Message stateChange = new ClientStateMessage(ClientState.WAIT_TURN);
             sendTo(clientName, stateChange);
             String nextPlayer = playersOrderIterator.next();
-            gameController.setCurrentPlayer(nextPlayer); //serve per le carte
+            gameController.setCurrentPlayer(nextPlayer);
             Message moveStudentsFromLobbyMessage = new ClientStateMessage(ClientState.MOVE_FROM_LOBBY);
             sendTo(nextPlayer,moveStudentsFromLobbyMessage);
         }
@@ -492,7 +492,7 @@ public class GameHandler implements PropertyChangeListener{
 
     /**
      * It removes a ClientHandler's instance from the clientHandler's registry.
-     * @param clientHandler: ClientHandler istance that is being removed from the registry.
+     * @param clientHandler: ClientHandler instance that is being removed from the registry.
      */
     public synchronized void removeClientHandler(ClientHandler clientHandler){
         for (Map.Entry<String,ClientHandler> client: nameToHandlerMap.entrySet()){

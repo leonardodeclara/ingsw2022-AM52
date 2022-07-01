@@ -104,7 +104,7 @@ public class GameBoard {
     /**
      * Method printClientBoards prints the school boards' content on CLI interfaces.
      */
-    private void printClientBoards(){ //sarebbe meglio se ogni componente avesse un metodo print e qui venisse chiamato solo quello
+    private void printClientBoards(){
         outputStream.println("*****************************************PLAYERS' BOARDS*****************************************************");
         for(ClientBoard clientBoard : clientBoards.values()){
             clientBoard.print();

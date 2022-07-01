@@ -96,17 +96,17 @@ class BoardTest {
             fromLobby.add(i);
             fromTable.add(Color.GREEN);
         }
-        assertFalse(board.switchStudents(fromTable,fromLobby)); //voglio togliere 2 green ma ne ho 1
+        assertFalse(board.switchStudents(fromTable,fromLobby));
         for (int i = 0; i<2;i++){
             fromLobby.set(i,i+3);
         }
-        assertFalse(board.switchStudents(fromTable,fromLobby)); //indici out of bounds
+        assertFalse(board.switchStudents(fromTable,fromLobby));
         fromLobby.clear();
-        assertFalse(board.switchStudents(fromTable,fromLobby)); //array degli indici vuoto
+        assertFalse(board.switchStudents(fromTable,fromLobby));
         for (int i = 0; i<1;i++){
             fromLobby.add(i,i);
         }
-        assertFalse(board.switchStudents(fromTable,fromLobby)); //1 dalla lobby e 2 dalla table
+        assertFalse(board.switchStudents(fromTable,fromLobby));
         fromLobby.clear();
         fromTable.clear();
 

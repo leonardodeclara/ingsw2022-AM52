@@ -59,7 +59,7 @@ public class GUIBoard {
      * because the copies from server are stored in GameBoard instance
      */
     private void initializeBoard(){
-        ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN)); //l'ordine è importante per gli offset del rendering
+        ArrayList<Color> tableColors = new ArrayList<>(Arrays.asList(Color.BLUE,Color.PINK,Color.YELLOW,Color.RED,Color.GREEN));
         for(Color color : tableColors){
             numOfStudentsOnTable.put(color,clientBoard.getStudentsTable().get(color));
         }
@@ -166,7 +166,7 @@ public class GUIBoard {
         clearLobby();
         int studentRowCounter = 0;
         int studentColumnCounter = 0;
-        int studentIDCounter = 0; //identificativo studente lobby
+        int studentIDCounter = 0;
         for(Color student : clientSideLobbyStudents){
             ImageView studentImage = new ImageView("/graphics/"+student.toString().toLowerCase()+"_student.png");
             studentImage.setFitWidth(STUDENT_TABLE_WIDTH);
@@ -200,7 +200,7 @@ public class GUIBoard {
                     controller.handleHoverEvent(studentImage, Clickable.LOBBY_STUDENT);
                 });
                 studentImage.setOnMouseExited((MouseEvent e) -> {
-                    if (studentImage.getEffect()==null || !(DropShadow.class).equals(studentImage.getEffect().getClass())) //rivedere, qui il comportamento è lo stesso delle carte personaggio
+                    if (studentImage.getEffect()==null || !(DropShadow.class).equals(studentImage.getEffect().getClass()))
                         studentImage.setEffect(null);
                 });
                 studentImage.setOnMouseClicked((MouseEvent e)->{
@@ -280,7 +280,7 @@ public class GUIBoard {
             towerImage.setY(TOWER_IMAGE_START_Y + offsetY);
             towerImage.setPreserveRatio(true);
             towersImages.add(towerImage);
-            gui.addElementToScene(towerImage); //in teoria le torri non sono clickable perché è tutto automatico
+            gui.addElementToScene(towerImage);
 
         }
 

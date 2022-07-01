@@ -8,7 +8,6 @@ import it.polimi.ingsw.messages.UpdateMessage;
  * and notifies that a cloud has been emptied
  */
 
-//messaggio che notifica che una nuvola è stata svuotata
 public class CloudUpdateMessage implements UpdateMessage {
     int cloudIndex;
 

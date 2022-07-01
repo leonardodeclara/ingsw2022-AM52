@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.Constants.*;
 
-//TODO tasto per chiudere il gioco dopo la disconnessione
 
 /**
  * Class GameTableController implements all the logic behind the Game Table FXML Scene

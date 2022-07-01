@@ -148,7 +148,6 @@ public class Board {
      * Add each tower to the board
      */
     public void addTower() {
-        //bisogna inserire un controllo che non si inseriscano più torri di quanto permesso
         towers++;
     }
 

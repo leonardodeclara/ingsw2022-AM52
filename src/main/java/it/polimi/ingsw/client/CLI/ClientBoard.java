@@ -75,7 +75,7 @@ public class ClientBoard implements Serializable {
         try {
             for(Color color : studentsTable.keySet()){
                 for (int i = 0; i < Constants.MAX_LOBBY_SIZE; i++){
-                    System.out.print(Constants.getStudentsColor(color) + (i < studentsTable.get(color) ? "■ " : "○ "));
+                    System.out.print(Constants.getStudentsColor(color) + (i < studentsTable.get(color) ? "■ " : "X "));
                 }
                 System.out.print("\n");
                 System.out.print(Constants.RESET);
@@ -88,7 +88,7 @@ public class ClientBoard implements Serializable {
         System.out.print("TEACHERS TABLE: ");
         try {
             for (Color color : Color.values()) {
-                System.out.print(Constants.getStudentsColor(color) + (getTeacherTable().contains(color) ? "■ " : "○ "));
+                System.out.print(Constants.getStudentsColor(color) + (getTeacherTable().contains(color) ? "■ " : "X "));
                 System.out.print(Constants.RESET);
             }
             System.out.print("\n");
@@ -100,11 +100,11 @@ public class ClientBoard implements Serializable {
         try {
             for (int i = 0; i < getTowers(); i++) {
                 if (getTeam().equals(Tower.BLACK))
-                    System.out.print("♢ ");
+                    System.out.print("█ ");
                 else if (getTeam().equals(Tower.WHITE))
-                    System.out.print("♦ ");
+                    System.out.print("█ ");
                 else if (getTeam().equals(Tower.GREY))
-                    System.out.print(Constants.GREY + "♦ ");
+                    System.out.print(Constants.GREY + "█ ");
             }
             System.out.print("\n");
             System.out.print(Constants.RESET);

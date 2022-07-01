@@ -6,7 +6,6 @@ import it.polimi.ingsw.messages.Message;
  * Thiss message is sent from Client to Server to notify the choice of cloud to be emptied to fill the lobby
  */
 
-//messaggio Client->Server per comunicare la scelta di nuvola da svuotare per riempire la lobby
 public class CloudSelectionMessage implements Message {
     private int cloudIndex;
 

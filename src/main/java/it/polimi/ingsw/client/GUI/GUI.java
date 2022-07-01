@@ -220,7 +220,7 @@ public class GUI extends Application implements UI{
     /**
      * Method enableScene removes from the stage the gray overlay.
      */
-    public void enableScene(){ //riabilita la GUI
+    public void enableScene(){
         ((AnchorPane)stage.getScene().getRoot()).getChildren().remove(greyOverlay);
     }
 
@@ -271,7 +271,7 @@ public class GUI extends Application implements UI{
 
     }
 
-    public void openConnectMenu(){ //chiamato da MainMenuController quando si preme PLAY
+    public void openConnectMenu(){
         setScene(Constants.CONNECT_MENU_FXML);
     }
 
@@ -326,7 +326,7 @@ public class GUI extends Application implements UI{
         return GB.getClouds();
     }
 
-    public void setWizard(int wizard){ //chiamato dal controller quando fa send
+    public void setWizard(int wizard){
         wizardID = wizard;
     }
 

@@ -73,8 +73,8 @@ public class GUICloud {
      */
     private void populate(){
         clearStudentsImages();
-        int studentCounter = 0; //va tenuta traccia manualmente, indexOf trovava la prima occurence
-        for(Color student : clientCloud.getStudents()){ //li printiamo a cerchio invece che a matrice così sfruttiamo meglio lo spazio (esteticamente parlando)
+        int studentCounter = 0;
+        for(Color student : clientCloud.getStudents()){
             double angle = 2 * studentCounter * Math.PI / clientCloud.getStudents().size();
             double xOffset = STUDENTS_CLOUD_CIRCLE_RADIUS * Math.cos(angle);
             double yOffset = STUDENTS_CLOUD_CIRCLE_RADIUS * Math.sin(angle);
@@ -105,7 +105,7 @@ public class GUICloud {
             controller.handleHoverEvent(cloudImage, Clickable.CLOUD);
         });
         cloudImage.setOnMouseExited((MouseEvent e) -> {
-            if (cloudImage.getEffect()==null || !(DropShadow.class).equals(cloudImage.getEffect().getClass())) //rivedere, qui il comportamento è lo stesso delle carte personaggio
+            if (cloudImage.getEffect()==null || !(DropShadow.class).equals(cloudImage.getEffect().getClass()))
                 cloudImage.setEffect(null);
         });
 

@@ -36,18 +36,12 @@ public class Basket {
     public Color pickStudent() {
         if (size==0)
             throw new EmptyBasketException();
-        //alternativamente potrei lanciare un'eccezione ad hoc, tipo EmptyBasketException
-        //in modo che il chiamante possa fare un try catch e in caso di catch fa game.setLastRound(true)
-        //ci sarà un listener per comunicare il messaggio di LastRound
-
-        //in questo modo posso evitare di restituire null e differenziarlo da altri casi di errore
 
         int colorIndex = weightedRandomIndex();
         if (colorIndex==-1)
             return null;
         studentsNum[colorIndex]-=1;
         size-=1;
-        //System.out.println("SACCHETTO: IL NUMERO DI PEDINE RIMASTE È " + size);
         return Color.values()[colorIndex];
     }
 

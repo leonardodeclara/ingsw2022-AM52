@@ -135,7 +135,7 @@ public class Game {
      */
     public void giveAssistantDeck(String playerName, int deckId) {
         ArrayList<Assistant> assignedDeck = new ArrayList<>();
-        wizards.remove((Integer) deckId); //firePropertyChange
+        wizards.remove((Integer) deckId);
         for (Assistant assistant : assistantDecks) {
             if (assistant.getWizard() == deckId) {
                 assignedDeck.add(assistant);
@@ -250,7 +250,7 @@ public class Game {
         if(studentIDs.size() != maxStudentsToMove || islandIDs.size()!=maxStudentsToMove || hasDuplicates(studentIDs))
             return false;
 
-        for (int i = 0; i < studentIDs.size(); i++) { //controlliamo se la mossa è legit per ogni studente e per ogni destinazione
+        for (int i = 0; i < studentIDs.size(); i++) {
             if (!isMoveStudentFromLobbyLegal(player, studentIDs.get(i), islandIDs.get(i), studentsToMove))
                 return false;
             studentsToMove.add(player.getBoard().getLobbyStudent(studentIDs.get(i)));
@@ -318,9 +318,9 @@ public class Game {
         if(!isMoveStudentsToLobbyLegal(player,cloudId))
             return false;
         Cloud cloud = clouds.get(cloudId);
-        ArrayList<Color> studentsToMove = cloud.emptyStudents(); //firePropertyChange
+        ArrayList<Color> studentsToMove = cloud.emptyStudents();
         for(Color student : studentsToMove)
-            player.addToBoardLobby(student); //firePropertyChange
+            player.addToBoardLobby(student);
         return true;
     }
 
@@ -414,7 +414,7 @@ public class Game {
             cloud.setFilled(true);
             picks.clear();
         }
-        listeners.firePropertyChange("CloudsRefill", null, new ArrayList<>(clouds)); //rivedere come mandare effettivamente
+        listeners.firePropertyChange("CloudsRefill", null, new ArrayList<>(clouds));
     }
 
 
@@ -509,7 +509,7 @@ public class Game {
                 if (influences.get(player)==max)
                     newOwner = getPlayerByName(player);
         }
-        returnMap.put("Player Name", (newOwner==null) ? null : newOwner.getNickname()); //null se non c'è mai stato un proprietario
+        returnMap.put("Player Name", (newOwner==null) ? null : newOwner.getNickname());
         if(newOwner!=null && newOwner!=island.getOwner()){
             changeIslandOwnership(island, newOwner);
         }
@@ -519,8 +519,7 @@ public class Game {
 
     protected void changeIslandOwnership(Island island, Player newOwner){
         ArrayList<Tower> oldTowers = island.removeTower();
-        //si potrebbe evitare di chiamare sempre questo metodo perché a prescindere dalla presenza di vecchie torri
-        // scatta un messaggio di propertyChange che, se non ci sono torri, è inutile
+
         int numOldTowers = oldTowers.size();
         if (numOldTowers!=0)
             for (Player player: players)
@@ -828,19 +827,19 @@ public class Game {
      * @param controller: controller instance listening to the game's changes.
      */
     public void setPropertyChangeListeners(GameController controller){
-        listeners.addPropertyChangeListener("MotherNature", controller); //fire fatto, anche in exp
-        listeners.addPropertyChangeListener("Merge", controller); //fire fatto
-        listeners.addPropertyChangeListener("LastRound", controller); //fire fatto
-        listeners.addPropertyChangeListener("CloudsRefill", controller); //fire fatto
-        listeners.addPropertyChangeListener("CurrentTurnAssistantCards", controller); //fire fatto
+        listeners.addPropertyChangeListener("MotherNature", controller);
+        listeners.addPropertyChangeListener("Merge", controller);
+        listeners.addPropertyChangeListener("LastRound", controller);
+        listeners.addPropertyChangeListener("CloudsRefill", controller);
+        listeners.addPropertyChangeListener("CurrentTurnAssistantCards", controller);
         for (Cloud cloud: clouds){
-            cloud.setPropertyChangeListener(controller); //fire fatto
+            cloud.setPropertyChangeListener(controller);
         }
         for (Island island: islands){
-            island.setPropertyChangeListener(controller); //fire fatto, in teoria (vedere per students)
+            island.setPropertyChangeListener(controller);
         }
         for (Player player: players){
-            player.setPropertyChangeListener(controller); //fire fatto
+            player.setPropertyChangeListener(controller);
         }
     }
 }

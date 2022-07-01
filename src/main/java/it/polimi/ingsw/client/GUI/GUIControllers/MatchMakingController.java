@@ -61,7 +61,6 @@ public class MatchMakingController extends GUIController{
             actionParser.setPlayersNumber(numOfPlayersValue);
             String gameTypeString = gameType.getSelectionModel().getSelectedItem();
             boolean isExpert = (!gameTypeString.equals("Basic Rules"));
-            //per ora non serve currentState perchè questo controller non si occupa di altro se non questo
             ArrayList<Object> selectedMode = actionParser.parseNewGameParameters(numOfPlayersValue,isExpert);
 
             Message builtMessage = clientMessageBuilder.buildMessageFromPlayerInput(selectedMode, ClientState.INSERT_NEW_GAME_PARAMETERS);

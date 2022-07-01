@@ -100,7 +100,7 @@ public class GUIIsland{
      * Method clearIsland removes all the images
      * from the island
      */
-    public void clearIsland(){ //cancella l'isola
+    public void clearIsland(){
         clearStudents();
         clearTowers();
         clearMotherNature();
@@ -119,20 +119,20 @@ public class GUIIsland{
             if (gui.getCurrentState().equals(ClientState.MOVE_MOTHER_NATURE)){
                 actionParser.handleSelectionEvent(controller.extractMNsteps(index),Clickable.ISLAND,gui.getCurrentState());
             }
-            else actionParser.handleSelectionEvent(index,Clickable.ISLAND,gui.getCurrentState()); //es carte 3,5
+            else actionParser.handleSelectionEvent(index,Clickable.ISLAND,gui.getCurrentState());
             controller.handleSelectionEffect(islandImage,Clickable.ISLAND);
 
         });
         islandImage.setOnMouseEntered((MouseEvent e) -> {
-            if (!clientIsland.isMotherNature() || !(gui.getCurrentState().equals(ClientState.MOVE_MOTHER_NATURE))) //se sono in una fase che non è moveMN deve vedersi l'effetto di hover
+            if (!clientIsland.isMotherNature() || !(gui.getCurrentState().equals(ClientState.MOVE_MOTHER_NATURE)))
                 controller.handleHoverEvent(islandImage, Clickable.ISLAND);
         });
         islandImage.setOnMouseExited((MouseEvent e) -> {
-            if (islandImage.getEffect()==null || !(DropShadow.class).equals(islandImage.getEffect().getClass())) //rivedere, qui il comportamento è lo stesso delle carte personaggio
+            if (islandImage.getEffect()==null || !(DropShadow.class).equals(islandImage.getEffect().getClass()))
                 islandImage.setEffect(null);
         });
 
-        islandImage.setOnDragOver((DragEvent e) -> { //qui si avrà il check dell'action parser (se non è clickable questo evento non deve partire)
+        islandImage.setOnDragOver((DragEvent e) -> {
             if (e.getGestureSource() != islandImage && e.getDragboard().hasString()) {
                 e.acceptTransferModes(TransferMode.MOVE);
             }
@@ -140,11 +140,10 @@ public class GUIIsland{
             e.consume();
         });
         islandImage.setOnDragDropped(new EventHandler<DragEvent>() {
-            public void handle(DragEvent event) { //ci sarà da ottimizzare tutto e pulirlo sfruttando data structures apposite
+            public void handle(DragEvent event) {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
-                if (db.hasString()) { //per generalizzarlo avremo una variabile draggedElement così che qui sappiamo cosa sta venendo rilasciato
-                    //per ora creiamo solo il caso specifico di move from lobby
+                if (db.hasString()) {
                     int selectedStudentID = Integer.parseInt(db.getString());
                     Color student;
                     if (gui.getCurrentState().equals(ClientState.MOVE_FROM_LOBBY)){
@@ -158,7 +157,6 @@ public class GUIIsland{
                     ArrayList<Object> selection = new ArrayList<>();
                     selection.add(selectedStudentID);
                     selection.add(index);
-                    //MANCA CONTROLLO CAN CLICK-CAN DRAG
                     actionParser.handleSelectionEvent(selection, gui.getCurrentState());
                     addStudentToIsland(student);
                     success = true;
@@ -260,7 +258,7 @@ public class GUIIsland{
         double screenCenterY = gui.getScreenY()/2 - 15;
 
         clearMotherNature();
-        if (clientIsland.isMotherNature()){ //alziamo le carte personaggio di un tot e mettiamo mother nature in una traiettoria circolare in corrispondenza delle isole (radius più piccolo, quindi madre natura è dentro il cerchio)
+        if (clientIsland.isMotherNature()){
             ImageView motherNatureImage = new ImageView("/graphics/MotherNature_Overlay.png");
             motherNatureImage.setX(islandImage.getX()+MOTHER_NATURE_OFFSET_X);
             motherNatureImage.setY(islandImage.getY()+MOTHER_NATURE_OFFSET_Y);

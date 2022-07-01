@@ -83,7 +83,6 @@ public class GUIPersonality {
 
         if (personality.isHasBeenUsed()){
             coinImage = new ImageView("graphics/coin.png");
-            //rivedere dove posizionarla
             double coinX = cardImage.getX()+PERSONALITY_IMAGE_WIDTH/2;
             double coinY = cardImage.getY()+PERSONALITY_IMAGE_HEIGHT/2;
             coinImage.setX(coinX-COIN_IMAGE_WIDTH/2);
@@ -103,9 +102,9 @@ public class GUIPersonality {
         if (personality.isActive()){
             activeText = new Text("ACTIVE");
             activeText.setX(centerX-PERSONALITY_IMAGE_WIDTH/2);
-            activeText.setY(centerY+PERSONALITY_IMAGE_HEIGHT/2);//test
+            activeText.setY(centerY+PERSONALITY_IMAGE_HEIGHT/2);
             activeText.setFont(gui.getGameFont());
-            activeText.setFill(javafx.scene.paint.Color.BLACK); //si potrebbe mettere nel css
+            activeText.setFill(javafx.scene.paint.Color.BLACK);
             gui.addElementToScene(activeText);
             activeText.toFront();
         }
@@ -199,7 +198,7 @@ public class GUIPersonality {
             controller.handleHoverEvent(cardImage, Clickable.PERSONALITY);
         });
         cardImage.setOnMouseExited((MouseEvent e) -> {
-            if (cardImage.getEffect()==null || !(DropShadow.class).equals(cardImage.getEffect().getClass())) //rivedere, qui il comportamento è lo stesso delle carte personaggio
+            if (cardImage.getEffect()==null || !(DropShadow.class).equals(cardImage.getEffect().getClass()))
                 cardImage.setEffect(null);
         });
     }
@@ -210,8 +209,6 @@ public class GUIPersonality {
      */
     public void setStudentsEvents(ImageView studentImage, int studentIndex){
         studentImage.setOnMouseClicked((MouseEvent e) -> {
-            //if (personality.isActive) aggiungere controllo per cui si può clickare su uno studente se la carta è attiva
-            //o qui o in controller o actionParser
             if (personality.isActive()){
                 actionParser.handleSelectionEvent(studentIndex,Clickable.PERSONALITY_CARD_STUDENT, gui.getCurrentState());
                 controller.handleSelectionEffect(studentImage,Clickable.PERSONALITY_CARD_STUDENT);}

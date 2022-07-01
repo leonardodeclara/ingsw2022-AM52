@@ -72,7 +72,7 @@ class ExpertGameTest {
             studentIndexes.add(i+9);
             destinationsIds.add(Constants.ISLAND_ID_NOT_RECEIVED);
         }
-        assertTrue(game.moveStudentsFromLobby("leo", studentIndexes,destinationsIds)); //viene chiamato il metodo override di moveStudentFromLobbyToTable
+        assertTrue(game.moveStudentsFromLobby("leo", studentIndexes,destinationsIds));
         assertEquals(4,leo.getBoard().getTableNumberOfStudents(Color.BLUE));
         assertEquals(2, leo.getCoins());
         assertEquals(16, game.getCoins());

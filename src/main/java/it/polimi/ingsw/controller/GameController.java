@@ -405,7 +405,7 @@ public class GameController implements PropertyChangeListener {
             case "CurrentTurnAssistantCards":
                 toSend = UpdateMessageBuilder.buildCurrentTurnAssistantCardsMessage(event);
                 break;
-            case "Deck": //non se è messaggio broadcast, forse in gameHandler va gestito in maniera diversa
+            case "Deck":
                 toSend = UpdateMessageBuilder.buildDeckUpdateMessage(event);
                 break;
             case "IslandTowers":

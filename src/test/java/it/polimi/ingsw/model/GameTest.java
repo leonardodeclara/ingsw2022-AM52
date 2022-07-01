@@ -289,8 +289,8 @@ class GameTest {
         Game game = gameSetup(2);
         game.giveAssistantDeck("leo", 0);
         game.giveAssistantDeck("mari", 1);
-        game.playAssistantCard("leo",4); //giochiamo a0
-        game.playAssistantCard("mari",8); //giochaimo a1
+        game.playAssistantCard("leo",4);
+        game.playAssistantCard("mari",8);
         assertEquals(false,game.isMoveMNLegal("leo",25));
         assertEquals(true,game.isMoveMNLegal("leo",2));
         assertEquals(false,game.isMoveMNLegal("mari",6));
@@ -484,10 +484,8 @@ class GameTest {
         game.refillClouds();
         game.moveStudentsToLobby("leo", 0);
         game.moveStudentsToLobby("mari", 1);
-        //test per vedere se le nuvole sono vuote
         assertTrue(game.getClouds().get(0).getStudents().size() == 0);
         assertTrue(game.getClouds().get(1).getStudents().size() == 0);
-        //test per vedere se sono stati aggiunti 3 studenti alla lobby
         assertEquals(l1size + 3, game.getPlayers().get(0).getBoard().getLobby().size());
         assertEquals(l2size + 3, game.getPlayers().get(1).getBoard().getLobby().size());
     }
@@ -836,7 +834,7 @@ class GameTest {
         assertEquals(testIsland,game.islands.get(10));
         assertEquals(oldNumbersOfStudent[0] + leftIsland.getStudentsOfColor(Color.RED).size(),island1.getStudentsOfColor(Color.RED).size());
         assertEquals(oldNumbersOfStudent[1] + leftIsland.getStudentsOfColor(Color.PINK).size(),island1.getStudentsOfColor(Color.PINK).size());
-        assertEquals(oldNumbersOfStudent[2] + leftIsland.getStudentsOfColor(Color.BLUE).size(),island1.getStudentsOfColor(Color.BLUE).size()); //expected 3, actual 4
+        assertEquals(oldNumbersOfStudent[2] + leftIsland.getStudentsOfColor(Color.BLUE).size(),island1.getStudentsOfColor(Color.BLUE).size());
     }
 
     /**
@@ -906,7 +904,7 @@ class GameTest {
         game.getIslands().get((mnIndex+1)%game.getIslands().size()).setOwner(game.getPlayerByName("leoviatano"));
         game.getIslands().get((mnIndex+1)%game.getIslands().size()).addTower(Tower.BLACK);
         Island dest = game.getIslands().get((mnIndex+2)%game.getIslands().size());
-        game.calculateInfluence(dest); //qui c'è un merge
+        game.calculateInfluence(dest);
         assertEquals(11, game.getIslands().size());
         game.moveMotherNature("leoviatano", 2);
         assertEquals((game.getIslands().indexOf(initialMN)+2)%game.getIslands().size(),
@@ -944,7 +942,7 @@ class GameTest {
         ArrayList<Assistant> deck2 = game.getPlayerByName("leoviatano").getDeck();
         assertEquals(true,game.isCardPlayable(mari.getCardByPriority(1),mari.getDeck()));
         assertEquals(true,game.isCardPlayable(frizio.getCardByPriority(1),frizio.getDeck()));
-        game.playAssistantCard("mari",1); //cardPriority = 1 <==> getCardByPriority(1)
+        game.playAssistantCard("mari",1);
         assertEquals(false,game.isCardPlayable(frizio.getCardByPriority(1),frizio.getDeck()));
         assertEquals(true,game.isCardPlayable(frizio.getCardByPriority(2),frizio.getDeck()));
         assertEquals(false,game.isCardPlayable(leoviatano.getCardByPriority(1),leoviatano.getDeck()));

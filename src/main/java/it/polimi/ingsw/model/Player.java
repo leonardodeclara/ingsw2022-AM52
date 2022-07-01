@@ -220,7 +220,7 @@ public class Player {
      * @param controller: controller instance listening to the game's changes.
      */
     public void setPropertyChangeListener(GameController controller) {
-        listeners.addPropertyChangeListener("Deck", controller); //non sono sicuro sia un'informazione visibile a tutti
+        listeners.addPropertyChangeListener("Deck", controller);
         listeners.addPropertyChangeListener("Board", controller);
     }
 

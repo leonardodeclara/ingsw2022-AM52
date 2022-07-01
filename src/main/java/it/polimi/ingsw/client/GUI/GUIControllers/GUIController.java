@@ -5,9 +5,9 @@ import it.polimi.ingsw.client.GUI.GUI;
 import it.polimi.ingsw.client.ClientMessageBuilder;
 
 public class GUIController implements GUIControllerInterface {
-    protected GUI gui; //main class
-    protected ActionParser actionParser; //array of raw data builder
-    protected ClientMessageBuilder clientMessageBuilder; //message builder
+    protected GUI gui;
+    protected ActionParser actionParser;
+    protected ClientMessageBuilder clientMessageBuilder;
 
     @Override
     public void setGUI(GUI gui) {

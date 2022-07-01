@@ -17,8 +17,8 @@ import static it.polimi.ingsw.Constants.NUM_PLAYABLE_PERSONALITY_CARDS;
  */
 public class ExpertGame extends Game {
     private ArrayList<Personality> personalities;
-    private Personality activePersonality; //c'è un solo personaggio attivo per round
-    private Player currentPersonalityPlayer; //si può togliere e tenere solo currentPlayer. tanto l'effetto è attivo finché è il turno del giocatore che ha giocato la carta
+    private Personality activePersonality;
+    private Player currentPersonalityPlayer;
     private int coins;
     private Color bannedColor;
 
@@ -49,11 +49,10 @@ public class ExpertGame extends Game {
      */
     @Override
     protected void moveStudentsFromLobbyToTable(Player player, Color studentToMove){
-        //da al giocatore una moneta se ha posizionato una pedina in posizione 3,6,9 e ci sono abbastanza monete
         if(player.addToBoardTable(studentToMove)) {
             if(coins > 0){
-                coins--; //-1 dalla riserva
-                player.setCoins(player.getCoins()+1); //+ 1 al giocatore
+                coins--;
+                player.setCoins(player.getCoins()+1);
                 ArrayList<Object> coinsChange = new ArrayList<>();
                 coinsChange.add(player.getCoins());
                 coinsChange.add(player.getNickname());
@@ -208,7 +207,6 @@ public class ExpertGame extends Game {
                 LobbyPersonality extractedCard = new LobbyPersonality(randomIndex);
                 int lobbyDimension = randomIndex==7 ? 6 : 4;
                 for (int j = 0; j < lobbyDimension; j++){
-                    //rivedere, in teoria questa situazione non si dovrebbe mai presentare
                     try{
                         extractedCard.addStudent(basket.pickStudent());}
                     catch (EmptyBasketException e){
@@ -251,7 +249,7 @@ public class ExpertGame extends Game {
             activePersonality=personalities.remove(playedCardIndex);
             boolean hasBeenUsed = activePersonality.isHasBeenUsed();
             int cardCost=activePersonality.getCost();
-            coins += activePersonality.isHasBeenUsed()?cardCost: cardCost-1; //una moneta non torna in casssa ma viene messa sopra la carta
+            coins += activePersonality.isHasBeenUsed()?cardCost: cardCost-1;
             currentPlayer.setCoins(currentPlayer.getCoins()-activePersonality.getCost());
             activePersonality.updateCost();
             currentPersonalityPlayer = currentPlayer;
@@ -434,8 +432,6 @@ public class ExpertGame extends Game {
         }
         return true;
     }
-    //IMPORTANTE: capire come si comporta la teacherOwnership in questo caso
-    //non chiamiamo il metodo perché in teoria viene chiamato solo dopo che viene aggiunta una pedina alla sala, non tolta
 
     /**
      * Adds a student tile to the lobby personality's arraylist.
@@ -520,10 +516,10 @@ public class ExpertGame extends Game {
     @Override
     public void setPropertyChangeListeners(GameController controller) {
         super.setPropertyChangeListeners(controller);
-        listeners.addPropertyChangeListener("ActivePersonality", controller); //fatto
-        listeners.addPropertyChangeListener("Coins", controller); //fatto
+        listeners.addPropertyChangeListener("ActivePersonality", controller);
+        listeners.addPropertyChangeListener("Coins", controller);
         for (Personality personality: personalities)
             personality.setPropertyChangeListener(controller);
-        listeners.addPropertyChangeListener("NoLongerActivePersonality", controller); //fatto
+        listeners.addPropertyChangeListener("NoLongerActivePersonality", controller);
     }
 }

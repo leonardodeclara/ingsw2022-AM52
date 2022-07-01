@@ -476,7 +476,6 @@ public class InputParser {
         return false;
     }
 
-    //utility function per passare da indici human readable (da 1 in poi) a indici computer readable (da 0 in poi)
 
     /**
      * Method decrementIndexes translates human-readable indexes (counting starts from 1) to computer-readable indexes (counting starts from 0).

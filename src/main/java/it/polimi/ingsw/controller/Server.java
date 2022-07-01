@@ -113,7 +113,7 @@ public class Server {
      * clients are added to it. The now-empty lobby is also removed from the active lobbies list.
      * @param lobby: Lobby instance to which the clients belong to.
      */
-    private void createMatch(Lobby lobby){ //cancella la lobby, crea la lista giocatori, crea gamehandler e manda i messaggi ai giocatori
+    private void createMatch(Lobby lobby){
         ArrayList<String> players = lobby.getPlayers();
         boolean expert = lobby.isExpertGame();
         lobbies.remove(lobby);
@@ -247,6 +247,7 @@ public class Server {
 
     public static void main(String[] args) {
         Server server = new Server();
+        System.out.println(Constants.Logo);
         System.out.println("Please, choose a port to run your server on:");
         System.out.println(">");
 
