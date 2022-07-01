@@ -24,8 +24,6 @@ The UML diagrams linked below represent the first design of our model and the de
 - [Initial UML](https://github.com/leonardodeclara/ingsw2022-AM52/blob/master/deliverables/Initial_model_UML.png)
 - [Final UML](https://github.com/leonardodeclara/ingsw2022-AM52/tree/master/deliverables/Final%20UML)
 
-### JavaDocs
-The project's Javadocs can be found at the following [link]().
 
 ### Model Test Coverage report
 
@@ -72,7 +70,7 @@ The project's Javadocs can be found at the following [link]().
 ## Execution
 
 ### Jars
-Jars can be downloaded from the following link: [Jars]().
+Jars can be downloaded from the project folder: [Jars](https://github.com/leonardodeclara/ingsw2022-AM52/tree/master/deliverables/jars).
 
 ### Client
 
