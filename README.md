@@ -7,7 +7,8 @@
 ## Eriantys Board Game
 <img src="https://www.craniocreations.it/wp-content/uploads/2021/06/Eriantys_scatolaFrontombra.png" width=200px height=200px align="right"/>
 
-Eriantys Board Game is the final test of **"Software Engineering"**, held at Politecnico di Milano (2021/2022).<br>
+Eriantys Board Game is the final test of **"Software Engineering"**, held at Politecnico di Milano (2021/2022). The course was held by prof. Alessandro Margara, Gianpaolo Cugola and Pierluigi San Pietro.<br>
+Final Score: 30/30. <br> 
 Game rules are available [here](https://craniointernational.com/2021/wp-content/uploads/2021/06/Eriantys_rules_small.pdf).<br>
 
 ## Project specification
