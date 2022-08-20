@@ -1,4 +1,4 @@
-# Prova Finale Ingegneria del Software 2022
+# Eriantys Board Game
 ## Gruppo AM52
 **Davide Capobianco** [@CDCapobianco](https://github.com/CDCapobianco) <br> cirodavide.capobianco@mail.polimi.it <br>
 **Leonardo De Clara** [@leonardodeclara](https://github.com/leonardodeclara) <br> leonardo.declara@mail.polimi.it <br>
@@ -9,13 +9,13 @@
 
 Eriantys Board Game is the final test of **"Software Engineering"**, held at Politecnico di Milano (2021/2022). The course was held by prof. Alessandro Margara, Gianpaolo Cugola and Pierluigi San Pietro.<br>
 Final Score: 30/30. <br> 
-Game rules are available [here](https://craniointernational.com/2021/wp-content/uploads/2021/06/Eriantys_rules_small.pdf).<br>
+
 
 ## Project specification
 The following projects consists of the MVC (Model-View-Controller) implementation of a distributed system made up of a server and multiple clients.<br>
 The server is able to manage multiples games and multiple clients connected through socket connections. <br>
 The game can be played through a command line interface (CLI) or a graphical user interface (GUI). <br>
-
+Game rules are available [here](https://craniointernational.com/2021/wp-content/uploads/2021/06/Eriantys_rules_small.pdf).<br>
 
 
 ## Documentation
