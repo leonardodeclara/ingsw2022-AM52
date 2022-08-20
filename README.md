@@ -1,5 +1,5 @@
 # Eriantys Board Game
-## Gruppo AM52
+## AM52 Team
 **Davide Capobianco** [@CDCapobianco](https://github.com/CDCapobianco) <br> cirodavide.capobianco@mail.polimi.it <br>
 **Leonardo De Clara** [@leonardodeclara](https://github.com/leonardodeclara) <br> leonardo.declara@mail.polimi.it <br>
 **Marianna Dragonetti** [@mariannadragonetti](https://github.com/mariannadragonetti) <br>marianna.dragonetti@mail.polimi.it
